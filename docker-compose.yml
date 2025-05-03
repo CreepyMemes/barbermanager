@@ -1,0 +1,21 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    volumes:
+      - ./backend:/code
+    ports:
+      - '8000:8000'
+    working_dir: /code
+    command: python manage.py runserver 0.0.0.0:8000
+
+  frontend:
+    build:
+      context: ./frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules # Doing this fixes "Error: Cannot find module @rollup/rollup-linux-x64-gnu"
+    ports:
+      - '3000:5173'
+    working_dir: /app
+    command: npm run dev -- --host
