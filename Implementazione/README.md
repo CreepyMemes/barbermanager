@@ -1,16 +1,10 @@
 <div align="center"><img src="./frontend/public/logo.png" height="100px" alt="BarberManager Logo"/></div>
 
-<h2 align="center">BarberManager – Un software gestionale per barber shop</h2>
-
----
-
 ## 🚀 Overview
 
 BarberManager is a modern web-based management system for barber shops, featuring a Django REST API backend and a Vite + React frontend.
 
 The entire project is containerized using Docker for easy setup and development across teams.
-
----
 
 ## 🐳 Getting Started with Docker
 
@@ -18,8 +12,6 @@ The entire project is containerized using Docker for easy setup and development 
 
 - [Docker](https://www.docker.com/) installed
 - [Docker Compose](https://docs.docker.com/compose/) installed
-
----
 
 ### 🔧 Installation & Startup
 
@@ -38,8 +30,6 @@ docker-compose up --build
 
 - Frontend (React App) will be available at: [http://localhost:3000](http://localhost:3000)
 - Backend (Django API) will be available at: [http://localhost:8000](http://localhost:8000)
-
----
 
 ## ⚙️ Development Tips
 
@@ -61,8 +51,6 @@ React (Vite) supports hot reload by default. If you add a new npm package:
 # Inside the frontend container:
 docker-compose exec frontend npm install <package>
 ```
-
----
 
 ## ⚠️ Troubleshooting
 
