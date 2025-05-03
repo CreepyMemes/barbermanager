@@ -1,8 +1,6 @@
 <div align="center"><img src="./Implementazione/frontend/public/logo.png" height="100px" alt="ManageBarber Logo"/></div>
 
-<h2 align="center">ManageBarber – Un software gestionale per barber shop</h2>
-
----
+<h1 align="center">ManageBarber – Un software gestionale per barber shop</h2>
 
 ## 📝 Descrizione Generale
 
@@ -16,8 +14,6 @@ L’obiettivo del sistema è digitalizzare le attività principali del salone, q
 Il sistema mira a migliorare l’esperienza sia per i clienti che per i professionisti del settore.
 
 Il salone è composto da un’area di accoglienza e trattamento, dove operano uno o più barbieri, ciascuno con turni lavorativi definiti.
-
----
 
 ## 👤 Registrazione Cliente
 
@@ -35,8 +31,6 @@ Una volta registrati, possono:
 - Lasciare **recensioni**
 - Aggiornare in qualsiasi momento i dati del proprio profilo
 
----
-
 ## 📅 Prenotazione Servizi
 
 Attraverso la pagina di prenotazione, il cliente può:
@@ -51,8 +45,6 @@ Il sistema:
 - Salva automaticamente la prenotazione
 - Rende la prenotazione visibile nel profilo del cliente
 
----
-
 ## 🧑‍🔧 Gestione del Personale
 
 Ogni barbiere ha accesso a un’**area riservata personale** da cui può:
@@ -60,8 +52,6 @@ Ogni barbiere ha accesso a un’**area riservata personale** da cui può:
 - Visualizzare in tempo reale gli **appuntamenti assegnati**
 - Aggiornare lo **stato delle prenotazioni**
 - Inserire **note o osservazioni** sui clienti per offrire un servizio più personalizzato
-
----
 
 ## 🛠️ Area Amministrativa
 
