@@ -8,12 +8,12 @@ The entire project is containerized using Docker for easy setup and development 
 
 ## 🐳 Getting Started with Docker
 
-### ✅ Requirements
+### Requirements
 
 - [Docker](https://www.docker.com/) installed
 - [Docker Compose](https://docs.docker.com/compose/) installed
 
-### 🔧 Installation & Startup
+### Installation & Startup
 
 1. Clone the repository:
 
@@ -33,7 +33,7 @@ docker-compose up --build
 
 ## ⚙️ Development Tips
 
-### 🔄 Apply Backend Changes
+###  Backend Development Changes
 
 If you make changes to backend Python code, Django will auto-reload. If you add new dependencies:
 
@@ -43,7 +43,7 @@ docker-compose exec backend pip install <package>
 docker-compose exec backend pip freeze > requirements.txt
 ```
 
-### 💄 Apply Frontend Changes
+### Frontend Development Changes
 
 React (Vite) supports hot reload by default. If you add a new npm package:
 
