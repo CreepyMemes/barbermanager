@@ -1,16 +1,16 @@
 .item {
   /* border: 1px solid #ddd; */
   background-color: #383838;
-  padding: 1rem;
+  padding: 0.5rem 1rem;
   border-radius: 8px;
   text-align: left;
 
   display: flex;
   justify-content: space-between;
-  gap: 0.5rem;
 }
 
 p {
   display: flex;
   margin: 0;
+  padding: 0;
 }
