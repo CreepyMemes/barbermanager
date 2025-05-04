@@ -1,14 +1,10 @@
-# frontend
+FROM node:20
 
-FROM node:20 AS builder
-
-# Set work directory
 WORKDIR /app
 
 COPY package*.json jsconfig.json vite.config.js ./
 RUN npm ci
 
-COPY src ./src
-COPY public ./public
+COPY . .
 
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "dev", "--", "--host"]
