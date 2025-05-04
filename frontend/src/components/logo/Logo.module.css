@@ -1,0 +1,25 @@
+.logo {
+  height: 6rem;
+  padding: 1.5rem;
+
+  will-change: filter, transform;
+
+  animation: beat 1.5s infinite ease-in-out;
+  transform-origin: center;
+
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2rem #ffffffaa);
+}
+
+@keyframes beat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
