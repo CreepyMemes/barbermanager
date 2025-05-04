@@ -3,6 +3,23 @@ h1 {
   line-height: 1.1;
 }
 
+h2 {
+  text-align: left;
+  margin: 1 0 1 1;
+}
+
+p {
+  padding-top: 0.5rem;
+}
+
 .text {
   color: #888;
+}
+
+.item-list {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  /* background-color: red; */
 }
