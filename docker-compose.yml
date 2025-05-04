@@ -3,11 +3,10 @@ services:
     build:
       context: ./backend
     volumes:
-      - ./backend:/code
+      - ./backend:/app
     ports:
       - '8000:8000'
-    working_dir: /code
-    command: python manage.py runserver 0.0.0.0:8000
+    working_dir: /app
 
   frontend:
     build:
@@ -18,4 +17,3 @@ services:
     ports:
       - '3000:5173'
     working_dir: /app
-    command: npm run dev -- --host
