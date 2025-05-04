@@ -8,6 +8,8 @@ const apiUrl = 'http://127.0.0.1:8000/'; // Warning this only works on the host 
 
 function App() {
   const [items, setItems] = useState([]);
+  const [name, setName] = useState('');
+  const [quantity, setQuantity] = useState(0);
 
   useEffect(() => {
     fetchItems();
@@ -16,8 +18,28 @@ function App() {
   const fetchItems = async () => {
     try {
       const response = await fetch(`${apiUrl}/api/items/`);
-      const data = await response.json();
-      setItems(data);
+      const items = await response.json();
+      setItems(items);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const addItem = async () => {
+    const itemData = {
+      name,
+      quantity,
+    };
+
+    try {
+      const response = await fetch(`${apiUrl}/api/items/create/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(itemData),
+      });
+
+      const newItem = await response.json();
+      setItems((prevItems) => [...prevItems, newItem]);
     } catch (error) {
       console.log(error);
     }
@@ -27,7 +49,13 @@ function App() {
     <>
       <Logo />
       <h1>BarberManager</h1>
-      <Form />
+      <Form
+        name={name}
+        quantity={quantity}
+        setName={setName}
+        setQuantity={setQuantity}
+        onSubmit={addItem}
+      />
       <p className={styles.text}> Testing API CRUD operations</p>
 
       <h2>Items: </h2>
