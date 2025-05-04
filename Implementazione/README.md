@@ -18,8 +18,8 @@ The entire project is containerized using Docker for easy setup and development 
 1. Clone the repository:
 
 ```bash
-git clone <repo-url>
-cd <project-folder>
+git clone https://github.com/s1lentCommit/ManageBarber.git
+cd ManageBarber/Implementazione
 ```
 
 2. Build and run all services:
