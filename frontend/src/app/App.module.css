@@ -20,6 +20,5 @@ p {
   margin-top: 0.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  /* background-color: red; */
+  gap: 0.6rem;
 }
