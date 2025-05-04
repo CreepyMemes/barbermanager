@@ -2,7 +2,7 @@
 
 <h1 align="center">BarberManager – Un software gestionale per barber shop</h2>
 
-## 📝 Descrizione Generale
+### 📝 Descrizione Generale
 
 L’obiettivo del sistema è digitalizzare le attività principali del salone, quali:
 
@@ -15,7 +15,7 @@ Il sistema mira a migliorare l’esperienza sia per i clienti che per i professi
 
 Il salone è composto da un’area di accoglienza e trattamento, dove operano uno o più barbieri, ciascuno con turni lavorativi definiti.
 
-## 👤 Registrazione Cliente
+### 👤 Registrazione Cliente
 
 I clienti possono registrarsi tramite l’applicazione, fornendo:
 
@@ -31,7 +31,7 @@ Una volta registrati, possono:
 - Lasciare **recensioni**
 - Aggiornare in qualsiasi momento i dati del proprio profilo
 
-## 📅 Prenotazione Servizi
+### 📅 Prenotazione Servizi
 
 Attraverso la pagina di prenotazione, il cliente può:
 
@@ -45,7 +45,7 @@ Il sistema:
 - Salva automaticamente la prenotazione
 - Rende la prenotazione visibile nel profilo del cliente
 
-## 🧑‍🔧 Gestione del Personale
+### 🧑‍🔧 Gestione del Personale
 
 Ogni barbiere ha accesso a un’**area riservata personale** da cui può:
 
@@ -53,7 +53,7 @@ Ogni barbiere ha accesso a un’**area riservata personale** da cui può:
 - Aggiornare lo **stato delle prenotazioni**
 - Inserire **note o osservazioni** sui clienti per offrire un servizio più personalizzato
 
-## 🛠️ Area Amministrativa
+### 🛠️ Area Amministrativa
 
 Lo staff amministrativo, con credenziali specifiche, può accedere a un **pannello di controllo** da cui:
 
