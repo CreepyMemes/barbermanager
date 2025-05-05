@@ -1,5 +1,3 @@
-// Backend
-
 {
   "name": "Backend (Django API) Dev Container",
   "dockerComposeFile": "../../docker-compose.yml",
