@@ -1,5 +1,3 @@
-// Frontend
-
 {
   "name": "Frontend (React App) Dev Container",
   "dockerComposeFile": "../../docker-compose.yml",
