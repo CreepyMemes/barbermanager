@@ -1,19 +1,18 @@
 services:
   backend:
-    build:
-      context: ./backend
+    build: ./backend
     volumes:
       - ./backend:/app
     ports:
       - '8000:8000'
-    working_dir: /app
+    env_file:
+      - ./backend/.env
+    command: python manage.py runserver 0.0.0.0:8000
 
   frontend:
-    build:
-      context: ./frontend
+    build: ./frontend
     volumes:
       - ./frontend:/app
-      - /app/node_modules # Doing this fixes "Error: Cannot find module @rollup/rollup-linux-x64-gnu"
+      - /app/node_modules # Doing this unsyncs node_modules folder from host machine
     ports:
       - '3000:5173'
-    working_dir: /app
