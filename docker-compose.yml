@@ -22,6 +22,7 @@ services:
 
   frontend:
     build: ./frontend
+    command: npm run dev -- --host
     volumes:
       - ./frontend:/app
       - /app/node_modules # Doing this unsyncs node_modules folder from host machine
