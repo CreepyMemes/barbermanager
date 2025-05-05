@@ -1,10 +1,10 @@
-FROM node:20
+FROM node:20-alpine
 
 WORKDIR /app
 
-COPY package*.json jsconfig.json vite.config.js ./
+COPY package.json package-lock.json ./
 RUN npm ci
 
-COPY . .
+COPY . ./
 
 CMD ["npm", "run", "dev", "--", "--host"]
