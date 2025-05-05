@@ -4,7 +4,7 @@
   "name": "Backend (Django API) Dev Container",
   "dockerComposeFile": "../../docker-compose.yml",
   "service": "backend",
-  "workspaceFolder": "/code",
+  "workspaceFolder": "/app",
   "customizations": {
     "vscode": {
       "extensions": ["ms-python.python", "ms-python.vscode-pylance"]
