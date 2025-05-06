@@ -4,7 +4,7 @@
 
 # Project Documentation
 
-The project is containerized using **Docker**, **Docker Compose** and **VSCode Dev Containers** for easy setup and cross-platform consistency.
+This project is containerized using **Docker**, **Docker Compose** and **VSCode Dev Containers** for easy setup and cross-platform consistency.
 
 ## Table of Contents
 
@@ -14,14 +14,13 @@ The project is containerized using **Docker**, **Docker Compose** and **VSCode D
   - [Installation \& Startup](#installation--startup)
     - [1. Clone the repository:](#1-clone-the-repository)
     - [2. Build and Launch Services](#2-build-and-launch-services)
-  - [Development Workflow](#development-workflow)
-    - [Using VSCode Dev Containers](#using-vscode-dev-containers)
-      - [To Start:](#to-start)
-    - [Backend (Django API)](#backend-django-api)
-      - [Install Python Dependencies](#install-python-dependencies)
-      - [Run Migrations](#run-migrations)
-    - [Frontend (React + Vite)](#frontend-react--vite)
-      - [Install npm Packages](#install-npm-packages)
+  - [Using VSCode Dev Containers](#using-vscode-dev-containers)
+    - [To Start:](#to-start)
+  - [Backend Development (Django API)](#backend-development-django-api)
+    - [Install Python Dependencies](#install-python-dependencies)
+    - [Run Migrations](#run-migrations)
+  - [Frontend Development (React + Vite)](#frontend-development-react--vite)
+    - [Install npm Packages](#install-npm-packages)
   - [Troubleshooting](#troubleshooting)
   - [Resetting the Environment](#resetting-the-environment)
 
@@ -31,7 +30,7 @@ Make sure the following are installed on your machine:
 
 - [Docker](https://www.docker.com/) installed
 - [Docker Compose](https://docs.docker.com/compose/) installed
-- [VSCode](https://code.visualstudio.com/) with the [Remote - Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension installed
+- [VSCode](https://code.visualstudio.com/) with the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension installed
 
 ## Installation & Startup
 
@@ -51,49 +50,53 @@ docker-compose up --build
 - Frontend available at: [http://localhost:3000](http://localhost:3000)
 - Backend available at: [http://localhost:8000](http://localhost:8000)
 
-## Development Workflow
-
-### Using VSCode Dev Containers
+## Using VSCode Dev Containers
 
 When you open the project in VSCode, it detects the `.devcontainer` configurations for both frontend and backend:
 
 - **Backend (Django)**: Uses container-based Python environment.
 - **Frontend (React + Vite)**: Preconfigured with Prettier, ESLint, and other useful extensions.
 
-#### To Start:
+### To Start:
 
 1. Open VSCode.
 2. Open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on macOS).
 3. Select `Remote-Containers: Reopen in Container`.
 
-### Backend (Django API)
+## Backend Development (Django API)
 
 The Django server reloads automatically on code changes.
 
-> **Note:** Run the following commands _inside_ the container.
-> If using from the host, prefix commands with `docker-compose exec backend`.
+> [!TIP]
+> Run the following commands _inside_ the container.
+> If using from the host, prefix commands with:
+>
+> `docker-compose exec backend`.
 
-#### Install Python Dependencies
+### Install Python Dependencies
 
 ```bash
 pip install <package>
 pip freeze > requirements.txt
 ```
 
-#### Run Migrations
+### Run Migrations
 
 ```bash
 python manage.py migrate
 ```
 
-### Frontend (React + Vite)
+## Frontend Development (React + Vite)
 
 Vite provides automatic hot-reloading when frontend files are modified.
 
-> **Note:** Run the following commands _inside_ the container.
-> If using from the host, prefix commands with `docker-compose exec frontend`.
+> [!TIP]
+> Run the following commands _inside_ the container.
+> If using from the host, prefix commands with:
+>
+> `docker-compose exec frontend`.
 
-#### Install npm Packages
+### Install npm Packages
 
 ```bash
 npm install <package>
@@ -104,7 +107,6 @@ npm install <package>
 - **Port Conflicts**: Ensure ports `3000` and `8000` are free or modify them in `docker-compose.yml`.
 - **Dev Container Not Opening**: Use `Remote-Containers: Reopen in Container` from the Command Palette.
 - **Python Interpreter Issues**: Use `Python: Select Interpreter` in the Command Palette to choose the correct environment.
--
 
 ## Resetting the Environment
 
