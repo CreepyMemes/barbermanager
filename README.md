@@ -1,124 +1,118 @@
-<div align="center"><img src="./frontend/public/logo.png" height="100px" alt="BarberManager Logo"/></div>
+<div align="center">
+    <img src="./frontend/public/logo.png" height="100px" alt="BarberManager Logo"/>
+</div>
 
-## 🚀 Overview
+# Project Documentation
 
-BarberManager is a modern web-based management system for barber shops, featuring a Django REST API backend and a Vite + React frontend.
+The project is containerized using **Docker**, **Docker Compose** and **VSCode Dev Containers** for easy setup and cross-platform consistency.
 
-The entire project is containerized using **Docker** and **VSCode Dev Containers** for easy setup and consistent development environments across teams.
+## Table of Contents
 
-## 🐳 Getting Started with Docker
+- [Project Documentation](#project-documentation)
+  - [Table of Contents](#table-of-contents)
+  - [Requirements](#requirements)
+  - [Installation \& Startup](#installation--startup)
+    - [1. Clone the repository:](#1-clone-the-repository)
+    - [2. Build and Launch Services](#2-build-and-launch-services)
+  - [Development Workflow](#development-workflow)
+    - [Using VSCode Dev Containers](#using-vscode-dev-containers)
+      - [To Start:](#to-start)
+    - [Backend (Django API)](#backend-django-api)
+      - [Install Python Dependencies](#install-python-dependencies)
+      - [Run Migrations](#run-migrations)
+    - [Frontend (React + Vite)](#frontend-react--vite)
+      - [Install npm Packages](#install-npm-packages)
+  - [Troubleshooting](#troubleshooting)
+  - [Resetting the Environment](#resetting-the-environment)
 
-### Requirements
+## Requirements
+
+Make sure the following are installed on your machine:
 
 - [Docker](https://www.docker.com/) installed
 - [Docker Compose](https://docs.docker.com/compose/) installed
 - [VSCode](https://code.visualstudio.com/) with the [Remote - Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension installed
 
-### Installation & Startup
+## Installation & Startup
 
-1. Clone the repository:
+### 1. Clone the repository:
 
 ```bash
 git clone https://github.com/CreepyMemes/BarberManager.git
 cd BarberManager/Implementazione
 ```
 
-2. Build and run all services:
+### 2. Build and Launch Services
 
 ```bash
 docker-compose up --build
 ```
 
-- Frontend (React App) will be available at: [http://localhost:3000](http://localhost:3000)
-- Backend (Django API) will be available at: [http://localhost:8000](http://localhost:8000)
+- Frontend available at: [http://localhost:3000](http://localhost:3000)
+- Backend available at: [http://localhost:8000](http://localhost:8000)
 
-## ⚙️ Development Workflow with VSCode
+## Development Workflow
 
-### 1. Open the Project in VSCode
+### Using VSCode Dev Containers
 
-When you open the project, VSCode will automatically detect the `.devcontainer` configuration for both the **frontend** and **backend** folders. The following configurations are set:
+When you open the project in VSCode, it detects the `.devcontainer` configurations for both frontend and backend:
 
-- **Backend (Django API)**: Automatically uses the Python environment inside the container.
-- **Frontend (React App)**: Includes necessary extensions like Prettier and ESLint for code formatting and linting.
+- **Backend (Django)**: Uses container-based Python environment.
+- **Frontend (React + Vite)**: Preconfigured with Prettier, ESLint, and other useful extensions.
 
-To open the project in the containerized environment:
+#### To Start:
 
-- Open VSCode.
-- Open the **Command Palette** (`Ctrl+Shift+P` or `Cmd+Shift+P` on macOS).
-- Search for **Remote-Containers: Reopen in Container**.
+1. Open VSCode.
+2. Open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on macOS).
+3. Select `Remote-Containers: Reopen in Container`.
 
-This will connect VSCode to the running Docker container, allowing you to work inside the containerized development environment.
+### Backend (Django API)
 
-### 2. Using the Backend Dev Container (Django API)
+The Django server reloads automatically on code changes.
 
-Any changes you make to the Python code will trigger automatic reloading due to Django's development server.
+> **Note:** Run the following commands _inside_ the container.
+> If using from the host, prefix commands with `docker-compose exec backend`.
 
-- If you add new dependencies to the backend:
+#### Install Python Dependencies
 
 ```bash
 pip install <package>
 pip freeze > requirements.txt
 ```
 
-Or from the host machine (in the backend directory):
-
-```bash
-docker-compose exec backend pip install <package>
-docker-compose exec backend pip freeze > requirements.txt
-```
-
-- You can also run Django management commands, for example:
+#### Run Migrations
 
 ```bash
 python manage.py migrate
-python manage.py createsuperuser
 ```
 
-Or from the host machine (in the backend directory):
+### Frontend (React + Vite)
 
-```bash
-docker-compose exec backend python manage.py migrate
-docker-compose exec backend python manage.py createsuperuser
-```
+Vite provides automatic hot-reloading when frontend files are modified.
 
-### 3. Using the Frontend Dev Container (React + Vite)
+> **Note:** Run the following commands _inside_ the container.
+> If using from the host, prefix commands with `docker-compose exec frontend`.
 
-Vite will automatically hot-reload on file changes.
-
-- If you need to install a new npm package for the frontend:
+#### Install npm Packages
 
 ```bash
 npm install <package>
 ```
 
-Or from the host machine (inside the frontend directory):
+## Troubleshooting
 
-```bash
-docker-compose exec frontend npm install <package>
-```
+- **Port Conflicts**: Ensure ports `3000` and `8000` are free or modify them in `docker-compose.yml`.
+- **Dev Container Not Opening**: Use `Remote-Containers: Reopen in Container` from the Command Palette.
+- **Python Interpreter Issues**: Use `Python: Select Interpreter` in the Command Palette to choose the correct environment.
+-
 
-### 4. Code Formatting & Linting
+## Resetting the Environment
 
-Both the frontend and backend containers are configured with useful extensions in VSCode:
-
-- **Backend**: Python, Pylance for IntelliSense, and auto-imports.
-- **Frontend**: Prettier for formatting and ESLint for linting.
-
-Formatting happens automatically on save, and linting will give you feedback as you type.
-
-## ⚠️ Troubleshooting
-
-- **Port conflicts**: If ports like `3000` or `8000` are already in use, stop any other services or change the ports in `docker-compose.yml`.
-- **Container not opening automatically in VSCode**: If VSCode doesn’t automatically switch to the container, manually open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`) and select **Remote-Containers: Reopen in Container**.
-- **If you face issues with Python interpreter**: You can manually select the correct Python interpreter by opening the Command Palette and selecting **Python: Select Interpreter**.
-
-## 🔄 Resetting the Environment
-
-To reset everything and rebuild from scratch:
+To fully reset and rebuild the environment:
 
 ```bash
 docker-compose down --volumes --remove-orphans
 docker-compose up --build
 ```
 
-This will remove all volumes (including any data stored in your containers) and rebuild everything from the ground up.
+This command removes all volumes and rebuilds everything from scratch, ensuring a clean development state.
