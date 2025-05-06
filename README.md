@@ -15,6 +15,8 @@ Il sistema mira a migliorare l’esperienza sia per i clienti che per i professi
 
 Il salone è composto da un’area di accoglienza e trattamento, dove operano uno o più barbieri, ciascuno con turni lavorativi definiti.
 
+---
+
 ### Registrazione Cliente
 
 I clienti possono registrarsi tramite l’applicazione, fornendo:
@@ -31,6 +33,8 @@ Una volta registrati, possono:
 - Lasciare **recensioni**
 - Aggiornare in qualsiasi momento i dati del proprio profilo
 
+---
+
 ### Prenotazione Servizi
 
 Attraverso la pagina di prenotazione, il cliente può:
@@ -45,6 +49,8 @@ Il sistema:
 - Salva automaticamente la prenotazione
 - Rende la prenotazione visibile nel profilo del cliente
 
+---
+
 ### Gestione del Personale
 
 Ogni barbiere ha accesso a un’**area riservata personale** da cui può:
@@ -52,6 +58,8 @@ Ogni barbiere ha accesso a un’**area riservata personale** da cui può:
 - Visualizzare in tempo reale gli **appuntamenti assegnati**
 - Aggiornare lo **stato delle prenotazioni**
 - Inserire **note o osservazioni** sui clienti per offrire un servizio più personalizzato
+
+---
 
 ### Area Amministrativa
 
