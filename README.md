@@ -53,7 +53,7 @@ Ogni barbiere ha accesso a un’**area riservata personale** da cui può:
 - Aggiornare lo **stato delle prenotazioni**
 - Inserire **note o osservazioni** sui clienti per offrire un servizio più personalizzato
 
-### 🛠Area Amministrativa
+### Area Amministrativa
 
 Lo staff amministrativo, con credenziali specifiche, può accedere a un **pannello di controllo** da cui:
 
