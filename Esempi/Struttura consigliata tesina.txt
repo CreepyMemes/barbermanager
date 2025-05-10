@@ -1,0 +1,24 @@
+1. Descrizione in linguaggio naturale 
+  a. Descrizione del sistema, del funzionamento e dei requisiti in linguaggio naturale 
+  b. Glossario dei termini
+
+2. Analisi dei requisiti
+  a. Requisiti funzionali
+  b. Requisiti non funzionali
+  c. Diagrammi dei casi d’uso
+  d. Matrice di mapping
+
+3. Diagrammi di analisi
+  a. Diagramma delle classi di analisi
+  b. Diagrammi di sequenza (scegliere 5-6 casi d’uso da modellare)
+  c. Diagrammi di attività (stessi casi d’uso dei diagrammi di sequenza)
+
+4. Diagrammi di progettazione
+  a. Diagramma delle classi di progettazione
+  b. Diagrammi delle macchine a stati (scegliere 3-4 classi da modellare)
+  c. Diagramma dei componenti
+
+5. Implementazione
+  a. Diagramma di deployment
+  b. Mockup
+  c. Descrizione unit tests (cosa si è testato, scelte implementative, ecc)
