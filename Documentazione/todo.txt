@@ -1,1 +1,1 @@
-diagrammi di attivita: prenotazione, recensione e statistiche
+diagrammi delle classi di progettazione
