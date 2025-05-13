@@ -15,8 +15,8 @@
 
 4. Diagrammi di progettazione
   a. Diagramma delle classi di progettazione
-  b. Diagrammi delle macchine a stati (scegliere 3-4 classi da modellare)
-  c. Diagramma dei componenti
+  b. Diagramma dei componenti
+  c. Diagrammi delle macchine a stati (scegliere 3-4 classi da modellare)
 
 5. Implementazione
   a. Diagramma di deployment
