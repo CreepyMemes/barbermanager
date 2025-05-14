@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate
 
 User = get_user_model()
 
+# Registra utente custom serializer per registrare con solo nome, email e password (makes email unique)
 class UtenteRegisterSerializer(RegisterSerializer):
     email = serializers.EmailField(required=True)
 
@@ -14,7 +15,7 @@ class UtenteRegisterSerializer(RegisterSerializer):
             raise serializers.ValidationError("A user with this email already exists.")
         return value
 
-
+# Login utente custom serializer per loggare con solo email e password (makes email required and removes username requirement)
 class UtenteLoginSerializer(LoginSerializer):
     username = None  # Remove username
     email = serializers.EmailField(required=True)
