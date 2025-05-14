@@ -4,6 +4,4 @@ django-cors-headers==4.7.0
 djangorestframework==3.16.0
 djangorestframework_simplejwt==5.5.0
 psycopg2-binary==2.9.10
-PyJWT==2.9.0
 sqlparse==0.5.3
-tzdata==2025.2
