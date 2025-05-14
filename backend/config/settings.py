@@ -28,16 +28,6 @@ DEBUG = bool(int(os.getenv("DEBUG", "0")))  # Default: False
 # 'DJANGO_ALLOWED_HOSTS' should be a single string of hosts with a space between each.
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split()
 
-# Rest framework default authentication settings
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ),
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
-    ],
-}
-
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
