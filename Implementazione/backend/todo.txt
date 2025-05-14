@@ -1,0 +1,5 @@
+make email verification 
+
+https://medium.com/@michal.drozdze/django-rest-framework-jwt-authentication-sign-up-api-with-email-confirmation-0cfc6054ce8e
+
+this might be working you can log in only after email is verified
