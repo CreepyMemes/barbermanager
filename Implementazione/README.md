@@ -117,4 +117,12 @@ docker-compose down --volumes --remove-orphans
 docker-compose up --build
 ```
 
+To quickly enter the container shell from host machine
+
+```bash
+docker-compose exec -it frontend sh
+#or
+docker-compos exec -it backend sh
+```
+
 This command removes all volumes and rebuilds everything from scratch, ensuring a clean development state.
