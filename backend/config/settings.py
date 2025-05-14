@@ -45,7 +45,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "allauth.account.middleware.AccountMiddleware",
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -53,7 +53,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -79,11 +79,10 @@ DATABASES = {
     }
 }
 
-# Custom authentication backend for email and password login
-AUTHENTICATION_BACKENDS = [
-    'api.authentication.EmailBackend',
-    'django.contrib.auth.backends.ModelBackend', # keep default for admin
-]
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend"
+)
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -111,31 +110,38 @@ REST_FRAMEWORK = {
         'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
     )
 }
-
-AUTH_USER_MODEL = 'api.Utente'
-
 # Rest framework authentication settings
 REST_AUTH = {
-    "USE_JWT": True,
-    "JWT_AUTH_COOKIE": "_auth",  # Name of access token cookie
-    "JWT_AUTH_REFRESH_COOKIE": "_refresh", # Name of refresh token cookie
-    "JWT_AUTH_HTTPONLY": False,  # Makes sure refresh token is sent
-    'REGISTER_SERIALIZER': 'api.serializers.UtenteRegisterSerializer',
-    'LOGIN_SERIALIZER': 'api.serializers.UtenteLoginSerializer',
+
+    'USE_JWT': True,
+    'JWT_AUTH_COOKIE': '_auth',  # Name of access token cookie
+    'JWT_AUTH_REFRESH_COOKIE': '_refresh', # Name of refresh token cookie
+    'JWT_AUTH_HTTPONLY': False,  # Makes sure refresh token is sent
 }
 
 # Setting up JWT toke lifetime
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
 # Account all-auth settings
-ACCOUNT_AUTHENTICATION_METHOD = "email"  # Use Email / Password authentication
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = "none" # Do not require email confirmation
+ACCOUNT_EMAIL_VERIFICATION = "mandatory" # Require email confirmation
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True  # No need to sent POST request to confirmation link
+
+LOGIN_URL = "/"  # Path, users will be redirected to after email verification
 
 # WARNING: this is only for development
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWS_CREDENTIALS = True
+
+# Django SMTP
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+EMAIL_USE_TLS = bool(int(os.getenv('EMAIL_USE_TLS', 1)))
+EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']        # Required
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']  # Required

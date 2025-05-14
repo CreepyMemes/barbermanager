@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Conferma Email - BarberManager</title>
+  </head>
+  <body style="margin: 0; padding: 0; background-color: #f4f4f4;">
+    <center class="wrapper" style="width: 100%; table-layout: fixed; background-color: #f4f4f4; padding: 20px 0;">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td align="center">
+            <table class="main" width="600" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff; border-radius: 8px; padding: 20px; font-family: Arial, sans-serif; color: #333333;">
+              <tr>
+                <td>
+                  <h2 style="text-align: center; color: #333;">Conferma il tuo indirizzo email</h2>
+                  <p style="font-size: 16px; line-height: 1.5;">
+                    Hai ricevuto questa email perché l'utente <strong>{{ user.username }}</strong> ha utilizzato questo indirizzo per registrare un account su <strong>BarberManager</strong>, il gestionale per barber shop.
+                  </p>
+                  <p style="font-size: 16px; line-height: 1.5;">
+                    Per confermare che questo indirizzo email è corretto, clicca sul pulsante seguente:
+                  </p>
+                  <p style="text-align: center; margin: 30px 0;">
+                    <a href="{{ activate_url }}" style="background-color: #007bff; color: #ffffff; padding: 12px 24px; border-radius: 5px; text-decoration: none; font-size: 16px;">Conferma il tuo indirizzo email</a>
+                  </p>
+                  <p style="font-size: 14px; line-height: 1.5;">
+                    Se non sei stato tu a fare questa richiesta, puoi ignorare questo messaggio.
+                  </p>
+                  <p style="font-size: 14px; line-height: 1.5;">
+                    Grazie per aver scelto <strong>BarberManager</strong>!
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </center>
+  </body>
+</html>
