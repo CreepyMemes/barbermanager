@@ -1,4 +1,6 @@
 
+- 
+
 - implement frontend for registering, logging in and resetting password
 
 - start diagramma di classi di progettazione

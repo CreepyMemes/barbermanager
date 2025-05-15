@@ -1,7 +1,9 @@
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.tokens import default_token_generator
-from django.utils.http import urlsafe_base64_decode
+from django.core.mail import send_mail
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
 from dj_rest_auth.registration.serializers import RegisterSerializer
 from allauth.account.models import EmailAddress
 from .models import Roles, User, BarberInvitation
@@ -9,11 +11,24 @@ from .models import Roles, User, BarberInvitation
 
 class ClientRegisterSerializer(RegisterSerializer):
     """
-    Register a client. Default serializer for client signup.
+    Register a client. Sends a confirmation email.
     """
     def custom_signup(self, request, user):
         user.role = Roles.CLIENT.value
+        user.is_active = False
         user.save()
+
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        link = f"http://localhost:8000/api/confirm-email/{uid}/{token}/"
+
+        send_mail(
+            subject='Confirm your BarberManager email',
+            message=f'Please confirm your email by clicking the following link: {link}',
+            from_email='barber.manager.verify@gmail.com',
+            recipient_list=[user.email],
+        )
+
 
 class BarberInviteSerializer(serializers.Serializer):
     """

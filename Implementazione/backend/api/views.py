@@ -1,17 +1,89 @@
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
+from rest_framework import status
+from allauth.account.models import EmailAddress
+from dj_rest_auth.registration.views import RegisterView
+from dj_rest_auth.views import LoginView
 from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.password_validation import validate_password
 from .models import BarberInvitation
 from .serializers import BarberInviteSerializer, BarberRegisterSerializer
 
 
 User = get_user_model()
+
+
+class CustomRegisterView(RegisterView):
+    """
+    Custom register view that does NOT login user after registration,
+    and returns a custom message.
+    """
+    def perform_create(self, serializer):
+        self.user = serializer.save(self.request)
+
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        return Response({"detail": "Verification e-mail sent."}, status=status.HTTP_201_CREATED)
+    
+
+class CustomLoginView(LoginView):
+    """
+    Custom login view that returns JSON responses only,
+    handles inactive accounts gracefully,
+    and uses dj_rest_auth built-in token generation.
+    """
+    def login(self):
+        super().login()
+
+        if not self.user.is_active:
+            raise PermissionDenied("Account inactive. Please confirm your email.")
+
+
+    def get_response(self):
+        original_response = super().get_response()
+
+        data = original_response.data
+
+        data['user'] = {
+            "id": self.user.id,
+            "email": self.user.email,
+            "username": self.user.username,
+            "role": self.user.role,
+        }
+
+        return Response(data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def confirm_email(request, uidb64, token):
+    """
+    Confirms a user's email using uid and token.
+    """
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User.objects.get(pk=uid)
+    except Exception:
+        return Response({"error": "Invalid confirmation link."}, status=400)
+
+    if not default_token_generator.check_token(user, token):
+        return Response({"error": "Invalid or expired token."}, status=400)
+
+    user.is_active = True
+    user.save()
+
+    EmailAddress.objects.update_or_create(
+        user=user,
+        email=user.email,
+        defaults={'verified': True, 'primary': True}
+    )
+
+    return Response({"detail": "Email confirmed successfully."})
 
 
 @api_view(['POST'])
@@ -23,6 +95,9 @@ def invite_barber(request):
     serializer = BarberInviteSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     email = serializer.validated_data['email']
+
+    if User.objects.filter(email=email).exists():
+        return Response({"detail": "A user with this email already exists."}, status=400)
 
     invitation, created = BarberInvitation.objects.get_or_create(email=email, used=False)
     if not created:
