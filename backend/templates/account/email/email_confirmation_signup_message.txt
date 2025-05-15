@@ -1,8 +1,0 @@
-Hai ricevuto questa email perché l’utente {{ user.username }}, ha utilizzato questo indirizzo per registrare un account su BarberManager, il gestionale per barber shop.
-
-Per confermare che questo indirizzo email è corretto, clicca sul link seguente:
-[Confirma il tuo indirizzo email: {{ activate_url }}]
-
-Se non sei stato tu a fare questa richiesta, puoi ignorare questo messaggio.
-
-Grazie per aver scelto BarberManager!
