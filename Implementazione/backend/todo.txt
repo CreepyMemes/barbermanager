@@ -1,0 +1,4 @@
+- add reset credentials functionality
+
+- start diagramma di classi di progettazione
+
