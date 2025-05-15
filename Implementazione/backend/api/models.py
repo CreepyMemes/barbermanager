@@ -4,12 +4,26 @@ from allauth.account.models import EmailAddress
 from django.db import models
 from enum import Enum
 
-# Custom user manager definition for handling creation
-class UserManager(BaseUserManager):
+class Roles(Enum):
+    """
+    User role enum definition
+    """
+    ADMIN = "ADMIN"
+    CLIENT = "CLIENT"
+    BARBER = "BARBER"
 
+    @classmethod
+    def choices(cls):
+        return [(tag.value, tag.name) for tag in cls]
+
+
+class UserManager(BaseUserManager):
+    """
+    Custom user manager definition for handling creation
+    """
     def create_user(self, email, password=None, **extra_fields):
         if not email:
-            raise ValueError('Users must have an email address')
+            raise ValueError('Email is required')
         
         email = self.normalize_email(email)
         extra_fields.setdefault('role', Roles.CLIENT.value)
@@ -17,17 +31,14 @@ class UserManager(BaseUserManager):
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
+
         return user
     
+
     def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('role', Roles.ADMIN.value)
-
-        if extra_fields.get('is_staff') is not True:
-            raise ValueError('Superuser must have is_staff=True.')
-        if extra_fields.get('is_superuser') is not True:
-            raise ValueError('Superuser must have is_superuser=True.')
 
         user = self.create_user(email, password, **extra_fields)
 
@@ -41,18 +52,10 @@ class UserManager(BaseUserManager):
         return user
 
 
-# User role enum definition
-class Roles(Enum):
-    ADMIN = "ADMIN"
-    CLIENT = "CLIENT"
-    BARBER = "BARBER"
-
-    @classmethod
-    def choices(cls):
-        return [(tag.value, tag.name) for tag in cls]
-
-# Custom user model definition that uses the previous custom user manager
 class User(AbstractUser):
+    """
+    Custom user model definition that uses the previous custom user manager
+    """
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
 
@@ -69,8 +72,11 @@ class User(AbstractUser):
     def is_admin(self):
         return self.role == Roles.ADMIN.value
 
-# Store invited barber emails
+
 class BarberInvitation(models.Model):
+    """
+    Store invited barber emails
+    """
     email = models.EmailField(unique=True)
     used = models.BooleanField(default=False)
     invited_at = models.DateTimeField(auto_now_add=True)
