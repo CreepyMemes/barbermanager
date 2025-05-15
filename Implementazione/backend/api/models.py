@@ -31,6 +31,7 @@ class UserManager(BaseUserManager):
 
         user = self.create_user(email, password, **extra_fields)
 
+        # Mark email as verified for allauth
         EmailAddress.objects.create(
             user=user,
             email=user.email,
@@ -38,7 +39,8 @@ class UserManager(BaseUserManager):
             primary=True,
         )
         return user
-    
+
+
 # User role enum definition
 class Roles(Enum):
     ADMIN = "ADMIN"
@@ -67,3 +69,11 @@ class User(AbstractUser):
     def is_admin(self):
         return self.role == Roles.ADMIN.value
 
+# Store invited barber emails
+class BarberInvitation(models.Model):
+    email = models.EmailField(unique=True)
+    used = models.BooleanField(default=False)
+    invited_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.email
