@@ -21,7 +21,6 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
     - [Run Migrations](#run-migrations)
     - [Create SuperUser](#create-superuser)
     - [To check database from shell](#to-check-database-from-shell)
-    - [Change website domain name](#change-website-domain-name)
   - [Frontend Development (React + Vite)](#frontend-development-react--vite)
     - [Install npm Packages](#install-npm-packages)
   - [Troubleshooting](#troubleshooting)
@@ -106,10 +105,6 @@ from api.models import User
 user = User.objects.get(email="test@example.com")
 print(user.role)
 ```
-
-### Change website domain name
-
-go to: http://localhost:8000/admin/sites/site/
 
 ## Frontend Development (React + Vite)
 

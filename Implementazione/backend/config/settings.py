@@ -143,8 +143,8 @@ EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.smtp.Email
 EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
 EMAIL_USE_TLS = bool(int(os.getenv('EMAIL_USE_TLS', 1)))
-EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']        # Required
-EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']  # Required
+EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER'] 
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD'] 
 
 # WARNING: this is only for development
 CORS_ALLOW_ALL_ORIGINS = True
