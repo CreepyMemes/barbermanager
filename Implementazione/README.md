@@ -19,6 +19,7 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
   - [Backend Development (Django API)](#backend-development-django-api)
     - [Install Python Dependencies](#install-python-dependencies)
     - [Run Migrations](#run-migrations)
+    - [Create SuperUser](#create-superuser)
   - [Frontend Development (React + Vite)](#frontend-development-react--vite)
     - [Install npm Packages](#install-npm-packages)
   - [Troubleshooting](#troubleshooting)
@@ -84,6 +85,12 @@ pip freeze > requirements.txt
 
 ```bash
 python manage.py migrate
+```
+
+### Create SuperUser
+
+```bash
+python manage.py createsuperuser
 ```
 
 ## Frontend Development (React + Vite)
