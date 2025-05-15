@@ -1,5 +1,8 @@
-make email verification 
 
-https://medium.com/@michal.drozdze/django-rest-framework-jwt-authentication-sign-up-api-with-email-confirmation-0cfc6054ce8e
+- see how to login as adming 
+  without having to add a new acc from admin panel
+  this happens because auth and admin are separate services
 
-this might be working you can log in only after email is verified
+- add barber registration functionality
+
+- remove example.com from email verification 
