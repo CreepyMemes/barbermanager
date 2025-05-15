@@ -21,7 +21,6 @@ def invite_barber(request):
     if not created:
         return Response({"detail": "Invitation already sent to this email."}, status=400)
 
-
     uid = urlsafe_base64_encode(force_bytes(email))
     link = f"http://localhost:8000/register-barber/{uid}/"
 
