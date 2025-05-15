@@ -20,6 +20,8 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
     - [Install Python Dependencies](#install-python-dependencies)
     - [Run Migrations](#run-migrations)
     - [Create SuperUser](#create-superuser)
+    - [To check database from shell](#to-check-database-from-shell)
+    - [Change website domain name](#change-website-domain-name)
   - [Frontend Development (React + Vite)](#frontend-development-react--vite)
     - [Install npm Packages](#install-npm-packages)
   - [Troubleshooting](#troubleshooting)
@@ -92,6 +94,22 @@ python manage.py migrate
 ```bash
 python manage.py createsuperuser
 ```
+
+### To check database from shell
+
+```bash
+python manage.py shell
+
+# then run it like this
+from api.models import User
+
+user = User.objects.get(email="test@example.com")
+print(user.role)
+```
+
+### Change website domain name
+
+go to: http://localhost:8000/admin/sites/site/
 
 ## Frontend Development (React + Vite)
 
