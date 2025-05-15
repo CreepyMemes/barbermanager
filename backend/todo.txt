@@ -1,8 +1,3 @@
-
-- see how to login as adming 
-  without having to add a new acc from admin panel
-  this happens because auth and admin are separate services
-
 - add barber registration functionality
 
 - remove example.com from email verification 
