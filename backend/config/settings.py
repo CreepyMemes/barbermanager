@@ -14,6 +14,9 @@ DEBUG = bool(int(os.getenv('DEBUG', '0')))
 # 'DJANGO_ALLOWED_HOSTS' should be a single string of hosts with a space between each.
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '').split()
 
+# Hardcoded setting for frontend url (it's backend now untill implemented)
+FRONTEND_URL = 'http://localhost:8000'
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -32,7 +35,7 @@ SITE_ID = 1
 
 # Custom authentication backend for logging with either email/pass or usrname/pass
 AUTHENTICATION_BACKENDS = [
-    'api.auth_backends.EmailOrUsernameModelBackend', 
+    'api.auth_backends.UsernameOrEmailBackend', 
     'django.contrib.auth.backends.ModelBackend',
 ]
 
