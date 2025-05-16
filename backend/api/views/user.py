@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 
+from ..permissions import IsAdminRole
 from ..models import BarberInvitation
 from ..serializers import (
     UserSerializer,
@@ -19,7 +20,7 @@ User = get_user_model()
 
 
 @api_view(['POST'])
-@permission_classes([IsAdminUser])
+@permission_classes([IsAdminRole])
 def invite_barber(request):
     """
     Admin-only: Invite a barber by email. Sends a link with encoded email (uid).
