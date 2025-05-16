@@ -1,10 +1,3 @@
-from .auth import (
-    ClientRegisterSerializer,
-    BarberRegisterSerializer,
-    LoginSerializer,
-)
-
-from .user import (
-    UserSerializer,
-    BarberInviteSerializer,
-)
+from .auth import *
+from .user import *
+from .tokens import *
