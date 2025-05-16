@@ -137,35 +137,6 @@ def register_barber(request, uidb64, token):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def request_password_reset(request):
-    """
-    Request password reset: Sends a reset link with uid + token if email exists.
-    """
-    email = request.data.get('email')
-    if not email:
-        return Response({"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST)
-
-    try:
-        user = User.objects.get(email=email)
-    except User.DoesNotExist:
-        return Response({"detail": "If that email exists, a reset link has been sent."})  # Do not leak existence
-
-    uid = urlsafe_base64_encode(force_bytes(user.pk))
-    token = default_token_generator.make_token(user)
-    reset_link = f"http://localhost:8000/api/auth/reset-password/{uid}/{token}/"
-
-    send_mail(
-        subject='Reset your password',
-        message=f'Click here to reset your password: {reset_link}',
-        from_email='barber.manager.verify@gmail.com',
-        recipient_list=[email],
-    )
-
-    return Response({"detail": "If that email exists, a reset link has been sent."})
-
-
-@api_view(['POST'])
-@permission_classes([AllowAny])
 def confirm_password_reset(request, uidb64, token):
     """
     Confirm password reset with uid + token.
