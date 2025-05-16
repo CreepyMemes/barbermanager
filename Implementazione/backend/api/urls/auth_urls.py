@@ -3,6 +3,7 @@ from django.urls import path
 from ..views.auth import (
     register_client,
     login_user,
+    logout_user,
     verify_email,
     register_barber,
     request_password_reset,
@@ -13,6 +14,7 @@ from ..views.auth import (
 urlpatterns = [
     path('register/', register_client),
     path('login/', login_user),
+    path('logout/', logout_user),
     path('verify-email/<uidb64>/<token>/', verify_email),
     path('register-barber/<uidb64>/<token>/', register_barber),
     path('reset-password/', request_password_reset),
