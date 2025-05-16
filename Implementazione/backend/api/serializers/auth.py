@@ -1,10 +1,9 @@
-from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import get_user_model
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import serializers
 
-from ..models import BarberInvitation, Roles
+from ..models import Client, Barber, Admin, BarberInvitation, Roles
 from ..utils import generate_unique_username
 
 
@@ -20,7 +19,7 @@ class ClientRegisterSerializer(serializers.ModelSerializer):
     username = serializers.CharField(required=False)
 
     class Meta:
-        model = User
+        model = Client
         fields = ('email', 'username', 'password')
 
     def validate_password(self, value):
@@ -32,10 +31,9 @@ class ClientRegisterSerializer(serializers.ModelSerializer):
         email = validated_data['email']
         username = validated_data.get('username') or generate_unique_username(email)
     
-        user = User.objects.create(
+        user = Client(
             email=email,
             username=username,
-            role=Roles.CLIENT.value,
             is_active=False,
         )
         user.set_password(validated_data['password'])
@@ -76,10 +74,10 @@ class BarberRegisterSerializer(serializers.Serializer):
         if User.objects.filter(email=email).exists():
             raise serializers.ValidationError({"error": "User with this email already exists."})
 
-        user = User.objects.create(
+        user = Barber(
             email=email,
             username=generate_unique_username(email),
-            role=Roles.BARBER.value,
+
             is_active=True,
         )
         user.set_password(self.validated_data['password'])
