@@ -33,16 +33,16 @@ def register_client(request):
 
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
-        link = f"http://localhost:8000/api/auth/confirm-email/{uid}/{token}/"
+        link = f"http://localhost:8000/api/auth/verify-email/{uid}/{token}/"
 
         send_mail(
-            subject='Confirm your email',
-            message=f'Click here to confirm your account: {link}',
+            subject='Verify your email on BarberManager',
+            message=f'Click here to verify your account: {link}',
             from_email='barber.manager.verify@gmail.com',
             recipient_list=[user.email],
         )
 
-        return Response({'detail': 'Check your email to confirm your account'}, status=status.HTTP_201_CREATED)
+        return Response({'detail': 'Email verification has been sent.'}, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -99,7 +99,7 @@ def login_user(request):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
-def confirm_email(request, uidb64, token):
+def verify_email(request, uidb64, token):
     """
     Confirms a user's email using uid and token.
     """
@@ -133,6 +133,35 @@ def register_barber(request, uidb64, token):
     serializer.save()
 
     return Response({"detail": "Barber registered successfully."})
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def request_password_reset(request):
+    """
+    Request password reset: Sends a reset link with uid + token if email exists.
+    """
+    email = request.data.get('email')
+    if not email:
+        return Response({"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return Response({"detail": "If that email exists, a reset link has been sent."})  # Do not leak existence
+
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    token = default_token_generator.make_token(user)
+    reset_link = f"http://localhost:8000/api/auth/reset-password/{uid}/{token}/"
+
+    send_mail(
+        subject='Reset your password',
+        message=f'Click here to reset your password: {reset_link}',
+        from_email='barber.manager.verify@gmail.com',
+        recipient_list=[email],
+    )
+
+    return Response({"detail": "If that email exists, a reset link has been sent."})
 
 
 @api_view(['POST'])
