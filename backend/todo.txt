@@ -1,7 +1,22 @@
 
-- invite barber not working,, jwt cookies not authenticating
+What to implement:
 
-- implement frontend for registering, logging in and resetting password
+for frontend:
+- register page,
+- login page,
+- verify-email get request to verify then redirect to login page,
 
-- start diagramma di classi di progettazione
+- reset password button in login/register pages
+- reset password page
+
+- client, barber and admin pages
+- logout button
+- add barber in admin user page
+
+
+for backend:
+- I'll think of this later...
+
+for architecture:
+- diagramma di classi di progettazione
 
