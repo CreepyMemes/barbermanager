@@ -6,11 +6,6 @@ from .user import Roles, User
 class AppointmentStatus(Enum):
     """
     Enumeration of possible statuses for an appointment.
-    
-    Statuses include:
-    - ONGOING: Appointment is currently scheduled or in progress.
-    - COMPLETED: Appointment has been completed.
-    - CANCELLED: Appointment has been cancelled.
     """
     ONGOING = "ONGOING"
     COMPLETED = "COMPLETED"
@@ -24,14 +19,8 @@ class AppointmentStatus(Enum):
 class Service(models.Model):
     """
     A service offered by a barber.
-
     Each service is associated with exactly one barber.
     Barbers can offer multiple different services.
-
-    Fields:
-    - barber: The barber offering this service.
-    - name: Name of the service.
-    - price: Price of the service, with up to 6 digits total and 2 decimal places.
     """
     barber = models.ForeignKey(
         User,
@@ -48,17 +37,7 @@ class Service(models.Model):
 class Availability(models.Model):
     """
     Represents a one-hour time slot of availability for a barber.
-
     Managed by admins only.
-
-    Fields:
-    - barber: The barber who is available during this slot.
-    - date: The calendar date of the availability.
-    - hour: The start time of the one-hour availability slot.
-    - is_booked: Whether this slot has been booked by a client.
-    
-    Constraints:
-    - Each barber can only have one availability entry per date and hour.
     """
     barber = models.ForeignKey(
         User,
@@ -80,17 +59,8 @@ class Availability(models.Model):
 class Appointment(models.Model):
     """
     Represents a booked appointment made by a client with a barber.
-
     Clients can select one barber and choose one or more services offered by that barber,
     scheduled for a specific availability slot.
-
-    Fields:
-    - client: The client who booked the appointment.
-    - barber: The barber with whom the appointment is booked.
-    - status: Current status of the appointment (ongoing, completed, cancelled).
-    - services: One or more services selected for the appointment.
-    - availability: The specific availability slot booked.
-    - created_at: Timestamp when the appointment was created.
     """
     client = models.ForeignKey(
         User,
@@ -120,20 +90,6 @@ class Appointment(models.Model):
 class Review(models.Model):
     """
     A review submitted by a client for a barber, linked to a completed appointment.
-
-    Fields:
-    - appointment: The completed appointment this review is associated with (one-to-one).
-    - client: The client who submitted the review (must have CLIENT role).
-    - barber: The barber being reviewed (must have BARBER role).
-    - rating: Numerical rating given by the client (e.g., 1 to 5).
-    - comment: Optional text comment provided by the client.
-    - created_at: Timestamp when the review was created.
-    
-    Constraints:
-    - One review per appointment (enforced by OneToOneField).
-    - One review per client-barber pair (enforced by unique_together).
-    - Only clients can create reviews.
-    - Reviews can only be made for barbers associated with completed appointments.
     """
     appointment = models.OneToOneField(
         Appointment, 
