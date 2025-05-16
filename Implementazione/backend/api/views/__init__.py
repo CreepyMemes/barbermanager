@@ -1,7 +1,7 @@
 from .auth import (
     register_client,
     login_user,
-    confirm_email,
+    verify_email,
     register_barber,
     confirm_password_reset,
 )
