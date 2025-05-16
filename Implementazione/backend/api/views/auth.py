@@ -4,8 +4,11 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
+from rest_framework_simplejwt.serializers import TokenRefreshSerializer
+from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
+from rest_framework_simplejwt.settings import api_settings
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
@@ -22,6 +25,7 @@ User = get_user_model()
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@authentication_classes([]) 
 def register_client(request):
     """
     Register a client by sending an email to verify it,
@@ -33,7 +37,7 @@ def register_client(request):
 
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
-        link = f"http://localhost:8000/api/auth/verify-email/{uid}/{token}/"
+        link = f'http://localhost:8000/api/auth/verify-email/{uid}/{token}/'
 
         send_mail(
             subject='Verify your email on BarberManager',
@@ -49,6 +53,7 @@ def register_client(request):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@authentication_classes([]) 
 def login_user(request):
     """
     Login method for users with email or username and password.
@@ -90,15 +95,17 @@ def login_user(request):
         'token': {
             'access_token': str(refresh.access_token),
             'refresh_token': str(refresh),
-            "expires_in": 1800,
-            "refresh_expires_in": 86400,
-            "token_type": "Bearer",
+            'expires_in': int(api_settings.ACCESS_TOKEN_LIFETIME.total_seconds()),
+            'refresh_expires_in': int(api_settings.REFRESH_TOKEN_LIFETIME.total_seconds()),
+            'token_type': 'Bearer',
         }
+
     }, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
+@authentication_classes([]) 
 def verify_email(request, uidb64, token):
     """
     Verifies a user's email using uid and token.
@@ -107,19 +114,20 @@ def verify_email(request, uidb64, token):
         uid = urlsafe_base64_decode(uidb64).decode()
         user = User.objects.get(pk=uid)
     except Exception:
-        return Response({"error": "Invalid verification link."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Invalid verification link.'}, status=status.HTTP_400_BAD_REQUEST)
 
     if not default_token_generator.check_token(user, token):
-        return Response({"error": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Invalid or expired token.'}, status=status.HTTP_400_BAD_REQUEST)
 
     user.is_active = True
     user.save()
 
-    return Response({"detail": "Email verified successfully."})
+    return Response({'detail': 'Email verified successfully.'})
 
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@authentication_classes([]) 
 def register_barber(request, uidb64, token): 
     """
     Public: Register a barber using the emailed link (uid + token).
@@ -132,27 +140,28 @@ def register_barber(request, uidb64, token):
     serializer.is_valid(raise_exception=True)
     serializer.save()
 
-    return Response({"detail": "Barber registered successfully."})
+    return Response({'detail': 'Barber registered successfully.'})
 
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@authentication_classes([]) 
 def request_password_reset(request):
     """
     Request password reset: Sends a reset link with uid + token if email exists.
     """
     email = request.data.get('email')
     if not email:
-        return Response({"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
         user = User.objects.get(email=email)
     except User.DoesNotExist:
-        return Response({"detail": "If that email exists, a reset link has been sent."})  # Do not leak existence
+        return Response({'detail': 'If that email exists, a reset link has been sent.'})  # Do not leak existence
 
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     token = default_token_generator.make_token(user)
-    reset_link = f"http://localhost:8000/api/auth/reset-password/{uid}/{token}/"
+    reset_link = f'http://localhost:8000/api/auth/reset-password/{uid}/{token}/'
 
     send_mail(
         subject='Reset your password',
@@ -161,34 +170,62 @@ def request_password_reset(request):
         recipient_list=[email],
     )
 
-    return Response({"detail": "If that email exists, a reset link has been sent."})
+    return Response({'detail': 'If that email exists, a reset link has been sent.'})
 
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@authentication_classes([]) 
 def confirm_password_reset(request, uidb64, token):
     """
     Confirm password reset with uid + token.
     """
     password = request.data.get('password')
     if not password:
-        return Response({"error": "Password is required"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Password is required'}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
         uid = urlsafe_base64_decode(uidb64).decode()
         user = User.objects.get(pk=uid)
     except Exception:
-        return Response({"error": "Invalid reset link"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Invalid reset link'}, status=status.HTTP_400_BAD_REQUEST)
 
     if not default_token_generator.check_token(user, token):
-        return Response({"error": "Invalid or expired token"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Invalid or expired token'}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
         validate_password(password, user)
     except Exception as e:
-        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     user.set_password(password)
     user.save()
 
-    return Response({"detail": "Password reset successful."})
+    return Response({'detail': 'Password reset successful.'})
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+@authentication_classes([]) 
+def refresh_token(request):
+    """
+    Refresh the access token using a refresh token passed as 'refresh_token' in the request.
+    """
+    refresh_token = request.data.get('refresh_token')
+
+    if not refresh_token:
+        return Response({'error': 'Refresh token is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # The TokenRefreshSerializer expects the token under the key 'refresh', so rename it
+    serializer = TokenRefreshSerializer(data={'refresh': refresh_token})
+
+    try:
+        serializer.is_valid(raise_exception=True)
+    except TokenError as e:
+        return Response({'error': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
+
+    return Response({
+        'access_token': serializer.validated_data['access'],
+        'expires_in': int(api_settings.ACCESS_TOKEN_LIFETIME.total_seconds()),
+        'token_type': 'Bearer',
+    }, status=status.HTTP_200_OK)
