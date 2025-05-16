@@ -94,19 +94,19 @@ class Review(models.Model):
     appointment = models.OneToOneField(
         Appointment, 
         on_delete=models.CASCADE, 
-        related_name='review'
+        related_name='appointment_review'
     )
     client = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         limit_choices_to={'role': Roles.CLIENT.value},
-        related_name='reviews'
+        related_name='client_reviews'
     )
     barber = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         limit_choices_to={'role': Roles.BARBER.value},
-        related_name='reviews'
+        related_name='barber_reviews'
     )
     rating = models.PositiveSmallIntegerField()
     comment = models.TextField(blank=True)
