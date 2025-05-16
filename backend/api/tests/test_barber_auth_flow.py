@@ -4,11 +4,8 @@ from django.urls import reverse
 from django.core import mail
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
-from unittest.mock import patch
 import uuid
 from api.models import User, BarberInvitation, Roles
-from api.serializers import BarberRegisterSerializer, BarberInviteSerializer
-
 
 class BarberAuthFlowTest(APITestCase):
     """
