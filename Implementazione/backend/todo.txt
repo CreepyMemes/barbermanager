@@ -12,17 +12,19 @@ for frontend:
 - client, barber and admin pages
 - logout button
 - add barber in admin user page
-
+...
 
 for backend:
-- ServiceSerializer, To list the services offered by a barber (used in step 2 of booking flow).
-- AvailabilitySerializer, To list available slots for a selected barber (step 3 of booking flow).
-- AppointmentCreateSerializer, To handle creation of a new appointment (step 4: confirming booking).
-- AppointmentDetailSerializer, To return appointment details (e.g., for confirmation, display, or API responses).
+- ServiceListSerializer, To list the services offered by a barber
+- BarberListSerializer, list all barbers
+- AvailabilityListSerializer, To list available slots for a selected barber
+
+- AppointmentCreateSerializer, To handle creation of a new appointment 
+
 - AppointmentListSerializer, To list previous appointments for a client.
 - AppointmentCancelSerializer, To cancel an ongoing appointment
-
+...
 
 for architecture:
 - diagramma di classi di progettazione
-
+...
