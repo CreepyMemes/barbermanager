@@ -1,12 +1,11 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
-from allauth.account.models import EmailAddress
 from django.db import models
 from enum import Enum
 
 class Roles(Enum):
     """
-    User role enum definition
+    User role definitions: Admin, Client, Barber.
     """
     ADMIN = "ADMIN"
     CLIENT = "CLIENT"
@@ -14,12 +13,12 @@ class Roles(Enum):
 
     @classmethod
     def choices(cls):
-        return [(tag.value, tag.name) for tag in cls]
+        return [(role.value, role.name) for role in cls]
 
 
 class UserManager(BaseUserManager):
     """
-    Custom user manager definition for handling creation
+    Custom user manager to handle user and superuser creation.
     """
     def create_user(self, email, password=None, **extra_fields):
         if not email:
@@ -28,7 +27,7 @@ class UserManager(BaseUserManager):
         email = self.normalize_email(email)
         extra_fields.setdefault('role', Roles.CLIENT.value)
 
-        user = self.model(email=email, **extra_fields)
+        user = self.model(email=email,**extra_fields)
         user.set_password(password)
         user.save(using=self._db)
 
@@ -38,30 +37,25 @@ class UserManager(BaseUserManager):
     def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)
         extra_fields.setdefault('role', Roles.ADMIN.value)
 
         user = self.create_user(email, password, **extra_fields)
-
-        # Mark email as verified for allauth
-        EmailAddress.objects.create(
-            user=user,
-            email=user.email,
-            verified=True,
-            primary=True,
-        )
+        
         return user
 
 
 class User(AbstractUser):
     """
-    Custom user model definition that uses the previous custom user manager
+    Custom user model using our custom manager.
     """
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email']
-
+    email = models.EmailField(unique=True)
     role = models.CharField(max_length=10, choices=Roles.choices(), default=Roles.CLIENT.value)
 
     objects = UserManager()
+
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email']
     
     def is_client(self):
         return self.role == Roles.CLIENT.value
@@ -75,7 +69,7 @@ class User(AbstractUser):
 
 class BarberInvitation(models.Model):
     """
-    Store invited barber emails
+    Keeps track of which barbers have been invited to register.
     """
     email = models.EmailField(unique=True)
     used = models.BooleanField(default=False)
