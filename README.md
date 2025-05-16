@@ -20,7 +20,7 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
     - [Install Python Dependencies](#install-python-dependencies)
     - [Run Migrations](#run-migrations)
     - [Create SuperUser](#create-superuser)
-    - [To check database from shell](#to-check-database-from-shell)
+    - [Run test cases](#run-test-cases)
   - [Frontend Development (React + Vite)](#frontend-development-react--vite)
     - [Install npm Packages](#install-npm-packages)
   - [Troubleshooting](#troubleshooting)
@@ -94,16 +94,10 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-### To check database from shell
+### Run test cases
 
 ```bash
-python manage.py shell
-
-# then run it like this
-from api.models import User
-
-user = User.objects.get(email="test@example.com")
-print(user.role)
+python manage.py test api
 ```
 
 ## Frontend Development (React + Vite)
