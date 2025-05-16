@@ -4,7 +4,7 @@ What to implement:
 for frontend:
 - register page,
 - login page,
-- verify-email get request to verify then redirect to login page,
+- verify-email send GET request to verify then redirect to login page,
 
 - reset password button in login/register pages
 - reset password page
