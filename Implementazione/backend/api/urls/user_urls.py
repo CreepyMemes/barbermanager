@@ -6,6 +6,6 @@ from ..views.user import (
 )
 
 urlpatterns = [
-    path('invite-barber/', invite_barber),
+    path('invite-barber/', invite_barber, name='invite_barber'),
     path('me/', get_user, name='get_user'),
 ]
