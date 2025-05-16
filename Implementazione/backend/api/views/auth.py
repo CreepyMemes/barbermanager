@@ -24,7 +24,7 @@ User = get_user_model()
 @permission_classes([AllowAny])
 def register_client(request):
     """
-    Register a client by sending an email confirmation,
+    Register a client by sending an email to verify it,
     client must verify their email to login
     """
     serializer = ClientRegisterSerializer(data=request.data)
@@ -68,7 +68,7 @@ def login_user(request):
         user = User.objects.get(email=identifier) if email else User.objects.get(username=identifier)
         
         if not user.is_active:
-            return Response({'error': 'Account inactive. Please confirm your email.'}, status=status.HTTP_403_FORBIDDEN)
+            return Response({'error': 'Account inactive. Please verify your email.'}, status=status.HTTP_403_FORBIDDEN)
 
     except User.DoesNotExist:
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
@@ -101,13 +101,13 @@ def login_user(request):
 @permission_classes([AllowAny])
 def verify_email(request, uidb64, token):
     """
-    Confirms a user's email using uid and token.
+    Verifies a user's email using uid and token.
     """
     try:
         uid = urlsafe_base64_decode(uidb64).decode()
         user = User.objects.get(pk=uid)
     except Exception:
-        return Response({"error": "Invalid confirmation link."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "Invalid verification link."}, status=status.HTTP_400_BAD_REQUEST)
 
     if not default_token_generator.check_token(user, token):
         return Response({"error": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
@@ -115,7 +115,7 @@ def verify_email(request, uidb64, token):
     user.is_active = True
     user.save()
 
-    return Response({"detail": "Email confirmed successfully."})
+    return Response({"detail": "Email verified successfully."})
 
 
 @api_view(['POST'])
