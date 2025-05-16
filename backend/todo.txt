@@ -1,5 +1,5 @@
 
-- 
+- invite barber not working,, jwt cookies not authenticating
 
 - implement frontend for registering, logging in and resetting password
 
