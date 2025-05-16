@@ -4,6 +4,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
+from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from rest_framework_simplejwt.settings import api_settings
@@ -101,6 +102,25 @@ def login_user(request):
         }
 
     }, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def logout_user(request):
+    """
+    Logout by blacklisting the refresh token.
+    """
+    refresh_token = request.data.get('refresh_token')
+
+    if not refresh_token:
+        return Response({'error': 'Refresh token is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        token = RefreshToken(refresh_token)
+        token.blacklist()
+    except Exception as e:
+        return Response({'error': 'Invalid token or token already blacklisted.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response({'detail': 'Logout successful.'}, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -216,7 +236,6 @@ def refresh_token(request):
     if not refresh_token:
         return Response({'error': 'Refresh token is required.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # The TokenRefreshSerializer expects the token under the key 'refresh', so rename it
     serializer = TokenRefreshSerializer(data={'refresh': refresh_token})
 
     try:
