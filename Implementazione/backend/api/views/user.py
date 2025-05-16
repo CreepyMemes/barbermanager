@@ -11,7 +11,7 @@ from rest_framework import status
 from ..permissions import IsAdminRole
 from ..models import BarberInvitation
 from ..serializers import (
-    UserSerializer,
+    GetUserSerializer,
     BarberInviteSerializer,
 )
 
@@ -56,5 +56,5 @@ def get_user(request):
     """
     Return the authenticated user's information.
     """
-    serializer = UserSerializer(request.user)
+    serializer = GetUserSerializer(request.user)
     return Response(serializer.data)
