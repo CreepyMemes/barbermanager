@@ -2,6 +2,8 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from enum import Enum
+import uuid
+
 
 class Roles(Enum):
     """
@@ -72,8 +74,10 @@ class BarberInvitation(models.Model):
     Keeps track of which barbers have been invited to register.
     """
     email = models.EmailField(unique=True)
+    token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     used = models.BooleanField(default=False)
-    invited_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.email
+    
