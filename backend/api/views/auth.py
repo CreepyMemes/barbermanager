@@ -4,6 +4,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
+from django.conf import settings
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
@@ -38,7 +39,7 @@ def register_client(request):
 
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
-        link = f'http://localhost:8000/api/auth/verify-email/{uid}/{token}/'
+        link = f'{settings.FRONTEND_URL}/api/auth/verify-email/{uid}/{token}/'
 
         send_mail(
             subject='Verify your email on BarberManager',
@@ -57,32 +58,22 @@ def register_client(request):
 @authentication_classes([]) 
 def login_user(request):
     """
-    Login method for users with email or username and password.
-    It hadles unverified users accordingly
-    and uses JWT token generation.
+    Login with email OR username + password.
+    Handles unverified users and returns JWT tokens.
     """
     serializer = LoginSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 
-    email = serializer.validated_data.get('email')
-    username = serializer.validated_data.get('username')
+    identifier = serializer.validated_data['identifier']
     password = serializer.validated_data['password']
-
-    identifier = email or username
-
-    try:
-        user = User.objects.get(email=identifier) if email else User.objects.get(username=identifier)
-        
-        if not user.is_active:
-            return Response({'error': 'Account inactive. Please verify your email.'}, status=status.HTTP_403_FORBIDDEN)
-
-    except User.DoesNotExist:
-        return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
     user = authenticate(request, username=identifier, password=password)
 
     if not user:
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if not user.is_active:
+        return Response({'error': 'Account inactive. Please verify your email.'}, status=status.HTTP_403_FORBIDDEN)
 
     refresh = RefreshToken.for_user(user)
 
@@ -102,6 +93,7 @@ def login_user(request):
         }
 
     }, status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -181,7 +173,7 @@ def request_password_reset(request):
 
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     token = default_token_generator.make_token(user)
-    reset_link = f'http://localhost:8000/api/auth/reset-password/{uid}/{token}/'
+    reset_link = f'{settings.FRONTEND_URL}/api/auth/reset-password/{uid}/{token}/'
 
     send_mail(
         subject='Reset your password',
