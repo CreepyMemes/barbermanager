@@ -26,9 +26,6 @@ class BarberAuthFlowTest(APITestCase):
             email='root@test.com',
             password=self.admin_password,
             role=Roles.ADMIN.value,
-            is_active=True,
-            is_staff=True,
-            is_superuser=True,
         )
 
         self.barber_password = 'BarberPass123!'
