@@ -54,9 +54,10 @@ class UserManager(BaseUserManager):
         if extra_fields.get('role') != Roles.ADMIN.value:
             raise ValueError('Superuser must have role=ADMIN')
         
-        user = self.create_user(username=username, email=None, password=password, **extra_fields)
-        
-        return user
+        admin = Admin(username=username, **extra_fields)
+        admin.set_password(password)
+        admin.save(using=self._db)
+        return admin
 
 
 class User(AbstractUser):
