@@ -5,7 +5,7 @@ def send_client_verify_email(email, uid, token, domain):
     """
     Sends email confirmation link to client after registration.
     """
-    activation_link = f'{domain}/api/auth/verify-client/{uid}/{token}/'
+    activation_link = f'{domain}/api/auth/verify/{uid}/{token}/'
 
     subject = '[BarberManager] Verify your email to register as a client'
     message = (
@@ -21,7 +21,7 @@ def send_barber_invite_email(email, uid, token, domain):
     """
     Sends barber invitation email with registration link.
     """
-    invite_link = f'{domain}/api/auth/register-barber/{uid}/{token}/'
+    invite_link = f'{domain}/api/auth/register/{uid}/{token}/'
 
     subject = '[BarberManager] You have been invited to register as a barber'
     message = (
