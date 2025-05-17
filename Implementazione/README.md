@@ -26,9 +26,11 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
   - [Troubleshooting](#troubleshooting)
   - [Resetting the Environment](#resetting-the-environment)
   - [API Endpoint Guide](#api-endpoint-guide)
-    - [Auth Endpoints (`/auth/`)](#auth-endpoints-auth)
-    - [User Endpoints (`/user/`)](#user-endpoints-user)
-    - [🛠️ Admin Endpoints (`/admin/`)](#️-admin-endpoints-admin)
+    - [Auth Endpoints (`/api/auth/`)](#auth-endpoints-apiauth)
+    - [User Endpoints (`/api/user/`)](#user-endpoints-apiuser)
+    - [Admin Endpoints (`/api/admin/`)](#admin-endpoints-apiadmin)
+    - [Barber Endpoints (`/api/barber/`)](#barber-endpoints-apibarber)
+    - [Client Endpoints (`/api/client/`)](#client-endpoints-apiclient)
 
 ## Requirements
 
@@ -147,31 +149,36 @@ This command removes all volumes and rebuilds everything from scratch, ensuring 
 
 ## API Endpoint Guide
 
-### Auth Endpoints (`/auth/`)
+### Auth Endpoints (`/api/auth/`)
 
-| Endpoint                                  | Method | Description                                     |
-| ----------------------------------------- | ------ | ----------------------------------------------- |
-| `/auth/register-client/`                  | POST   | Register a new client.                          |
-| `/auth/verify-client/<uidb64>/<token>/`   | GET    | Verify a client's email address.                |
-| `/auth/register-barber/<uidb64>/<token>/` | POST   | Register a barber (via invitation).             |
-| `/auth/login/`                            | POST   | Log in a user.                                  |
-| `/auth/logout/`                           | POST   | Log out the current user.                       |
-| `/auth/request-password-reset/`           | POST   | Send password reset link via email.             |
-| `/auth/reset-password/<uidb64>/<token>/`  | POST   | Confirm and apply password reset.               |
-| `/auth/refresh-token/`                    | POST   | Get a new access token using the refresh token. |
+| Endpoint                                      | Method | Description                                     |
+| --------------------------------------------- | ------ | ----------------------------------------------- |
+| `/api/auth/register-client/`                  | POST   | Register a new client.                          |
+| `/api/auth/verify-client/<uidb64>/<token>/`   | GET    | Verify a client's email address.                |
+| `/api/auth/register-barber/<uidb64>/<token>/` | POST   | Register a barber (via invitation).             |
+| `/api/auth/login/`                            | POST   | Log in a user.                                  |
+| `/api/auth/logout/`                           | POST   | Log out the current user.                       |
+| `/api/auth/request-password-reset/`           | POST   | Send password reset link via email.             |
+| `/api/auth/reset-password/<uidb64>/<token>/`  | POST   | Confirm and apply password reset.               |
+| `/api/auth/refresh-token/`                    | POST   | Get a new access token using the refresh token. |
 
----
+### User Endpoints (`/api/user/`)
 
-### User Endpoints (`/user/`)
+| Endpoint        | Method | Description                                 |
+| --------------- | ------ | ------------------------------------------- |
+| `/api/user/me/` | GET    | Get the currently logged-in user's profile. |
 
-| Endpoint    | Method | Description                                 |
-| ----------- | ------ | ------------------------------------------- |
-| `/user/me/` | GET    | Get the currently logged-in user's profile. |
+### Admin Endpoints (`/api/admin/`)
 
----
+| Endpoint | Method | Description |
+| -------- | ------ | ----------- |
 
-### 🛠️ Admin Endpoints (`/admin/`)
+### Barber Endpoints (`/api/barber/`)
 
-| Endpoint                | Method | Description                         |
-| ----------------------- | ------ | ----------------------------------- |
-| `/admin/invite-barber/` | POST   | Send an invitation to a new barber. |
+| Endpoint | Method | Description |
+| -------- | ------ | ----------- |
+
+### Client Endpoints (`/api/client/`)
+
+| Endpoint | Method | Description |
+| -------- | ------ | ----------- |
