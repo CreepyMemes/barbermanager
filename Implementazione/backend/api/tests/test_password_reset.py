@@ -39,8 +39,10 @@ class PasswordResetTest(APITestCase):
         response = self.client.post(self.reset_request_url, {'email': self.user_email}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('detail', response.data)
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertIn('Click here to reset your password', mail.outbox[0].body)
+
+        # Extract uid and token from the verification email
+        match = re.search(r'/api/auth/reset-password/(?P<uidb64>[^/]+)/(?P<token>[^/]+)/', mail.outbox[0].body)
+        self.assertIsNotNone(match, "Registration link not found in email body")
 
 
     def test_request_password_reset_no_email_provided(self):
@@ -49,7 +51,7 @@ class PasswordResetTest(APITestCase):
         """
         response = self.client.post(self.reset_request_url, {}, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data.get('error'), 'Email is required')
+        self.assertEqual(response.data.get('email'), ['This field is required.'])
 
 
     def test_request_password_reset_nonexistent_email(self):
@@ -74,7 +76,7 @@ class PasswordResetTest(APITestCase):
         response = self.client.post(url, {'password': new_password}, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data.get('detail'), 'Password reset successful.')
+        self.assertEqual(response.data.get('detail'), 'Password has been reset successfully.')
 
         self.user.refresh_from_db()
         self.assertTrue(self.user.check_password(new_password))
@@ -91,7 +93,7 @@ class PasswordResetTest(APITestCase):
         response = self.client.post(url, {}, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data.get('error'), 'Password is required')
+        self.assertEqual(response.data.get('password'), ['This field is required.'])
 
 
     def test_confirm_password_reset_invalid_uid(self):
@@ -104,7 +106,7 @@ class PasswordResetTest(APITestCase):
         response = self.client.post(url, {'password': 'SomePass123!'}, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data.get('error'), 'Invalid reset link')
+        self.assertEqual(response.data.get('detail'), 'Invalid reset link.')
 
 
     def test_confirm_password_reset_invalid_token(self):
@@ -117,7 +119,7 @@ class PasswordResetTest(APITestCase):
         response = self.client.post(url, {'password': 'SomePass123!'}, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data.get('error'), 'Invalid or expired token')
+        self.assertEqual(response.data.get('detail'), 'Invalid or expired token')
 
 
     def test_confirm_password_reset_invalid_password(self):
@@ -131,4 +133,4 @@ class PasswordResetTest(APITestCase):
         response = self.client.post(url, {'password': '123'}, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('error', response.data)
+        self.assertIn('password', response.data)

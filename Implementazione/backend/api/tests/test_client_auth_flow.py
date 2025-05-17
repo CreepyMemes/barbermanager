@@ -12,7 +12,7 @@ class AuthFlowTest(APITestCase):
     """
     def setUp(self):
         self.register_url = reverse('register_client')
-        self.verify_url_name = 'verify_email'
+        self.verify_url_name = 'verify_client_email'
         self.login_url = reverse('login_user')
         self.logout_url = reverse('logout_user')
 
@@ -44,7 +44,7 @@ class AuthFlowTest(APITestCase):
         self.assertFalse(user.is_active)
 
         # Extract uid and token from the verification email
-        match = re.search(r'/api/auth/verify-email/(?P<uidb64>[^/]+)/(?P<token>[^/]+)/', mail.outbox[0].body)
+        match = re.search(r'/api/auth/verify-client-email/(?P<uidb64>[^/]+)/(?P<token>[^/]+)/', mail.outbox[0].body)
         self.assertIsNotNone(match, "Verification link not found in email body")
         return user, match.group('uidb64'), match.group('token')
 
@@ -94,7 +94,7 @@ class AuthFlowTest(APITestCase):
         url = reverse(self.verify_url_name, kwargs={'uidb64': 'invalid-uid', 'token': 'wrong-token'})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data.get('error'), 'Invalid verification link.')
+        self.assertEqual(response.data.get('detail'), 'Invalid verification link.')
 
 
     def test_verify_with_expired_or_wrong_token(self):
@@ -105,7 +105,7 @@ class AuthFlowTest(APITestCase):
         url = reverse(self.verify_url_name, kwargs={'uidb64': uidb64, 'token': 'wrong-token'})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data.get('error'), 'Invalid or expired token.')
+        self.assertEqual(response.data.get('detail'), 'Invalid or expired token.')
 
 
     def test_login_fails_with_unverified_account(self):
@@ -116,7 +116,7 @@ class AuthFlowTest(APITestCase):
         login_data = {'email': user.email, 'password': self.user_password}
         response = self.client.post(self.login_url, login_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(response.data.get('error'), 'Account inactive. Please verify your email.')
+        self.assertEqual(response.data.get('detail'), 'Account inactive. Please verify your email.')
 
 
     def test_login_fails_with_wrong_credentials(self):
@@ -131,7 +131,7 @@ class AuthFlowTest(APITestCase):
         login_data = {'email': user.email, 'password': 'WrongPass!'}
         response = self.client.post(self.login_url, login_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data.get('error'), 'Invalid credentials')
+        self.assertEqual(response.data.get('detail'), 'Invalid credentials')
 
 
     def test_logout_fails_without_refresh_token(self):
@@ -150,7 +150,7 @@ class AuthFlowTest(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
         response = self.client.post(self.logout_url, {}, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data.get('error'), 'Refresh token is required.')
+        self.assertEqual(response.data.get('refresh_token'), 'Refresh token is required.')
 
 
     def test_logout_fails_with_invalid_refresh_token(self):
@@ -167,6 +167,6 @@ class AuthFlowTest(APITestCase):
         access_token = login_response.data['token']['access_token']
 
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
-        response = self.client.post(self.logout_url, {'refresh_token': 'invalidtoken'}, format='json')
+        response = self.client.post(self.logout_url, {'refresh_token': 'invalid-token'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data.get('error'), 'Invalid token or token already blacklisted.')
+        self.assertEqual(response.data.get('detail'), 'Invalid token or token already blacklisted.')
