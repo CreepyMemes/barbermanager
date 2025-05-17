@@ -1,6 +1,6 @@
 from django.db import models
 from enum import Enum
-from .user import Roles, User
+from .user import Barber, Client
 
 
 class AppointmentStatus(Enum):
@@ -23,9 +23,8 @@ class Service(models.Model):
     Barbers can offer multiple different services.
     """
     barber = models.ForeignKey(
-        User,
+        Barber,
         on_delete=models.CASCADE,
-        limit_choices_to={'role': Roles.BARBER.value},
         related_name='services'
     )
     name = models.CharField(max_length=100)
@@ -41,9 +40,8 @@ class Availability(models.Model):
     Managed by admins only.
     """
     barber = models.ForeignKey(
-        User,
+        Barber,
         on_delete=models.CASCADE,
-        limit_choices_to={'role':Roles.BARBER.value},
         related_name='availabilities',
     )
     date=models.DateField()
@@ -64,15 +62,13 @@ class Appointment(models.Model):
     scheduled for a specific availability slot.
     """
     client = models.ForeignKey(
-        User,
+        Client,
         on_delete=models.CASCADE,
-        limit_choices_to={'role': Roles.CLIENT.value},
         related_name='appointments',
     )
     barber = models.ForeignKey(
-        User,
+        Barber,
         on_delete=models.CASCADE,
-        limit_choices_to={'role': Roles.BARBER.value},
         related_name='appointments_received'
     )
     status = models.CharField(
@@ -98,15 +94,13 @@ class Review(models.Model):
         related_name='appointment_review'
     )
     client = models.ForeignKey(
-        User,
+        Client,
         on_delete=models.CASCADE,
-        limit_choices_to={'role': Roles.CLIENT.value},
         related_name='client_reviews'
     )
     barber = models.ForeignKey(
-        User,
+        Barber,
         on_delete=models.CASCADE,
-        limit_choices_to={'role': Roles.BARBER.value},
         related_name='barber_reviews'
     )
     rating = models.PositiveSmallIntegerField()
