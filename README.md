@@ -174,12 +174,12 @@ api/
 
 ### Admin Endpoints (`api/admin/`)
 
-| Endpoint                                      | Method | Description                          |
-| --------------------------------------------- | ------ | ------------------------------------ |
-| `/admin/invite-barber/`                       | POST   | Invite a barber through their email. |
-| `/admin/set-barber-availability/<barber_id>/` | POST   | Manage availability slots            |
-| `/admin/remove-barber/<barber_id>/`           | DELETE | Remove barber                        |
-| `/admin/stats/`                               | GET    | Generate general statistics          |
+| Endpoint                           | Method | Description                          |
+| ---------------------------------- | ------ | ------------------------------------ |
+| `/admin/barber/`                   | POST   | Invite a barber through their email. |
+| `/admin/barber/<barber_id>/`       | DELETE | Remove barber                        |
+| `/admin/availability/<barber_id>/` | POST   | Manage barber's availability slots   |
+| `/admin/stats/`                    | GET    | Generate general statistics          |
 
 ## Barber Endpoints (`api/barber/`)
 
