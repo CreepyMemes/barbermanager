@@ -11,7 +11,7 @@ class BarberAuthFlowTest(APITestCase):
     Tests for barber invitation and registration flows.
     """
     def setUp(self):
-        self.invite_url = reverse('invite_barber_email')
+        self.invite_url = reverse('invite_barber')
         self.login_url = reverse('login_user')
         self.register_url = 'register_barber'
 
