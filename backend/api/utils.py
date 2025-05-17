@@ -5,7 +5,7 @@ def send_client_verify_email(email, uid, token, domain):
     """
     Sends email confirmation link to client after registration.
     """
-    activation_link = f'{domain}/api/auth/verify-client-email/{uid}/{token}/'
+    activation_link = f'{domain}/api/auth/verify-client/{uid}/{token}/'
 
     subject = '[BarberManager] Verify your email to register as a client'
     message = (

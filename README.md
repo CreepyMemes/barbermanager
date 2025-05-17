@@ -25,6 +25,10 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
     - [Install npm Packages](#install-npm-packages)
   - [Troubleshooting](#troubleshooting)
   - [Resetting the Environment](#resetting-the-environment)
+  - [API Endpoint Guide](#api-endpoint-guide)
+    - [Auth Endpoints (`/auth/`)](#auth-endpoints-auth)
+    - [User Endpoints (`/user/`)](#user-endpoints-user)
+    - [🛠️ Admin Endpoints (`/admin/`)](#️-admin-endpoints-admin)
 
 ## Requirements
 
@@ -140,3 +144,34 @@ docker-compos exec -it backend sh
 ```
 
 This command removes all volumes and rebuilds everything from scratch, ensuring a clean development state.
+
+## API Endpoint Guide
+
+### Auth Endpoints (`/auth/`)
+
+| Endpoint                                  | Method | Description                                     |
+| ----------------------------------------- | ------ | ----------------------------------------------- |
+| `/auth/register-client/`                  | POST   | Register a new client.                          |
+| `/auth/verify-client/<uidb64>/<token>/`   | GET    | Verify a client's email address.                |
+| `/auth/register-barber/<uidb64>/<token>/` | POST   | Register a barber (via invitation).             |
+| `/auth/login/`                            | POST   | Log in a user.                                  |
+| `/auth/logout/`                           | POST   | Log out the current user.                       |
+| `/auth/request-password-reset/`           | POST   | Send password reset link via email.             |
+| `/auth/reset-password/<uidb64>/<token>/`  | POST   | Confirm and apply password reset.               |
+| `/auth/refresh-token/`                    | POST   | Get a new access token using the refresh token. |
+
+---
+
+### User Endpoints (`/user/`)
+
+| Endpoint    | Method | Description                                 |
+| ----------- | ------ | ------------------------------------------- |
+| `/user/me/` | GET    | Get the currently logged-in user's profile. |
+
+---
+
+### 🛠️ Admin Endpoints (`/admin/`)
+
+| Endpoint                | Method | Description                         |
+| ----------------------- | ------ | ----------------------------------- |
+| `/admin/invite-barber/` | POST   | Send an invitation to a new barber. |
