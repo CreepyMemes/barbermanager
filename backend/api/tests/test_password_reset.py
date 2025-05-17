@@ -9,7 +9,6 @@ import re
 from api.models import User
 
 
-
 class PasswordResetTest(APITestCase):
     """
     Tests for password reset request and confirmation endpoints.

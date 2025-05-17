@@ -36,8 +36,9 @@ class RefreshTokenTest(APITestCase):
         Refresh fails when token is not provided.
         """
         response = self.client.post(self.refresh_url, {}, format='json')
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data.get('error'), 'Refresh token is required.')
+        self.assertEqual(response.data.get('refresh_token'), ['This field is required.'])
 
 
     def test_refresh_token_invalid(self):
@@ -46,4 +47,4 @@ class RefreshTokenTest(APITestCase):
         """
         response = self.client.post(self.refresh_url, {'refresh_token': 'invalid.token.here'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        self.assertIn('error', response.data)
+        self.assertIn('detail', response.data)
