@@ -109,3 +109,12 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError({"error": "Provide only one of email or username, not both."})
 
         return data
+    
+    
+class GetUserSerializer(serializers.ModelSerializer):
+    """
+    Get information on currently logged in user
+    """
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'role']

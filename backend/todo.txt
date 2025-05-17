@@ -15,14 +15,8 @@ for frontend:
 ...
 
 for backend:
-- ServiceListSerializer, To list the services offered by a barber
-- BarberListSerializer, list all barbers
-- AvailabilityListSerializer, To list available slots for a selected barber
 
-- AppointmentCreateSerializer, To handle creation of a new appointment 
-
-- AppointmentListSerializer, To list previous appointments for a client.
-- AppointmentCancelSerializer, To cancel an ongoing appointment
+- Impement all the API endpoints in README.md (serializers and views)
 ...
 
 for architecture:
