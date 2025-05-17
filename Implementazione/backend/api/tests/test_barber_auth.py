@@ -50,7 +50,7 @@ class BarberAuthFlowTest(APITestCase):
         self.assertEqual(response.data['detail'], 'Barber invited successfully.')
     
         # Extract uid and token from the verification email
-        match = re.search(r'/api/auth/register-barber/(?P<uidb64>[^/]+)/(?P<token>[^/]+)/', mail.outbox[0].body)
+        match = re.search(r'/api/auth/register/(?P<uidb64>[^/]+)/(?P<token>[^/]+)/', mail.outbox[0].body)
         self.assertIsNotNone(match, "Verification link not found in email body")
     
         return response, match.group('uidb64'), match.group('token')
