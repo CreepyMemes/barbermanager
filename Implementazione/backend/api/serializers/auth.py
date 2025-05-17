@@ -1,10 +1,8 @@
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import get_user_model
-from django.utils.http import urlsafe_base64_decode
 from rest_framework import serializers
 
-from ..models import Client, Barber, Admin, BarberInvitation, Roles
-from ..utils import generate_unique_username
+from ..models import Client, Barber
 
 
 User = get_user_model()
@@ -13,14 +11,28 @@ User = get_user_model()
 class ClientRegisterSerializer(serializers.ModelSerializer):
     """
     Register a client. Sends a confirmation email.
-    Sets fallback username based on email if not present
+    Client must provide valid username and password
     """
+    email = serializers.EmailField(required=True)
     password = serializers.CharField(write_only=True)
-    username = serializers.CharField(required=False)
+    username = serializers.CharField(required=True)
 
     class Meta:
         model = Client
-        fields = ('email', 'username', 'password')
+        fields = ['email', 'username', 'password']
+
+    def validate_username(self, username):
+        if User.objects.filter(username=username).exists():
+            raise serializers.ValidationError("This username is already taken.")
+        
+        return username
+    
+    def validate_email(self, email):
+        if User.objects.filter(email=email).exists():
+            raise serializers.ValidationError("A user with this email already exists.")
+        
+        return email
+
 
     def validate_password(self, value):
         validate_password(value)
@@ -28,65 +40,87 @@ class ClientRegisterSerializer(serializers.ModelSerializer):
 
 
     def create(self, validated_data):
-        email = validated_data['email']
-        username = validated_data.get('username') or generate_unique_username(email)
+        email = validated_data.get('email')
+        username = validated_data.get('username')
+        password = validated_data.get('password')
     
-        user = Client(
+        client = Client(
             email=email,
             username=username,
             is_active=False,
         )
-        user.set_password(validated_data['password'])
-        user.save()
+        client.set_password(password)
+        client.save()
 
-        return user
+        return client
+
+
+class BarberInviteSerializer(serializers.Serializer):
+    """
+    Admin only: Invites a barber, accepts only email.
+    """
+    email = serializers.EmailField()
+
+    class Meta:
+        model = Barber
+        fields = ['email']
+    
+
+    def validate_email(self, email):
+        if User.objects.filter(email=email).exists():
+            raise serializers.ValidationError("A user with this email already exists.")
+        
+        return email
+    
+
+    def create(self, validated_data):
+        email = validated_data.get('email')
+
+        barber = Barber(
+            email=email,
+            is_active=False
+        )
+        barber.set_unusable_password()
+        barber.save()
+
+        return barber
+
 
 
 class BarberRegisterSerializer(serializers.Serializer):
     """
-    Register a barber: requires uid and token, validates passwords.
+    Barber completes registration via invite link. Only sets username and password.
     """
-    uid = serializers.CharField()
-    token = serializers.UUIDField()
+    username = serializers.CharField(required=True)
     password = serializers.CharField(write_only=True)
 
-    def validate(self, data):
-        validate_password(data['password'])
-        return data
+    class Meta:
+        model = Barber
+        fields = ['username', 'password']
 
 
-    def save(self):
-        try:
-            email = urlsafe_base64_decode(self.validated_data['uid']).decode()
-        except (ValueError, TypeError, UnicodeDecodeError):
-            raise serializers.ValidationError({"error": "Invalid UID."})
+    def validate_password(self, value):
+        validate_password(value)
+        return value
 
-        token = self.validated_data['token']
 
-        try:
-            invitation = BarberInvitation.objects.get(email=email, used=False)
-        except BarberInvitation.DoesNotExist:
-            raise serializers.ValidationError({"error": "Invalid or expired invitation."})
+    def validate_username(self, username):
+        if User.objects.filter(username=username).exists():
+            raise serializers.ValidationError("This username is already taken.")
+        return username
 
-        if invitation.token != token:
-            raise serializers.ValidationError({"error": "Invalid invitation token."})
 
-        if User.objects.filter(email=email).exists():
-            raise serializers.ValidationError({"error": "User with this email already exists."})
+    def create(self, validated_data):
+        password = validated_data.get('password')
+        username = validated_data.get('username')
 
-        user = Barber(
-            email=email,
-            username=generate_unique_username(email),
+        barber = self.context['barber']
+        barber.username = username
+        barber.set_password(password)
+        barber.is_active = True
+        barber.save()
 
-            is_active=True,
-        )
-        user.set_password(self.validated_data['password'])
-        user.save()
-
-        invitation.used = True
-        invitation.save()
-
-        return user
+        return barber
     
 
 class LoginSerializer(serializers.Serializer):
@@ -95,7 +129,7 @@ class LoginSerializer(serializers.Serializer):
     """
     email = serializers.EmailField(required=False)
     username = serializers.CharField(required=False)
-    password = serializers.CharField()
+    password = serializers.CharField(write_only=True)
 
     def validate(self, data):
         email = data.get('email')
@@ -106,6 +140,4 @@ class LoginSerializer(serializers.Serializer):
         if email and username:
             raise serializers.ValidationError({"error": "Provide only one of email or username, not both."})
 
-        data['identifier'] = email or username
-        
         return data

@@ -8,16 +8,20 @@ User = get_user_model()
 
 class UsernameOrEmailBackend(ModelBackend):
     """
-    Authenticate with either username or email.
+    Custom authentication backend to allow login with either username or email.
+    Gives precedence to username (especially for admins with no email).
     """
     def authenticate(self, request, username=None, password=None, **kwargs):
-        if username is None or password is None:
+        if not username or not password:
             return None
         
         try:
-            user = User.objects.get(Q(username=username) | Q(email=username))
+            user = User.objects.get(username=username)
         except User.DoesNotExist:
-            return None
+            try:
+                user = User.objects.get(email=username)
+            except User.DoesNotExist:
+                return None
 
         if user.check_password(password):
             return user
