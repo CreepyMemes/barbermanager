@@ -10,20 +10,17 @@ from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from rest_framework_simplejwt.settings import api_settings
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
-from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 
-from ..permissions import IsAdminRole
 from ..utils import(
     send_client_verify_email,
-    send_barber_invite_email,
     send_password_reset_email,
 )
 from ..serializers import (
     ClientRegisterSerializer,
     LoginSerializer,
-    BarberInviteSerializer,
     BarberRegisterSerializer,
 )
 
@@ -56,7 +53,7 @@ def register_client(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 @authentication_classes([]) 
-def verify_client_email(request, uidb64, token):
+def verify_client(request, uidb64, token):
     """
     Verifies client account from confirmation email link.
     """
@@ -76,27 +73,6 @@ def verify_client_email(request, uidb64, token):
     client.save()
 
     return Response({'detail': 'Email verified successfully.'})
-
-
-@api_view(['POST'])
-@permission_classes([IsAdminRole])
-def invite_barber_email(request):
-    """
-    Admin-only: Invite a barber by email. Sends a link with encoded email (uid).
-    """
-    serializer = BarberInviteSerializer(data=request.data)
-
-    if serializer.is_valid():
-        barber = serializer.save()
-
-        uid = urlsafe_base64_encode(force_bytes(barber.pk))
-        token = default_token_generator.make_token(barber)
-
-        send_barber_invite_email(barber.email, uid, token, settings.FRONTEND_URL)
-
-        return Response({'detail': 'Barber invited successfully.'}, status=status.HTTP_201_CREATED)
-
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])

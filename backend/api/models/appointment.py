@@ -34,6 +34,7 @@ class Service(models.Model):
     def __str__(self):
         return f"{self.name} - {self.barber.email}"
     
+    
 class Availability(models.Model):
     """
     Represents a one-hour time slot of availability for a barber.
