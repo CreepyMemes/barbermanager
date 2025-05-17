@@ -44,7 +44,7 @@ class AuthFlowTest(APITestCase):
         self.assertFalse(user.is_active)
 
         # Extract uid and token from the verification email
-        match = re.search(r'/api/auth/verify-client/(?P<uidb64>[^/]+)/(?P<token>[^/]+)/', mail.outbox[0].body)
+        match = re.search(r'/api/auth/verify/(?P<uidb64>[^/]+)/(?P<token>[^/]+)/', mail.outbox[0].body)
         self.assertIsNotNone(match, "Verification link not found in email body")
         return user, match.group('uidb64'), match.group('token')
 
