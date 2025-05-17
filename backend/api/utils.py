@@ -7,7 +7,7 @@ def send_client_verify_email(email, uid, token, domain):
     """
     activation_link = f'{domain}/api/auth/verify-client-email/{uid}/{token}/'
 
-    subject = '[ManageBarber] Verify your email as a client'
+    subject = '[ManageBarber] Verify your email to register as a client'
     message = (
         f'Thank you for registering.\n\n'
         f'Please click the link below to verify your account:\n'
@@ -22,7 +22,8 @@ def send_barber_invite_email(email, uid, token, domain):
     Sends barber invitation email with registration link.
     """
     invite_link = f'{domain}/api/auth/register-barber/{uid}/{token}/'
-    subject = '[ManageBarber] You are invited to register as a barber'
+
+    subject = '[ManageBarber] You have been invited to register as a barber'
     message = (
         f'You have been invited to join as a barber.\n\n'
         f'Please click the link below to complete your registration:\n'
@@ -37,7 +38,8 @@ def send_password_reset_email(email, uid, token, domain):
     Sends password reset email with reset link.
     """
     reset_link = f'{domain}/api/auth/reset-password/{uid}/{token}/'
-    subject = 'Reset your password'
+
+    subject = '[ManageBarber] You have requested to reset your password'
     message = (
         f'We received a request to reset your password.\n\n'
         f'Please click the link below to set a new password:\n'
