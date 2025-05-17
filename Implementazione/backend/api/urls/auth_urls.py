@@ -1,8 +1,7 @@
 from django.urls import path
 from ..views.auth import (
     register_client,
-    verify_client_email,
-    invite_barber_email,
+    verify_client,
     register_barber,
     login_user,
     logout_user,
@@ -13,9 +12,7 @@ from ..views.auth import (
 
 urlpatterns = [
     path('register-client/', register_client, name='register_client'),
-    path('verify-client-email/<uidb64>/<token>/', verify_client_email, name='verify_client_email'),
-    path('invite-barber-email/', invite_barber_email, name='invite_barber_email'),
-
+    path('verify-client/<uidb64>/<token>/', verify_client, name='verify_client'),
     path('register-barber/<uidb64>/<token>/', register_barber, name='register_barber'),
     
     path('login/', login_user, name='login_user'),

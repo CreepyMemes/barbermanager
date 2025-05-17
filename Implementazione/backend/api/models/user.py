@@ -16,7 +16,7 @@ class Roles(Enum):
     @classmethod
     def choices(cls):
         return [(role.value, role.name) for role in cls]
-
+    
 
 class UserManager(BaseUserManager):
     """
@@ -82,6 +82,25 @@ class User(AbstractUser):
 
     def get_role(self):
         return self.role
+    
+
+class Admin(User):
+    """
+    Admins are created by the system using the `createsuperuser` command.
+    They are granted full permissions (staff and superuser) and do not require an email.
+    """
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.role = Roles.ADMIN.value
+
+        self.is_staff = True
+        self.is_superuser = True
+
+        super().save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = 'Admin'
+        verbose_name_plural = 'Admins'
 
 
 class Client(User):
@@ -120,23 +139,3 @@ class Barber(User):
     class Meta:
         verbose_name = 'Barber'
         verbose_name_plural = 'Barbers'
-
-
-class Admin(User):
-    """
-    Admins are created by the system using the `createsuperuser` command.
-    They are granted full permissions (staff and superuser) and do not require an email.
-    """
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            self.role = Roles.ADMIN.value
-
-        self.is_staff = True
-        self.is_superuser = True
-
-        super().save(*args, **kwargs)
-
-    class Meta:
-        verbose_name = 'Admin'
-        verbose_name_plural = 'Admins'
-    

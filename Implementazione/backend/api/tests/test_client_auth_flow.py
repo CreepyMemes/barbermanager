@@ -12,7 +12,7 @@ class AuthFlowTest(APITestCase):
     """
     def setUp(self):
         self.register_url = reverse('register_client')
-        self.verify_url = 'verify_client_email'
+        self.verify_url = 'verify_client'
         self.login_url = reverse('login_user')
         self.logout_url = reverse('logout_user')
 
@@ -44,7 +44,7 @@ class AuthFlowTest(APITestCase):
         self.assertFalse(user.is_active)
 
         # Extract uid and token from the verification email
-        match = re.search(r'/api/auth/verify-client-email/(?P<uidb64>[^/]+)/(?P<token>[^/]+)/', mail.outbox[0].body)
+        match = re.search(r'/api/auth/verify-client/(?P<uidb64>[^/]+)/(?P<token>[^/]+)/', mail.outbox[0].body)
         self.assertIsNotNone(match, "Verification link not found in email body")
         return user, match.group('uidb64'), match.group('token')
 
