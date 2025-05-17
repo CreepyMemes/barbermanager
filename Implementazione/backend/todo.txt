@@ -15,8 +15,11 @@ for frontend:
 ...
 
 for backend:
-
-- Impement all the API endpoints in README.md (serializers and views)
+1. study database design and make a diagram
+2. study rest api design and improve the ones i made
+3. implement models
+4. implement serializers for views
+5. implement views
 ...
 
 for architecture:
