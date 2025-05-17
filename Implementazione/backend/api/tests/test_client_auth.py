@@ -12,7 +12,7 @@ class AuthFlowTest(APITestCase):
     """
     def setUp(self):
         self.register_url = reverse('register_client')
-        self.verify_url = 'verify_client'
+        self.verify_url = 'verify_client_email'
         self.login_url = reverse('login_user')
         self.logout_url = reverse('logout_user')
 

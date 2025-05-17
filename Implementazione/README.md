@@ -25,12 +25,12 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
     - [Install npm Packages](#install-npm-packages)
   - [Troubleshooting](#troubleshooting)
   - [Resetting the Environment](#resetting-the-environment)
-  - [API Endpoint Guide](#api-endpoint-guide)
-    - [Auth Endpoints (`/api/auth/`)](#auth-endpoints-apiauth)
-    - [User Endpoints (`/api/user/`)](#user-endpoints-apiuser)
-    - [Admin Endpoints (`/api/admin/`)](#admin-endpoints-apiadmin)
-    - [Barber Endpoints (`/api/barber/`)](#barber-endpoints-apibarber)
-    - [Client Endpoints (`/api/client/`)](#client-endpoints-apiclient)
+  - [API Endpoint Guide \[TODO\]](#api-endpoint-guide-todo)
+    - [Auth Endpoints (`api/auth/`)](#auth-endpoints-apiauth)
+    - [Admin Endpoints (`api/admin/`)](#admin-endpoints-apiadmin)
+  - [Barber Endpoints (`api/barber/`)](#barber-endpoints-apibarber)
+  - [Client Endpoints (`api/client/`)](#client-endpoints-apiclient)
+  - [Common Endpoints (`api/public/`)](#common-endpoints-apipublic)
 
 ## Requirements
 
@@ -147,38 +147,70 @@ docker-compos exec -it backend sh
 
 This command removes all volumes and rebuilds everything from scratch, ensuring a clean development state.
 
-## API Endpoint Guide
+## API Endpoint Guide [TODO]
 
-### Auth Endpoints (`/api/auth/`)
+```
+api/
+├── auth/
+├── admin/
+├── barber/
+├── client/
+└── public/
+```
 
-| Endpoint                                      | Method | Description                                     |
-| --------------------------------------------- | ------ | ----------------------------------------------- |
-| `/api/auth/register-client/`                  | POST   | Register a new client.                          |
-| `/api/auth/verify-client/<uidb64>/<token>/`   | GET    | Verify a client's email address.                |
-| `/api/auth/register-barber/<uidb64>/<token>/` | POST   | Register a barber (via invitation).             |
-| `/api/auth/login/`                            | POST   | Log in a user.                                  |
-| `/api/auth/logout/`                           | POST   | Log out the current user.                       |
-| `/api/auth/request-password-reset/`           | POST   | Send password reset link via email.             |
-| `/api/auth/reset-password/<uidb64>/<token>/`  | POST   | Confirm and apply password reset.               |
-| `/api/auth/refresh-token/`                    | POST   | Get a new access token using the refresh token. |
+### Auth Endpoints (`api/auth/`)
 
-### User Endpoints (`/api/user/`)
+| Endpoint                                 | Method | Description                                     |
+| ---------------------------------------- | ------ | ----------------------------------------------- |
+| `/auth/register/`                        | POST   | Register a new client.                          |
+| `/auth/register/<uidb64>/<token>/`       | POST   | Register a barber via invitation email.         |
+| `/auth/verify/<uidb64>/<token>/`         | GET    | Verify a client's email address.                |
+| `/auth/me/`                              | GET    | Get the currently logged-in user's profile.     |
+| `/auth/login/`                           | POST   | Log in a user.                                  |
+| `/auth/logout/`                          | POST   | Log out the current user.                       |
+| `/auth/reset-password/`                  | POST   | Send password reset link via email.             |
+| `/auth/reset-password/<uidb64>/<token>/` | POST   | Confirm and apply password reset.               |
+| `/auth/refresh-token/`                   | POST   | Get a new access token using the refresh token. |
 
-| Endpoint        | Method | Description                                 |
-| --------------- | ------ | ------------------------------------------- |
-| `/api/user/me/` | GET    | Get the currently logged-in user's profile. |
+### Admin Endpoints (`api/admin/`)
 
-### Admin Endpoints (`/api/admin/`)
+| Endpoint                                      | Method | Description                          |
+| --------------------------------------------- | ------ | ------------------------------------ |
+| `/admin/invite-barber/`                       | POST   | Invite a barber through their email. |
+| `/admin/set-barber-availability/<barber_id>/` | POST   | Manage availability slots            |
+| `/admin/remove-barber/<barber_id>/`           | DELETE | Remove barber                        |
+| `/admin/stats/`                               | GET    | Generate general statistics          |
 
-| Endpoint | Method | Description |
-| -------- | ------ | ----------- |
+## Barber Endpoints (`api/barber/`)
 
-### Barber Endpoints (`/api/barber/`)
+| Endpoint                         | Method | Description                  |
+| -------------------------------- | ------ | ---------------------------- |
+| `/barber/services/`              | GET    | List own services            |
+| `/barber/services/`              | POST   | Add a service                |
+| `/barber/services/<service_id>/` | PATCH  | Edit a service               |
+| `/barber/services/<service_id>/` | DELETE | Remove a service             |
+| `/barber/reviews/`               | GET    | List reviews of own services |
+| `/barber/appointments/`          | GET    | View upcoming appointments   |
 
-| Endpoint | Method | Description |
-| -------- | ------ | ----------- |
+## Client Endpoints (`api/client/`)
 
-### Client Endpoints (`/api/client/`)
+| Endpoint                             | Method | Description                                    |
+| ------------------------------------ | ------ | ---------------------------------------------- |
+| `/client/appointments/`              | GET    | List own past appointments                     |
+| `/client/appointments/`              | POST   | Create a booking                               |
+| `/client/appointments/<booking_id>/` | DELETE | Cancel if still ongoing                        |
+| `/client/reviews/`                   | GET    | List own reviews                               |
+| `/client/reviews/<booking_id>/`      | POST   | Create a review for barber of this appointment |
+| `/client/reviews/<review_id>/`       | PATCH  | Edit own review                                |
+| `/client/reviews/<review_id>/`       | DELETE | Delete own review                              |
 
-| Endpoint | Method | Description |
-| -------- | ------ | ----------- |
+## Common Endpoints (`api/public/`)
+
+| Endpoint                                   | Method | Description                           |
+| ------------------------------------------ | ------ | ------------------------------------- |
+| `/public/barbers/`                         | GET    | List all barbers                      |
+| `/public/barber/<barber_id>/services/`     | GET    | List services by selected barber      |
+| `/public/barber/<barber_id>/availability/` | GET    | Get available time slots              |
+| `/public/barber/<barber_id>/profile/`      | GET    | Get barber profile, reviews, services |
+
+TODO: some way to set reminders (will think of this later)
