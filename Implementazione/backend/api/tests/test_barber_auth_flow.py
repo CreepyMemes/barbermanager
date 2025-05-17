@@ -5,6 +5,7 @@ from django.core import mail
 import re
 from api.models import User, Roles
 
+
 class BarberAuthFlowTest(APITestCase):
     """
     Tests for barber invitation and registration flows.
@@ -12,11 +13,13 @@ class BarberAuthFlowTest(APITestCase):
     def setUp(self):
         self.invite_url = reverse('invite_barber_email')
         self.login_url = reverse('login_user')
-        # register_barber URL will be generated dynamically as it requires uid and token
+        self.register_url = 'register_barber'
 
-        # Create admin user to authenticate invite requests
+        # User data for admin
         self.admin_username = 'root'
         self.admin_password = 'AdminPass123!'
+
+        # Create admin user to authenticate invite requests
         self.admin = User.objects.create_user(
             username=self.admin_username,
             email=None,
@@ -62,7 +65,7 @@ class BarberAuthFlowTest(APITestCase):
 
         self.assertEqual(response.data['detail'], 'Barber invited successfully.')
         
-        register_url = reverse('register_barber', kwargs={'uidb64': uid, 'token': token})
+        register_url = reverse(self.register_url, kwargs={'uidb64': uid, 'token': token})
 
         data = {'username': 'newbarbertest', 'password': 'BarberPass123!'}
         response = self.client.post(register_url, data, format='json')
@@ -85,7 +88,7 @@ class BarberAuthFlowTest(APITestCase):
 
         self.assertEqual(response.data['detail'], 'Barber invited successfully.')
         
-        register_url = reverse('register_barber', kwargs={'uidb64': 'invalid-uid', 'token': token})
+        register_url = reverse(self.register_url, kwargs={'uidb64': 'invalid-uid', 'token': token})
 
         data = {'username': 'newbarbertest', 'password': 'BarberPass123!'}
         response = self.client.post(register_url, data, format='json')
@@ -102,7 +105,7 @@ class BarberAuthFlowTest(APITestCase):
 
         self.assertEqual(response.data['detail'], 'Barber invited successfully.')
         
-        register_url = reverse('register_barber', kwargs={'uidb64': uid, 'token': 'invalid-token'})
+        register_url = reverse(self.register_url, kwargs={'uidb64': uid, 'token': 'invalid-token'})
 
         data = {'username': 'newbarbertest', 'password': 'BarberPass123!'}
         response = self.client.post(register_url, data, format='json')

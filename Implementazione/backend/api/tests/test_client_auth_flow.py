@@ -12,7 +12,7 @@ class AuthFlowTest(APITestCase):
     """
     def setUp(self):
         self.register_url = reverse('register_client')
-        self.verify_url_name = 'verify_client_email'
+        self.verify_url = 'verify_client_email'
         self.login_url = reverse('login_user')
         self.logout_url = reverse('logout_user')
 
@@ -56,7 +56,7 @@ class AuthFlowTest(APITestCase):
         user, uidb64, token = self.register_and_get_verification_link()
 
         # Verify email
-        verify_url = reverse(self.verify_url_name, kwargs={'uidb64': uidb64, 'token': token})
+        verify_url = reverse(self.verify_url, kwargs={'uidb64': uidb64, 'token': token})
         verify_response = self.client.get(verify_url)
         self.assertEqual(verify_response.status_code, status.HTTP_200_OK)
         self.assertIn('detail', verify_response.data)
@@ -91,7 +91,7 @@ class AuthFlowTest(APITestCase):
         """
         Verify email with invalid uid/token returns error.
         """
-        url = reverse(self.verify_url_name, kwargs={'uidb64': 'invalid-uid', 'token': 'wrong-token'})
+        url = reverse(self.verify_url, kwargs={'uidb64': 'invalid-uid', 'token': 'wrong-token'})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data.get('detail'), 'Invalid verification link.')
@@ -102,7 +102,7 @@ class AuthFlowTest(APITestCase):
         Verify email with expired or wrong token returns error.
         """
         user, uidb64, token = self.register_and_get_verification_link()
-        url = reverse(self.verify_url_name, kwargs={'uidb64': uidb64, 'token': 'wrong-token'})
+        url = reverse(self.verify_url, kwargs={'uidb64': uidb64, 'token': 'wrong-token'})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data.get('detail'), 'Invalid or expired token.')
@@ -124,7 +124,7 @@ class AuthFlowTest(APITestCase):
         Login fails with incorrect password.
         """
         user, uidb64, token = self.register_and_get_verification_link(email='wrongcred@example.com', username='wrongcred')
-        verify_url = reverse(self.verify_url_name, kwargs={'uidb64': uidb64, 'token': token})
+        verify_url = reverse(self.verify_url, kwargs={'uidb64': uidb64, 'token': token})
         self.client.get(verify_url)
         user.refresh_from_db()
 
@@ -139,7 +139,7 @@ class AuthFlowTest(APITestCase):
         Logout fails if refresh token not provided.
         """
         user, uidb64, token = self.register_and_get_verification_link(email='logoutfail@example.com', username='logoutfail')
-        verify_url = reverse(self.verify_url_name, kwargs={'uidb64': uidb64, 'token': token})
+        verify_url = reverse(self.verify_url, kwargs={'uidb64': uidb64, 'token': token})
         self.client.get(verify_url)
         user.refresh_from_db()
 
@@ -158,7 +158,7 @@ class AuthFlowTest(APITestCase):
         Logout fails with invalid refresh token.
         """
         user, uidb64, token = self.register_and_get_verification_link(email='logoutinvalid@example.com', username='logoutinvalid')
-        verify_url = reverse(self.verify_url_name, kwargs={'uidb64': uidb64, 'token': token})
+        verify_url = reverse(self.verify_url, kwargs={'uidb64': uidb64, 'token': token})
         self.client.get(verify_url)
         user.refresh_from_db()
 
