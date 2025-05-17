@@ -25,12 +25,12 @@ class UserManager(BaseUserManager):
     def create_user(self, username, email=None, password=None, **extra_fields):
         
         if not username:
-            raise ValueError({'error': 'Username is required'})
+            raise ValueError('Username is required')
         
         role = extra_fields.get('role', Roles.CLIENT.value)
 
         if role != Roles.ADMIN.value and not email:
-            raise ValueError({'error': 'Email is required for non-admin users'})
+            raise ValueError('Email is required for non-admin users')
 
         if email:
             email = self.normalize_email(email)
@@ -49,9 +49,10 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault('role', Roles.ADMIN.value)
 
         if not username:
-            raise ValueError({'error': 'Superuser must have a username'})
+            raise ValueError('Superuser must have a username')
+        
         if extra_fields.get('role') != Roles.ADMIN.value:
-            raise ValueError({'error': 'Superuser must have role=ADMIN'})
+            raise ValueError('Superuser must have role=ADMIN')
         
         user = self.create_user(username=username, email=None, password=password, **extra_fields)
         
@@ -79,14 +80,8 @@ class User(AbstractUser):
             )
         ]
 
-    def is_client(self):
-        return self.role == Roles.CLIENT.value
-
-    def is_barber(self):
-        return self.role == Roles.BARBER.value
-
-    def is_admin(self):
-        return self.role == Roles.ADMIN.value
+    def get_role(self):
+        return self.role
 
 
 class Client(User):
@@ -95,10 +90,11 @@ class Client(User):
     They must provide a valid email and username during registration.
     """
     def save(self, *args, **kwargs):
-        self.role = Roles.CLIENT.value
+        if not self.pk:
+            self.role = Roles.CLIENT.value
 
         if not self.email:
-            raise ValueError({'error': 'Client must have an email'})
+            raise ValueError('Client must have an email')
         
         super().save(*args, **kwargs)
 
@@ -113,10 +109,11 @@ class Barber(User):
     providing a username and password, email is set by admin invitation.
     """
     def save(self, *args, **kwargs):
-        self.role = Roles.BARBER.value
+        if not self.pk:
+            self.role = Roles.BARBER.value
 
         if not self.email:
-            raise ValueError({'error': 'Barber must have an email'})
+            raise ValueError('Barber must have an email')
         
         super().save(*args, **kwargs)
 
@@ -131,7 +128,9 @@ class Admin(User):
     They are granted full permissions (staff and superuser) and do not require an email.
     """
     def save(self, *args, **kwargs):
-        self.role = Roles.ADMIN.value
+        if not self.pk:
+            self.role = Roles.ADMIN.value
+
         self.is_staff = True
         self.is_superuser = True
 
