@@ -22,6 +22,7 @@ from ..serializers import (
     ClientRegisterSerializer,
     LoginSerializer,
     BarberRegisterSerializer,
+    GetUserSerializer,
 )
 
 
@@ -48,31 +49,6 @@ def register_client(request):
         return Response({'detail': 'Client registered, check your email to verify.'}, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['GET'])
-@permission_classes([AllowAny])
-@authentication_classes([]) 
-def verify_client(request, uidb64, token):
-    """
-    Verifies client account from confirmation email link.
-    """
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        client = User.objects.get(pk=uid, role='CLIENT')
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        return Response({'detail': 'Invalid verification link.'}, status=status.HTTP_400_BAD_REQUEST)
-
-    if not default_token_generator.check_token(client, token):
-        return Response({'detail': 'Invalid or expired token.'}, status=status.HTTP_400_BAD_REQUEST)
-
-    if client.is_active:
-        return Response({'detail': 'Account already verified.'}, status=status.HTTP_400_BAD_REQUEST)
-    
-    client.is_active = True
-    client.save()
-
-    return Response({'detail': 'Email verified successfully.'})
 
 
 @api_view(['POST'])
@@ -102,6 +78,31 @@ def register_barber(request, uidb64, token):
         return Response({'detail': 'Barber registered and account activated.'})
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+@authentication_classes([]) 
+def verify_client(request, uidb64, token):
+    """
+    Verifies client account from confirmation email link.
+    """
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        client = User.objects.get(pk=uid, role='CLIENT')
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        return Response({'detail': 'Invalid verification link.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if not default_token_generator.check_token(client, token):
+        return Response({'detail': 'Invalid or expired token.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if client.is_active:
+        return Response({'detail': 'Account already verified.'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    client.is_active = True
+    client.save()
+
+    return Response({'detail': 'Email verified successfully.'})
 
 
 @api_view(['POST'])
@@ -247,3 +248,13 @@ def refresh_token(request):
         'expires_in': int(api_settings.ACCESS_TOKEN_LIFETIME.total_seconds()),
         'token_type': 'Bearer',
     }, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user(request):
+    """
+    Return the authenticated user's information.
+    """
+    serializer = GetUserSerializer(request.user)
+    return Response(serializer.data)
