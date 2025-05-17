@@ -4,5 +4,5 @@ from ..views.admin import (
 )
 
 urlpatterns = [
-    path('invite-barber/', invite_barber, name='invite_barber'),
+    path('barber/', invite_barber, name='invite_barber'),
 ]
