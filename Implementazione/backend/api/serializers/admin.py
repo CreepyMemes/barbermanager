@@ -11,12 +11,7 @@ class BarberInviteSerializer(serializers.Serializer):
     Admin only: Invites a barber, accepts only email.
     """
     email = serializers.EmailField()
-
-    class Meta:
-        model = Barber
-        fields = ['email']
     
-
     def validate_email(self, email):
         if User.objects.filter(email=email).exists():
             raise serializers.ValidationError("A user with this email already exists.")
