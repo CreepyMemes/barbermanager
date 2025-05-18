@@ -1,19 +1,13 @@
 from rest_framework import serializers
-from ..models import User, Barber
+from ..models import Barber
+from ..utils import EmailValidationMixin
 
 
-class BarberInviteSerializer(serializers.Serializer):
+class BarberInviteSerializer(EmailValidationMixin, serializers.Serializer):
     """
     Admin only: Invites a barber, accepts only email.
     """
-    email = serializers.EmailField()
-    
-    def validate_email(self, email):
-        if User.objects.filter(email=email).exists():
-            raise serializers.ValidationError("A user with this email already exists.")
-        
-        return email
-    
+    email = serializers.EmailField(required=True)
 
     def create(self, validated_data):
         email = validated_data.get('email')

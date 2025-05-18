@@ -9,13 +9,14 @@ from rest_framework import serializers
 from ..models import User, Client
 from ..utils import (
     get_user_from_uid_token, 
-    PasswordValidationMixin, 
     UsernameValidationMixin,
+    EmailValidationMixin, 
+    PasswordValidationMixin,
     UIDTokenValidationSerializer,
 )
 
 
-class ClientRegisterSerializer(PasswordValidationMixin, UsernameValidationMixin, serializers.Serializer):
+class ClientRegisterSerializer(UsernameValidationMixin, EmailValidationMixin, PasswordValidationMixin, serializers.Serializer):
     """
     Register a client. Sends a confirmation email.
     Client must provide valid username and password
@@ -23,12 +24,6 @@ class ClientRegisterSerializer(PasswordValidationMixin, UsernameValidationMixin,
     email = serializers.EmailField(required=True)
     password = serializers.CharField(required=True, write_only=True)
     username = serializers.CharField(required=True)
-    
-    def validate_email(self, email):
-        if User.objects.filter(email=email).exists():
-            raise serializers.ValidationError("A user with this email already exists.")
-        
-        return email
 
     def create(self, validated_data):
         email = validated_data.get('email')
@@ -46,7 +41,7 @@ class ClientRegisterSerializer(PasswordValidationMixin, UsernameValidationMixin,
         return client
 
 
-class BarberRegisterSerializer(PasswordValidationMixin, UsernameValidationMixin, serializers.Serializer):
+class BarberRegisterSerializer(UsernameValidationMixin, PasswordValidationMixin, serializers.Serializer):
     """
     Barber completes registration via invite link. Only sets username and password.
     """

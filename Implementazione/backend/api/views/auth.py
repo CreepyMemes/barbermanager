@@ -105,7 +105,7 @@ def request_password_reset(request):
     serializer = PasswordResetRequestSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     user = serializer.get_user()
-  
+
     if user: # Fail silently for security
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
