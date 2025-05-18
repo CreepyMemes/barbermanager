@@ -33,7 +33,7 @@ class BarberAuthFlowTest(APITestCase):
         Helper to authenticate admin
         """
         response = self.client.post(self.login_url, {'username': self.admin_username, 'password': self.admin_password}, format='json')
-        token = response.data['token']['access_token']
+        token = response.data.get('token')['access_token']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
 
 
@@ -47,7 +47,7 @@ class BarberAuthFlowTest(APITestCase):
         response = self.client.post(self.invite_url, data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data['detail'], 'Barber invited successfully.')
+        self.assertEqual(response.data.get('detail'), 'Barber invited successfully.')
     
         # Dynamically get the URL prefix without uid/token
         url_prefix = reverse(self.register_url, kwargs={'uidb64': 'UIDPLACEHOLDER', 'token': 'TOKENPLACEHOLDER'})
@@ -69,15 +69,15 @@ class BarberAuthFlowTest(APITestCase):
         email = 'registerbarber@example.com'
         response, uid, token = self.invite_barber(email)
 
-        self.assertEqual(response.data['detail'], 'Barber invited successfully.')
+        self.assertEqual(response.data.get('detail'), 'Barber invited successfully.')
         
         register_url = reverse(self.register_url, kwargs={'uidb64': uid, 'token': token})
 
         data = {'username': 'newbarbertest', 'password': 'BarberPass123!'}
         response = self.client.post(register_url, data, format='json')
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['detail'], 'Barber registered and account activated.')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data.get('detail'), 'Barber registered and account activated.')
 
         # Check user created and active with correct role
         user = User.objects.filter(email=email).first()
@@ -92,7 +92,7 @@ class BarberAuthFlowTest(APITestCase):
         """
         response, uid, token = self.invite_barber('invaliduid@example.com')
 
-        self.assertEqual(response.data['detail'], 'Barber invited successfully.')
+        self.assertEqual(response.data.get('detail'), 'Barber invited successfully.')
         
         register_url = reverse(self.register_url, kwargs={'uidb64': 'invalid-uid', 'token': token})
 
@@ -100,7 +100,7 @@ class BarberAuthFlowTest(APITestCase):
         response = self.client.post(register_url, data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data['detail'], 'Invalid invitation link.')
+        self.assertEqual(response.data.get('detail'), 'Invalid link.')
 
 
     def test_register_barber_invalid_token(self):
@@ -109,7 +109,7 @@ class BarberAuthFlowTest(APITestCase):
         """
         response, uid, token = self.invite_barber('invalidtoken@example.com')
 
-        self.assertEqual(response.data['detail'], 'Barber invited successfully.')
+        self.assertEqual(response.data.get('detail'), 'Barber invited successfully.')
         
         register_url = reverse(self.register_url, kwargs={'uidb64': uid, 'token': 'invalid-token'})
 
@@ -117,7 +117,7 @@ class BarberAuthFlowTest(APITestCase):
         response = self.client.post(register_url, data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data['detail'], 'Invalid or expired token.')
+        self.assertEqual(response.data.get('detail'), 'Invalid or expired token.')
 
 
     def test_invite_barber_already_regsitered(self):

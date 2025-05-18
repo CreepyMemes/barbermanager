@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
 from django.conf import settings
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -14,6 +14,7 @@ from ..utils import(
 )
 from ..serializers import (
     ClientRegisterSerializer,
+    VerifyClientEmailSerializer,
     LoginSerializer,
     BarberRegisterSerializer,
     LogoutSerializer,
@@ -52,23 +53,11 @@ def register_barber(request, uidb64, token):
     """
     Barber completes registration via invite link by setting username and password.
     """
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        barber = User.objects.get(pk=uid, role='BARBER')
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        return Response({'detail': 'Invalid invitation link.'}, status=status.HTTP_400_BAD_REQUEST)
-
-    if not default_token_generator.check_token(barber, token):
-        return Response({'detail': 'Invalid or expired token.'}, status=status.HTTP_400_BAD_REQUEST)
-    
-    if barber.is_active:
-        return Response({'detail': 'Account already registered.'}, status=status.HTTP_400_BAD_REQUEST)
-    
-    serializer = BarberRegisterSerializer(data=request.data, context={'barber': barber})
+    serializer = BarberRegisterSerializer(data=request.data, context={'uidb64': uidb64, 'token': token})
     serializer.is_valid(raise_exception=True)
     serializer.save()
 
-    return Response({'detail': 'Barber registered and account activated.'})
+    return Response({'detail': 'Barber registered and account activated.'}, status=status.HTTP_201_CREATED)
     
 
 @api_view(['GET'])
@@ -78,22 +67,11 @@ def verify_client(request, uidb64, token):
     """
     Verifies client account from confirmation email link.
     """
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        client = User.objects.get(pk=uid, role='CLIENT')
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        return Response({'detail': 'Invalid verification link.'}, status=status.HTTP_400_BAD_REQUEST)
+    serializer = VerifyClientEmailSerializer(data=request.data, context={'uidb64': uidb64, 'token': token})
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
 
-    if not default_token_generator.check_token(client, token):
-        return Response({'detail': 'Invalid or expired token.'}, status=status.HTTP_400_BAD_REQUEST)
-
-    if client.is_active:
-        return Response({'detail': 'Account already verified.'}, status=status.HTTP_400_BAD_REQUEST)
-    
-    client.is_active = True
-    client.save()
-
-    return Response({'detail': 'Email verified successfully.'})
+    return Response({'detail': 'Email verified successfully.'}, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
@@ -138,7 +116,7 @@ def request_password_reset(request):
         token = default_token_generator.make_token(user)
         send_password_reset_email(user.email, uid, token, settings.FRONTEND_URL)
 
-    return Response({'detail': 'If this email is registered, a password reset email has been sent.'})
+    return Response({'detail': 'If this email is registered, a password reset email has been sent.'}, status.HTTP_200_OK)
 
 
 @api_view(['POST'])
@@ -148,21 +126,11 @@ def confirm_password_reset(request, uidb64, token):
     """
     Confirm password reset by setting new password.
     """
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid, is_active=True)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        return Response({'detail': 'Invalid reset link.'}, status=status.HTTP_400_BAD_REQUEST)
-
-    if not default_token_generator.check_token(user, token):
-        return Response({'detail': 'Invalid or expired token'}, status=status.HTTP_400_BAD_REQUEST)
-
-    serializer = PasswordResetConfirmSerializer(data=request.data, context={'user': user})
+    serializer = PasswordResetConfirmSerializer(data=request.data, context={'uidb64': uidb64, 'token': token})
     serializer.is_valid(raise_exception=True)
-    user.set_password(serializer.validated_data['password'])
-    user.save()
+    serializer.save()
 
-    return Response({'detail': 'Password has been reset successfully.'})
+    return Response({'detail': 'Password has been reset successfully.'}, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
@@ -184,4 +152,4 @@ def get_user(request):
     Return the authenticated user's information.
     """
     serializer = GetUserSerializer(request.user)
-    return Response(serializer.data)
+    return Response(serializer.data, status.HTTP_200_OK)
