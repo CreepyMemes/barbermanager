@@ -88,7 +88,16 @@ class PasswordValidationMixin:
     def validate_password(self, value):
         validate_password(value)
         return value
+    
 
+class EmailValidationMixin:
+    """
+    Utility mixin to handle common email validation checks
+    """
+    def validate_email(self, email):
+        if User.objects.filter(email=email).exists():
+            raise serializers.ValidationError("A user with this email already exists.")
+        return email
 
 class UsernameValidationMixin:
     """
