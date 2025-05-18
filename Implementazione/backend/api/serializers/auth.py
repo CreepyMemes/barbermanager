@@ -1,34 +1,21 @@
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
-from django.contrib.auth import get_user_model, authenticate
+from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.settings import api_settings
 from rest_framework.exceptions import PermissionDenied
 from rest_framework import serializers
-
-from ..models import Client
-from ..utils import get_user_from_uid_token
-
-
-User = get_user_model()
-
-
-class UsernamePasswordValidationMixin:
-    """
-    Utility mixin to handle common username and password validation checks
-    """
-    def validate_username(self, username):
-        if User.objects.filter(username=username).exists():
-            raise serializers.ValidationError("This username is already taken.")
-        return username
-
-    def validate_password(self, value):
-        validate_password(value)
-        return value
+from ..models import User, Client
+from ..utils import (
+    get_user_from_uid_token, 
+    PasswordValidationMixin, 
+    UsernameValidationMixin,
+    UIDTokenValidationSerializer,
+)
 
 
-class ClientRegisterSerializer(UsernamePasswordValidationMixin, serializers.Serializer):
+class ClientRegisterSerializer(PasswordValidationMixin, UsernameValidationMixin, serializers.Serializer):
     """
     Register a client. Sends a confirmation email.
     Client must provide valid username and password
@@ -59,7 +46,7 @@ class ClientRegisterSerializer(UsernamePasswordValidationMixin, serializers.Seri
         return client
 
 
-class BarberRegisterSerializer(UsernamePasswordValidationMixin, serializers.Serializer):
+class BarberRegisterSerializer(PasswordValidationMixin, UsernameValidationMixin, serializers.Serializer):
     """
     Barber completes registration via invite link. Only sets username and password.
     """
@@ -92,26 +79,6 @@ class BarberRegisterSerializer(UsernamePasswordValidationMixin, serializers.Seri
         barber.save()
 
         return barber
-    
-
-class UIDTokenValidationSerializer(serializers.Serializer):
-    """
-    Utility serializer that handlles token checks, from which other serializers inherit
-    """
-    def validate_uid_token(self):
-        uidb64 = self.context.get('uidb64')
-        token = self.context.get('token')
-
-        if not uidb64 or not token:
-            raise serializers.ValidationError("Missing uid or token.")
-
-        user = get_user_from_uid_token(uidb64, token)
-        return user
-
-    def validate(self, attrs):
-        user = self.validate_uid_token()
-        attrs['user'] = user
-        return attrs
 
 
 class VerifyClientEmailSerializer(UIDTokenValidationSerializer):
@@ -227,25 +194,12 @@ class PasswordResetRequestSerializer(serializers.Serializer):
             return  # Silently continue for security
         
 
-class PasswordResetConfirmSerializer(UIDTokenValidationSerializer):
+class PasswordResetConfirmSerializer(PasswordValidationMixin, UIDTokenValidationSerializer):
     """
     Resets a user's password after validating the request token and password
     """
     password = serializers.CharField(required=True, write_only=True)
 
-    def validate(self, attrs):
-        attrs = super().validate(attrs)
-
-        password = attrs.get('password')
-        user = attrs.get('user')
-
-        try:
-            validate_password(password=password, user=user)
-        except ValidationError as e:
-            raise serializers.ValidationError({'password': list(e.messages)})
-
-        return attrs
-    
     def save(self, **kwargs):
         user = self.validated_data['user']
         password = self.validated_data['password']

@@ -2,11 +2,10 @@ from django.urls import reverse
 from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import  force_str
-from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
-
-User = get_user_model()
+from ..models import User
 
 
 def send_client_verify_email(email, uid, token, domain):
@@ -80,3 +79,42 @@ def get_user_from_uid_token(uidb64, token, role=None):
         raise serializers.ValidationError("Invalid or expired token.")
 
     return user
+
+
+class PasswordValidationMixin:
+    """
+    Utility mixin to handle common password validation checks
+    """
+    def validate_password(self, value):
+        validate_password(value)
+        return value
+
+
+class UsernameValidationMixin:
+    """
+    Utility mixin to handle common username validation checks
+    """
+    def validate_username(self, username):
+        if User.objects.filter(username=username).exists():
+            raise serializers.ValidationError("This username is already taken.")
+        return username
+
+
+class UIDTokenValidationSerializer(serializers.Serializer):
+    """
+    Utility serializer that handlles token checks, from which other serializers inherit
+    """
+    def validate_uid_token(self):
+        uidb64 = self.context.get('uidb64')
+        token = self.context.get('token')
+
+        if not uidb64 or not token:
+            raise serializers.ValidationError("Missing uid or token.")
+
+        user = get_user_from_uid_token(uidb64, token)
+        return user
+
+    def validate(self, attrs):
+        user = self.validate_uid_token()
+        attrs['user'] = user
+        return attrs

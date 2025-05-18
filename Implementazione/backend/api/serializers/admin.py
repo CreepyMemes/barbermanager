@@ -1,9 +1,5 @@
-from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from ..models import Barber
-
-
-User = get_user_model()
+from ..models import User, Barber
 
 
 class BarberInviteSerializer(serializers.Serializer):

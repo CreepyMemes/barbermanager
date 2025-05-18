@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
@@ -7,7 +6,6 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
-
 from ..utils import(
     send_client_verify_email,
     send_password_reset_email,
@@ -23,9 +21,6 @@ from ..serializers import (
     RefreshTokenCustomSerializer,
     GetUserSerializer,
 )
-
-
-User = get_user_model()
 
 
 @api_view(['POST'])
