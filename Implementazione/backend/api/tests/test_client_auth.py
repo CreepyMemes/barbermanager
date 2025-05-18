@@ -43,9 +43,16 @@ class AuthFlowTest(APITestCase):
         user = User.objects.get(email=email)
         self.assertFalse(user.is_active)
 
-        # Extract uid and token from the verification email
-        match = re.search(r'/api/auth/verify/(?P<uidb64>[^/]+)/(?P<token>[^/]+)/', mail.outbox[0].body)
+        # Dynamically get the URL prefix without uid/token
+        url_prefix = reverse(self.verify_url, kwargs={'uidb64': 'UIDPLACEHOLDER', 'token': 'TOKENPLACEHOLDER'})
+
+        # Build regex by replacing the placeholders with regex groups
+        regex_pattern = url_prefix.replace('UIDPLACEHOLDER', r'(?P<uidb64>[^/]+)').replace('TOKENPLACEHOLDER', r'(?P<token>[^/]+)')
+
+        # Search in the email body
+        match = re.search(regex_pattern, mail.outbox[0].body)
         self.assertIsNotNone(match, "Verification link not found in email body")
+
         return user, match.group('uidb64'), match.group('token')
 
 
@@ -130,8 +137,8 @@ class AuthFlowTest(APITestCase):
 
         login_data = {'email': user.email, 'password': 'WrongPass!'}
         response = self.client.post(self.login_url, login_data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data.get('detail'), 'Invalid credentials')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.data.get('detail'), 'Invalid credentials.')
 
 
     def test_logout_fails_without_refresh_token(self):
@@ -150,7 +157,7 @@ class AuthFlowTest(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
         response = self.client.post(self.logout_url, {}, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data.get('refresh_token'), 'Refresh token is required.')
+        self.assertEqual(response.data.get('refresh_token')[0], 'This field is required.')
 
 
     def test_logout_fails_with_invalid_refresh_token(self):
@@ -169,4 +176,4 @@ class AuthFlowTest(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
         response = self.client.post(self.logout_url, {'refresh_token': 'invalid-token'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data.get('detail'), 'Invalid token or token already blacklisted.')
+        self.assertEqual(response.data.get('refresh_token')[0], 'Invalid or expired refresh token.')
