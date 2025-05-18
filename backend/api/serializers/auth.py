@@ -7,14 +7,28 @@ from rest_framework_simplejwt.settings import api_settings
 from rest_framework.exceptions import PermissionDenied
 from rest_framework import serializers
 
-from ..models import Client, Barber
+from ..models import Client
 from ..utils import get_user_from_uid_token
 
 
 User = get_user_model()
 
 
-class ClientRegisterSerializer(serializers.ModelSerializer):
+class UsernamePasswordValidationMixin:
+    """
+    Utility mixin to handle common username and password validation checks
+    """
+    def validate_username(self, username):
+        if User.objects.filter(username=username).exists():
+            raise serializers.ValidationError("This username is already taken.")
+        return username
+
+    def validate_password(self, value):
+        validate_password(value)
+        return value
+
+
+class ClientRegisterSerializer(UsernamePasswordValidationMixin, serializers.ModelSerializer):
     """
     Register a client. Sends a confirmation email.
     Client must provide valid username and password
@@ -27,22 +41,12 @@ class ClientRegisterSerializer(serializers.ModelSerializer):
         model = Client
         fields = ['email', 'username', 'password']
 
-    def validate_username(self, username):
-        if User.objects.filter(username=username).exists():
-            raise serializers.ValidationError("This username is already taken.")
-        
-        return username
     
     def validate_email(self, email):
         if User.objects.filter(email=email).exists():
             raise serializers.ValidationError("A user with this email already exists.")
         
         return email
-
-
-    def validate_password(self, value):
-        validate_password(value)
-        return value
 
 
     def create(self, validated_data):
@@ -61,7 +65,7 @@ class ClientRegisterSerializer(serializers.ModelSerializer):
         return client
 
 
-class BarberRegisterSerializer(serializers.Serializer):
+class BarberRegisterSerializer(UsernamePasswordValidationMixin, serializers.Serializer):
     """
     Barber completes registration via invite link. Only sets username and password.
     """
@@ -83,16 +87,6 @@ class BarberRegisterSerializer(serializers.Serializer):
 
         return attrs
     
-    def validate_password(self, value):
-        validate_password(value)
-        return value
-
-
-    def validate_username(self, username):
-        if User.objects.filter(username=username).exists():
-            raise serializers.ValidationError("This username is already taken.")
-        return username
-
 
     def create(self, validated_data):
         barber = self.validated_data['barber']
@@ -107,26 +101,44 @@ class BarberRegisterSerializer(serializers.Serializer):
         return barber
     
 
-class VerifyClientEmailSerializer(serializers.Serializer):
-    
-    def validate(self, attrs):
+class UIDTokenValidationSerializer(serializers.Serializer):
+    """
+    Utility serializer that handlles token checks, from which other serializers inherit
+    """
+    def validate_uid_token(self):
         uidb64 = self.context.get('uidb64')
         token = self.context.get('token')
 
         if not uidb64 or not token:
             raise serializers.ValidationError("Missing uid or token.")
 
-        client = get_user_from_uid_token(uidb64, token)
-        attrs['client'] = client
+        user = get_user_from_uid_token(uidb64, token)
+        return user
+
+
+    def validate(self, attrs):
+        user = self.validate_uid_token()
+        attrs['user'] = user
+        return attrs
+
+
+class VerifyClientEmailSerializer(UIDTokenValidationSerializer):
+    """
+    Handles token validations when a client attempts to verify their account
+    """
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        client = attrs.get('user')
 
         if client.is_active:
             raise serializers.ValidationError('Account already verified.')
 
         return attrs
     
+
     def save(self, **kwargs):
-        client = self.validated_data['client']
-        
+        client = self.validated_data['user']
+
         client.is_active = True
         client.save()
 
@@ -187,7 +199,6 @@ class LoginSerializer(serializers.Serializer):
         }
 
 
-
 class LogoutSerializer(serializers.Serializer):
     """
     Logout by blacklisting entered refresh token
@@ -225,19 +236,14 @@ class PasswordResetRequestSerializer(serializers.Serializer):
             return  # Silently continue for security
         
 
-class PasswordResetConfirmSerializer(serializers.Serializer):
+class PasswordResetConfirmSerializer(UIDTokenValidationSerializer):
     password = serializers.CharField(required=True, write_only=True)
 
     def validate(self, attrs):
-        uidb64 = self.context.get('uidb64')
-        token = self.context.get('token')
+        attrs = super().validate(attrs)
+
         password = attrs.get('password')
-
-        if not uidb64 or not token:
-            raise serializers.ValidationError("Missing uid or token.")
-
-        user = get_user_from_uid_token(uidb64, token)
-        attrs['user'] = user
+        user = attrs.get('user')
 
         try:
             validate_password(password=password, user=user)
