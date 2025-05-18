@@ -6,11 +6,10 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 
+from ..permissions import IsAdminRole
 from ..utils import(
     send_barber_invite_email,
 )
-
-from ..permissions import IsAdminRole
 from ..serializers import (
     BarberInviteSerializer,
 )
@@ -23,15 +22,12 @@ def invite_barber(request):
     Admin-only: Invite a barber by email. Sends a link with encoded email (uid).
     """
     serializer = BarberInviteSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    barber = serializer.save()
 
-    if serializer.is_valid():
-        barber = serializer.save()
+    uid = urlsafe_base64_encode(force_bytes(barber.pk))
+    token = default_token_generator.make_token(barber)
 
-        uid = urlsafe_base64_encode(force_bytes(barber.pk))
-        token = default_token_generator.make_token(barber)
+    send_barber_invite_email(barber.email, uid, token, settings.FRONTEND_URL)
 
-        send_barber_invite_email(barber.email, uid, token, settings.FRONTEND_URL)
-
-        return Response({'detail': 'Barber invited successfully.'}, status=status.HTTP_201_CREATED)
-
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response({'detail': 'Barber invited successfully.'}, status=status.HTTP_201_CREATED)
