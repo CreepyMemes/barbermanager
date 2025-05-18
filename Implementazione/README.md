@@ -28,9 +28,9 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
   - [API Endpoint Guide \[TODO\]](#api-endpoint-guide-todo)
     - [Auth Endpoints (`api/auth/`)](#auth-endpoints-apiauth)
     - [Admin Endpoints (`api/admin/`)](#admin-endpoints-apiadmin)
-  - [Barber Endpoints (`api/barber/`)](#barber-endpoints-apibarber)
-  - [Client Endpoints (`api/client/`)](#client-endpoints-apiclient)
-  - [Common Endpoints (`api/public/`)](#common-endpoints-apipublic)
+    - [Barber Endpoints (`api/barber/`)](#barber-endpoints-apibarber)
+    - [Client Endpoints (`api/client/`)](#client-endpoints-apiclient)
+    - [Common Endpoints (`api/public/`)](#common-endpoints-apipublic)
 
 ## Requirements
 
@@ -184,7 +184,7 @@ api/
 | `/admin/availability/<barber_id>/` | POST   | Manage barber's availability slots   |        |
 | `/admin/stats/`                    | GET    | Generate general statistics          |        |
 
-## Barber Endpoints (`api/barber/`)
+### Barber Endpoints (`api/barber/`)
 
 | Endpoint                         | Method | Description                  | Status |
 | -------------------------------- | ------ | ---------------------------- | ------ |
@@ -195,7 +195,7 @@ api/
 | `/barber/reviews/`               | GET    | List reviews of own services |        |
 | `/barber/appointments/`          | GET    | View upcoming appointments   |        |
 
-## Client Endpoints (`api/client/`)
+### Client Endpoints (`api/client/`)
 
 | Endpoint                             | Method | Description                                    | Status |
 | ------------------------------------ | ------ | ---------------------------------------------- | ------ |
@@ -207,7 +207,7 @@ api/
 | `/client/reviews/<review_id>/`       | PATCH  | Edit own review                                |        |
 | `/client/reviews/<review_id>/`       | DELETE | Delete own review                              |        |
 
-## Common Endpoints (`api/public/`)
+### Common Endpoints (`api/public/`)
 
 | Endpoint                                   | Method | Description                           | Status |
 | ------------------------------------------ | ------ | ------------------------------------- | ------ |
