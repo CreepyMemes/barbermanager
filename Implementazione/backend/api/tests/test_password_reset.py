@@ -39,8 +39,14 @@ class PasswordResetTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('detail', response.data)
 
-        # Extract uid and token from the verification email
-        match = re.search(r'/api/auth/reset-password/(?P<uidb64>[^/]+)/(?P<token>[^/]+)/', mail.outbox[0].body)
+        # Dynamically get the URL prefix without uid/token
+        url_prefix = reverse(self.reset_confirm_url_name, kwargs={'uidb64': 'UIDPLACEHOLDER', 'token': 'TOKENPLACEHOLDER'})
+
+        # Build regex by replacing the placeholders with regex groups
+        regex_pattern = url_prefix.replace('UIDPLACEHOLDER', r'(?P<uidb64>[^/]+)').replace('TOKENPLACEHOLDER', r'(?P<token>[^/]+)')
+
+        # Search in the email body
+        match = re.search(regex_pattern, mail.outbox[0].body)
         self.assertIsNotNone(match, "Registration link not found in email body")
 
 

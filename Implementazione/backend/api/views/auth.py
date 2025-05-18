@@ -1,12 +1,8 @@
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth.password_validation import validate_password
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.conf import settings
-from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
-from rest_framework_simplejwt.serializers import TokenRefreshSerializer
-from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from rest_framework_simplejwt.settings import api_settings
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
@@ -22,6 +18,10 @@ from ..serializers import (
     ClientRegisterSerializer,
     LoginSerializer,
     BarberRegisterSerializer,
+    LogoutSerializer,
+    PasswordResetRequestSerializer,
+    PasswordResetConfirmSerializer,
+    RefreshTokenCustomSerializer,
     GetUserSerializer,
 )
 
@@ -37,18 +37,14 @@ def register_client(request):
     Client self registration. Creates inactive client and sends confirmation email.
     """
     serializer = ClientRegisterSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    client = serializer.save()
 
-    if serializer.is_valid():
-        client = serializer.save()
+    uid = urlsafe_base64_encode(force_bytes(client.pk))
+    token = default_token_generator.make_token(client)
+    send_client_verify_email(client.email, uid, token, settings.FRONTEND_URL)
 
-        uid = urlsafe_base64_encode(force_bytes(client.pk))
-        token = default_token_generator.make_token(client)
-
-        send_client_verify_email(client.email, uid, token, settings.FRONTEND_URL)
-
-        return Response({'detail': 'Client registered, check your email to verify.'}, status=status.HTTP_201_CREATED)
-
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response({'detail': 'Client registered, check your email to verify.'}, status=status.HTTP_201_CREATED)
 
 
 @api_view(['POST'])
@@ -70,15 +66,12 @@ def register_barber(request, uidb64, token):
     if barber.is_active:
         return Response({'detail': 'Account already registered.'}, status=status.HTTP_400_BAD_REQUEST)
     
-    
     serializer = BarberRegisterSerializer(data=request.data, context={'barber': barber})
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
 
-    if serializer.is_valid():
-        serializer.save()
-        return Response({'detail': 'Barber registered and account activated.'})
+    return Response({'detail': 'Barber registered and account activated.'})
     
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -115,38 +108,7 @@ def login_user(request):
     serializer = LoginSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 
-    email = serializer.validated_data.get('email')
-    username = serializer.validated_data.get('username')
-    password = serializer.validated_data['password']
-
-    identifier = username or email
-
-    user = authenticate(request, username=identifier, password=password)
-
-    if not user:
-        return Response({'detail': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
-
-    if not user.is_active:
-        return Response({'detail': 'Account inactive. Please verify your email.'}, status=status.HTTP_403_FORBIDDEN)
-
-    refresh = RefreshToken.for_user(user)
-
-    return Response({
-        'user': {
-            'id': user.id,
-            'email': user.email,
-            'username': user.username,
-            'role': user.role,
-        },
-        'token': {
-            'access_token': str(refresh.access_token),
-            'refresh_token': str(refresh),
-            'expires_in': int(api_settings.ACCESS_TOKEN_LIFETIME.total_seconds()),
-            'refresh_expires_in': int(api_settings.REFRESH_TOKEN_LIFETIME.total_seconds()),
-            'token_type': 'Bearer',
-        }
-
-    }, status=status.HTTP_200_OK)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
@@ -155,19 +117,12 @@ def logout_user(request):
     """
     Logout by blacklisting the refresh token.
     """
-    refresh_token = request.data.get('refresh_token')
-
-    if not refresh_token:
-        return Response({'refresh_token': 'Refresh token is required.'}, status=status.HTTP_400_BAD_REQUEST)
-
-    try:
-        token = RefreshToken(refresh_token)
-        token.blacklist()
-    except Exception as e:
-        return Response({'detail': 'Invalid token or token already blacklisted.'}, status=status.HTTP_400_BAD_REQUEST)
-
+    serializer = LogoutSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    
     return Response({'detail': 'Logout successful.'}, status=status.HTTP_200_OK)
-
+    
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -176,19 +131,14 @@ def request_password_reset(request):
     """
     Request password reset by email, sends reset email with token.
     """
-    email = request.data.get('email')
-    if not email:
-        return Response({'email': ['This field is required.']}, status=status.HTTP_400_BAD_REQUEST)
-
-    try:
-        user = User.objects.get(email=email, is_active=True)
-    except User.DoesNotExist:
-        return Response({'detail': 'If this email is registered, a password reset email has been sent.'})
-
-    uid = urlsafe_base64_encode(force_bytes(user.pk))
-    token = default_token_generator.make_token(user)
-
-    send_password_reset_email(user.email, uid, token, settings.FRONTEND_URL)
+    serializer = PasswordResetRequestSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    user = serializer.get_user()
+  
+    if user: # Fail silently for security
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        send_password_reset_email(user.email, uid, token, settings.FRONTEND_URL)
 
     return Response({'detail': 'If this email is registered, a password reset email has been sent.'})
 
@@ -209,16 +159,9 @@ def confirm_password_reset(request, uidb64, token):
     if not default_token_generator.check_token(user, token):
         return Response({'detail': 'Invalid or expired token'}, status=status.HTTP_400_BAD_REQUEST)
 
-    new_password = request.data.get('password')
-    if not new_password:
-        return Response({'password': ['This field is required.']}, status=status.HTTP_400_BAD_REQUEST)
-    
-    try:
-        validate_password(new_password, user)
-    except Exception as e:
-        return Response({'password': list(e.messages)}, status=status.HTTP_400_BAD_REQUEST)
-
-    user.set_password(new_password)
+    serializer = PasswordResetConfirmSerializer(data=request.data, context={'user': user})
+    serializer.is_valid(raise_exception=True)
+    user.set_password(serializer.validated_data['password'])
     user.save()
 
     return Response({'detail': 'Password has been reset successfully.'})
@@ -231,23 +174,9 @@ def refresh_token(request):
     """
     Refresh the access token using a refresh token passed as 'refresh_token' in the request.
     """
-    refresh_token = request.data.get('refresh_token')
-
-    if not refresh_token:
-        return Response({'refresh_token': ['This field is required.']}, status=status.HTTP_400_BAD_REQUEST)
-
-    serializer = TokenRefreshSerializer(data={'refresh': refresh_token})
-
-    try:
-        serializer.is_valid(raise_exception=True)
-    except TokenError as e:
-        return Response({'detail': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
-
-    return Response({
-        'access_token': serializer.validated_data['access'],
-        'expires_in': int(api_settings.ACCESS_TOKEN_LIFETIME.total_seconds()),
-        'token_type': 'Bearer',
-    }, status=status.HTTP_200_OK)
+    serializer = RefreshTokenCustomSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    return Response(serializer.get_response(), status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
