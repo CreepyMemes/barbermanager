@@ -1,7 +1,23 @@
 
 What to implement:
 
-for frontend:
+1. for backend:
+- study database design and make an ER and EER diagrams
+- study rest api design and improve the ones i made (in README.md)
+- implement models
+- implement serializers for views
+- implement views
+...
+
+2. for architecture:
+- una volta finita la parte backend correggi i diagrammi di casi d'uso
+- rifai i diagrammi di classi di analisi
+- correggi i diagrammi di sequenza e i rispettivi di attivita
+- fai i diagrammi di classi di progettazione
+...
+
+
+3. for frontend:
 - register page,
 - login page,
 - verify-email send GET request to verify then redirect to login page,
@@ -12,16 +28,4 @@ for frontend:
 - client, barber and admin pages
 - logout button
 - add barber in admin user page
-...
-
-for backend:
-1. study database design and make a diagram
-2. study rest api design and improve the ones i made
-3. implement models
-4. implement serializers for views
-5. implement views
-...
-
-for architecture:
-- diagramma di classi di progettazione
 ...
