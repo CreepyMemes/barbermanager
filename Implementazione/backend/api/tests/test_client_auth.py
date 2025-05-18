@@ -67,7 +67,7 @@ class AuthFlowTest(APITestCase):
         verify_response = self.client.get(verify_url)
         self.assertEqual(verify_response.status_code, status.HTTP_200_OK)
         self.assertIn('detail', verify_response.data)
-        self.assertEqual(verify_response.data['detail'], 'Email verified successfully.')
+        self.assertEqual(verify_response.data.get('detail'), 'Email verified successfully.')
 
         # User should now be active
         user.refresh_from_db()
@@ -78,8 +78,8 @@ class AuthFlowTest(APITestCase):
         login_response = self.client.post(self.login_url, login_data, format='json')
         self.assertEqual(login_response.status_code, status.HTTP_200_OK)
         self.assertIn('token', login_response.data)
-        access_token = login_response.data['token']['access_token']
-        refresh_token = login_response.data['token']['refresh_token']
+        access_token = login_response.data.get('token')['access_token']
+        refresh_token = login_response.data.get('token')['refresh_token']
 
         # Login with email
         login_data_email = {'email': user.email, 'password': self.user_password}
@@ -101,7 +101,7 @@ class AuthFlowTest(APITestCase):
         url = reverse(self.verify_url, kwargs={'uidb64': 'invalid-uid', 'token': 'wrong-token'})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data.get('detail'), 'Invalid verification link.')
+        self.assertEqual(response.data.get('detail'), 'Invalid link.')
 
 
     def test_verify_with_expired_or_wrong_token(self):
@@ -152,7 +152,7 @@ class AuthFlowTest(APITestCase):
 
         login_data = {'email': user.email, 'password': self.user_password}
         login_response = self.client.post(self.login_url, login_data, format='json')
-        access_token = login_response.data['token']['access_token']
+        access_token = login_response.data.get('token')['access_token']
 
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
         response = self.client.post(self.logout_url, {}, format='json')
@@ -171,7 +171,7 @@ class AuthFlowTest(APITestCase):
 
         login_data = {'email': user.email, 'password': self.user_password}
         login_response = self.client.post(self.login_url, login_data, format='json')
-        access_token = login_response.data['token']['access_token']
+        access_token = login_response.data.get('token')['access_token']
 
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
         response = self.client.post(self.logout_url, {'refresh_token': 'invalid-token'}, format='json')

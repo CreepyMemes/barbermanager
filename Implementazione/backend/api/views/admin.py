@@ -6,8 +6,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 
-from ..permissions import IsAdminRole
-from ..utils import(
+from ..utils import (
+    IsAdminRole,
     send_barber_invite_email,
 )
 from ..serializers import (

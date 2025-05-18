@@ -111,7 +111,7 @@ class PasswordResetTest(APITestCase):
         response = self.client.post(url, {'password': 'SomePass123!'}, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data.get('detail'), 'Invalid reset link.')
+        self.assertEqual(response.data.get('detail'), 'Invalid link.')
 
 
     def test_confirm_password_reset_invalid_token(self):
@@ -122,9 +122,9 @@ class PasswordResetTest(APITestCase):
 
         url = reverse(self.reset_confirm_url_name, kwargs={'uidb64': uidb64, 'token': 'invalidtoken'})
         response = self.client.post(url, {'password': 'SomePass123!'}, format='json')
-
+ 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data.get('detail'), 'Invalid or expired token')
+        self.assertEqual(response.data.get('detail'), 'Invalid or expired token.')
 
 
     def test_confirm_password_reset_invalid_password(self):

@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import get_user_model, authenticate
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
@@ -7,6 +8,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework import serializers
 
 from ..models import Client, Barber
+from ..utils import get_user_from_uid_token
 
 
 User = get_user_model()
@@ -66,11 +68,21 @@ class BarberRegisterSerializer(serializers.Serializer):
     username = serializers.CharField(required=True)
     password = serializers.CharField(required=True, write_only=True)
 
-    class Meta:
-        model = Barber
-        fields = ['username', 'password']
+    def validate(self, attrs):
+        uidb64 = self.context.get('uidb64')
+        token = self.context.get('token')
 
+        if not uidb64 or not token:
+            raise serializers.ValidationError("Missing uid or token.")
+        
+        barber = get_user_from_uid_token(uidb64, token)
+        attrs['barber'] = barber
 
+        if barber.is_active:
+            raise serializers.ValidationError('Account already registered.')
+
+        return attrs
+    
     def validate_password(self, value):
         validate_password(value)
         return value
@@ -83,16 +95,42 @@ class BarberRegisterSerializer(serializers.Serializer):
 
 
     def create(self, validated_data):
+        barber = self.validated_data['barber']
         password = validated_data.get('password')
         username = validated_data.get('username')
 
-        barber = self.context['barber']
         barber.username = username
         barber.set_password(password)
         barber.is_active = True
         barber.save()
 
         return barber
+    
+
+class VerifyClientEmailSerializer(serializers.Serializer):
+    
+    def validate(self, attrs):
+        uidb64 = self.context.get('uidb64')
+        token = self.context.get('token')
+
+        if not uidb64 or not token:
+            raise serializers.ValidationError("Missing uid or token.")
+
+        client = get_user_from_uid_token(uidb64, token)
+        attrs['client'] = client
+
+        if client.is_active:
+            raise serializers.ValidationError('Account already verified.')
+
+        return attrs
+    
+    def save(self, **kwargs):
+        client = self.validated_data['client']
+        
+        client.is_active = True
+        client.save()
+
+        return client
     
 
 class LoginSerializer(serializers.Serializer):
@@ -190,13 +228,31 @@ class PasswordResetRequestSerializer(serializers.Serializer):
 class PasswordResetConfirmSerializer(serializers.Serializer):
     password = serializers.CharField(required=True, write_only=True)
 
-    def validate_password(self, value):
-        user = self.context.get('user')
+    def validate(self, attrs):
+        uidb64 = self.context.get('uidb64')
+        token = self.context.get('token')
+        password = attrs.get('password')
 
-        if user:
-            validate_password(value, user)
+        if not uidb64 or not token:
+            raise serializers.ValidationError("Missing uid or token.")
 
-        return value
+        user = get_user_from_uid_token(uidb64, token)
+        attrs['user'] = user
+
+        try:
+            validate_password(password=password, user=user)
+        except ValidationError as e:
+            raise serializers.ValidationError({'password': list(e.messages)})
+
+        return attrs
+    
+    def save(self, **kwargs):
+        user = self.validated_data['user']
+        password = self.validated_data['password']
+
+        user.set_password(password)
+        user.save()
+        return user
 
 
 class RefreshTokenCustomSerializer(TokenRefreshSerializer):
