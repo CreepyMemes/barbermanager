@@ -183,6 +183,7 @@ api/
 | `/admin/barber/<barber_id>/`       | DELETE | Remove a barber by ID                | ✅     |
 | `/admin/availability/<barber_id>/` | POST   | Manage barber's availability slots   |        |
 | `/admin/stats/`                    | GET    | Generate general statistics          |        |
+| `/admin/appointments/`             | GET    | View a list of all past appointments |        |
 
 ### Barber Endpoints (`api/barber/`)
 
