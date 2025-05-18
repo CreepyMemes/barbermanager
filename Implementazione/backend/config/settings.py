@@ -35,7 +35,7 @@ SITE_ID = 1
 
 # Custom authentication backend for logging with either email/pass or usrname/pass
 AUTHENTICATION_BACKENDS = [
-    'api.auth_backends.UsernameOrEmailBackend', 
+    'api.utils.UsernameOrEmailBackend', 
     'django.contrib.auth.backends.ModelBackend',
 ]
 
@@ -49,6 +49,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
+    'EXCEPTION_HANDLER': 'api.utils.customExceptionHandler',
 }
 
 
