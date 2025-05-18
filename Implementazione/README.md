@@ -158,59 +158,62 @@ api/
 └── public/
 ```
 
+- ✅ Implemented endpoint
+- 🧪 Implemented testcases
+
 ### Auth Endpoints (`api/auth/`)
 
-| Endpoint                                 | Method | Description                                     |
-| ---------------------------------------- | ------ | ----------------------------------------------- |
-| `/auth/register/`                        | POST   | Register a new client.                          |
-| `/auth/register/<uidb64>/<token>/`       | POST   | Register a barber via invitation email.         |
-| `/auth/verify/<uidb64>/<token>/`         | GET    | Verify a client's email address.                |
-| `/auth/me/`                              | GET    | Get the currently logged-in user's profile.     |
-| `/auth/login/`                           | POST   | Log in a user.                                  |
-| `/auth/logout/`                          | POST   | Log out the current user.                       |
-| `/auth/reset-password/`                  | POST   | Send password reset link via email.             |
-| `/auth/reset-password/<uidb64>/<token>/` | POST   | Confirm and apply password reset.               |
-| `/auth/refresh-token/`                   | POST   | Get a new access token using the refresh token. |
+| Endpoint                                 | Method | Description                                     | Status |
+| ---------------------------------------- | ------ | ----------------------------------------------- | ------ |
+| `/auth/register/`                        | POST   | Register a new client.                          | ✅ 🧪  |
+| `/auth/register/<uidb64>/<token>/`       | POST   | Register a barber after an invitation email.    | ✅ 🧪  |
+| `/auth/verify/<uidb64>/<token>/`         | GET    | Verify a client's email address.                | ✅ 🧪  |
+| `/auth/me/`                              | GET    | Get the currently logged-in user's profile.     | ✅ 🧪  |
+| `/auth/login/`                           | POST   | Log in a user.                                  | ✅ 🧪  |
+| `/auth/logout/`                          | POST   | Log out the current user                        | ✅ 🧪  |
+| `/auth/reset-password/`                  | POST   | Send password reset link via email.             | ✅ 🧪  |
+| `/auth/reset-password/<uidb64>/<token>/` | POST   | Confirm and apply password reset.               | ✅ 🧪  |
+| `/auth/refresh-token/`                   | POST   | Get a new access token using the refresh token. | ✅ 🧪  |
 
 ### Admin Endpoints (`api/admin/`)
 
-| Endpoint                           | Method | Description                          |
-| ---------------------------------- | ------ | ------------------------------------ |
-| `/admin/barber/`                   | POST   | Invite a barber through their email. |
-| `/admin/barber/<barber_id>/`       | DELETE | Remove barber                        |
-| `/admin/availability/<barber_id>/` | POST   | Manage barber's availability slots   |
-| `/admin/stats/`                    | GET    | Generate general statistics          |
+| Endpoint                           | Method | Description                          | Status |
+| ---------------------------------- | ------ | ------------------------------------ | ------ |
+| `/admin/barber/`                   | POST   | Invite a barber through their email. | ✅ 🧪  |
+| `/admin/barber/<barber_id>/`       | DELETE | Remove a barber by ID                | ✅     |
+| `/admin/availability/<barber_id>/` | POST   | Manage barber's availability slots   |        |
+| `/admin/stats/`                    | GET    | Generate general statistics          |        |
 
 ## Barber Endpoints (`api/barber/`)
 
-| Endpoint                         | Method | Description                  |
-| -------------------------------- | ------ | ---------------------------- |
-| `/barber/services/`              | GET    | List own services            |
-| `/barber/services/`              | POST   | Add a service                |
-| `/barber/services/<service_id>/` | PATCH  | Edit a service               |
-| `/barber/services/<service_id>/` | DELETE | Remove a service             |
-| `/barber/reviews/`               | GET    | List reviews of own services |
-| `/barber/appointments/`          | GET    | View upcoming appointments   |
+| Endpoint                         | Method | Description                  | Status |
+| -------------------------------- | ------ | ---------------------------- | ------ |
+| `/barber/services/`              | GET    | List own services            |        |
+| `/barber/services/`              | POST   | Add a service                |        |
+| `/barber/services/<service_id>/` | PATCH  | Edit a service               |        |
+| `/barber/services/<service_id>/` | DELETE | Remove a service             |        |
+| `/barber/reviews/`               | GET    | List reviews of own services |        |
+| `/barber/appointments/`          | GET    | View upcoming appointments   |        |
 
 ## Client Endpoints (`api/client/`)
 
-| Endpoint                             | Method | Description                                    |
-| ------------------------------------ | ------ | ---------------------------------------------- |
-| `/client/appointments/`              | GET    | List own past appointments                     |
-| `/client/appointments/`              | POST   | Create a booking                               |
-| `/client/appointments/<booking_id>/` | DELETE | Cancel if still ongoing                        |
-| `/client/reviews/`                   | GET    | List own reviews                               |
-| `/client/reviews/<booking_id>/`      | POST   | Create a review for barber of this appointment |
-| `/client/reviews/<review_id>/`       | PATCH  | Edit own review                                |
-| `/client/reviews/<review_id>/`       | DELETE | Delete own review                              |
+| Endpoint                             | Method | Description                                    | Status |
+| ------------------------------------ | ------ | ---------------------------------------------- | ------ |
+| `/client/appointments/`              | GET    | List own past appointments                     |        |
+| `/client/appointments/`              | POST   | Create a booking                               |        |
+| `/client/appointments/<booking_id>/` | DELETE | Cancel if still ongoing                        |        |
+| `/client/reviews/`                   | GET    | List own reviews                               |        |
+| `/client/reviews/<booking_id>/`      | POST   | Create a review for barber of this appointment |        |
+| `/client/reviews/<review_id>/`       | PATCH  | Edit own review                                |        |
+| `/client/reviews/<review_id>/`       | DELETE | Delete own review                              |        |
 
 ## Common Endpoints (`api/public/`)
 
-| Endpoint                                   | Method | Description                           |
-| ------------------------------------------ | ------ | ------------------------------------- |
-| `/public/barbers/`                         | GET    | List all barbers                      |
-| `/public/barber/<barber_id>/services/`     | GET    | List services by selected barber      |
-| `/public/barber/<barber_id>/availability/` | GET    | Get available time slots              |
-| `/public/barber/<barber_id>/profile/`      | GET    | Get barber profile, reviews, services |
+| Endpoint                                   | Method | Description                           | Status |
+| ------------------------------------------ | ------ | ------------------------------------- | ------ |
+| `/public/barbers/`                         | GET    | List all barbers                      | ✅     |
+| `/public/barber/<barber_id>/services/`     | GET    | List services by selected barber      |        |
+| `/public/barber/<barber_id>/availability/` | GET    | Get available time slots              |        |
+| `/public/barber/<barber_id>/profile/`      | GET    | Get barber profile, reviews, services |        |
 
 TODO: some way to set reminders (will think of this later)

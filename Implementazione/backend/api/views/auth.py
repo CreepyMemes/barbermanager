@@ -11,13 +11,13 @@ from ..utils import(
     send_password_reset_email,
 )
 from ..serializers import (
-    ClientRegisterSerializer,
+    RegisterClientSerializer,
     VerifyClientEmailSerializer,
     LoginSerializer,
-    BarberRegisterSerializer,
+    RegisterBarberSerializer,
     LogoutSerializer,
-    PasswordResetRequestSerializer,
-    PasswordResetConfirmSerializer,
+    RequestPasswordResetSerializer,
+    ConfirmPasswordResetSerializer,
     RefreshTokenCustomSerializer,
     GetUserSerializer,
 )
@@ -30,7 +30,7 @@ def register_client(request):
     """
     Client self registration. Creates inactive client and sends confirmation email.
     """
-    serializer = ClientRegisterSerializer(data=request.data)
+    serializer = RegisterClientSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     client = serializer.save()
 
@@ -48,7 +48,7 @@ def register_barber(request, uidb64, token):
     """
     Barber completes registration via invite link by setting username and password.
     """
-    serializer = BarberRegisterSerializer(data=request.data, context={'uidb64': uidb64, 'token': token})
+    serializer = RegisterBarberSerializer(data=request.data, context={'uidb64': uidb64, 'token': token})
     serializer.is_valid(raise_exception=True)
     serializer.save()
 
@@ -102,7 +102,7 @@ def request_password_reset(request):
     """
     Request password reset by email, sends reset email with token.
     """
-    serializer = PasswordResetRequestSerializer(data=request.data)
+    serializer = RequestPasswordResetSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     user = serializer.get_user()
 
@@ -121,7 +121,7 @@ def confirm_password_reset(request, uidb64, token):
     """
     Confirm password reset by setting new password.
     """
-    serializer = PasswordResetConfirmSerializer(data=request.data, context={'uidb64': uidb64, 'token': token})
+    serializer = ConfirmPasswordResetSerializer(data=request.data, context={'uidb64': uidb64, 'token': token})
     serializer.is_valid(raise_exception=True)
     serializer.save()
 

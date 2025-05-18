@@ -1,5 +1,3 @@
-from django.core.exceptions import ValidationError
-from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
@@ -16,7 +14,7 @@ from ..utils import (
 )
 
 
-class ClientRegisterSerializer(UsernameValidationMixin, EmailValidationMixin, PasswordValidationMixin, serializers.Serializer):
+class RegisterClientSerializer(UsernameValidationMixin, EmailValidationMixin, PasswordValidationMixin, serializers.Serializer):
     """
     Register a client. Sends a confirmation email.
     Client must provide valid username and password
@@ -41,7 +39,7 @@ class ClientRegisterSerializer(UsernameValidationMixin, EmailValidationMixin, Pa
         return client
 
 
-class BarberRegisterSerializer(UsernameValidationMixin, PasswordValidationMixin, serializers.Serializer):
+class RegisterBarberSerializer(UsernameValidationMixin, PasswordValidationMixin, serializers.Serializer):
     """
     Barber completes registration via invite link. Only sets username and password.
     """
@@ -173,7 +171,7 @@ class LogoutSerializer(serializers.Serializer):
             raise serializers.ValidationError("Token blacklisting not supported.")
     
 
-class PasswordResetRequestSerializer(serializers.Serializer):
+class RequestPasswordResetSerializer(serializers.Serializer):
     """
     Request password reset by email associated to account
     """
@@ -189,7 +187,7 @@ class PasswordResetRequestSerializer(serializers.Serializer):
             return  # Silently continue for security
         
 
-class PasswordResetConfirmSerializer(PasswordValidationMixin, UIDTokenValidationSerializer):
+class ConfirmPasswordResetSerializer(PasswordValidationMixin, UIDTokenValidationSerializer):
     """
     Resets a user's password after validating the request token and password
     """
@@ -201,6 +199,7 @@ class PasswordResetConfirmSerializer(PasswordValidationMixin, UIDTokenValidation
 
         user.set_password(password)
         user.save()
+
         return user
 
 
@@ -218,6 +217,7 @@ class RefreshTokenCustomSerializer(TokenRefreshSerializer):
             validated_data = super().validate(attrs)
         except TokenError as e:
             raise serializers.ValidationError({'refresh_token': [str(e)]})
+        
         return validated_data
     
     def get_response(self):
