@@ -1,7 +1,7 @@
 from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
-from api.models import User, Client, Barber, Admin
+from api.models import Client, Barber, Admin
 from api.models import Roles
 
 
