@@ -28,7 +28,7 @@ class UsernamePasswordValidationMixin:
         return value
 
 
-class ClientRegisterSerializer(UsernamePasswordValidationMixin, serializers.ModelSerializer):
+class ClientRegisterSerializer(UsernamePasswordValidationMixin, serializers.Serializer):
     """
     Register a client. Sends a confirmation email.
     Client must provide valid username and password
@@ -36,18 +36,12 @@ class ClientRegisterSerializer(UsernamePasswordValidationMixin, serializers.Mode
     email = serializers.EmailField(required=True)
     password = serializers.CharField(required=True, write_only=True)
     username = serializers.CharField(required=True)
-
-    class Meta:
-        model = Client
-        fields = ['email', 'username', 'password']
-
     
     def validate_email(self, email):
         if User.objects.filter(email=email).exists():
             raise serializers.ValidationError("A user with this email already exists.")
         
         return email
-
 
     def create(self, validated_data):
         email = validated_data.get('email')
@@ -87,7 +81,6 @@ class BarberRegisterSerializer(UsernamePasswordValidationMixin, serializers.Seri
 
         return attrs
     
-
     def create(self, validated_data):
         barber = self.validated_data['barber']
         password = validated_data.get('password')
@@ -115,7 +108,6 @@ class UIDTokenValidationSerializer(serializers.Serializer):
         user = get_user_from_uid_token(uidb64, token)
         return user
 
-
     def validate(self, attrs):
         user = self.validate_uid_token()
         attrs['user'] = user
@@ -134,7 +126,6 @@ class VerifyClientEmailSerializer(UIDTokenValidationSerializer):
             raise serializers.ValidationError('Account already verified.')
 
         return attrs
-    
 
     def save(self, **kwargs):
         client = self.validated_data['user']
@@ -177,7 +168,7 @@ class LoginSerializer(serializers.Serializer):
         data['refresh'] = RefreshToken.for_user(user)
 
         return data
-    
+
     def to_representation(self, instance):
         user = instance['user']
         refresh = instance['refresh']
@@ -237,6 +228,9 @@ class PasswordResetRequestSerializer(serializers.Serializer):
         
 
 class PasswordResetConfirmSerializer(UIDTokenValidationSerializer):
+    """
+    Resets a user's password after validating the request token and password
+    """
     password = serializers.CharField(required=True, write_only=True)
 
     def validate(self, attrs):
@@ -292,3 +286,4 @@ class GetUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'role']
+        read_only_fields = fields 
