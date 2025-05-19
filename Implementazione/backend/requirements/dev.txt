@@ -1,0 +1,5 @@
+-r base.txt
+coverage==7.8.0
+django-extensions==4.1
+pydotplus==2.0.2
+pygraphviz==1.14

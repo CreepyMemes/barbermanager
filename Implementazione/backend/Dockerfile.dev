@@ -8,8 +8,9 @@ ENV PYTHONUNBUFFERED=1
 RUN apk add --no-cache build-base graphviz graphviz-dev
 RUN pip install --upgrade pip
 
-COPY requirements.txt ./
-RUN pip install -r requirements.txt
+COPY requirements/dev.txt requirements/base.txt /app/requirements/
+RUN pip install -r requirements/dev.txt
+ENV DJANGO_SETTINGS_MODULE=config.settings.dev
 
 COPY ./entrypoint.sh .
 RUN chmod +x ./entrypoint.sh
