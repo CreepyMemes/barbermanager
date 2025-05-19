@@ -25,3 +25,20 @@ What to implement:
 - logout button
 - add barber in admin user page
 ...
+
+
+
+# Workflow for Development
+- Use `docker-compose -f docker-compose.dev.yml up --build`
+- Code live reload works (because of volumes)
+- Access frontend on `localhost:3000`, backend on `localhost:8000`
+- Stop containers with `docker-compose -f docker-compose.dev.yml down`
+
+docker-compose -f docker-compose.dev.yml exec backend sh
+
+
+
+# Workflow for Production
+- SSH into your SBC or server
+- Pull latest code from GitHub `cd ~/babrbermanager && git pull`
+- Build and run containers: `docker-compose -f docker-compose.prod.yml up -d --build`
