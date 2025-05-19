@@ -83,13 +83,15 @@ class User(AbstractUser):
 
     def get_role(self):
         return self.role
-    
+
 
 class Admin(User):
     """
     Admins are created by the system using the `createsuperuser` command.
     They are granted full permissions (staff and superuser) and do not require an email.
     """
+    admin_code = models.CharField(max_length=20, blank=True, null=True)  # e.g. some internal admin code
+    
     def save(self, *args, **kwargs):
         if not self.pk:
             self.role = Roles.ADMIN.value
@@ -99,16 +101,14 @@ class Admin(User):
 
         super().save(*args, **kwargs)
 
-    class Meta:
-        verbose_name = 'Admin'
-        verbose_name_plural = 'Admins'
-
 
 class Client(User):
     """
     Clients are regular users who can register themselves via the API.
     They must provide a valid email and username during registration.
     """
+    phone_number = models.CharField(max_length=15, blank=True, null=True)  # Client-specific phone
+
     def save(self, *args, **kwargs):
         if not self.pk:
             self.role = Roles.CLIENT.value
@@ -118,16 +118,14 @@ class Client(User):
         
         super().save(*args, **kwargs)
 
-    class Meta:
-        verbose_name = 'Client'
-        verbose_name_plural = 'Clients'
-
 
 class Barber(User):
     """
     Barbers can only register if invited by an admin. They register by 
     providing a username and password, email is set by admin invitation.
     """
+    description = models.TextField(blank=True, null=True)
+
     def save(self, *args, **kwargs):
         if not self.pk:
             self.role = Roles.BARBER.value
@@ -136,7 +134,3 @@ class Barber(User):
             raise ValueError('Barber must have an email')
         
         super().save(*args, **kwargs)
-
-    class Meta:
-        verbose_name = 'Barber'
-        verbose_name_plural = 'Barbers'
