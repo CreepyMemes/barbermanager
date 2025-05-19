@@ -21,10 +21,12 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
     - [Run Migrations](#run-migrations)
     - [Create SuperUser](#create-superuser)
     - [Run test cases](#run-test-cases)
+    - [Check test case coverage](#check-test-case-coverage)
   - [Frontend Development (React + Vite)](#frontend-development-react--vite)
     - [Install npm Packages](#install-npm-packages)
   - [Troubleshooting](#troubleshooting)
   - [Resetting the Environment](#resetting-the-environment)
+  - [Entering the container shell from host machine](#entering-the-container-shell-from-host-machine)
   - [API Endpoint Guide \[TODO\]](#api-endpoint-guide-todo)
     - [Auth Endpoints (`api/auth/`)](#auth-endpoints-apiauth)
     - [Admin Endpoints (`api/admin/`)](#admin-endpoints-apiadmin)
@@ -106,6 +108,21 @@ python manage.py createsuperuser
 python manage.py test api
 ```
 
+### Check test case coverage
+
+This is a useful installed package that highlights which part of the codebase are being tested, helps with developing testcases
+
+```bash
+# to run
+coverage run --source="." manage.py test api
+
+# To check results, generates htmlconv find index.html
+coverage html
+
+# Or just print retults in terminal
+coverage report
+```
+
 ## Frontend Development (React + Vite)
 
 Vite provides automatic hot-reloading when frontend files are modified.
@@ -137,15 +154,15 @@ docker-compose down --volumes --remove-orphans
 docker-compose up --build
 ```
 
-To quickly enter the container shell from host machine
+## Entering the container shell from host machine
 
 ```bash
+# For the frontend docker container
 docker-compose exec -it frontend sh
-#or
+
+# Or for the backend one
 docker-compos exec -it backend sh
 ```
-
-This command removes all volumes and rebuilds everything from scratch, ensuring a clean development state.
 
 ## API Endpoint Guide [TODO]
 
