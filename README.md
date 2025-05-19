@@ -2,27 +2,31 @@
 
 <h1 align="center">BarberManager – Un software gestionale per barber shop</h2>
 
-### Descrizione
+# Descrizione
 
 L’obiettivo del sistema è digitalizzare le attività principali del salone, quali:
 
-- Gestione delle **prenotazioni**
-- Gestione dei **clienti**
-- Gestione dei **servizi offerti**
-- Gestione del **personale impiegato**
+- Gestione **account**
+- Registrazione **cliente**
+- Prenotazione **appuntamenti**
+- Gestione del **personale**
+- Area **amministrativa**
 
-Il sistema mira a migliorare l’esperienza sia per i clienti che per i professionisti del settore.
+## Gestione account
 
-Il salone è composto da un’area di accoglienza e trattamento, dove operano uno o più barbieri, ciascuno con turni lavorativi definiti.
+Gli utenti registrati nel sistema hanno possibilita di:
 
----
-
-### Registrazione Cliente
+- Accedere alla piattaforma inserendo le proprie credenziali
+- Recupero credenziali inserendo una nuova password tramite email
+- Nodificare ed eliminare il proprio account
+  
+## Registrazione Cliente
 
 I clienti possono registrarsi tramite l’applicazione, fornendo:
 
 - Dati personali
 - Indirizzo e-mail valido
+- Username unico
 - Password
 
 Una volta registrati, possono:
@@ -33,14 +37,12 @@ Una volta registrati, possono:
 - Lasciare **recensioni**
 - Aggiornare in qualsiasi momento i dati del proprio profilo
 
----
-
-### Prenotazione Servizi
+## Prenotazione Appuntamenti
 
 Attraverso la pagina di prenotazione, il cliente può:
 
-- Selezionare il **tipo di servizio**
 - Scegliere il **barbiere preferito**
+- Selezionare i  **servizi** che desidera da quelli offerti dal barbiere scelto
 - Indicare **data e orario** tra quelli disponibili
 
 Il sistema:
@@ -49,23 +51,17 @@ Il sistema:
 - Salva automaticamente la prenotazione
 - Rende la prenotazione visibile nel profilo del cliente
 
----
-
-### Gestione del Personale
+## Gestione del Personale
 
 Ogni barbiere ha accesso a un’**area riservata personale** da cui può:
 
 - Visualizzare in tempo reale gli **appuntamenti assegnati**
-- Aggiornare lo **stato delle prenotazioni**
-- Inserire **note o osservazioni** sui clienti per offrire un servizio più personalizzato
+- Aggiungere, modificare o eliminare i propri **servizi offerti**
 
----
-
-### Area Amministrativa
+## Area Amministrativa
 
 Lo staff amministrativo, con credenziali specifiche, può accedere a un **pannello di controllo** da cui:
 
-- Aggiungere, modificare o eliminare **servizi offerti**
 - Gestire i **turni del personale**
-- Consultare l’**agenda delle prenotazioni**
+- Consultare l’**agenda degli appuntamenti**
 - Visualizzare **statistiche dettagliate** sull’andamento delle attività
