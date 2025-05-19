@@ -2,11 +2,7 @@
 What to implement:
 
 1. for backend:
-- study database design and make an ER and EER diagrams
-- study rest api design and improve the ones i made (in README.md)
-- implement models
-- implement serializers for views
-- implement views
+- continua ad implementare gli API endpoint su README.md
 ...
 
 2. for architecture:
