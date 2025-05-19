@@ -33,6 +33,10 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
     - [Barber Endpoints (`api/barber/`)](#barber-endpoints-apibarber)
     - [Client Endpoints (`api/client/`)](#client-endpoints-apiclient)
     - [Common Endpoints (`api/public/`)](#common-endpoints-apipublic)
+  - [Developer Notes](#developer-notes)
+    - [Barber Availability](#barber-availability)
+    - [Client Appointments](#client-appointments)
+    - [Reviews](#reviews)
 
 ## Requirements
 
@@ -194,13 +198,15 @@ api/
 
 ### Admin Endpoints (`api/admin/`)
 
-| Endpoint                           | Method | Description                          | Status |
-| ---------------------------------- | ------ | ------------------------------------ | ------ |
-| `/admin/barber/`                   | POST   | Invite a barber through their email. | ✅ 🧪  |
-| `/admin/barber/<barber_id>/`       | DELETE | Remove a barber by ID                | ✅     |
-| `/admin/availability/<barber_id>/` | POST   | Manage barber's availability slots   |        |
-| `/admin/stats/`                    | GET    | Generate general statistics          |        |
-| `/admin/appointments/`             | GET    | View a list of all past appointments |        |
+| Endpoint                           | Method  | Description                                                      | Status |
+| ---------------------------------- | ------- | ---------------------------------------------------------------- | ------ |
+| `/admin/barber/`                   | POST    | Invite a barber through their email.                             | ✅ 🧪  |
+| `/admin/barber/<barber_id>/`       | DELETE  | Remove a barber by ID                                            | ✅     |
+| `/admin/availability/<barber_id>/` | POST    | Add or update availability slots for a barber on a specific date |        |
+| `/admin/availability/<barber_id>/` | PATCH   | Edit availability slots for a barber on a specific date          |        |
+| `/admin/availability/<barber_id>/` | DELELTE | Delete availability slots for a barber on a specific date        |        |
+| `/admin/statistics/`               | GET     | Generate general statistics                                      |        |
+| `/admin/appointments/`             | GET     | View a list of all past appointments                             |        |
 
 ### Barber Endpoints (`api/barber/`)
 
@@ -215,15 +221,15 @@ api/
 
 ### Client Endpoints (`api/client/`)
 
-| Endpoint                             | Method | Description                                    | Status |
-| ------------------------------------ | ------ | ---------------------------------------------- | ------ |
-| `/client/appointments/`              | GET    | List own past appointments                     |        |
-| `/client/appointments/`              | POST   | Create a booking                               |        |
-| `/client/appointments/<booking_id>/` | DELETE | Cancel if still ongoing                        |        |
-| `/client/reviews/`                   | GET    | List own reviews                               |        |
-| `/client/reviews/<booking_id>/`      | POST   | Create a review for barber of this appointment |        |
-| `/client/reviews/<review_id>/`       | PATCH  | Edit own review                                |        |
-| `/client/reviews/<review_id>/`       | DELETE | Delete own review                              |        |
+| Endpoint                                 | Method | Description                                          | Status |
+| ---------------------------------------- | ------ | ---------------------------------------------------- | ------ |
+| `/client/appointments/`                  | GET    | List own past appointments                           |        |
+| `/client/appointments/`                  | POST   | Create a appointment only if no active one currently |        |
+| `/client/appointments/<appointment_id>/` | DELETE | Cancel if still ongoing                              |        |
+| `/client/reviews/`                       | GET    | List own reviews                                     |        |
+| `/client/reviews/<appointment_id>/`      | POST   | Create review for barber of appointment if competed  |        |
+| `/client/reviews/<review_id>/`           | PATCH  | Edit own review                                      |        |
+| `/client/reviews/<review_id>/`           | DELETE | Delete own review                                    |        |
 
 ### Common Endpoints (`api/public/`)
 
@@ -235,3 +241,65 @@ api/
 | `/public/barber/<barber_id>/profile/`      | GET    | Get barber profile, reviews, services |        |
 
 TODO: some way to set reminders (will think of this later)
+
+## Developer Notes
+
+### Barber Availability
+
+Barber availability is defined as a single record per barber per date, listing all 1-hour time slots during which the barber is available. Example:
+
+```json
+{
+  "barber": 3,
+  "date": "2025-05-20",
+  "slots": ["09:00", "10:00", "11:00", "14:00", "15:00"]
+}
+```
+
+**Rules & Constraints:**
+
+- Each time slot represents a fixed 1-hour window.
+- Availability data is managed exclusively by admins.
+- Only one availability entry is allowed per barber per date.
+
+### Client Appointments
+
+Clients can book a single available slot with a barber on a specific date, along with one or more services offered by that barber. Example:
+
+```json
+{
+  "client": 12,
+  "barber": 3,
+  "date": "2025-05-20",
+  "slot": "09:00",
+  "status": "ONGOING",
+  "services": [4, 7]
+}
+```
+
+**Rules & Constraints:**
+
+- A client may have only **one** appointment with `status = "ONGOING"` at a time.
+- The selected `slot` must:
+
+  - Exist in the barber’s availability for the specified date.
+  - Not be already booked by another appointment.
+
+### Reviews
+
+Clients can submit a **single** review per barber, but **only** after completing an appointment. Each review is directly associated with both the barber and the related appointment. Example:
+
+```json
+{
+  "appointment": 101,
+  "client": 12,
+  "barber": 3,
+  "rating": 5,
+  "comment": "Great cut, very professional!"
+}
+```
+
+**Rules & Constraints:**
+
+- One review per client per barber.
+- Reviews are allowed **only** after the associated appointment is completed.
