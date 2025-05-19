@@ -22,6 +22,7 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
     - [Create SuperUser](#create-superuser)
     - [Run test cases](#run-test-cases)
     - [Check test case coverage](#check-test-case-coverage)
+    - [Generate model diagram](#generate-model-diagram)
   - [Frontend Development (React + Vite)](#frontend-development-react--vite)
     - [Install npm Packages](#install-npm-packages)
   - [Troubleshooting](#troubleshooting)
@@ -114,7 +115,7 @@ python manage.py test api
 
 ### Check test case coverage
 
-This is a useful installed package that highlights which part of the codebase are being tested, helps with developing testcases
+This is a useful installed package `coverage` that highlights which part of the codebase are being tested, helps with developing testcases, to use:
 
 ```bash
 # to run
@@ -125,6 +126,14 @@ coverage html
 
 # Or just print retults in terminal
 coverage report
+```
+
+### Generate model diagram
+
+This is a useful installed package `django-extensions` that has many features, of which a diagram generator for all the implemented models found in the project, to use:
+
+```bash
+python manage.py graph_models -a -o models_diagram.png
 ```
 
 ## Frontend Development (React + Vite)
