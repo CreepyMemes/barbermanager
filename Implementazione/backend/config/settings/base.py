@@ -2,22 +2,16 @@ import os
 from pathlib import Path
 from datetime import timedelta
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Base directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
+# Django's secret key
 SECRET_KEY = os.environ['SECRET_KEY']
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(int(os.getenv('DEBUG', '0')))
-
-# 'DJANGO_ALLOWED_HOSTS' should be a single string of hosts with a space between each.
+# Allowed host ips
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '').split()
 
-# Hardcoded setting for frontend url (it's backend now untill implemented)
-FRONTEND_URL = 'http://localhost:8000'
-
-# Application definition
+# Defined installed apps in use
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -27,11 +21,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework_simplejwt.token_blacklist',
     'rest_framework',
-    'django_extensions',
     'corsheaders',
     'api',
 ]
 
+# idk what this means
 SITE_ID = 1
 
 # Custom authentication backend for logging with either email/pass or usrname/pass
@@ -40,6 +34,7 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
+# Custom user model to be used
 AUTH_USER_MODEL = 'api.User'
 
 # Setting up default authentication to JWT token
@@ -52,7 +47,6 @@ REST_FRAMEWORK = {
     ],
     'EXCEPTION_HANDLER': 'api.utils.customExceptionHandler',
 }
-
 
 # Setting up JWT token lifetime
 SIMPLE_JWT = {
@@ -72,8 +66,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# Root url config path
 ROOT_URLCONF = 'config.urls'
 
+# I'm not sure if i need this as it's API only backend
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -89,6 +85,7 @@ TEMPLATES = [
     },
 ]
 
+# Development server location
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database settings

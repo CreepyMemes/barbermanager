@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=mydb
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    ports:
+      - '8000:8000' # Expose only if needed by NGINX reverse proxy
+    env_file:
+      - ./backend/.env.prod
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    ports:
+      - '3000:80' # Example if using nginx to serve frontend on port 80
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
