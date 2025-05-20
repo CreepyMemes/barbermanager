@@ -8,6 +8,7 @@ services:
       - POSTGRES_USER=myuser
       - POSTGRES_PASSWORD=mypassword
       - PGOPTIONS=--shared_buffers=8MB --work_mem=512kB --max_connections=3
+    mem_limit: 100m
 
   backend:
     build:
@@ -19,6 +20,7 @@ services:
       - ./backend/.env.prod
     depends_on:
       - db
+    mem_limit: 100m
 
   frontend:
     build:
@@ -28,6 +30,7 @@ services:
       - '3000:80' # Example if using nginx to serve frontend on port 80
     depends_on:
       - db
+    mem_limit: 50m
 
 volumes:
   postgres_data:
