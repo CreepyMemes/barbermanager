@@ -307,8 +307,7 @@ ssh dietpi@rockpi
 ## 1. Clone the repository:
 
 ```bash
-cd projects && git clone https://github.com/s1lentCommit/ManageBarber.git
-cd ManageBarber/Implementazione
+cd ~/projects/ && git clone https://github.com/s1lentCommit/ManageBarber.git
 ```
 
 ## 2. Copy the project's reverse proxy settings
