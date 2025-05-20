@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=mydb
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+      - PGOPTIONS=--shared_buffers=8MB --work_mem=512kB --max_connections=3
+    mem_limit: 100m
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    env_file:
+      - ./backend/.env.prod
+    depends_on:
+      - db
+    expose:
+      - '8000'
+    networks:
+      webproxy:
+        aliases:
+          - barbermanager-backend
+    mem_limit: 100m
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    expose:
+      - '80'
+    networks:
+      webproxy:
+        aliases:
+          - barbermanager-frontend
+    mem_limit: 50m
+
+volumes:
+  postgres_data:
+
+networks:
+  webproxy:
+    external: true
