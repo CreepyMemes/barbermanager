@@ -11,10 +11,10 @@ RUN apk add --no-cache build-base graphviz graphviz-dev
 COPY requirements/dev.txt requirements/base.txt requirements/
 RUN pip install -r requirements/dev.txt
 
+COPY . .
+
 COPY ./entrypoint.sh .
 RUN chmod +x ./entrypoint.sh
-
-COPY . .
 
 EXPOSE 8000
 
