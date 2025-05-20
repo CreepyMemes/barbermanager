@@ -34,7 +34,7 @@ What to implement:
 - Access frontend on `localhost:3000`, backend on `localhost:8000`
 - Stop containers with `docker-compose -f docker-compose.dev.yml down`
 
-docker-compose -f docker-compose.dev.yml exec backend sh
+docker-compose -f docker compose.dev.yml exec backend sh
 
 
 
@@ -42,3 +42,6 @@ docker-compose -f docker-compose.dev.yml exec backend sh
 - SSH into your SBC or server
 - Pull latest code from GitHub `cd ~/babrbermanager && git pull`
 - Build and run containers: `docker compose -f docker-compose.prod.yml up -d --build`
+
+docker stats
+free -h
