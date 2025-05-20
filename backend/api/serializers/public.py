@@ -8,5 +8,5 @@ class GetBarberListSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Barber
-        fields = ['id', 'username', 'email', 'is_active'] 
+        fields = ['id', 'username', 'email'] 
         read_only_fields = fields
