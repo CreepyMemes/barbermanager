@@ -9,7 +9,9 @@ services:
       - POSTGRES_PASSWORD=mypassword
       - PGOPTIONS=--shared_buffers=8MB --work_mem=512kB --max_connections=3
     networks:
-      - webproxy
+      webproxy:
+        aliases:
+          - db
     mem_limit: 100m
 
   backend:
