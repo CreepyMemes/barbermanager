@@ -41,6 +41,7 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
   - [3. Pull latest code from GitHub](#3-pull-latest-code-from-github)
   - [4. Build and run production containers](#4-build-and-run-production-containers)
 - [Rerun the server's reverse proxy](#rerun-the-servers-reverse-proxy)
+  - [To shell in backend](#to-shell-in-backend)
 
 ## Requirements
 
@@ -73,13 +74,13 @@ cd BarberManager/Implementazione
 ## 2. Build and launch development containers
 
 ```bash
-docker-compose -f docker-compose.dev.yml up --build
+docker compose -f docker-compose.dev.yml up --build
 ```
 
 ## To reset the environment
 
 ```bash
-docker-compose -f docker-compose.dev.yml down --volumes --remove-orphans
+docker compose -f docker-compose.dev.yml down --volumes --remove-orphans
 ```
 
 - Frontend available at: [http://localhost:3000](http://localhost:3000)
@@ -92,7 +93,7 @@ The Django dev server reloads automatically on code changes.
 > [!IMPORTANT]
 > Run the following commands _inside_ the container.
 > by running the following command:
-> `docker-compose -f docker-compose.dev.yml exec -it backend sh`.
+> `docker compose -f docker-compose.dev.yml exec -it backend sh`.
 
 ### To install new python dependencies
 
@@ -149,7 +150,7 @@ Vite provides automatic hot-reloading when frontend files are modified.
 > [!IMPORTANT]
 > Run the following commands _inside_ the container.
 > by running the following command:
-> `docker-compose -f docker-compose.dev.yml exec -it frontend sh`.
+> `docker compose -f docker-compose.dev.yml exec -it frontend sh`.
 
 ### To install new npm Packages
 
@@ -300,7 +301,7 @@ This section is about deplying the application to the internet in a production e
 ## 1 SSH into produciton server
 
 ```bash
-ssh rock@rockpi
+ssh dietpi@rockpi
 ```
 
 ## 1. Clone the repository:
@@ -313,7 +314,7 @@ cd BarberManager/Implementazione
 ## 2. Copy the project's reverse proxy settings
 
 ```bash
-cd ~/nginx/conf.d/ && cd cp ~/projects/BarberManager/Implementazione/nginx/nginx.conf ~/nginx/conf.d/barbermanager.conf
+cd ~/nginx/conf.d/ && cp ~/projects/BarberManager/Implementazione/nginx/nginx.conf ~/nginx/conf.d/barbermanager.conf
 ```
 
 ## 3. Pull latest code from GitHub
@@ -335,3 +336,9 @@ cd ~/nginx/ && docker exec nginx nginx -s reload
 ```
 
 - The deployed will be available at: [http://barbermanager.creepymemes.duckdns.org](http://barbermanager.creepymemes.duckdns.org)
+
+## To shell in backend
+
+```bash
+cd ~/projects/BarberManager/Implementazione && docker compose -f docker-compose.prod.yml exec -it backend sh
+```
