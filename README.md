@@ -307,8 +307,7 @@ ssh dietpi@rockpi
 ## 1. Clone the repository:
 
 ```bash
-cd projects && git clone https://github.com/CreepyMemes/BarberManager.git
-cd BarberManager/Implementazione
+cd ~/projects/ && git clone https://github.com/CreepyMemes/BarberManager.git
 ```
 
 ## 2. Copy the project's reverse proxy settings
