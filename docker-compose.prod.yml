@@ -21,7 +21,9 @@ services:
     expose:
       - '8000'
     networks:
-      - webproxy
+      webproxy:
+        aliases:
+          - barbermanager-backend
     mem_limit: 100m
 
   frontend:
@@ -31,7 +33,9 @@ services:
     expose:
       - '80'
     networks:
-      - webproxy
+      webproxy:
+        aliases:
+          - barbermanager-frontend
     mem_limit: 50m
 
 volumes:
