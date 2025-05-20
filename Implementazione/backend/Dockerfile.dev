@@ -4,18 +4,17 @@ WORKDIR /app
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
+ENV DJANGO_SETTINGS_MODULE=config.settings.dev
 
 RUN apk add --no-cache build-base graphviz graphviz-dev
-RUN pip install --upgrade pip
 
-COPY requirements/dev.txt requirements/base.txt /app/requirements/
+COPY requirements/dev.txt requirements/base.txt requirements/
 RUN pip install -r requirements/dev.txt
-ENV DJANGO_SETTINGS_MODULE=config.settings.dev
 
 COPY ./entrypoint.sh .
 RUN chmod +x ./entrypoint.sh
 
-COPY . ./
+COPY . .
 
 EXPOSE 8000
 

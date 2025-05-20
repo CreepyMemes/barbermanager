@@ -1,17 +1,21 @@
 FROM python:3.12-alpine
+
 WORKDIR /app
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-
-RUN apk add --no-cache build-base
-
-COPY requirements/prod.txt requirements/base.txt /app/requirements/
-RUN pip install -r requirements/prod.txt
 ENV DJANGO_SETTINGS_MODULE=config.settings.prod
+
+COPY requirements/prod.txt requirements/base.txt requirements/
+RUN pip install --no-cache-dir -r requirements/prod.txt
+
+COPY ./entrypoint.sh .
+RUN chmod +x ./entrypoint.sh
 
 COPY . .
 
 EXPOSE 8000
 
-CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000"]
+ENTRYPOINT ["./entrypoint.sh"]
+
+CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers=1", "--threads=1", "--worker-class=sync", "--max-requests=100", "--max-requests-jitter=10"]
