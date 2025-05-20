@@ -2,4 +2,4 @@ Dockerfile.*
 .devcontainer
 .env.*
 *.png
-htmlconv/
+htmlcov/
