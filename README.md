@@ -11,109 +11,115 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
 - [Project Documentation](#project-documentation)
   - [Table of Contents](#table-of-contents)
   - [Requirements](#requirements)
-  - [Installation \& Startup](#installation--startup)
-    - [1. Clone the repository:](#1-clone-the-repository)
-    - [2. Build and Launch Services](#2-build-and-launch-services)
-  - [Using VSCode Dev Containers](#using-vscode-dev-containers)
-    - [To Start:](#to-start)
+- [Development Workflow](#development-workflow)
+  - [1. Clone the repository:](#1-clone-the-repository)
+  - [2. Build and launch development containers](#2-build-and-launch-development-containers)
+  - [To reset the environment](#to-reset-the-environment)
   - [Backend Development (Django API)](#backend-development-django-api)
-    - [Install Python Dependencies](#install-python-dependencies)
-    - [Run Migrations](#run-migrations)
-    - [Create SuperUser](#create-superuser)
-    - [Run test cases](#run-test-cases)
-    - [Check test case coverage](#check-test-case-coverage)
-    - [Generate model diagram](#generate-model-diagram)
+    - [To install new python dependencies](#to-install-new-python-dependencies)
+    - [To run migrations](#to-run-migrations)
+    - [to create a superuser](#to-create-a-superuser)
+    - [To run test cases](#to-run-test-cases)
+    - [To check test case coverage](#to-check-test-case-coverage)
+    - [To generate model diagram](#to-generate-model-diagram)
   - [Frontend Development (React + Vite)](#frontend-development-react--vite)
-    - [Install npm Packages](#install-npm-packages)
-  - [Troubleshooting](#troubleshooting)
-  - [Resetting the Environment](#resetting-the-environment)
-  - [Entering the container shell from host machine](#entering-the-container-shell-from-host-machine)
-  - [API Endpoint Guide \[TODO\]](#api-endpoint-guide-todo)
-    - [Auth Endpoints (`api/auth/`)](#auth-endpoints-apiauth)
-    - [Admin Endpoints (`api/admin/`)](#admin-endpoints-apiadmin)
-    - [Barber Endpoints (`api/barber/`)](#barber-endpoints-apibarber)
-    - [Client Endpoints (`api/client/`)](#client-endpoints-apiclient)
-    - [Common Endpoints (`api/public/`)](#common-endpoints-apipublic)
+    - [To install new npm Packages](#to-install-new-npm-packages)
+- [API Endpoint Guide \[TODO\]](#api-endpoint-guide-todo)
+  - [Auth Endpoints (`api/auth/`)](#auth-endpoints-apiauth)
+  - [Admin Endpoints (`api/admin/`)](#admin-endpoints-apiadmin)
+  - [Barber Endpoints (`api/barber/`)](#barber-endpoints-apibarber)
+  - [Client Endpoints (`api/client/`)](#client-endpoints-apiclient)
+  - [Common Endpoints (`api/public/`)](#common-endpoints-apipublic)
   - [Developer Notes](#developer-notes)
     - [Barber Availability](#barber-availability)
     - [Client Appointments](#client-appointments)
     - [Reviews](#reviews)
+- [Production Workflow](#production-workflow)
+  - [1 SSH into produciton server](#1-ssh-into-produciton-server)
+  - [1. Clone the repository:](#1-clone-the-repository-1)
+  - [2. Copy the project's reverse proxy settings](#2-copy-the-projects-reverse-proxy-settings)
+  - [3. Pull latest code from GitHub](#3-pull-latest-code-from-github)
+  - [4. Build and run production containers](#4-build-and-run-production-containers)
+- [Rerun the server's reverse proxy](#rerun-the-servers-reverse-proxy)
 
 ## Requirements
 
 Make sure the following are installed on your machine:
 
-- [Docker](https://www.docker.com/) installed
-- [Docker Compose](https://docs.docker.com/compose/) installed
+- [Docker](https://docs.docker.com/engine/install/) installed
+- [Docker Compose](https://docs.docker.com/compose/install/) installed
 - [VSCode](https://code.visualstudio.com/) with the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension installed
 
-## Installation & Startup
+# Development Workflow
 
-### 1. Clone the repository:
+This section is about the development workflow in programming and testing the application on local machine.
+
+> [!TIP]
+> If you want to run **VSCode** inside the backend container.
+> When you open the project `backend` or `frontend` foldlers in **VSCode**,
+> it shoullt automaticaly detect the `.devcontainer` configurations.
+>
+> If it doesn't detect it or you ignore the notification you can:
+> Open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on macOS).
+> Select `Remote-Containers: Reopen in Container`.
+
+## 1. Clone the repository:
 
 ```bash
 git clone https://github.com/CreepyMemes/BarberManager.git
 cd BarberManager/Implementazione
 ```
 
-### 2. Build and Launch Services
+## 2. Build and launch development containers
 
 ```bash
-docker-compose up --build
+docker-compose -f docker-compose.dev.yml up --build
+```
+
+## To reset the environment
+
+```bash
+docker-compose -f docker-compose.dev.yml down --volumes --remove-orphans
 ```
 
 - Frontend available at: [http://localhost:3000](http://localhost:3000)
 - Backend available at: [http://localhost:8000](http://localhost:8000)
 
-## Using VSCode Dev Containers
-
-When you open the project in VSCode, it detects the `.devcontainer` configurations for both frontend and backend:
-
-- **Backend (Django)**: Uses container-based Python environment.
-- **Frontend (React + Vite)**: Preconfigured with Prettier, ESLint, and other useful extensions.
-
-### To Start:
-
-1. Open VSCode.
-2. Open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on macOS).
-3. Select `Remote-Containers: Reopen in Container`.
-
 ## Backend Development (Django API)
 
-The Django server reloads automatically on code changes.
+The Django dev server reloads automatically on code changes.
 
-> [!TIP]
+> [!IMPORTANT]
 > Run the following commands _inside_ the container.
-> If using from the host, prefix commands with:
->
-> `docker-compose exec backend`.
+> by running the following command:
+> `docker-compose -f docker-compose.dev.yml exec -it backend sh`.
 
-### Install Python Dependencies
+### To install new python dependencies
 
 ```bash
 pip install <package>
 pip freeze > requirements.txt
 ```
 
-### Run Migrations
+### To run migrations
 
 ```bash
 python manage.py migrate
 ```
 
-### Create SuperUser
+### to create a superuser
 
 ```bash
 python manage.py createsuperuser
 ```
 
-### Run test cases
+### To run test cases
 
 ```bash
 python manage.py test api
 ```
 
-### Check test case coverage
+### To check test case coverage
 
 This is a useful installed package `coverage` that highlights which part of the codebase are being tested, helps with developing testcases, to use:
 
@@ -128,7 +134,7 @@ coverage html
 coverage report
 ```
 
-### Generate model diagram
+### To generate model diagram
 
 This is a useful installed package `django-extensions` that has many features, of which a diagram generator for all the implemented models found in the project, to use:
 
@@ -140,44 +146,18 @@ python manage.py graph_models -a -o models_diagram.png
 
 Vite provides automatic hot-reloading when frontend files are modified.
 
-> [!TIP]
+> [!IMPORTANT]
 > Run the following commands _inside_ the container.
-> If using from the host, prefix commands with:
->
-> `docker-compose exec frontend`.
+> by running the following command:
+> `docker-compose -f docker-compose.dev.yml exec -it frontend sh`.
 
-### Install npm Packages
+### To install new npm Packages
 
 ```bash
 npm install <package>
 ```
 
-## Troubleshooting
-
-- **Port Conflicts**: Ensure ports `3000` and `8000` are free or modify them in `docker-compose.yml`.
-- **Dev Container Not Opening**: Use `Remote-Containers: Reopen in Container` from the Command Palette.
-- **Python Interpreter Issues**: Use `Python: Select Interpreter` in the Command Palette to choose the correct environment.
-
-## Resetting the Environment
-
-To fully reset and rebuild the environment:
-
-```bash
-docker-compose down --volumes --remove-orphans
-docker-compose up --build
-```
-
-## Entering the container shell from host machine
-
-```bash
-# For the frontend docker container
-docker-compose exec -it frontend sh
-
-# Or for the backend one
-docker-compos exec -it backend sh
-```
-
-## API Endpoint Guide [TODO]
+# API Endpoint Guide [TODO]
 
 ```
 api/
@@ -191,7 +171,7 @@ api/
 - ✅ Implemented endpoint
 - 🧪 Implemented testcases
 
-### Auth Endpoints (`api/auth/`)
+## Auth Endpoints (`api/auth/`)
 
 | Endpoint                                 | Method | Description                                     | Status |
 | ---------------------------------------- | ------ | ----------------------------------------------- | ------ |
@@ -205,7 +185,7 @@ api/
 | `/auth/reset-password/<uidb64>/<token>/` | POST   | Confirm and apply password reset.               | ✅ 🧪  |
 | `/auth/refresh-token/`                   | POST   | Get a new access token using the refresh token. | ✅ 🧪  |
 
-### Admin Endpoints (`api/admin/`)
+## Admin Endpoints (`api/admin/`)
 
 | Endpoint                           | Method  | Description                                                      | Status |
 | ---------------------------------- | ------- | ---------------------------------------------------------------- | ------ |
@@ -217,7 +197,7 @@ api/
 | `/admin/statistics/`               | GET     | Generate general statistics                                      |        |
 | `/admin/appointments/`             | GET     | View a list of all past appointments                             |        |
 
-### Barber Endpoints (`api/barber/`)
+## Barber Endpoints (`api/barber/`)
 
 | Endpoint                         | Method | Description                  | Status |
 | -------------------------------- | ------ | ---------------------------- | ------ |
@@ -228,7 +208,7 @@ api/
 | `/barber/reviews/`               | GET    | List reviews of own services |        |
 | `/barber/appointments/`          | GET    | View upcoming appointments   |        |
 
-### Client Endpoints (`api/client/`)
+## Client Endpoints (`api/client/`)
 
 | Endpoint                                 | Method | Description                                          | Status |
 | ---------------------------------------- | ------ | ---------------------------------------------------- | ------ |
@@ -240,7 +220,7 @@ api/
 | `/client/reviews/<review_id>/`           | PATCH  | Edit own review                                      |        |
 | `/client/reviews/<review_id>/`           | DELETE | Delete own review                                    |        |
 
-### Common Endpoints (`api/public/`)
+## Common Endpoints (`api/public/`)
 
 | Endpoint                                   | Method | Description                           | Status |
 | ------------------------------------------ | ------ | ------------------------------------- | ------ |
@@ -312,3 +292,46 @@ Clients can submit a **single** review per barber, but **only** after completing
 
 - One review per client per barber.
 - Reviews are allowed **only** after the associated appointment is completed.
+
+# Production Workflow
+
+This section is about deplying the application to the internet in a production environment hosted by a server exposed to the internet.
+
+## 1 SSH into produciton server
+
+```bash
+ssh rock@rockpi
+```
+
+## 1. Clone the repository:
+
+```bash
+cd projects && git clone https://github.com/CreepyMemes/BarberManager.git
+cd BarberManager/Implementazione
+```
+
+## 2. Copy the project's reverse proxy settings
+
+```bash
+cd ~/nginx/conf.d/ && cd cp ~/projects/BarberManager/Implementazione/nginx/nginx.conf ~/nginx/conf.d/barbermanager.conf
+```
+
+## 3. Pull latest code from GitHub
+
+```bash
+cd ~/projects/BarberManager && git pull
+```
+
+## 4. Build and run production containers
+
+```bash
+cd ~/projects/BarberManager/Implementazione && docker compose -f docker-compose.prod.yml up -d --build
+```
+
+# Rerun the server's reverse proxy
+
+```bash
+cd ~/nginx/ && docker exec nginx nginx -s reload
+```
+
+- The deployed will be available at: [http://barbermanager.creepymemes.duckdns.org](http://barbermanager.creepymemes.duckdns.org)
