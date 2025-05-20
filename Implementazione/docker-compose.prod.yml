@@ -11,25 +11,25 @@ services:
     mem_limit: 100m
 
   backend:
+    container_name: barbermanager-backend
     build:
       context: ./backend
       dockerfile: Dockerfile.prod
-    ports:
-      - '8000:8000' # Expose only if needed by NGINX reverse proxy
     env_file:
       - ./backend/.env.prod
     depends_on:
       - db
+    expose:
+      - '8000'
     mem_limit: 100m
 
   frontend:
+    container_name: barbermanager-frontend
     build:
       context: ./frontend
       dockerfile: Dockerfile.prod
-    ports:
-      - '3000:80' # Example if using nginx to serve frontend on port 80
-    depends_on:
-      - db
+    expose:
+      - '80'
     mem_limit: 50m
 
 volumes:
