@@ -11,7 +11,6 @@ services:
     mem_limit: 100m
 
   backend:
-    container_name: barbermanager-backend
     build:
       context: ./backend
       dockerfile: Dockerfile.prod
@@ -21,16 +20,23 @@ services:
       - db
     expose:
       - '8000'
+    networks:
+      - webproxy
     mem_limit: 100m
 
   frontend:
-    container_name: barbermanager-frontend
     build:
       context: ./frontend
       dockerfile: Dockerfile.prod
     expose:
       - '80'
+    networks:
+      - webproxy
     mem_limit: 50m
 
 volumes:
   postgres_data:
+
+networks:
+  webproxy:
+    external: true
