@@ -9,10 +9,10 @@ ENV DJANGO_SETTINGS_MODULE=config.settings.prod
 COPY requirements/prod.txt requirements/base.txt requirements/
 RUN pip install --no-cache-dir -r requirements/prod.txt
 
+COPY . .
+
 COPY ./entrypoint.sh .
 RUN chmod +x ./entrypoint.sh
-
-COPY . .
 
 EXPOSE 8000
 
