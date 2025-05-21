@@ -100,7 +100,10 @@ The Django dev server reloads automatically on code changes.
 > [!IMPORTANT]
 > Run the following commands _inside_ the container.
 > by running the following command:
-> `docker compose -f docker-compose.dev.yml exec -it backend sh`.
+
+```bash
+docker compose -f docker-compose.dev.yml exec -it backend sh
+```
 
 ### To install new python dependencies
 
@@ -165,7 +168,10 @@ Vite provides automatic hot-reloading when frontend files are modified.
 > [!IMPORTANT]
 > Run the following commands _inside_ the container.
 > by running the following command:
-> `docker compose -f docker-compose.dev.yml exec -it frontend sh`.
+
+```bash
+docker compose -f docker-compose.dev.yml exec -it frontend sh
+```
 
 ### To install new npm Packages
 
@@ -240,7 +246,7 @@ api/
 
 | Endpoint                                   | Method | Description                           | Status |
 | ------------------------------------------ | ------ | ------------------------------------- | ------ |
-| `/public/barbers/`                         | GET    | List all barbers                      | ✅     |
+| `/public/barber/`                          | GET    | List all barbers                      | ✅     |
 | `/public/barber/<barber_id>/services/`     | GET    | List services by selected barber      |        |
 | `/public/barber/<barber_id>/availability/` | GET    | Get available time slots              |        |
 | `/public/barber/<barber_id>/profile/`      | GET    | Get barber profile, reviews, services |        |
