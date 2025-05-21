@@ -70,8 +70,11 @@ This section is about the development workflow in programming and testing the ap
 
 ## 1. Clone the repository:
 
+> [!IMPORTANT]
+> Change **TOKEN** to your github token
+
 ```bash
-git clone https://github.com/CreepyMemes/BarberManager.git
+git clone https://CreepyMemes:TOKEN@github.com/CreepyMemes/BarberManager.git
 cd BarberManager/Implementazione
 ```
 
