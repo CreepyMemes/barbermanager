@@ -42,6 +42,7 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
   - [4. Build and run production containers](#4-build-and-run-production-containers)
 - [Rerun the server's reverse proxy](#rerun-the-servers-reverse-proxy)
   - [To shell in backend](#to-shell-in-backend)
+  - [To view logs](#to-view-logs)
 
 ## Requirements
 
@@ -340,4 +341,14 @@ cd ~/nginx/ && docker exec nginx nginx -s reload
 
 ```bash
 cd ~/projects/BarberManager/Implementazione && docker compose -f docker-compose.prod.yml exec -it backend sh
+```
+
+## To view logs
+
+```bash
+# backend
+docker compose -f docker-compose.prod.yml logs backend -f
+
+# frontend
+docker compose -f docker-compose.prod.yml logs frontend -f
 ```
