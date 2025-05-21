@@ -70,8 +70,11 @@ This section is about the development workflow in programming and testing the ap
 
 ## 1. Clone the repository:
 
+> [!IMPORTANT]
+> Change **TOKEN** to your github token
+
 ```bash
-git clone https://github.com/s1lentCommit/ManageBarber.git
+git clone https://s1lentCommit:TOKEN@github.com/s1lentCommit/ManageBarber.git
 cd ManageBarber/Implementazione
 ```
 
