@@ -106,7 +106,15 @@ The Django dev server reloads automatically on code changes.
 
 ```bash
 pip install <package>
-pip freeze > requirements.txt
+
+# If for both prod and dev
+pip freeze > requirements/base.txt
+
+# If for dev
+pip freeze > requirements/dev.txt
+
+# If for prod
+pip freeze > requirements/prod.txt
 ```
 
 ### To run migrations
