@@ -35,13 +35,16 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
     - [Client Appointments](#client-appointments)
     - [Reviews](#reviews)
 - [Production Workflow](#production-workflow)
-  - [1 SSH into produciton server](#1-ssh-into-produciton-server)
-  - [1. Clone the repository:](#1-clone-the-repository-1)
-  - [2. Copy the project's reverse proxy settings](#2-copy-the-projects-reverse-proxy-settings)
-  - [3. Pull latest code from GitHub](#3-pull-latest-code-from-github)
-  - [4. Build and run production containers](#4-build-and-run-production-containers)
-- [Rerun the server's reverse proxy](#rerun-the-servers-reverse-proxy)
-  - [To shell in backend](#to-shell-in-backend)
+  - [Installing](#installing)
+    - [1. SSH into produciton server](#1-ssh-into-produciton-server)
+    - [2. Clone the repository:](#2-clone-the-repository)
+    - [3. Copy the project's reverse proxy settings](#3-copy-the-projects-reverse-proxy-settings)
+    - [4. Rerun the server's reverse proxy](#4-rerun-the-servers-reverse-proxy)
+  - [Updating](#updating)
+    - [1. Pull latest code from GitHub](#1-pull-latest-code-from-github)
+  - [2. Rebuild and run production containers](#2-rebuild-and-run-production-containers)
+  - [3. Rerun the server's reverse proxy](#3-rerun-the-servers-reverse-proxy)
+  - [4. To shell in backend/frontend](#4-to-shell-in-backendfrontend)
   - [To view logs](#to-view-logs)
 
 ## Requirements
@@ -299,45 +302,55 @@ Clients can submit a **single** review per barber, but **only** after completing
 
 This section is about deplying the application to the internet in a production environment hosted by a server exposed to the internet.
 
-## 1 SSH into produciton server
+- The deployed will be available at: [http://barbermanager.creepymemes.duckdns.org](http://barbermanager.creepymemes.duckdns.org)
+
+## Installing
+
+### 1. SSH into produciton server
 
 ```bash
 ssh dietpi@rockpi
 ```
 
-## 1. Clone the repository:
+### 2. Clone the repository:
 
 ```bash
 cd ~/projects/ && git clone https://github.com/CreepyMemes/BarberManager.git
 ```
 
-## 2. Copy the project's reverse proxy settings
+### 3. Copy the project's reverse proxy settings
 
 ```bash
 cd ~/nginx/conf.d/ && cp ~/projects/BarberManager/Implementazione/nginx/nginx.conf ~/nginx/conf.d/barbermanager.conf
 ```
 
-## 3. Pull latest code from GitHub
-
-```bash
-cd ~/projects/BarberManager && git pull
-```
-
-## 4. Build and run production containers
-
-```bash
-cd ~/projects/BarberManager/Implementazione && docker compose -f docker-compose.prod.yml up -d --build
-```
-
-# Rerun the server's reverse proxy
+### 4. Rerun the server's reverse proxy
 
 ```bash
 cd ~/nginx/ && docker exec nginx nginx -s reload
 ```
 
-- The deployed will be available at: [http://barbermanager.creepymemes.duckdns.org](http://barbermanager.creepymemes.duckdns.org)
+## Updating
 
-## To shell in backend
+### 1. Pull latest code from GitHub
+
+```bash
+cd ~/projects/BarberManager && git pull
+```
+
+## 2. Rebuild and run production containers
+
+```bash
+cd ~/projects/BarberManager/Implementazione && docker compose -f docker-compose.prod.yml up -d --build
+```
+
+## 3. Rerun the server's reverse proxy
+
+```bash
+cd ~/nginx/ && docker exec nginx nginx -s reload
+```
+
+## 4. To shell in backend/frontend
 
 ```bash
 cd ~/projects/BarberManager/Implementazione && docker compose -f docker-compose.prod.yml exec -it backend sh
