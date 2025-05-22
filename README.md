@@ -338,13 +338,13 @@ cd ~/projects/ && git clone https://github.com/s1lentCommit/ManageBarber.git
 ### 3. Copy the project's reverse proxy settings
 
 ```bash
-cd ~/nginx/conf.d/ && cp ~/projects/ManageBarber/Implementazione/nginx/nginx.conf ~/nginx/conf.d/manageBarber.conf
+cd /etc/nginx/conf.d/ && cp ~/projects/ManageBarber/Implementazione/nginx/nginx.conf /etc/nginx/conf.d/manageBarber.conf
 ```
 
 ### 4. Rerun the server's reverse proxy
 
 ```bash
-cd ~/nginx/ && docker exec nginx nginx -s reload
+sudo systemctl reload nginx
 ```
 
 ## Updating
@@ -364,7 +364,7 @@ cd ~/projects/ManageBarber/Implementazione && docker compose -f docker-compose.p
 ## 3. Rerun the server's reverse proxy
 
 ```bash
-cd ~/nginx/ && docker exec nginx nginx -s reload
+sudo systemctl reload nginx
 ```
 
 ## 4. To shell in backend/frontend
