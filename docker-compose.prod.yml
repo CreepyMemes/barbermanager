@@ -7,10 +7,6 @@ services:
       - POSTGRES_DB=mydb
       - POSTGRES_USER=myuser
       - POSTGRES_PASSWORD=mypassword
-    networks:
-      webproxy:
-        aliases:
-          - db
     mem_limit: 100m
 
   backend:
@@ -21,29 +17,17 @@ services:
       - ./backend/.env.prod
     depends_on:
       - db
-    expose:
-      - '8000'
-    networks:
-      webproxy:
-        aliases:
-          - barbermanager-backend
+    ports:
+      - '127.0.0.1:7001:8000'
     mem_limit: 100m
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile.prod
-    expose:
-      - '80'
-    networks:
-      webproxy:
-        aliases:
-          - barbermanager-frontend
+    ports:
+      - '127.0.0.1:3001:80'
     mem_limit: 50m
 
 volumes:
   postgres_data:
-
-networks:
-  webproxy:
-    external: true
