@@ -42,10 +42,10 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
     - [4. Rerun the server's reverse proxy](#4-rerun-the-servers-reverse-proxy)
   - [Updating](#updating)
     - [1. Pull latest code from GitHub](#1-pull-latest-code-from-github)
-  - [2. Rebuild and run production containers](#2-rebuild-and-run-production-containers)
-  - [3. Rerun the server's reverse proxy](#3-rerun-the-servers-reverse-proxy)
-  - [4. To shell in backend/frontend](#4-to-shell-in-backendfrontend)
-  - [To view logs](#to-view-logs)
+    - [2. Rebuild and run production containers](#2-rebuild-and-run-production-containers)
+    - [3. Rerun the server's reverse proxy](#3-rerun-the-servers-reverse-proxy)
+    - [4. To shell in backend/frontend](#4-to-shell-in-backendfrontend)
+    - [To view logs](#to-view-logs)
 
 ## Requirements
 
@@ -355,25 +355,25 @@ sudo systemctl reload nginx
 cd ~/projects/BarberManager && git pull
 ```
 
-## 2. Rebuild and run production containers
+### 2. Rebuild and run production containers
 
 ```bash
 cd ~/projects/BarberManager/Implementazione && docker compose -f docker-compose.prod.yml up -d --build
 ```
 
-## 3. Rerun the server's reverse proxy
+### 3. Rerun the server's reverse proxy
 
 ```bash
 sudo systemctl reload nginx
 ```
 
-## 4. To shell in backend/frontend
+### 4. To shell in backend/frontend
 
 ```bash
 cd ~/projects/BarberManager/Implementazione && docker compose -f docker-compose.prod.yml exec -it backend sh
 ```
 
-## To view logs
+### To view logs
 
 ```bash
 # backend
