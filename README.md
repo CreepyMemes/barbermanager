@@ -43,9 +43,10 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
   - [Updating](#updating)
     - [1. Pull latest code from GitHub](#1-pull-latest-code-from-github)
     - [2. Rebuild and run production containers](#2-rebuild-and-run-production-containers)
-    - [3. Rerun the server's reverse proxy](#3-rerun-the-servers-reverse-proxy)
-    - [4. To shell in backend/frontend](#4-to-shell-in-backendfrontend)
-    - [To view logs](#to-view-logs)
+    - [3. Copy the project's reverse proxy settings](#3-copy-the-projects-reverse-proxy-settings-1)
+    - [4. Rerun the server's reverse proxy](#4-rerun-the-servers-reverse-proxy-1)
+    - [5. To shell in backend/frontend](#5-to-shell-in-backendfrontend)
+    - [6. To view logs](#6-to-view-logs)
 
 ## Requirements
 
@@ -72,11 +73,11 @@ This section is about the development workflow in programming and testing the ap
 
 > [!IMPORTANT]
 > Change **TOKEN** to your github token
-
-```bash
-git clone https://CreepyMemes:TOKEN@github.com/CreepyMemes/BarberManager.git
-cd BarberManager/Implementazione
-```
+>
+> ```bash
+> git clone https://CreepyMemes:TOKEN@github.com/CreepyMemes/BarberManager.git
+> cd BarberManager/Implementazione
+> ```
 
 ## 2. Build and launch development containers
 
@@ -100,10 +101,10 @@ The Django dev server reloads automatically on code changes.
 > [!IMPORTANT]
 > Run the following commands _inside_ the container.
 > by running the following command:
-
-```bash
-docker compose -f docker-compose.dev.yml exec -it backend sh
-```
+>
+> ```bash
+> docker compose -f docker-compose.dev.yml exec -it backend sh
+> ```
 
 ### To install new python dependencies
 
@@ -168,10 +169,10 @@ Vite provides automatic hot-reloading when frontend files are modified.
 > [!IMPORTANT]
 > Run the following commands _inside_ the container.
 > by running the following command:
-
-```bash
-docker compose -f docker-compose.dev.yml exec -it frontend sh
-```
+>
+> ```bash
+> docker compose -f docker-compose.dev.yml exec -it frontend sh
+> ```
 
 ### To install new npm Packages
 
@@ -338,7 +339,7 @@ cd ~/projects/ && git clone https://github.com/CreepyMemes/BarberManager.git
 ### 3. Copy the project's reverse proxy settings
 
 ```bash
-cd /etc/nginx/conf.d/ && cp ~/projects/BarberManager/Implementazione/nginx/nginx.conf /etc/nginx/conf.d/barbermanager.conf
+sudo cp ~/projects/BarberManager/Implementazione/nginx/nginx.conf /etc/nginx/conf.d/barbermanager.conf
 ```
 
 ### 4. Rerun the server's reverse proxy
@@ -361,19 +362,25 @@ cd ~/projects/BarberManager && git pull
 cd ~/projects/BarberManager/Implementazione && docker compose -f docker-compose.prod.yml up -d --build
 ```
 
-### 3. Rerun the server's reverse proxy
+### 3. Copy the project's reverse proxy settings
+
+```bash
+sudo cp ~/projects/BarberManager/Implementazione/nginx/nginx.conf /etc/nginx/conf.d/barbermanager.conf
+```
+
+### 4. Rerun the server's reverse proxy
 
 ```bash
 sudo systemctl reload nginx
 ```
 
-### 4. To shell in backend/frontend
+### 5. To shell in backend/frontend
 
 ```bash
 cd ~/projects/BarberManager/Implementazione && docker compose -f docker-compose.prod.yml exec -it backend sh
 ```
 
-### To view logs
+### 6. To view logs
 
 ```bash
 # backend
