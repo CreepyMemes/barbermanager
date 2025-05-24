@@ -38,12 +38,11 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
   - [Installing](#installing)
     - [1. SSH into produciton server](#1-ssh-into-produciton-server)
     - [2. Clone the repository:](#2-clone-the-repository)
-    - [3. Add project's nginx config to the server's reverse proxy](#3-add-projects-nginx-config-to-the-servers-reverse-proxy)
-    - [4. Restart the server's reverse proxy](#4-restart-the-servers-reverse-proxy)
+    - [3. Restart the server's reverse proxy](#3-restart-the-servers-reverse-proxy)
   - [Updating](#updating)
     - [1. Pull latest code from GitHub](#1-pull-latest-code-from-github)
     - [2. Rebuild and run production containers](#2-rebuild-and-run-production-containers)
-    - [3. Restart the server's reverse proxy](#3-restart-the-servers-reverse-proxy)
+    - [3. Restart the server's reverse proxy](#3-restart-the-servers-reverse-proxy-1)
     - [4. To shell in backend/frontend](#4-to-shell-in-backendfrontend)
     - [5. To view logs](#5-to-view-logs)
   - [Disabling](#disabling)
@@ -338,17 +337,7 @@ ssh dietpi@rockpi.local
 cd ~/projects/ && git clone https://github.com/CreepyMemes/BarberManager.git
 ```
 
-### 3. Add project's nginx config to the server's reverse proxy
-
-```bash
-# Link to sites-available
-sudo ln -s /home/dietpi/projects/BarberManager/Implementazione/nginx/nginx.conf /etc/nginx/sites-available/barbermanager.conf
-
-# Link to sites-enabled
-sudo ln -s /etc/nginx/sites-available/barbermanager.conf /etc/nginx/sites-enabled/
-```
-
-### 4. Restart the server's reverse proxy
+### 3. Restart the server's reverse proxy
 
 ```bash
 sudo nginx -t && sudo systemctl reload nginx
@@ -365,7 +354,7 @@ cd ~/projects/BarberManager && git pull
 ### 2. Rebuild and run production containers
 
 ```bash
-cd ~/projects/BarberManager/Implementazione && docker compose -f docker-compose.prod.yml up -d --build
+cd ~/projects/barbermanager && docker compose -f docker-compose.prod.yml up -d --build
 ```
 
 ### 3. Restart the server's reverse proxy
@@ -377,7 +366,7 @@ sudo nginx -t && sudo systemctl reload nginx
 ### 4. To shell in backend/frontend
 
 ```bash
-cd ~/projects/BarberManager/Implementazione && docker compose -f docker-compose.prod.yml exec -it backend sh
+cd ~/projects/barbermanager && docker compose -f docker-compose.prod.yml exec -it backend sh
 ```
 
 ### 5. To view logs
@@ -395,11 +384,11 @@ docker compose -f docker-compose.prod.yml logs frontend -f
 ### To disable website being reverse proxied by nginx
 
 ```bash
-sudo rm /etc/nginx/sites-enabled/barbermanager.conf
+sudo mv nginx.conf nginx.conf.disabled
 ```
 
 ### To stop containers
 
 ```bash
-cd ~/projects/BarberManager/Implementazione && docker compose -f docker-compose.prod.yml down
+cd ~/projects/barbermanager && docker compose -f docker-compose.prod.yml down
 ```
