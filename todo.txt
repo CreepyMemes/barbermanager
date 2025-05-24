@@ -1,19 +1,11 @@
 
-What to implement:
+What to do:
 
-1. for backend:
+1. Backend:
 - continua ad implementare gli API endpoint su README.md
 ...
 
-2. for architecture:
-- una volta finita la parte backend correggi i diagrammi di casi d'uso
-- rifai i diagrammi di classi di analisi
-- correggi i diagrammi di sequenza e i rispettivi di attivita
-- fai i diagrammi di classi di progettazione
-...
-
-
-3. for frontend:
+2. Frontend:
 - register page,
 - login page,
 - verify-email send GET request to verify then redirect to login page,
