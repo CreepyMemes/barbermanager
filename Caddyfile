@@ -1,6 +1,9 @@
+import /etc/caddy/logging_snippet.caddyimport /etc/caddy/logging_snippet.caddy
+
 barbermanager.creepymemes.com, barbermanager.rockpi.local {
+	import log_common
 	tls /etc/caddy/ssl/origin.crt /etc/caddy/ssl/origin.key
-	
+
 	handle /api/* {
 		reverse_proxy 127.0.0.1:7001
 	}
