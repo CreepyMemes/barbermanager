@@ -38,15 +38,17 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
   - [Installing](#installing)
     - [1. SSH into produciton server](#1-ssh-into-produciton-server)
     - [2. Clone the repository:](#2-clone-the-repository)
-    - [3. Copy the project's reverse proxy settings](#3-copy-the-projects-reverse-proxy-settings)
-    - [4. Rerun the server's reverse proxy](#4-rerun-the-servers-reverse-proxy)
+    - [3. Add project's nginx config to the server's reverse proxy](#3-add-projects-nginx-config-to-the-servers-reverse-proxy)
+    - [4. Restart the server's reverse proxy](#4-restart-the-servers-reverse-proxy)
   - [Updating](#updating)
     - [1. Pull latest code from GitHub](#1-pull-latest-code-from-github)
     - [2. Rebuild and run production containers](#2-rebuild-and-run-production-containers)
-    - [3. Copy the project's reverse proxy settings](#3-copy-the-projects-reverse-proxy-settings-1)
-    - [4. Rerun the server's reverse proxy](#4-rerun-the-servers-reverse-proxy-1)
-    - [5. To shell in backend/frontend](#5-to-shell-in-backendfrontend)
-    - [6. To view logs](#6-to-view-logs)
+    - [3. Restart the server's reverse proxy](#3-restart-the-servers-reverse-proxy)
+    - [4. To shell in backend/frontend](#4-to-shell-in-backendfrontend)
+    - [5. To view logs](#5-to-view-logs)
+  - [Disabling](#disabling)
+    - [To disable website being reverse proxied by nginx](#to-disable-website-being-reverse-proxied-by-nginx)
+    - [To stop containers](#to-stop-containers)
 
 ## Requirements
 
@@ -327,7 +329,7 @@ This section is about deplying the application to the internet in a production e
 ### 1. SSH into produciton server
 
 ```bash
-ssh dietpi@rockpi
+ssh dietpi@rockpi.local
 ```
 
 ### 2. Clone the repository:
@@ -336,16 +338,20 @@ ssh dietpi@rockpi
 cd ~/projects/ && git clone https://github.com/CreepyMemes/BarberManager.git
 ```
 
-### 3. Copy the project's reverse proxy settings
+### 3. Add project's nginx config to the server's reverse proxy
 
 ```bash
-sudo cp ~/projects/BarberManager/Implementazione/nginx/nginx.conf /etc/nginx/conf.d/barbermanager.conf
+# Link to sites-available
+sudo ln -s /home/dietpi/projects/BarberManager/Implementazione/nginx/nginx.conf /etc/nginx/sites-available/barbermanager.conf
+
+# Link to sites-enabled
+sudo ln -s /etc/nginx/sites-available/barbermanager.conf /etc/nginx/sites-enabled/
 ```
 
-### 4. Rerun the server's reverse proxy
+### 4. Restart the server's reverse proxy
 
 ```bash
-sudo systemctl reload nginx
+sudo nginx -t && sudo systemctl reload nginx
 ```
 
 ## Updating
@@ -362,25 +368,19 @@ cd ~/projects/BarberManager && git pull
 cd ~/projects/BarberManager/Implementazione && docker compose -f docker-compose.prod.yml up -d --build
 ```
 
-### 3. Copy the project's reverse proxy settings
+### 3. Restart the server's reverse proxy
 
 ```bash
-sudo cp ~/projects/BarberManager/Implementazione/nginx/nginx.conf /etc/nginx/conf.d/barbermanager.conf
+sudo nginx -t && sudo systemctl reload nginx
 ```
 
-### 4. Rerun the server's reverse proxy
-
-```bash
-sudo systemctl reload nginx
-```
-
-### 5. To shell in backend/frontend
+### 4. To shell in backend/frontend
 
 ```bash
 cd ~/projects/BarberManager/Implementazione && docker compose -f docker-compose.prod.yml exec -it backend sh
 ```
 
-### 6. To view logs
+### 5. To view logs
 
 ```bash
 # backend
@@ -388,4 +388,18 @@ docker compose -f docker-compose.prod.yml logs backend -f
 
 # frontend
 docker compose -f docker-compose.prod.yml logs frontend -f
+```
+
+## Disabling
+
+### To disable website being reverse proxied by nginx
+
+```bash
+sudo rm /etc/nginx/sites-enabled/barbermanager.conf
+```
+
+### To stop containers
+
+```bash
+cd ~/projects/BarberManager/Implementazione && docker compose -f docker-compose.prod.yml down
 ```
