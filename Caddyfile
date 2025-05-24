@@ -1,4 +1,4 @@
-import /etc/caddy/logging_snippet.caddyimport /etc/caddy/logging_snippet.caddy
+import /etc/caddy/logging.caddy
 
 manageBarber.s1lentCommit.com, manageBarber.rockpi.local {
 	import log_common
