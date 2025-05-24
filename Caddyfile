@@ -1,4 +1,6 @@
 barbermanager.creepymemes.com, barbermanager.rockpi.local {
+	tls /etc/caddy/ssl/origin.crt /etc/caddy/ssl/origin.key
+	
 	handle /api/* {
 		reverse_proxy 127.0.0.1:7001
 	}
