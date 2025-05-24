@@ -1,7 +1,9 @@
-import /etc/caddy/logging.caddy
-
 barbermanager.creepymemes.com, barbermanager.rockpi.local {
+
+	# Add logging
 	import log_common
+
+	# Set custom SSL certificates
 	tls /etc/caddy/ssl/origin.crt /etc/caddy/ssl/origin.key
 
 	handle /api/* {
