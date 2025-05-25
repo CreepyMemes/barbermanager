@@ -360,7 +360,7 @@ cd ~/projects/barbermanager && docker compose -f docker-compose.prod.yml up -d -
 ### 3. Restart the server's reverse proxy
 
 ```bash
-sudo nginx -t && sudo systemctl reload nginx
+sudo nginx -t && sudo nginx -s reload
 ```
 
 ### 4. To shell in backend/frontend
@@ -384,7 +384,7 @@ docker compose -f docker-compose.prod.yml logs frontend -f
 ### To disable website being reverse proxied by nginx
 
 ```bash
-sudo mv nginx.conf nginx.conf.disabled
+sudo mv nginx.conf nginx.conf.disabled && sudo nginx -s reload
 ```
 
 ### To stop containers
