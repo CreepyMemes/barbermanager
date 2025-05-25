@@ -1,3 +1,5 @@
+[![Deploy to Production](https://github.com/s1lentCommit/manageBarber/actions/workflows/deploy.yml/badge.svg?branch=master)](https://github.com/s1lentCommit/manageBarber/actions/workflows/deploy.yml)
+
 <div align="center">
     <img src="./frontend/public/logo.png" height="100px" alt="ManageBarber Logo"/>
 </div>
