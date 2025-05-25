@@ -17,4 +17,5 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd ~/projects/barbermanager && ./deploy.sh
+            cd ${{ secrets.PRODUCTION_PATH }}
+            ./deploy.sh

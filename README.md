@@ -35,9 +35,6 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
     - [Client Appointments](#client-appointments)
     - [Reviews](#reviews)
 - [Production Workflow](#production-workflow)
-  - [Deployment](#deployment)
-    - [1. Clone the repository](#1-clone-the-repository-1)
-    - [2. Run the deploy script](#2-run-the-deploy-script)
 
 ## Requirements
 
@@ -309,20 +306,6 @@ Clients can submit a **single** review per barber, but **only** after completing
 
 # Production Workflow
 
-This section is about deplying the application to the internet in a production environment hosted by a server exposed to the internet.
-
 - The project will be available at: [http://barbermanager.creepymemes.com](http://barbermanager.creepymemes.com)
 
-## Deployment
-
-### 1. Clone the repository
-
-```bash
-cd ~/projects/ && git clone https://CreepyMemes:TOKEN@github.com/CreepyMemes/barbermanager.git
-```
-
-### 2. Run the deploy script
-
-```bash
-cd ~/projects/barbermanager && ./deploy.sh
-```
+TODO: run CI/CD automated deployment with github actions
