@@ -5,9 +5,13 @@ FRONTEND_URL = os.environ['FRONTEND_URL']
 REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = (
     'rest_framework.renderers.JSONRenderer',
 )
+
+# Ensure cookies are only sent over HTTPS
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Set HSTS on every subdomain
-SECURE_HSTS_SECONDS = 31536000         # Match nginx config
-SECURE_SSL_REDIRECT = False            # No need as nginx redirects
+
+# We leave SSL redirect to Nginx
+SECURE_SSL_REDIRECT = False
+
+# No need for SECURE_HSTS_* settings here, as Nginx handles HSTS globally
