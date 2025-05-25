@@ -8,5 +8,6 @@ REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = (
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
-SECURE_HSTS_SECONDS = 31536000 # Match nginx config
-SECURE_SSL_REDIRECT = False    # No need as nginx redirects
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Set HSTS on every subdomain
+SECURE_HSTS_SECONDS = 31536000         # Match nginx config
+SECURE_SSL_REDIRECT = False            # No need as nginx redirects
