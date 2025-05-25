@@ -1,3 +1,5 @@
+[![Deploy to Production](https://github.com/CreepyMemes/barbermanager/actions/workflows/deploy.yml/badge.svg?branch=master)](https://github.com/CreepyMemes/barbermanager/actions/workflows/deploy.yml)
+
 <div align="center">
     <img src="./frontend/public/logo.png" height="100px" alt="BarberManager Logo"/>
 </div>
