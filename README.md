@@ -324,5 +324,5 @@ cd ~/projects/ && git clone https://CreepyMemes:TOKEN@github.com/CreepyMemes/bar
 ### 2. Run the deploy script
 
 ```bash
-cd ~/projects/barbermanager && ./deploy.sh
+cd ~/projects/barbermanager && sudo ./deploy.sh
 ```
