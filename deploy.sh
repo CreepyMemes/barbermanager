@@ -1,7 +1,9 @@
 #!/bin/bash
+set -e  # Exit on first error
 
 echo "Pulling latest code..."
-git pull
+git config --global --add safe.directory "$(pwd)"  # Fix Git safe-dir issue in some CI
+git pull origin master
 
 echo "Starting containers..."
 docker compose -f docker-compose.prod.yml up -d --build
