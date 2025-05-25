@@ -35,19 +35,9 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
     - [Client Appointments](#client-appointments)
     - [Reviews](#reviews)
 - [Production Workflow](#production-workflow)
-  - [Installing](#installing)
-    - [1. SSH into produciton server](#1-ssh-into-produciton-server)
-    - [2. Clone the repository:](#2-clone-the-repository)
-    - [3. Restart the server's reverse proxy](#3-restart-the-servers-reverse-proxy)
-  - [Updating](#updating)
-    - [1. Pull latest code from GitHub](#1-pull-latest-code-from-github)
-    - [2. Rebuild and run production containers](#2-rebuild-and-run-production-containers)
-    - [3. Restart the server's reverse proxy](#3-restart-the-servers-reverse-proxy-1)
-    - [4. To shell in backend/frontend](#4-to-shell-in-backendfrontend)
-    - [5. To view logs](#5-to-view-logs)
-  - [Disabling](#disabling)
-    - [To disable website being reverse proxied by nginx](#to-disable-website-being-reverse-proxied-by-nginx)
-    - [To stop containers](#to-stop-containers)
+  - [Deployment](#deployment)
+    - [1. Clone the repository](#1-clone-the-repository-1)
+    - [2. Run the deploy script](#2-run-the-deploy-script)
 
 ## Requirements
 
@@ -321,74 +311,18 @@ Clients can submit a **single** review per barber, but **only** after completing
 
 This section is about deplying the application to the internet in a production environment hosted by a server exposed to the internet.
 
-- The deployed will be available at: [http://barbermanager.creepymemes.duckdns.org](http://barbermanager.creepymemes.duckdns.org)
+- The project will be available at: [http://barbermanager.creepymemes.com](http://barbermanager.creepymemes.com)
 
-## Installing
+## Deployment
 
-### 1. SSH into produciton server
+### 1. Clone the repository
 
 ```bash
-ssh dietpi@rockpi.local
+cd ~/projects/ && git clone https://CreepyMemes:TOKEN@github.com/CreepyMemes/barbermanager.git
 ```
 
-### 2. Clone the repository:
+### 2. Run the deploy script
 
 ```bash
-cd ~/projects/ && git clone https://github.com/CreepyMemes/BarberManager.git
-```
-
-### 3. Restart the server's reverse proxy
-
-```bash
-sudo nginx -t && sudo systemctl reload nginx
-```
-
-## Updating
-
-### 1. Pull latest code from GitHub
-
-```bash
-cd ~/projects/BarberManager && git pull
-```
-
-### 2. Rebuild and run production containers
-
-```bash
-cd ~/projects/barbermanager && docker compose -f docker-compose.prod.yml up -d --build
-```
-
-### 3. Restart the server's reverse proxy
-
-```bash
-sudo nginx -t && sudo nginx -s reload
-```
-
-### 4. To shell in backend/frontend
-
-```bash
-cd ~/projects/barbermanager && docker compose -f docker-compose.prod.yml exec -it backend sh
-```
-
-### 5. To view logs
-
-```bash
-# backend
-docker compose -f docker-compose.prod.yml logs backend -f
-
-# frontend
-docker compose -f docker-compose.prod.yml logs frontend -f
-```
-
-## Disabling
-
-### To disable website being reverse proxied by nginx
-
-```bash
-sudo mv nginx.conf nginx.conf.disabled && sudo nginx -s reload
-```
-
-### To stop containers
-
-```bash
-cd ~/projects/barbermanager && docker compose -f docker-compose.prod.yml down
+cd ~/projects/barbermanager && sudo ./deploy.sh
 ```
