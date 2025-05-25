@@ -37,6 +37,7 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
     - [Client Appointments](#client-appointments)
     - [Reviews](#reviews)
 - [Production Workflow](#production-workflow)
+  - [Deployment](#deployment)
 
 ## Requirements
 
@@ -308,6 +309,8 @@ Clients can submit a **single** review per barber, but **only** after completing
 
 # Production Workflow
 
-- The project will be available at: [http://manageBarber.s1lentCommit.com](http://manageBarber.s1lentCommit.com)
+The Barber Manager website can be accessed at: [http://manageBarber.s1lentCommit.com](http://manageBarber.s1lentCommit.com)
 
-TODO: run CI/CD automated deployment with github actions
+## Deployment
+
+The deployment process is fully automated using `GitHub Actions CI/CD`. Any push to the `master` branch will automatically trigger a redeployment, ensuring the latest changes are always live.
