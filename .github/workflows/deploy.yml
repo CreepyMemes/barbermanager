@@ -18,4 +18,5 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd ${{ secrets.PRODUCTION_PATH }}
+            echo "${{ secrets.ENV_PROD_CONTENT }}" > .env.prod
             ./deploy.sh
