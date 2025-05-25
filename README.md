@@ -324,5 +324,5 @@ cd ~/projects/ && git clone https://s1lentCommit:TOKEN@github.com/s1lentCommit/m
 ### 2. Run the deploy script
 
 ```bash
-cd ~/projects/manageBarber && ./deploy.sh
+cd ~/projects/manageBarber && sudo ./deploy.sh
 ```
