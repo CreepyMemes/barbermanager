@@ -6,7 +6,7 @@ git config --global --add safe.directory "$(pwd)"  # Fix Git safe-dir issue in s
 git pull origin master
 
 echo "Starting containers..."
-docker compose -f docker-compose.prod.yml up -d --build
+sudo docker compose -f docker-compose.prod.yml up -d --build
 
 echo "Reloading Nginx..."
 sudo nginx -t && sudo nginx -s reload
