@@ -205,9 +205,9 @@ api/
 | ---------------------------------- | ------- | ---------------------------------------------------------------- | ------ |
 | `/admin/barber/`                   | POST    | Invite a barber through their email.                             | ✅ 🧪  |
 | `/admin/barber/<barber_id>/`       | DELETE  | Remove a barber by ID                                            | ✅     |
-| `/admin/availability/<barber_id>/` | POST    | Add or update availability slots for a barber on a specific date |        |
-| `/admin/availability/<barber_id>/` | PATCH   | Edit availability slots for a barber on a specific date          |        |
-| `/admin/availability/<barber_id>/` | DELELTE | Delete availability slots for a barber on a specific date        |        |
+| `/admin/availability/<barber_id>/` | POST    | Add or update availability slots for a barber on a specific date | ✅     |
+| `/admin/availability/<barber_id>/` | PATCH   | Edit availability slots for a barber on a specific date          | ✅     |
+| `/admin/availability/<barber_id>/` | DELELTE | Delete availability slots for a barber on a specific date        | ✅     |
 | `/admin/statistics/`               | GET     | Generate general statistics                                      |        |
 | `/admin/appointments/`             | GET     | View a list of all past appointments                             |        |
 
@@ -240,7 +240,7 @@ api/
 | ------------------------------------------ | ------ | ------------------------------------- | ------ |
 | `/public/barber/`                          | GET    | List all barbers                      | ✅     |
 | `/public/barber/<barber_id>/services/`     | GET    | List services by selected barber      |        |
-| `/public/barber/<barber_id>/availability/` | GET    | Get available time slots              |        |
+| `/public/barber/<barber_id>/availability/` | GET    | Get available time slots              | ✅     |
 | `/public/barber/<barber_id>/profile/`      | GET    | Get barber profile, reviews, services |        |
 
 TODO: some way to set reminders (will think of this later)
@@ -253,7 +253,6 @@ Barber availability is defined as a single record per barber per date, listing a
 
 ```json
 {
-  "barber": 3,
   "date": "2025-05-20",
   "slots": ["09:00", "10:00", "11:00", "14:00", "15:00"]
 }
