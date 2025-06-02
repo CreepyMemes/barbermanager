@@ -2,9 +2,16 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.conf import settings
+from rest_framework.permissions import IsAdminUser
+from ..models import Availability
+from ..serializers import AvailabilitySerializer
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import (
+    api_view,
+    permission_classes,
+    authentication_classes
+)
 from ..utils import (
     IsAdminRole,
     send_barber_invite_email,
@@ -13,6 +20,8 @@ from ..serializers import (
     InviteBarberSerializer,
     DeleteBarberSerializer,
 )
+from ..models import Availability
+from ..serializers.admin import AvailabilitySerializer
 
 
 @api_view(['POST'])
@@ -43,3 +52,55 @@ def delete_barber(request, barber_id):
     serializer.delete()
 
     return Response({"detail": f"Barber with ID {barber_id} has been deleted."}, status=status.HTTP_200_OK)
+
+@api_view(['POST', 'PATCH', 'DELETE'])
+@permission_classes([IsAdminUser])
+def manage_barber_availability(request, barber_id):
+    date = request.data.get('date')
+    if not date:
+        return Response({"detail": "Date is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+    if request.method == 'POST':
+        slots = request.data.get('slots')
+        if not slots:
+            return Response({"detail": "Slots are required for POST."}, status=status.HTTP_400_BAD_REQUEST)
+        availability, created = Availability.objects.update_or_create(
+            barber_id=barber_id,
+            date=date,
+            defaults={'slots': slots}
+        )
+        serializer = AvailabilitySerializer(availability)
+        return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+
+    elif request.method == 'PATCH':
+        try:
+            availability = Availability.objects.get(barber_id=barber_id, date=date)
+        except Availability.DoesNotExist:
+            return Response({"detail": "Availability not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = AvailabilitySerializer(availability, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        try:
+            availability = Availability.objects.get(barber_id=barber_id, date=date)
+            availability.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Availability.DoesNotExist:
+            return Response({"detail": "Availability not found."}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def get_barber_availability(request, barber_id, date):
+    """
+    Get availability for a specific barber on a given date (YYYY-MM-DD).
+    """
+    try:
+        availability = Availability.objects.get(barber_id=barber_id, date=date)
+        serializer = AvailabilitySerializer(availability)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Availability.DoesNotExist:
+        return Response({"detail": "No availability found."}, status=status.HTTP_404_NOT_FOUND)

@@ -6,6 +6,7 @@ from ..models import Barber
 from ..serializers import (
     GetBarberListSerializer,
 )
+from ..models import Barber, Availability
 
 
 @api_view(['GET'])
@@ -18,3 +19,16 @@ def get_barbers_list(request):
     barbers = Barber.objects.filter(is_active=True)
     serializer = GetBarberListSerializer(barbers, many=True)
     return Response({"barbers": serializer.data}, status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_barber_public_availability(request, barber_id):
+    availabilities = Availability.objects.filter(barber_id=barber_id)
+    data = [
+        {
+            "date": a.date,
+            "slots": a.slots
+        }
+        for a in availabilities
+    ]
+    return Response({"availability": data}, status=200)

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from ..models import Barber
 from ..utils import EmailValidationMixin
+from ..models import Availability
 
 
 class InviteBarberSerializer(EmailValidationMixin, serializers.Serializer):
@@ -43,3 +44,17 @@ class DeleteBarberSerializer(serializers.Serializer):
     def delete(self):
         self.barber.delete()
         return self.barber
+    
+class AvailabilitySerializer(serializers.ModelSerializer):
+    """
+    Admin only: Manage barber availability for a specific date.
+    """
+  
+    class Meta:
+        model = Availability
+        fields = ['id', 'barber', 'date', 'slots']
+
+    def validate_slots(self, value):
+        if not isinstance(value, list) or not all(isinstance(slot, str) for slot in value):
+            raise serializers.ValidationError("Slots must be a list of strings (e.g., ['09:00', '10:00'])")
+        return value
