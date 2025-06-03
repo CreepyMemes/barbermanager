@@ -213,14 +213,14 @@ api/
 
 ## Barber Endpoints (`api/barber/`)
 
-| Endpoint                         | Method | Description                  | Status |
-| -------------------------------- | ------ | ---------------------------- | ------ |
-| `/barber/services/`              | GET    | List own services            |        |
-| `/barber/services/`              | POST   | Add a service                |        |
-| `/barber/services/<service_id>/` | PATCH  | Edit a service               |        |
-| `/barber/services/<service_id>/` | DELETE | Remove a service             |        |
-| `/barber/reviews/`               | GET    | List reviews of own services |        |
-| `/barber/appointments/`          | GET    | View upcoming appointments   |        |
+| Endpoint                        | Method | Description                  | Status |
+| ------------------------------- | ------ | ---------------------------- | ------ |
+| `/barber/services/`             | GET    | List own services            |        |
+| `/barber/service/`              | POST   | Add a service                |        |
+| `/barber/service/<service_id>/` | PATCH  | Edit a service               |        |
+| `/barber/service/<service_id>/` | DELETE | Remove a service             |        |
+| `/barber/reviews/`              | GET    | List reviews of own services |        |
+| `/barber/appointments/`         | GET    | View upcoming appointments   |        |
 
 ## Client Endpoints (`api/client/`)
 
