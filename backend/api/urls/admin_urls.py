@@ -1,5 +1,5 @@
 from django.urls import path
-from ..views.admin import (
+from ..views import (
     invite_barber,
     delete_barber,
     manage_barber_availability,
