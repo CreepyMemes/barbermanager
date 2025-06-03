@@ -86,17 +86,3 @@ def manage_barber_availability(request, barber_id):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Availability.DoesNotExist:
             return Response({"detail": "Availability not found."}, status=status.HTTP_404_NOT_FOUND)
-
-
-@api_view(['GET'])
-@permission_classes([IsAdminRole])
-def get_barber_availability(request, barber_id, date):
-    """
-    Get availability for a specific barber on a given date (YYYY-MM-DD).
-    """
-    try:
-        availability = Availability.objects.get(barber_id=barber_id, date=date)
-        serializer = AvailabilitySerializer(availability)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    except Availability.DoesNotExist:
-        return Response({"detail": "No availability found."}, status=status.HTTP_404_NOT_FOUND)
