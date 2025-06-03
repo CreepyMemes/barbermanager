@@ -3,6 +3,7 @@ What to do:
 
 1. Backend:
 - continua ad implementare gli API endpoint su README.md
+- aggiungi name, surname, description a barber, durante registrazione, o un endpoint che lo fa dopo
 ...
 
 2. Frontend:

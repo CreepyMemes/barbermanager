@@ -124,7 +124,7 @@ class Barber(User):
     Barbers can only register if invited by an admin. They register by 
     providing a username and password, email is set by admin invitation.
     """
-    # description = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.pk:
