@@ -2,11 +2,13 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
-from ..models import Barber
 from ..serializers import (
     GetBarberListSerializer,
 )
-from ..models import Barber, Availability
+from ..models import (
+    Barber, 
+    Availability
+)
 
 
 @api_view(['GET'])
@@ -20,8 +22,10 @@ def get_barbers_list(request):
     serializer = GetBarberListSerializer(barbers, many=True)
     return Response({"barbers": serializer.data}, status.HTTP_200_OK)
 
+
 @api_view(['GET'])
 @permission_classes([AllowAny])
+@authentication_classes([]) 
 def get_barber_public_availability(request, barber_id):
     availabilities = Availability.objects.filter(barber_id=barber_id)
     data = [

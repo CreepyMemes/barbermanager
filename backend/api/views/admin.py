@@ -2,16 +2,10 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.conf import settings
-from rest_framework.permissions import IsAdminUser
-from ..models import Availability
-from ..serializers import AvailabilitySerializer
-from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.decorators import (
-    api_view,
-    permission_classes,
-    authentication_classes
-)
+from rest_framework import status
 from ..utils import (
     IsAdminRole,
     send_barber_invite_email,
@@ -19,9 +13,9 @@ from ..utils import (
 from ..serializers import (
     InviteBarberSerializer,
     DeleteBarberSerializer,
+    AvailabilitySerializer,
 )
 from ..models import Availability
-from ..serializers.admin import AvailabilitySerializer
 
 
 @api_view(['POST'])
@@ -53,8 +47,9 @@ def delete_barber(request, barber_id):
 
     return Response({"detail": f"Barber with ID {barber_id} has been deleted."}, status=status.HTTP_200_OK)
 
+
 @api_view(['POST', 'PATCH', 'DELETE'])
-@permission_classes([IsAdminUser])
+@permission_classes([IsAdminRole])
 def manage_barber_availability(request, barber_id):
     date = request.data.get('date')
     if not date:
@@ -92,8 +87,9 @@ def manage_barber_availability(request, barber_id):
         except Availability.DoesNotExist:
             return Response({"detail": "Availability not found."}, status=status.HTTP_404_NOT_FOUND)
 
+
 @api_view(['GET'])
-@permission_classes([IsAdminUser])
+@permission_classes([IsAdminRole])
 def get_barber_availability(request, barber_id, date):
     """
     Get availability for a specific barber on a given date (YYYY-MM-DD).
