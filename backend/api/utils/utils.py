@@ -5,7 +5,11 @@ from django.utils.encoding import  force_str
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
-from ..models import User
+from ..models import (
+    User, 
+    Barber,
+    Availability,
+)
 
 
 def send_client_verify_email(email, uid, token, domain):
@@ -99,6 +103,7 @@ class EmailValidationMixin:
             raise serializers.ValidationError("A user with this email already exists.")
         return email
 
+
 class UsernameValidationMixin:
     """
     Utility mixin to handle common username validation checks
@@ -126,4 +131,51 @@ class UIDTokenValidationSerializer(serializers.Serializer):
     def validate(self, attrs):
         user = self.validate_uid_token()
         attrs['user'] = user
+        return attrs
+    
+
+class BarberValidationMixin:
+    """
+    Mixin to validate that a barber_id from context exists and is active. Also adds 'barber' to attrs.
+    """
+    def validate_barber(self, attrs):
+        barber_id = self.context.get('barber_id')
+
+        try:
+            barber = Barber.objects.get(pk=barber_id, is_active=True)
+        except Barber.DoesNotExist:
+            raise serializers.ValidationError('Barber with this ID does not exist or is inactive.')
+        
+        attrs['barber'] = barber
+        return attrs
+
+
+class NewAvailabilityValidationMixin:
+    """
+    Mixin to validate if the given date for the specific barber doesn't already have existing availability
+    """
+    def validate_new_date(self, attrs):
+        barber = attrs['barber']
+        date = attrs['date']
+
+        if Availability.objects.filter(barber=barber, date=date).exists():
+            raise serializers.ValidationError(f'Availability for the date: {date} already exists.')
+        
+        return attrs
+
+
+class FindAvailabilityValidationMixin:
+    """
+    Mixin to validate if the given date for the specific barber has an existing availabililty
+    """
+    def validate_find_date(self, attrs):
+        barber = attrs['barber']
+        date = attrs['date']
+
+        try:
+            availability = Availability.objects.get(barber=barber, date=date)
+        except Availability.DoesNotExist:
+            raise serializers.ValidationError(f'No availability exists for the date: {date}.')
+        
+        attrs['availability'] = availability
         return attrs
