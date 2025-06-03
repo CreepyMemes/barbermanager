@@ -2,7 +2,7 @@ from django.urls import path
 from ..views.admin import (
     invite_barber,
     delete_barber,
-    manage_barber_availability,  # nuova view unica
+    manage_barber_availability,
 )
 
 urlpatterns = [
