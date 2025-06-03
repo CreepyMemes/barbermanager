@@ -1,5 +1,5 @@
 from django.urls import path
-from ..views.barber import (
+from ..views import (
     add_service,
 )
 

@@ -1,5 +1,5 @@
 from django.urls import path
-from ..views.auth import (
+from ..views import (
     register_client,
     register_barber,
     verify_client,

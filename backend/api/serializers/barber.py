@@ -10,8 +10,8 @@ class AddServiceSerializer(BarberValidationMixin, serializers.Serializer):
     """
     Admin only: Invites a barber, accepts only email.
     """
-    name = serializers.CharField(required=True) # TODO: add unique validation
-    price = serializers.DecimalField(required=True) 
+    name = serializers.CharField(required=True, max_length=100) # TODO: add unique validation
+    price = serializers.DecimalField(required=True, max_digits=6, decimal_places=2) 
 
     def validate(self, attrs):
         attrs = self.validate_barber(attrs)
