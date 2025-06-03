@@ -1,5 +1,10 @@
 from rest_framework import serializers
-from ..utils import EmailValidationMixin
+from ..utils import (
+    EmailValidationMixin,
+    BarberValidationMixin,
+    NewAvailabilityValidationMixin,
+    FindAvailabilityValidationMixin,
+)
 from ..models import(
     Barber,
     Availability,
@@ -46,9 +51,9 @@ class DeleteBarberSerializer(serializers.Serializer):
     def delete(self):
         self.barber.delete()
         return self.barber
+    
 
-
-class CreateBarberAvailabilitySerializer(serializers.Serializer):
+class CreateBarberAvailabilitySerializer(BarberValidationMixin, NewAvailabilityValidationMixin, serializers.Serializer):
     """
     Admin only: Creates a barber's availability for a specific date.
     """
@@ -56,19 +61,8 @@ class CreateBarberAvailabilitySerializer(serializers.Serializer):
     slots = serializers.ListField(child=serializers.RegexField(r'^\d\d:\d\d$', required=True), min_length=1)
 
     def validate(self, attrs):
-        barber_id = self.context['barber_id']
-
-        try:
-            barber = Barber.objects.get(pk=barber_id, is_active=True)
-        except Barber.DoesNotExist:
-            raise serializers.ValidationError('Barber with this ID does not exist or is inactive.')
-        
-        attrs['barber'] = barber
-
-        date = attrs['date']
-        if Availability.objects.filter(barber=barber, date=date).exists():
-            raise serializers.ValidationError('Availability for this date already exists.')
-        
+        attrs = self.validate_barber(attrs)
+        attrs = self.validate_new_date(attrs)
         return attrs
 
     def create(self, validated_data):
@@ -83,7 +77,7 @@ class CreateBarberAvailabilitySerializer(serializers.Serializer):
         )
 
 
-class UpdateBarberAvailabilitySerializer(serializers.Serializer):
+class UpdateBarberAvailabilitySerializer(BarberValidationMixin, FindAvailabilityValidationMixin, serializers.Serializer):
     """
     Admin only: Updates the slots of an existing barber's availability for a specific date.
     """
@@ -91,23 +85,8 @@ class UpdateBarberAvailabilitySerializer(serializers.Serializer):
     slots = serializers.ListField(child=serializers.RegexField(r'^\d\d:\d\d$', required=True), min_length=1)
 
     def validate(self, attrs):
-        barber_id = self.context['barber_id']
-
-        try:
-            barber = Barber.objects.get(pk=barber_id, is_active=True)
-        except Barber.DoesNotExist:
-            raise serializers.ValidationError('Barber with this ID does not exist or is inactive.')
-        
-        attrs['barber'] = barber
-
-        date = attrs['date']
-        try:
-            availability = Availability.objects.get(barber=barber, date=date)
-        except Availability.DoesNotExist:
-            raise serializers.ValidationError('No availability exists for this date to update.')
-        
-        attrs['availability'] = availability
-
+        attrs = self.validate_barber(attrs)
+        attrs = self.validate_find_date(attrs)
         return attrs
 
     def update(self, instance, validated_data):
@@ -120,28 +99,15 @@ class UpdateBarberAvailabilitySerializer(serializers.Serializer):
         return self.update(self.validated_data['availability'], self.validated_data)
     
 
-class DeleteBarberAvailabilitySerializer(serializers.Serializer):
+class DeleteBarberAvailabilitySerializer(BarberValidationMixin, FindAvailabilityValidationMixin, serializers.Serializer):
     """
     Admin only: Deletes a barber's availability for a specific date.
     """
     date = serializers.DateField(required=True)
 
     def validate(self, attrs):
-        barber_id = self.context['barber_id']
-
-        try:
-            barber = Barber.objects.get(pk=barber_id, is_active=True)
-        except Barber.DoesNotExist:
-            raise serializers.ValidationError('Barber with this ID does not exist or is inactive.')
-        
-        attrs['barber'] = barber
-
-        date = attrs['date']
-        try:
-            availability = Availability.objects.get(barber=barber, date=date)
-        except Availability.DoesNotExist:
-            raise serializers.ValidationError('No availability exists for this date to delete.')
-        attrs['availability'] = availability
+        attrs = self.validate_barber(attrs)
+        attrs = self.validate_find_date(attrs)
         return attrs
 
     def delete(self):
