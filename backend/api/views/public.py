@@ -7,21 +7,17 @@ from ..serializers import (
     GetBarberAvailabilitySerializer,
     GetBarberServicesSerializer,
 )
-from ..models import (
-    Barber, 
-)
 
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
-@authentication_classes([]) 
+@authentication_classes([])
 def get_barbers_list(request):
     """
     Return a list of all active barbers
     """
-    barbers = Barber.objects.filter(is_active=True)
-    serializer = GetBarberListSerializer(barbers, many=True)
-    return Response({"barbers": serializer.data}, status.HTTP_200_OK)
+    serializer = GetBarberListSerializer(instance={}) 
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])

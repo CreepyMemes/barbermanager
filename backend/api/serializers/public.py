@@ -9,14 +9,19 @@ from ..models import (
 )
 
 
-class GetBarberListSerializer(serializers.ModelSerializer):
+class GetBarberListSerializer(serializers.Serializer):
     """
-    Returns read only info for barbers
+    Return a list of all active barbers
     """
-    class Meta:
-        model = Barber
-        fields = ['id', 'username', 'email'] 
-        read_only_fields = fields
+
+    def to_representation(self, instance):
+        barbers = Barber.objects.filter(is_active=True)
+
+        return {"barbers": [{
+            "id": b.id, 
+            "username": b.username, 
+            "email": b.email
+        } for b in barbers]}
 
 
 class GetBarberAvailabilitySerializer(BarberValidationMixin, serializers.Serializer):
