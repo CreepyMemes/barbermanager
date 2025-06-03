@@ -1,7 +1,9 @@
 from rest_framework import serializers
-from ..models import Barber
 from ..utils import EmailValidationMixin
-from ..models import Availability
+from ..models import(
+    Barber,
+    Availability,
+)
 
 
 class InviteBarberSerializer(EmailValidationMixin, serializers.Serializer):
@@ -44,12 +46,12 @@ class DeleteBarberSerializer(serializers.Serializer):
     def delete(self):
         self.barber.delete()
         return self.barber
-    
+
+
 class AvailabilitySerializer(serializers.ModelSerializer):
     """
     Admin only: Manage barber availability for a specific date.
     """
-  
     class Meta:
         model = Availability
         fields = ['id', 'barber', 'date', 'slots']

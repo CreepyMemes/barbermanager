@@ -1,7 +1,7 @@
 from django.urls import path
-from ..views.public import get_barber_public_availability
-from ..views.public import (
+from ..views import (
     get_barbers_list,
+    get_barber_public_availability,
 )
 
 urlpatterns = [
