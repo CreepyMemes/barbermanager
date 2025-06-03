@@ -20,7 +20,7 @@ class GetBarberListSerializer(serializers.Serializer):
         return {"barbers": [{
             "id": b.id, 
             "username": b.username, 
-            "email": b.email
+            "description": b.description
         } for b in barbers]}
 
 
