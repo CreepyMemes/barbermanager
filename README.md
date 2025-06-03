@@ -201,15 +201,15 @@ api/
 
 ## Admin Endpoints (`api/admin/`)
 
-| Endpoint                           | Method  | Description                                                      | Status |
-| ---------------------------------- | ------- | ---------------------------------------------------------------- | ------ |
-| `/admin/barber/`                   | POST    | Invite a barber through their email.                             | ✅ 🧪  |
-| `/admin/barber/<barber_id>/`       | DELETE  | Remove a barber by ID                                            | ✅     |
-| `/admin/availability/<barber_id>/` | POST    | Add or update availability slots for a barber on a specific date | ✅     |
-| `/admin/availability/<barber_id>/` | PATCH   | Edit availability slots for a barber on a specific date          | ✅     |
-| `/admin/availability/<barber_id>/` | DELELTE | Delete availability slots for a barber on a specific date        | ✅     |
-| `/admin/statistics/`               | GET     | Generate general statistics                                      |        |
-| `/admin/appointments/`             | GET     | View a list of all past appointments                             |        |
+| Endpoint                                  | Method  | Description                                                      | Status |
+| ----------------------------------------- | ------- | ---------------------------------------------------------------- | ------ |
+| `/admin/barber/`                          | POST    | Invite a barber through their email.                             | ✅ 🧪  |
+| `/admin/barber/<barber_id>/`              | DELETE  | Remove a barber by ID                                            | ✅     |
+| `/admin/barber/<barber_id>/availability/` | POST    | Add or update availability slots for a barber on a specific date | ✅     |
+| `/admin/barber/<barber_id>/availability/` | PATCH   | Edit availability slots for a barber on a specific date          | ✅     |
+| `/admin/barber/<barber_id>/availability/` | DELELTE | Delete availability slots for a barber on a specific date        | ✅     |
+| `/admin/statistics/`                      | GET     | Generate general statistics                                      |        |
+| `/admin/appointments/`                    | GET     | View a list of all past appointments                             |        |
 
 ## Barber Endpoints (`api/barber/`)
 
