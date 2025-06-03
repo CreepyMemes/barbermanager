@@ -19,7 +19,7 @@ class Service(models.Model):
     """
     Represents a service offered by a barber.
     Each service is tied to one barber.
-    Barbers can offer multiple services.
+    Barbers can offer multiple services, but with unique names only.
     """
     barber = models.ForeignKey(Barber, on_delete=models.CASCADE, related_name='services')
     name = models.CharField(max_length=100)
