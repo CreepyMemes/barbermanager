@@ -13,16 +13,16 @@ from ..utils import (
 from ..serializers import (
     InviteBarberSerializer,
     DeleteBarberSerializer,
-    AvailabilitySerializer,
+    CreateBarberAvailabilitySerializer,
+    UpdateBarberAvailabilitySerializer,
+    DeleteBarberAvailabilitySerializer,
 )
-from ..models import Availability
-
 
 @api_view(['POST'])
 @permission_classes([IsAdminRole])
 def invite_barber(request):
     """
-    Admin-only: Invite a barber by email. Sends a link with encoded email (uid).
+    Admin only: Invite a barber by email. Sends a link with encoded email (uid).
     """
     serializer = InviteBarberSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
@@ -39,7 +39,7 @@ def invite_barber(request):
 @permission_classes([IsAdminRole])
 def delete_barber(request, barber_id):
     """
-    Deletes a barber by ID using the serializer
+    Admin only: Deletes a barber by ID using the serializer
     """
     serializer = DeleteBarberSerializer(data={"id": barber_id})
     serializer.is_valid(raise_exception=True)
@@ -51,38 +51,27 @@ def delete_barber(request, barber_id):
 @api_view(['POST', 'PATCH', 'DELETE'])
 @permission_classes([IsAdminRole])
 def manage_barber_availability(request, barber_id):
-    date = request.data.get('date')
-    if not date:
-        return Response({"detail": "Date is required."}, status=status.HTTP_400_BAD_REQUEST)
-
+    """
+    Admin only: Manages a barber's availability with (CREATE, UPDATE, DELETE operations).
+    """
     if request.method == 'POST':
-        slots = request.data.get('slots')
-        if not slots:
-            return Response({"detail": "Slots are required for POST."}, status=status.HTTP_400_BAD_REQUEST)
-        availability, created = Availability.objects.update_or_create(
-            barber_id=barber_id,
-            date=date,
-            defaults={'slots': slots}
-        )
-        serializer = AvailabilitySerializer(availability)
-        return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
-
+        serializer = CreateBarberAvailabilitySerializer(data=request.data, context={'barber_id': barber_id})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        
+        return Response({"detail": "Availability created successfully."}, status=status.HTTP_201_CREATED)
+    
     elif request.method == 'PATCH':
-        try:
-            availability = Availability.objects.get(barber_id=barber_id, date=date)
-        except Availability.DoesNotExist:
-            return Response({"detail": "Availability not found."}, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = AvailabilitySerializer(availability, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+        serializer = UpdateBarberAvailabilitySerializer(data=request.data, context={'barber_id': barber_id})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        
+        return Response({"detail": "Availability slots updated."}, status=status.HTTP_200_OK)
+    
     elif request.method == 'DELETE':
-        try:
-            availability = Availability.objects.get(barber_id=barber_id, date=date)
-            availability.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except Availability.DoesNotExist:
-            return Response({"detail": "Availability not found."}, status=status.HTTP_404_NOT_FOUND)
+        serializer = DeleteBarberAvailabilitySerializer(data=request.data, context={'barber_id': barber_id})
+        serializer.is_valid(raise_exception=True)
+        serializer.delete()
+        
+        return Response({"detail": "Availability deleted."}, status=status.HTTP_200_OK)
+    
