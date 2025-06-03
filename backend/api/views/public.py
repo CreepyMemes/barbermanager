@@ -5,6 +5,7 @@ from rest_framework import status
 from ..serializers import (
     GetBarberListSerializer,
     GetBarberAvailabilitySerializer,
+    GetBarberServicesSerializer,
 )
 from ..models import (
     Barber, 
@@ -30,6 +31,18 @@ def get_barber_availability(request, barber_id):
     """
     Get all availabilities for a specific barber.
     """
-    serializer = GetBarberAvailabilitySerializer(data={'barber_id': barber_id})
+    serializer = GetBarberAvailabilitySerializer(data={}, context={'barber_id': barber_id})
+    serializer.is_valid(raise_exception=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+@authentication_classes([]) 
+def get_barber_services(request, barber_id):
+    """
+    Get all services for a specific barber.
+    """
+    serializer = GetBarberServicesSerializer(data={}, context={'barber_id': barber_id})
     serializer.is_valid(raise_exception=True)
     return Response(serializer.data, status=status.HTTP_200_OK)

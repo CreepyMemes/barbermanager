@@ -1,25 +1,22 @@
-from django.contrib.auth.tokens import default_token_generator
-from django.utils.http import urlsafe_base64_encode
-from django.utils.encoding import force_bytes
-from django.conf import settings
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
-from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
-
+from ..utils import (
+    IsBarberRole,
+)
 from ..serializers import (
     AddServiceSerializer,
 )
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsBarberRole])
 def add_service(request):
     """
-    Barber-only: aggiunge un nuovo servizio.
+    Barber only: Adds a new service to the authenticated Barber
     """
-    serializer = AddServiceSerializer(data=request.data)
+    serializer = AddServiceSerializer(data=request.data, context={'barber_id': request.user})
     serializer.is_valid(raise_exception=True)
-    service = serializer.save()
+    serializer.save()
 
-    return Response({'detail': 'Service added'}, status=status.HTTP_201_CREATED)
+    return Response({'detail': 'Service added successfully.'}, status=status.HTTP_201_CREATED)

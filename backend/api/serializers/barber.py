@@ -1,28 +1,30 @@
 from rest_framework import serializers
+from ..utils import (
+    BarberValidationMixin,
+)
 from ..models import Service
 
 
 
-class AddServiceSerializer( serializers.Serializer):
+class AddServiceSerializer(BarberValidationMixin, serializers.Serializer):
     """
     Admin only: Invites a barber, accepts only email.
     """
-    name = serializers.CharField(required=True)
-    price = serializers.NumericField(required=True)
-    barberId = serializers.CharField(required=True)
+    name = serializers.CharField(required=True) # TODO: add unique validation
+    price = serializers.DecimalField(required=True) 
+
+    def validate(self, attrs):
+        attrs = self.validate_barber(attrs)
+        return attrs
 
     def create(self, validated_data):
-        name = validated_data.get('name')
-        price = validated_data.get('price')
-        barberId = validated_data.get('barberId')
+        barber = validated_data['barber']
+        name = validated_data['name']
+        price = validated_data['price']
 
-        service = Service(
-            barberId,
+        return Service.objects.create(
+            barber,
             name,
             price
         )
-        service.save()
-
-        return service
-    
 
