@@ -215,8 +215,7 @@ api/
 
 | Endpoint                        | Method | Description                  | Status |
 | ------------------------------- | ------ | ---------------------------- | ------ |
-| `/barber/services/`             | GET    | List own services            |        |
-| `/barber/service/`              | POST   | Add a service                |        |
+| `/barber/service/`              | POST   | Add a service                | ✅     |
 | `/barber/service/<service_id>/` | PATCH  | Edit a service               |        |
 | `/barber/service/<service_id>/` | DELETE | Remove a service             |        |
 | `/barber/reviews/`              | GET    | List reviews of own services |        |
@@ -239,7 +238,7 @@ api/
 | Endpoint                                   | Method | Description                           | Status |
 | ------------------------------------------ | ------ | ------------------------------------- | ------ |
 | `/public/barber/`                          | GET    | List all barbers                      | ✅     |
-| `/public/barber/<barber_id>/services/`     | GET    | List services by selected barber      |        |
+| `/public/barber/<barber_id>/services/`     | GET    | List services by selected barber      | ✅     |
 | `/public/barber/<barber_id>/availability/` | GET    | Get available time slots              | ✅     |
 | `/public/barber/<barber_id>/profile/`      | GET    | Get barber profile, reviews, services |        |
 
