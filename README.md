@@ -31,9 +31,9 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
   - [Admin Endpoints (`api/admin/`)](#admin-endpoints-apiadmin)
   - [Barber Endpoints (`api/barber/`)](#barber-endpoints-apibarber)
   - [Client Endpoints (`api/client/`)](#client-endpoints-apiclient)
-  - [Common Endpoints (`api/public/`)](#common-endpoints-apipublic)
+  - [Public Endpoints (`api/public/`)](#public-endpoints-apipublic)
   - [Developer Notes](#developer-notes)
-    - [Barber Availability](#barber-availability)
+    - [Barber Availability ✅](#barber-availability-)
     - [Client Appointments](#client-appointments)
     - [Reviews](#reviews)
 - [Production Workflow](#production-workflow)
@@ -234,7 +234,7 @@ api/
 | `/client/reviews/<review_id>/`           | PATCH  | Edit own review                                      |        |
 | `/client/reviews/<review_id>/`           | DELETE | Delete own review                                    |        |
 
-## Common Endpoints (`api/public/`)
+## Public Endpoints (`api/public/`)
 
 | Endpoint                                   | Method | Description                           | Status |
 | ------------------------------------------ | ------ | ------------------------------------- | ------ |
@@ -247,7 +247,7 @@ TODO: some way to set reminders (will think of this later)
 
 ## Developer Notes
 
-### Barber Availability
+### Barber Availability ✅
 
 Barber availability is defined as a single record per barber per date, listing all 1-hour time slots during which the barber is available. Example:
 
