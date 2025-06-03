@@ -4,10 +4,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from ..serializers import (
     GetBarberListSerializer,
+    GetBarberAvailabilitySerializer,
 )
 from ..models import (
     Barber, 
-    Availability
 )
 
 
@@ -26,13 +26,10 @@ def get_barbers_list(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 @authentication_classes([]) 
-def get_barber_public_availability(request, barber_id):
-    availabilities = Availability.objects.filter(barber_id=barber_id)
-    data = [
-        {
-            "date": a.date,
-            "slots": a.slots
-        }
-        for a in availabilities
-    ]
-    return Response({"availability": data}, status=200)
+def get_barber_availability(request, barber_id):
+    """
+    Get all availabilities for a specific barber.
+    """
+    serializer = GetBarberAvailabilitySerializer(data={'barber_id': barber_id})
+    serializer.is_valid(raise_exception=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
