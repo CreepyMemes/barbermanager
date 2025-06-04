@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from ..utils import (
     BarberValidationMixin,
+    NewServiceValidationMixin,
 )
 from ..models import (
     Service,
@@ -8,22 +9,16 @@ from ..models import (
 )
 
 
-class AddServiceSerializer(BarberValidationMixin, serializers.Serializer):
+class CreateServiceSerializer(BarberValidationMixin, NewServiceValidationMixin, serializers.Serializer):
     """
-    Admin only: Invites a barber, accepts only email.
+    Barber only: Creates a new service (name/price) for the barber.
     """
     name = serializers.CharField(required=True, max_length=100)
     price = serializers.DecimalField(required=True, max_digits=6, decimal_places=2) 
 
     def validate(self, attrs):
         attrs = self.validate_barber(attrs)
-
-        barber = attrs['barber']
-        name = attrs['name']
-
-        if Service.objects.filter(barber=barber, name__iexact=name).exists():
-            raise serializers.ValidationError(f'You already offer a service with the name: {name}.')
-        
+        attrs = self.validate_new_service_name(attrs)
         return attrs
 
     def create(self, validated_data):

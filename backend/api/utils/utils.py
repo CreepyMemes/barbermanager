@@ -9,6 +9,7 @@ from ..models import (
     User, 
     Barber,
     Availability,
+    Service,
 )
 
 
@@ -178,4 +179,18 @@ class FindAvailabilityValidationMixin:
             raise serializers.ValidationError(f'No availability exists for the date: {date}.')
         
         attrs['availability'] = availability
+        return attrs
+    
+
+class NewServiceValidationMixin:
+    """
+    Mixin to ensure the barber doesn't already have a service with the same name (case-insensitive).
+    """
+    def validate_new_service_name(self, attrs):
+        barber = attrs['barber']
+        name = attrs['name']
+
+        if Service.objects.filter(barber=barber, name__iexact=name).exists():
+            raise serializers.ValidationError(f'You already offer a service with the name: {name}.')
+        
         return attrs
