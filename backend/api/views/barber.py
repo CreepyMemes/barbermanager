@@ -6,7 +6,7 @@ from ..utils import (
     IsBarberRole,
 )
 from ..serializers import (
-    AddServiceSerializer,
+    CreateServiceSerializer,
     ServiceSerializer,
     AppointmentSerializer,
 )
@@ -20,11 +20,11 @@ from datetime import date
 
 @api_view(['POST'])
 @permission_classes([IsBarberRole])
-def add_service(request):
+def create_service(request):
     """
-    Barber only: Adds a new service to the authenticated Barber
+    Barber only: Creates a new service to the authenticated Barber
     """
-    serializer = AddServiceSerializer(data=request.data, context={'barber_id': request.user})
+    serializer = CreateServiceSerializer(data=request.data, context={'barber_id': request.user})
     serializer.is_valid(raise_exception=True)
     serializer.save()
 
