@@ -27,15 +27,7 @@ class AddServiceSerializer(BarberValidationMixin, serializers.Serializer):
         return attrs
 
     def create(self, validated_data):
-        barber = validated_data['barber']
-        name = validated_data['name']
-        price = validated_data['price']
-
-        return Service.objects.create(
-            barber=barber,
-            name=name,
-            price=price
-        )
+        return Service.objects.create(**validated_data)
     
 
 class ServiceSerializer(serializers.ModelSerializer):
