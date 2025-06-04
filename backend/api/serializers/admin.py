@@ -18,12 +18,7 @@ class InviteBarberSerializer(EmailValidationMixin, serializers.Serializer):
     email = serializers.EmailField(required=True)
 
     def create(self, validated_data):
-        email = validated_data.get('email')
-
-        barber = Barber(
-            email=email,
-            is_active=False
-        )
+        barber = Barber(email=validated_data['email'],is_active=False)
         barber.set_unusable_password()
         barber.save()
 
@@ -66,15 +61,7 @@ class CreateBarberAvailabilitySerializer(BarberValidationMixin, NewAvailabilityV
         return attrs
 
     def create(self, validated_data):
-        barber = validated_data['barber']
-        date = validated_data['date']
-        slots = validated_data['slots']
-
-        return Availability.objects.create(
-            barber=barber,
-            date=date,
-            slots=slots
-        )
+        return Availability.objects.create(**validated_data)
 
 
 class UpdateBarberAvailabilitySerializer(BarberValidationMixin, FindAvailabilityValidationMixin, serializers.Serializer):
