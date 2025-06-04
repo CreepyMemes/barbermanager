@@ -215,19 +215,19 @@ api/
 
 | Endpoint                        | Method | Description                  | Status |
 | ------------------------------- | ------ | ---------------------------- | ------ |
-| `/barber/service/`              | POST   | Add a service                | ✅     |
-| `/barber/service/<service_id>/` | PATCH  | Edit a service               |        |
-| `/barber/service/<service_id>/` | DELETE | Remove a service             |        |
+| `/barber/service/`              | POST   | Add a service                | ✅ 🧪   |
+| `/barber/service/<service_id>/` | PATCH  | Edit a service               | ✅ 🧪   |
+| `/barber/service/<service_id>/` | DELETE | Remove a service             | ✅ 🧪   |
 | `/barber/reviews/`              | GET    | List reviews of own services |        |
-| `/barber/appointments/`         | GET    | View upcoming appointments   |        |
+| `/barber/appointments/`         | GET    | View upcoming appointments   | ✅ 🧪   |
 
 ## Client Endpoints (`api/client/`)
 
 | Endpoint                                 | Method | Description                                          | Status |
 | ---------------------------------------- | ------ | ---------------------------------------------------- | ------ |
-| `/client/appointments/`                  | GET    | List own past appointments                           |        |
-| `/client/appointments/`                  | POST   | Create a appointment only if no active one currently |        |
-| `/client/appointments/<appointment_id>/` | DELETE | Cancel if still ongoing                              |        |
+| `/client/appointments/`                  | GET    | List own past appointments                           | ✅ 🧪   |
+| `/client/appointments/`                  | POST   | Create a appointment only if no active one currently | ✅ 🧪   |
+| `/client/appointments/<appointment_id>/` | DELETE | Cancel if still ongoing                              | ✅ 🧪   |
 | `/client/reviews/`                       | GET    | List own reviews                                     |        |
 | `/client/reviews/<appointment_id>/`      | POST   | Create review for barber of appointment if competed  |        |
 | `/client/reviews/<review_id>/`           | PATCH  | Edit own review                                      |        |
