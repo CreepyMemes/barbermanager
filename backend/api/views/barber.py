@@ -6,15 +6,17 @@ from ..utils import (
     IsBarberRole,
 )
 from ..serializers import (
+    AddServiceSerializer,
     ServiceSerializer,
+    AppointmentSerializer,
 )
-from ..models import Service
-from django.utils import timezone
-from ..models import Appointment
-from ..serializers import AppointmentSerializer
-from ..models.appointment import AppointmentStatus
+from ..models import ( # TODO: move these to serializers
+    Service,
+    Appointment,
+    AppointmentStatus,
+)
 from datetime import date
-from ..models import Barber
+
 
 @api_view(['POST'])
 @permission_classes([IsBarberRole])
@@ -22,13 +24,12 @@ def add_service(request):
     """
     Barber only: Adds a new service to the authenticated Barber
     """
-    barber = request.user.barber  
-
-    serializer = ServiceSerializer(data=request.data, context={'barber': barber})
+    serializer = AddServiceSerializer(data=request.data, context={'barber_id': request.user})
     serializer.is_valid(raise_exception=True)
     serializer.save()
 
     return Response({'detail': 'Service added successfully.'}, status=status.HTTP_201_CREATED)
+
 
 @api_view(['PATCH', 'DELETE'])
 @permission_classes([IsBarberRole])
@@ -45,6 +46,7 @@ def update_or_delete_service(request, service_id):
     elif request.method == 'DELETE':
         service.delete()
         return Response({'detail': 'Service deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
+
 
 @api_view(['GET'])
 @permission_classes([IsBarberRole])
