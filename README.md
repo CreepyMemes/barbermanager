@@ -34,7 +34,7 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
   - [Public Endpoints (`api/public/`)](#public-endpoints-apipublic)
   - [Developer Notes](#developer-notes)
     - [Barber Availability ✅](#barber-availability-)
-    - [Client Appointments](#client-appointments)
+    - [Client Appointments ✅](#client-appointments-)
     - [Reviews](#reviews)
   - [Reminders](#reminders)
 - [Production Workflow](#production-workflow)
@@ -223,7 +223,6 @@ api/
 | `/barber/service/<service_id>/` | DELETE | Remove a service owned by the authenticated barber       | ✅     |
 | `/barber/appointments/`         | GET    | List ongoing appointments of the authenticated barber    | ✅     |
 | `/barber/reviews/`              | GET    | View reviews received by the authenticated barberreviews |        |
-| `/barber/appointments/`         | GET    | View appointments for the authenticated barber           | ✅     |
 
 ## Client Endpoints (`api/client/`)
 
@@ -268,7 +267,7 @@ Model Example:
 - Availability data is managed exclusively by admins.
 - Only one availability entry is allowed per barber per date.
 
-### Client Appointments
+### Client Appointments ✅
 
 Clients can book a single available slot with a barber on a specific date, along with one or more services offered by that barber.
 
