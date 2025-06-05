@@ -45,7 +45,9 @@ class Availability(models.Model):
     slots = models.JSONField()  # Example: ["09:00", "10:00", "11:00"]
     
     class Meta:
-        unique_together = ['barber', 'date']
+        constraints = [
+            models.UniqueConstraint(fields=['barber', 'date'], name='unique_availability_date_per_barber')
+        ]
 
     def __str__(self):
         return f'{self.barber.email} - {self.date} Slots: {self.slots}'
