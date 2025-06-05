@@ -13,7 +13,5 @@ urlpatterns = [
     path('services/', get_barber_services, name='get_barber_services'),
     path('service/', create_barber_service, name='create_barber_service'),
     path('service/<int:service_id>/', manage_barber_service, name='manage_barber_service'),
-
-    # TODO
     path('appointments/', get_barber_appointments, name='get_barber_appointments'),
 ]

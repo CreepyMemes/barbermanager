@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 from enum import Enum
 from .user import Barber, Client
 
@@ -75,8 +76,8 @@ class Appointment(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['barber', 'date', 'slot'], name='unique_appointment_per_barber_date_slot'),
-            models.UniqueConstraint(fields=['client', 'date'], name='unique_appointment_per_client_date'),
+            models.UniqueConstraint(fields=['client', 'date'], condition=~Q(status=AppointmentStatus.CANCELLED.value), name='unique_appointment_per_client_date_if_not_cancelled'),
+            models.UniqueConstraint(fields=['barber', 'date', 'slot'], condition=~Q(status=AppointmentStatus.CANCELLED.value), name='unique_appointment_per_barber_date_slot_if_not_cancelled'),
         ]
 
     def __str__(self):

@@ -53,7 +53,7 @@ class CreateBarberAvailabilitySerializer(BarberValidationMixin, AvailabilityVali
     Admin only: Creates a barber's availability for a specific date.
     """
     date = serializers.DateField(required=True)
-    slots = serializers.ListField(required=True, child=serializers.RegexField(r'^\d\d:\d\d$', required=True), min_length=1)
+    slots = serializers.ListField(required=True, child=serializers.TimeField(required=True), min_length=1)
 
     def validate(self, attrs):
         attrs = self.validate_barber(attrs)
@@ -61,6 +61,7 @@ class CreateBarberAvailabilitySerializer(BarberValidationMixin, AvailabilityVali
         return attrs
 
     def create(self, validated_data):
+        validated_data["slots"] = [slot.strftime("%H:%M") for slot in validated_data["slots"]]
         return Availability.objects.create(**validated_data)
 
 

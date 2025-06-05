@@ -12,6 +12,7 @@ from ..models import (
     Appointment,
     Availability,
     Service,
+    AppointmentStatus
 )
 
 
@@ -153,6 +154,22 @@ class ClientValidationMixin:
         return attrs
     
 
+class BarberValidationMixin:
+    """
+    Mixin to validate that a barber_id from context exists and is active. Also adds 'barber' to attrs.
+    """
+    def validate_barber(self, attrs):
+        barber_id = self.context.get('barber_id')
+
+        try:
+            barber = Barber.objects.get(pk=barber_id, is_active=True)
+        except Barber.DoesNotExist:
+            raise serializers.ValidationError(f'Barber with ID: "{barber_id}" does not exist or is inactive.')
+        
+        attrs['barber'] = barber
+        return attrs
+    
+    
 class AppointmentValidationMixin:
     """
     Mixin that ensures the client doesn't already have an appointment with the same date, (same check with barber), 
@@ -173,11 +190,14 @@ class AppointmentValidationMixin:
         barber = attrs['barber']
         appointment_date = attrs['date']
         appointment_slot = attrs['slot']
-    
-        if Appointment.objects.filter(client=client, date=appointment_date).exists():
-            raise serializers.ValidationError(f"Appointment for the date {appointment_date} for the client: {client} already existts.")
 
-        if Appointment.objects.filter(barber=barber, date=appointment_date, slot=appointment_slot).exists():
+        if Appointment.objects.filter(client=client, status=AppointmentStatus.ONGOING.value).exists():
+            raise serializers.ValidationError(f'Client: {client} already has an ONGOING appointment.')
+
+        if Appointment.objects.filter(client=client, date=appointment_date).exclude(status=AppointmentStatus.CANCELLED.value).exists():
+            raise serializers.ValidationError(f"Appointment for the date {appointment_date} for the client: {client} already exists.")
+
+        if Appointment.objects.filter(barber=barber, date=appointment_date, slot=appointment_slot).exclude(status=AppointmentStatus.CANCELLED.value).exists():
             raise serializers.ValidationError(f"Appointment for the date: {appointment_date} in the slot: {appointment_slot} for the barber: {barber} already exists.")
 
         try:
@@ -188,25 +208,28 @@ class AppointmentValidationMixin:
         slot_str = appointment_slot.strftime("%H:%M")
 
         if slot_str not in availability.slots:
-            raise serializers.ValidationError(f"The Barber: {barber} is not available at {slot_str} on {appointment_date}.")
+            raise serializers.ValidationError(f"Barber: {barber} is not available at {slot_str} on {appointment_date}.")
 
         return attrs
     
     
-
-class BarberValidationMixin:
+class CancelAppointmentValidationMixin:
     """
-    Mixin to validate that a barber_id from context exists and is active. Also adds 'barber' to attrs.
+    Mixin that ensures the appointment exists, belongs to the client, and is ONGOING.
     """
-    def validate_barber(self, attrs):
-        barber_id = self.context.get('barber_id')
+    def validate_cancel_appointment(self, attrs):
+        client = attrs['client']
+        appointment_id = self.context.get('appointment_id')
 
         try:
-            barber = Barber.objects.get(pk=barber_id, is_active=True)
-        except Barber.DoesNotExist:
-            raise serializers.ValidationError(f'Barber with ID: "{barber_id}" does not exist or is inactive.')
+            appointment = Appointment.objects.get(pk=appointment_id, client=client)
+        except Appointment.DoesNotExist:
+            raise serializers.ValidationError(f'Appointment with ID "{appointment_id}" for the client: {client} does not exist.')
         
-        attrs['barber'] = barber
+        if appointment.status != AppointmentStatus.ONGOING.value:
+            raise serializers.ValidationError("Only ONGOING appointments can be cancelled.")
+
+        attrs['appointment'] = appointment
         return attrs
 
 

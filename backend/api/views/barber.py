@@ -10,7 +10,7 @@ from ..serializers import (
     CreateBarberServiceSerializer,
     UpdateBarberServiceSerializer,
     DeleteBarberServiceSerializer,
-    GetAppointmentsSerializer,
+    GeBarberAppointmentsSerializer,
 )
 
 # TODO: move these to serializers (logic and validations shouldn't be in views)
@@ -78,23 +78,13 @@ def manage_barber_service(request, service_id):
         return Response({"detail": "Service deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
     
 
-# TODO:
 @api_view(['GET'])
 @permission_classes([IsBarberRole])
 def get_barber_appointments(request):
-    today = date.today()
-    print(f"User: {request.user}")
-    print(f"Today: {today}")
+    """
+    Get all appointments for the authenticated barber.
+    """
+    serializer = GeBarberAppointmentsSerializer(data={}, context={'barber_id': request.user})
+    serializer.is_valid(raise_exception=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
-    appointments = Appointment.objects.filter(
-        barber=request.user,
-        date__gte=today,
-        status=AppointmentStatus.ONGOING.value
-    ).order_by('date', 'slot')
-
-    print(f"Appointments found: {appointments.count()}")
-    for app in appointments:
-        print(f"Appointment: {app.id}, date: {app.date}, status: {app.status}")
-
-    serializer = GetAppointmentsSerializer(appointments, many=True)
-    return Response(serializer.data)

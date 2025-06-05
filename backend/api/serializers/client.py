@@ -3,6 +3,7 @@ from ..utils import (
     ClientValidationMixin,
     BarberValidationMixin,
     AppointmentValidationMixin,
+    CancelAppointmentValidationMixin,
 )
 from ..models import (
     Appointment, 
@@ -12,7 +13,7 @@ from ..models import (
 )
 
 
-class GetAppointmentsSerializer(ClientValidationMixin, serializers.Serializer):
+class GetClientAppointmentsSerializer(ClientValidationMixin, serializers.Serializer):
     """
     Client only: Returns all appointments for a given client
     """
@@ -22,7 +23,7 @@ class GetAppointmentsSerializer(ClientValidationMixin, serializers.Serializer):
     
     def get_appointments(self, client_id):
         appointments = Appointment.objects.filter(client_id=client_id)
-        return [{'id': a.id, 'barber_id': a.barber.id, 'date': a.date, 'slot': a.slot, 'services': [s.id for s in a.services.all()], 'status': a.status} for a in appointments]
+        return [{'id': a.id, 'barber_id': a.barber.id, 'date': a.date, 'slot': a.slot.strftime("%H:%M"), 'services': [s.id for s in a.services.all()], 'status': a.status} for a in appointments]
 
     def to_representation(self, validated_data):
         client = validated_data['client']
@@ -30,7 +31,7 @@ class GetAppointmentsSerializer(ClientValidationMixin, serializers.Serializer):
         return {'appointments': appointments}
     
 
-class CreateAppointmentSerializer(ClientValidationMixin, BarberValidationMixin, AppointmentValidationMixin, serializers.Serializer):
+class CreateClientAppointmentSerializer(ClientValidationMixin, BarberValidationMixin, AppointmentValidationMixin, serializers.Serializer):
     """
     Client only: Creates a new appointment for a given client with a barber.
     """
@@ -52,44 +53,28 @@ class CreateAppointmentSerializer(ClientValidationMixin, BarberValidationMixin, 
         slot = validated_data['slot']
         services = validated_data['services']
 
-        appointment = Appointment.objects.create(client=client, barber=barber, date=date, slot=slot)
+        appointment = Appointment.objects.create(client=client, barber=barber, date=date, slot=slot) # Default ONGOING status
         appointment.services.set(services)
         return appointment
     
+
+class CancelClientAppointmentSerializer(ClientValidationMixin, CancelAppointmentValidationMixin, serializers.Serializer):
+    """
+    Client only: Cancels an ONGOING appointment for the authenticated client.
+    """
+    def validate(self, attrs):
+        attrs = self.validate_client(attrs)
+        attrs = self.validate_cancel_appointment(attrs)
+        return attrs
     
-# class CreateAppointmentSerializer(serializers.ModelSerializer):
-#     """
-#     Client only: Creates a new appointment for a given client
-#     """
-#     services = serializers.PrimaryKeyRelatedField(queryset=Service.objects.all(), many=True)
-
-#     class Meta:
-#         model = Appointment
-#         fields = ['barber', 'date', 'slot', 'services']
-
-#     def validate(self, attrs):
-#         barber = attrs['barber']
-#         date = attrs['date']
-#         slot = attrs['slot']
-
-#         if Appointment.objects.filter(barber=barber, date=date, slot=slot).exists():
-#             raise serializers.ValidationError("This slot is already booked.")
-
-#         for service in attrs['services']:
-#             if service.barber != barber:
-#                 raise serializers.ValidationError(f"The service '{service.name}' is not offered by this barber.")
-        
-#         return attrs
-
-#     def create(self, validated_data):
-#         client = self.context['client']
-#         services = validated_data.pop('services')
-#         appointment = Appointment.objects.create(client=client, status=AppointmentStatus.ONGOING.value, **validated_data)
-#         appointment.services.set(services)
-#         return appointment
+    def save(self):
+        appointment = self.validated_data['appointment']
+        appointment.status = AppointmentStatus.CANCELLED.value
+        appointment.save()
+        return appointment
 
 
-# 🔹 Serializer per creare/modificare una review
+# TODO Serializer per creare/modificare una review
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
@@ -114,3 +99,4 @@ class ReviewSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['barber'] = validated_data['appointment'].barber
         return super().create(validated_data)
+

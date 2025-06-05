@@ -8,6 +8,7 @@ from ..models import (
     Service,
     Appointment,
     Availability,
+    AppointmentStatus,
 )
 
 
@@ -109,15 +110,19 @@ class DeleteBarberServiceSerializer(BarberValidationMixin, FindServiceValidation
         self.validated_data['service'].delete()
 
 
-# TODO
-class AppointmentSerializer(serializers.ModelSerializer):
-    client_email = serializers.CharField(source='client.email', read_only=True)
-    services = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='name'
-    )
+class GeBarberAppointmentsSerializer(BarberValidationMixin, serializers.Serializer):
+    """
+    Barber only: Returns all ONGOING appointments for a given barber
+    """
+    def validate(self, attrs):
+        attrs = self.validate_barber(attrs)
+        return attrs
+    
+    def get_appointments(self, barber_id):
+        appointments = Appointment.objects.filter(barber_id=barber_id, status=AppointmentStatus.ONGOING.value)
+        return [{'id': a.id, 'client_id': a.client.id, 'date': a.date, 'slot': a.slot.strftime("%H:%M"), 'services': [s.id for s in a.services.all()], 'status': a.status} for a in appointments]
 
-    class Meta:
-        model = Appointment
-        fields = ['id', 'client_email', 'date', 'slot', 'services', 'status']
+    def to_representation(self, validated_data):
+        barber = validated_data['barber']
+        appointments = self.get_appointments(barber.id)
+        return {'appointments': appointments}
