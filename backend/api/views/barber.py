@@ -1,46 +1,77 @@
-from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from django.shortcuts import get_object_or_404
 from ..utils import (
     IsBarberRole,
 )
 from ..serializers import (
-    CreateServiceSerializer,
-    UpdateServiceSerializer,
-    DeleteServiceSerializer,
-    AppointmentSerializer,
+    GetBarberAvailabilitiesSerializer,
+    GetBarberServicesSerializer,
+    CreateBarberServiceSerializer,
+    UpdateBarberServiceSerializer,
+    DeleteBarberServiceSerializer,
+    GetAppointmentListSerializer,
 )
-from ..models import ( # TODO: move these to serializers (logic and validations shouldn't be in views)
-    Appointment,
-    AppointmentStatus,
-)
+
+# TODO: move these to serializers (logic and validations shouldn't be in views)
+from ..models import Appointment, AppointmentStatus
 from datetime import date
 
 
-@api_view(['POST', 'PATCH', 'DELETE'])
+@api_view(['GET'])
 @permission_classes([IsBarberRole])
-def manage_services(request):
+def get_barber_availabilities(request):
     """
-    Admin only: Manages a barber's availability with (CREATE, UPDATE, DELETE operations).
+    Get all availabilities for a specific barber.
     """
-    if request.method == 'POST':
-        serializer = CreateServiceSerializer(data=request.data, context={'barber_id': request.user})
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+    serializer = GetBarberAvailabilitiesSerializer(data={}, context={'barber_id': request.user})
+    serializer.is_valid(raise_exception=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
-        return Response({'detail': 'Service added successfully.'}, status=status.HTTP_201_CREATED)
-        
-    elif request.method == 'PATCH': # if new fields are added to Service, set (partial=True)
-        serializer = UpdateServiceSerializer(data=request.data, context={'barber_id': request.user})
+
+@api_view(['GET'])
+@permission_classes([IsBarberRole])
+def get_barber_services(request):
+    """
+    Get all services for the authenticated barber.
+    """
+    serializer = GetBarberServicesSerializer(data={}, context={'barber_id': request.user})
+    serializer.is_valid(raise_exception=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([IsBarberRole])
+def create_barber_service(request):
+    """
+    Barber only: Creates a service for the authenticated barber.
+    """
+    serializer = CreateBarberServiceSerializer(data=request.data, context={'barber_id': request.user})
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+
+    return Response({'detail': 'Service added successfully.'}, status=status.HTTP_201_CREATED)
+
+
+@api_view(['PATCH', 'DELETE'])
+@permission_classes([IsBarberRole])
+def manage_barber_service(request, service_id):
+    """
+    Barber only: Handles update and delete operations for a specific service by the authenticated barber.
+
+    - PATCH: Edit the details (name/price) of a given service.
+    - DELETE: Remove a given service.
+    """
+    if request.method == 'PATCH':
+        serializer = UpdateBarberServiceSerializer(data=request.data, context={'barber_id': request.user, 'service_id': service_id})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         
         return Response({"detail": "Service updated successfully."}, status=status.HTTP_200_OK)
     
+
     elif request.method == 'DELETE':
-        pass
-        serializer = DeleteServiceSerializer(data=request.data, context={'barber_id': request.user})
+        serializer = DeleteBarberServiceSerializer(data={}, context={'barber_id': request.user, 'service_id': service_id})
         serializer.is_valid(raise_exception=True)
         serializer.delete()
         
@@ -49,7 +80,7 @@ def manage_services(request):
 
 @api_view(['GET'])
 @permission_classes([IsBarberRole])
-def get_upcoming_appointments(request):
+def get_barber_appointments(request):
     today = date.today()
     print(f"User: {request.user}")
     print(f"Today: {today}")
@@ -64,5 +95,5 @@ def get_upcoming_appointments(request):
     for app in appointments:
         print(f"Appointment: {app.id}, date: {app.date}, status: {app.status}")
 
-    serializer = AppointmentSerializer(appointments, many=True)
+    serializer = GetAppointmentListSerializer(appointments, many=True)
     return Response(serializer.data)

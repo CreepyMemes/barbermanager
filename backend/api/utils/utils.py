@@ -151,15 +151,20 @@ class BarberValidationMixin:
         return attrs
 
 
-class NewAvailabilityValidationMixin:
+class AvailabilityValidationMixin:
     """
-    Mixin to validate if the given date for the specific barber doesn't already have existing availability
+    Mixin that ensures the barber doesn't already have an availability with the same date.
     """
-    def validate_new_availability_date(self, attrs):
+    def validate_availability_date(self, attrs, availability_instance=None):
         barber = attrs['barber']
         availability_date = attrs['date']
 
-        if Availability.objects.filter(barber=barber, date=availability_date).exists():
+        availability =  Availability.objects.filter(barber=barber, date=availability_date)
+
+        if availability_instance:
+            availability = availability.exclude(pk=availability_instance.pk)
+
+        if availability.exists():
             raise serializers.ValidationError(f'Availability with the date: "{availability_date}" for the barber: "{barber}" already exists.')
 
         return attrs
@@ -171,26 +176,31 @@ class FindAvailabilityValidationMixin:
     """
     def validate_find_availability(self, attrs):
         barber = attrs['barber']
-        availability_date = attrs['date']
+        availability_id = self.context.get('availability_id')
 
         try:
-            availability = Availability.objects.get(barber=barber, date=availability_date)
+            availability = Availability.objects.get(barber=barber, pk=availability_id)
         except Availability.DoesNotExist:
-            raise serializers.ValidationError(f'Availability with the date: "{availability_date}" for the barber: "{barber}" does not exist.')
+            raise serializers.ValidationError(f'Availability with the ID: "{availability_id}" for the barber: "{barber}" does not exist.')
         
         attrs['availability'] = availability
         return attrs
     
 
-class NewServiceValidationMixin:
+class ServiceValidationMixin:
     """
-    Mixin to ensure the barber doesn't already have a service with the same name (case-insensitive).
+    Mixin that ensures the barber doesn't already have a service with the same name (case-insensitive).
     """
-    def validate_new_service(self, attrs):
+    def validate_service_name(self, attrs, service_instance=None):
         barber = attrs['barber']
         service_name = attrs['name']
 
-        if Service.objects.filter(barber=barber, name__iexact=service_name).exists():
+        service = Service.objects.filter(barber=barber, name__iexact=service_name)
+
+        if service_instance:
+            service = service.exclude(pk=service_instance.pk)
+
+        if service.exists():
             raise serializers.ValidationError(f'Service with the name: "{service_name}" for the barber: "{barber}" already exists.')
         
         return attrs
@@ -202,12 +212,12 @@ class FindServiceValidationMixin:
     """
     def validate_find_service(self, attrs):
         barber = attrs['barber']
-        service_name = attrs['name']
+        service_id = self.context.get('service_id')
 
         try:
-            service = Service.objects.get(barber=barber, name=service_name)
+            service = Service.objects.get(barber=barber, pk=service_id)
         except Service.DoesNotExist:
-            raise serializers.ValidationError(f'Service with the name: "{service_name}" for the barber: "{barber}" does not exist.')
+            raise serializers.ValidationError(f'Service with the ID: "{service_id}" for the barber: "{barber}" does not exist.')
         
         attrs['service'] = service
         return attrs
