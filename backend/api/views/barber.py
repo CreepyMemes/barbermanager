@@ -13,10 +13,6 @@ from ..serializers import (
     GeBarberAppointmentsSerializer,
 )
 
-# TODO: move these to serializers (logic and validations shouldn't be in views)
-from ..models import Appointment, AppointmentStatus
-from datetime import date
-
 
 @api_view(['GET'])
 @permission_classes([IsBarberRole])

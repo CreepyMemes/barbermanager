@@ -13,7 +13,6 @@ from api.serializers.client import (
 from ..models import (
     Appointment, 
     Review, 
-    AppointmentStatus
 )
 
 
