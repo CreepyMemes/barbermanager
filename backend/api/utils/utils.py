@@ -9,6 +9,7 @@ from ..models import (
     User, 
     Barber,
     Availability,
+    Service
 )
 
 
@@ -178,4 +179,19 @@ class FindAvailabilityValidationMixin:
             raise serializers.ValidationError(f'No availability exists for the date: {date}.')
         
         attrs['availability'] = availability
+        return attrs
+    
+class ServiceValidationMixin:
+    """
+    Mixin to validate that a service_id from context exists and is active. Also adds 'service' to attrs.
+    """
+    def validate_service(self, attrs):
+        service_id = self.context.get('service_id')
+
+        try:
+            service = Service.objects.get(pk=service_id)
+        except Service.DoesNotExist:
+            raise serializers.ValidationError('Service with this ID does not exist or is inactive.')
+        
+        attrs['service'] = service
         return attrs
