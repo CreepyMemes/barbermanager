@@ -36,6 +36,7 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
     - [Barber Availability ✅](#barber-availability-)
     - [Client Appointments](#client-appointments)
     - [Reviews](#reviews)
+  - [Reminders](#reminders)
 - [Production Workflow](#production-workflow)
   - [Deployment](#deployment)
 
@@ -183,7 +184,7 @@ api/
 ```
 
 - ✅ Implemented endpoint
-- 🧪 Implemented testcases
+- 🧪 Implemented testcases (`~`: incomplete)
 
 ## Auth Endpoints (`api/auth/`)
 
@@ -201,57 +202,60 @@ api/
 
 ## Admin Endpoints (`api/admin/`)
 
-| Endpoint                                  | Method  | Description                                                      | Status |
-| ----------------------------------------- | ------- | ---------------------------------------------------------------- | ------ |
-| `/admin/barber/`                          | POST    | Invite a barber through their email.                             | ✅ 🧪  |
-| `/admin/barber/<barber_id>/`              | DELETE  | Remove a barber by ID                                            | ✅     |
-| `/admin/barber/<barber_id>/availability/` | POST    | Add or update availability slots for a barber on a specific date | ✅     |
-| `/admin/barber/<barber_id>/availability/` | PATCH   | Edit availability slots for a barber on a specific date          | ✅     |
-| `/admin/barber/<barber_id>/availability/` | DELELTE | Delete availability slots for a barber on a specific date        | ✅     |
-| `/admin/statistics/`                      | GET     | Generate general statistics                                      |        |
-| `/admin/appointments/`                    | GET     | View a list of all past appointments                             |        |
+| Endpoint                                                   | Method  | Description                                            | Status |
+| ---------------------------------------------------------- | ------- | ------------------------------------------------------ | ------ |
+| `/admin/barber/`                                           | POST    | Invite a barber through their email.                   | ✅ 🧪  |
+| `/admin/barber/<barber_id>/`                               | DELETE  | Remove a barber by ID                                  | ✅     |
+| `/admin/barber/<barber_id>/availability/`                  | POST    | Create availability for a barber on a specific date    | ✅     |
+| `/admin/barber/<barber_id>/availability/<availability_id>` | PATCH   | Edit an availability for a barber on a specific date   | ✅     |
+| `/admin/barber/<barber_id>/availability/<availability_id>` | DELELTE | Remove an availability for a barber on a specific date | ✅     |
+| `/admin/statistics/`                                       | GET     | Generate general statistics                            |        |
+| `/admin/appointments/`                                     | GET     | List all past appointments across the platform         |        |
 
 ## Barber Endpoints (`api/barber/`)
 
-| Endpoint                        | Method | Description                  | Status |
-| ------------------------------- | ------ | ---------------------------- | ------ |
-| `/barber/service/`              | POST   | Add a service                | ✅     |
-| `/barber/service/<service_id>/` | PATCH  | Edit a service               |        |
-| `/barber/service/<service_id>/` | DELETE | Remove a service             |        |
-| `/barber/reviews/`              | GET    | List reviews of own services |        |
-| `/barber/appointments/`         | GET    | View upcoming appointments   |        |
+| Endpoint                       | Method | Description                                              | Status |
+| ------------------------------ | ------ | -------------------------------------------------------- | ------ |
+| `/barber/availabilities/`      | GET    | List availabilities of the authenticated barber          | ✅     |
+| `/barber/services/`            | GET    | List services of the authenticated barber                | ✅     |
+| `/barber/service/`             | POST   | Create a new service for the authenticated barber        | ✅     |
+| `/barber/service/<service_id>` | PATCH  | Edit a service owned by the authenticated barber         | ✅     |
+| `/barber/service/<service_id>` | DELETE | Remove a service owned by the authenticated barber       | ✅     |
+| `/barber/reviews/`             | GET    | View reviews received by the authenticated barberreviews |        |
+| `/barber/appointments/`        | GET    | View appointments for the authenticated barber           | ✅     |
 
 ## Client Endpoints (`api/client/`)
 
-| Endpoint                                 | Method | Description                                          | Status |
-| ---------------------------------------- | ------ | ---------------------------------------------------- | ------ |
-| `/client/appointments/`                  | GET    | List own past appointments                           |        |
-| `/client/appointments/`                  | POST   | Create a appointment only if no active one currently |        |
-| `/client/appointments/<appointment_id>/` | DELETE | Cancel if still ongoing                              |        |
-| `/client/reviews/`                       | GET    | List own reviews                                     |        |
-| `/client/reviews/<appointment_id>/`      | POST   | Create review for barber of appointment if competed  |        |
-| `/client/reviews/<review_id>/`           | PATCH  | Edit own review                                      |        |
-| `/client/reviews/<review_id>/`           | DELETE | Delete own review                                    |        |
+| Endpoint                                 | Method | Description                                                                   | Status |
+| ---------------------------------------- | ------ | ----------------------------------------------------------------------------- | ------ |
+| `/client/appointments/`                  | GET    | List past appointments of the authenticated client                            | ✅ 🧪~ |
+| `/client/appointments/`                  | POST   | Create a new appointment if no active one exists for the authenticated client | ✅     |
+| `/client/appointments/<appointment_id>/` | DELETE | Cancel an ongoing appointment belonging to the authenticated client           | ✅     |
+| `/client/reviews/`                       | GET    | List reviews posted by the authenticated client                               |        |
+| `/client/reviews/<appointment_id>/`      | POST   | Create a review for the barber of a completed appointment                     |        |
+| `/client/reviews/<review_id>/`           | PATCH  | Edit a review posted by the authenticated client                              |        |
+| `/client/reviews/<review_id>/`           | DELETE | Delete a review posted by the authenticated client                            |        |
 
 ## Public Endpoints (`api/public/`)
 
-| Endpoint                                   | Method | Description                           | Status |
-| ------------------------------------------ | ------ | ------------------------------------- | ------ |
-| `/public/barber/`                          | GET    | List all barbers                      | ✅     |
-| `/public/barber/<barber_id>/services/`     | GET    | List services by selected barber      | ✅     |
-| `/public/barber/<barber_id>/availability/` | GET    | Get available time slots              | ✅     |
-| `/public/barber/<barber_id>/profile/`      | GET    | Get barber profile, reviews, services |        |
-
-TODO: some way to set reminders (will think of this later)
+| Endpoint                                     | Method | Description                                  | Status |
+| -------------------------------------------- | ------ | -------------------------------------------- | ------ |
+| `/public/barber/`                            | GET    | List all barbers                             | ✅     |
+| `/public/barber/<barber_id>/services/`       | GET    | List services offered by the selected barber | ✅     |
+| `/public/barber/<barber_id>/availabilities/` | GET    | List availabilities for the selecetd barber  | ✅     |
+| `/public/barber/<barber_id>/profile/`        | GET    | Get barber's profile, reviews, and services  |        |
 
 ## Developer Notes
 
 ### Barber Availability ✅
 
-Barber availability is defined as a single record per barber per date, listing all 1-hour time slots during which the barber is available. Example:
+Barber availability is defined as a single record per barber per date, listing all 1-hour time slots during which the barber is available.
+
+Model Example:
 
 ```json
 {
+  "barber": 3, // Barber ID associated to the availability
   "date": "2025-05-20",
   "slots": ["09:00", "10:00", "11:00", "14:00", "15:00"]
 }
@@ -265,7 +269,9 @@ Barber availability is defined as a single record per barber per date, listing a
 
 ### Client Appointments
 
-Clients can book a single available slot with a barber on a specific date, along with one or more services offered by that barber. Example:
+Clients can book a single available slot with a barber on a specific date, along with one or more services offered by that barber.
+
+Model Example:
 
 ```json
 {
@@ -274,7 +280,7 @@ Clients can book a single available slot with a barber on a specific date, along
   "date": "2025-05-20",
   "slot": "09:00",
   "status": "ONGOING",
-  "services": [4, 7]
+  "services": [4, 7] // Service IDs associated to the appointment
 }
 ```
 
@@ -288,14 +294,16 @@ Clients can book a single available slot with a barber on a specific date, along
 
 ### Reviews
 
-Clients can submit a **single** review per barber, but **only** after completing an appointment. Each review is directly associated with both the barber and the related appointment. Example:
+Clients can submit a **single** review per barber, but **only** after completing an appointment. Each review is directly associated with both the barber and the related appointment.
+
+Model Example:
 
 ```json
 {
-  "appointment": 101,
+  "appointment": 101, // Appointment ID associated to the review
   "client": 12,
   "barber": 3,
-  "rating": 5,
+  "rating": 5, // Rating vote (1 - 5)
   "comment": "Great cut, very professional!"
 }
 ```
@@ -304,6 +312,10 @@ Clients can submit a **single** review per barber, but **only** after completing
 
 - One review per client per barber.
 - Reviews are allowed **only** after the associated appointment is completed.
+
+## Reminders
+
+TODO: some way to set automatic email reminders that trigger a bit before the appointment is due.
 
 # Production Workflow
 

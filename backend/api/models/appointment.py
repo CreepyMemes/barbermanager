@@ -17,9 +17,11 @@ class AppointmentStatus(Enum):
 
 class Service(models.Model):
     """
-    Represents a service offered by a barber.
-    Each service is tied to one barber.
-    Barbers can offer multiple services, but with unique names only.
+    Represents a specific service that a barber offers to clients.
+
+    - Each service is linked to a single barber.
+    - A barber can offer multiple different services, but cannot have two services with the same name.
+    - Includes details such as the service name and its price.
     """
     barber = models.ForeignKey(Barber, on_delete=models.CASCADE, related_name='services')
     name = models.CharField(max_length=100)
@@ -36,16 +38,20 @@ class Service(models.Model):
 
 class Availability(models.Model):
     """
-    Represents the availability of a barber for a given date.
-    Contains a list of 1-hour slots as strings (e.g. "09:00", "10:00").
-    Managed by admins only.
+    Stores a barber's available time slots for client bookings on a particular date.
+
+    - Each availability record is linked to one barber and one date.
+    - The 'slots' field contains a list of available 1-hour time slots in "HH:MM" format.
+    - Used by admins to manage and update barbers' availability for appointments.
     """
     barber = models.ForeignKey(Barber, on_delete=models.CASCADE, related_name='availabilities',)
     date = models.DateField()
     slots = models.JSONField()  # Example: ["09:00", "10:00", "11:00"]
     
     class Meta:
-        unique_together = ['barber', 'date']
+        constraints = [
+            models.UniqueConstraint(fields=['barber', 'date'], name='unique_availability_date_per_barber')
+        ]
 
     def __str__(self):
         return f'{self.barber.email} - {self.date} Slots: {self.slots}'
@@ -53,9 +59,12 @@ class Availability(models.Model):
 
 class Appointment(models.Model):
     """
-    Represents a booked appointment made by a client with a barber.
-    Clients can select one barber and choose one or more services offered by that barber 
-    and one slot from the barber's availability.
+    Represents a scheduled appointment booked by a client with a barber.
+
+    - Each appointment records which client is booking, which barber, the date and time slot, and the selected services.
+    - Clients may book only one appointment per date.
+    - Prevents double-booking by ensuring a barber can have only one appointment per slot on a given date.
+    - Tracks the appointment status (e.g., ongoing, completed, canceled).
     """
     client = models.ForeignKey( Client, on_delete=models.CASCADE, related_name='appointments',)
     barber = models.ForeignKey( Barber, on_delete=models.CASCADE, related_name='appointments_received')
@@ -65,7 +74,10 @@ class Appointment(models.Model):
     status = models.CharField( max_length=10, choices=AppointmentStatus.choices(), default=AppointmentStatus.ONGOING.value)
 
     class Meta:
-        unique_together = ['barber', 'date', 'slot']  # Prevent double booking on same slot
+        constraints = [
+            models.UniqueConstraint(fields=['barber', 'date', 'slot'], name='unique_appointment_per_barber_date_slot'),
+            models.UniqueConstraint(fields=['client', 'date'], name='unique_appointment_per_client_date'),
+        ]
 
     def __str__(self):
         return f"{self.client.email} -> {self.barber.email} on {self.date} at {self.slot}"
