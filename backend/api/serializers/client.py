@@ -1,9 +1,16 @@
 from rest_framework import serializers
-from api.models.appointment import Appointment, AppointmentStatus, Service, Review
+from ..models import (
+    Appointment, 
+    Service, 
+    Review,
+    AppointmentStatus, 
+)
 
 
-# 🔹 Serializer per visualizzare appuntamenti passati
-class AppointmentSerializer(serializers.ModelSerializer):
+class GetAppointmentListSerializer(serializers.ModelSerializer):
+    """
+    Client only: Returns a list of all past appointments for a given client
+    """
     services = serializers.SlugRelatedField(
         many=True,
         read_only=True,
@@ -16,8 +23,10 @@ class AppointmentSerializer(serializers.ModelSerializer):
         fields = ['id', 'barber_email', 'date', 'slot', 'services', 'status']
 
 
-# 🔹 Serializer per creare nuovi appuntamenti
-class AppointmentCreateSerializer(serializers.ModelSerializer):
+class CreateAppointmentSerializer(serializers.ModelSerializer):
+    """
+    Client only: Creates a new appointment for a given client
+    """
     services = serializers.PrimaryKeyRelatedField(queryset=Service.objects.all(), many=True)
 
     class Meta:
