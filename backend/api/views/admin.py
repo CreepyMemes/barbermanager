@@ -47,30 +47,40 @@ def delete_barber(request, barber_id):
     return Response({"detail": f"Barber with ID {barber_id} has been deleted."}, status=status.HTTP_204_NO_CONTENT)
 
 
-@api_view(['POST', 'PATCH', 'DELETE'])
+@api_view(['POST'])
 @permission_classes([IsAdminRole])
-def manage_barber_availability(request, barber_id):
+def create_barber_availability(request, barber_id):
     """
-    Admin only: Manages a barber's availability with (CREATE, UPDATE, DELETE operations).
+    Admin only: Creates an availability for the selected barber.
     """
-    if request.method == 'POST':
-        serializer = CreateBarberAvailabilitySerializer(data=request.data, context={'barber_id': barber_id})
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        
-        return Response({"detail": "Availability created successfully."}, status=status.HTTP_201_CREATED)
+    serializer = CreateBarberAvailabilitySerializer(data=request.data, context={'barber_id': barber_id})
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
     
-    elif request.method == 'PATCH':
-        serializer = UpdateBarberAvailabilitySerializer(data=request.data, context={'barber_id': barber_id})
+    return Response({"detail": "Availability created successfully."}, status=status.HTTP_201_CREATED)
+
+
+@api_view(['PATCH', 'DELETE'])
+@permission_classes([IsAdminRole])
+def manage_barber_availability(request, barber_id, availability_id):
+    """
+    Admin only: Handles update and delete operations for a specific availability by the selected barber.
+
+    - PATCH: Edit the details (date/slots) of a given availability.
+    - DELETE: Remove a given availability.
+    """
+    if request.method == 'PATCH':
+        serializer = UpdateBarberAvailabilitySerializer(data=request.data, context={'barber_id': barber_id, 'availability_id': availability_id})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         
         return Response({"detail": "Availability updated successfully."}, status=status.HTTP_200_OK)
     
+    
     elif request.method == 'DELETE':
-        serializer = DeleteBarberAvailabilitySerializer(data=request.data, context={'barber_id': barber_id})
+        serializer = DeleteBarberAvailabilitySerializer(data={}, context={'barber_id': barber_id, 'availability_id': availability_id})
         serializer.is_valid(raise_exception=True)
-        serializer.delete()
+        serializer.delete() 
         
         return Response({"detail": "Availability deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
     

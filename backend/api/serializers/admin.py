@@ -2,7 +2,7 @@ from rest_framework import serializers
 from ..utils import (
     EmailValidationMixin,
     BarberValidationMixin,
-    NewAvailabilityValidationMixin,
+    AvailabilityValidationMixin,
     FindAvailabilityValidationMixin,
 )
 from ..models import(
@@ -48,7 +48,7 @@ class DeleteBarberSerializer(serializers.Serializer):
         return self.barber
     
 
-class CreateBarberAvailabilitySerializer(BarberValidationMixin, NewAvailabilityValidationMixin, serializers.Serializer):
+class CreateBarberAvailabilitySerializer(BarberValidationMixin, AvailabilityValidationMixin, serializers.Serializer):
     """
     Admin only: Creates a barber's availability for a specific date.
     """
@@ -57,27 +57,39 @@ class CreateBarberAvailabilitySerializer(BarberValidationMixin, NewAvailabilityV
 
     def validate(self, attrs):
         attrs = self.validate_barber(attrs)
-        attrs = self.validate_new_availability_date(attrs)
+        attrs = self.validate_availability_date(attrs)
         return attrs
 
     def create(self, validated_data):
         return Availability.objects.create(**validated_data)
 
 
-class UpdateBarberAvailabilitySerializer(BarberValidationMixin, FindAvailabilityValidationMixin, serializers.Serializer):
+class UpdateBarberAvailabilitySerializer(BarberValidationMixin, FindAvailabilityValidationMixin, AvailabilityValidationMixin, serializers.Serializer):
     """
-    Admin only: Updates the slots of an existing barber's availability for a specific date.
+    Admin only: Updates a given existing availability, for a given barber.
     """
-    date = serializers.DateField(required=True)
-    slots = serializers.ListField(child=serializers.RegexField(r'^\d\d:\d\d$', required=True), min_length=1)
+    date = serializers.DateField(required=False)
+    slots = serializers.ListField(required=False, child=serializers.RegexField(r'^\d\d:\d\d$'), min_length=1)
 
     def validate(self, attrs):
         attrs = self.validate_barber(attrs)
         attrs = self.validate_find_availability(attrs)
+
+        if 'date' not in attrs and 'slots' not in attrs:
+            raise serializers.ValidationError('You must provide at least one field: date or slots.')
+        
+        if 'date' in attrs:
+            attrs = self.validate_availability_date(attrs, availability_instance=attrs['availability'])
+
         return attrs
 
     def update(self, instance, validated_data):
-        instance.slots = validated_data['slots']
+        if 'date' in validated_data:
+            instance.date = validated_data['date']
+
+        if 'slots' in validated_data:
+            instance.slots = validated_data['slots']
+
         instance.save()
         return instance
 
@@ -87,10 +99,8 @@ class UpdateBarberAvailabilitySerializer(BarberValidationMixin, FindAvailability
 
 class DeleteBarberAvailabilitySerializer(BarberValidationMixin, FindAvailabilityValidationMixin, serializers.Serializer):
     """
-    Admin only: Deletes a barber's availability for a specific date.
+    Admin only: Deletes a given availability, for a given barber.
     """
-    date = serializers.DateField(required=True)
-
     def validate(self, attrs):
         attrs = self.validate_barber(attrs)
         attrs = self.validate_find_availability(attrs)
