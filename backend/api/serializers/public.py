@@ -52,7 +52,7 @@ class GetBarberServicesSerializer(BarberValidationMixin, serializers.Serializer)
     
     def get_services(self, barber_id):
         services = Service.objects.filter(barber_id=barber_id)
-        return [{'id': s.id, 'name': s.name, 'price': s.price} for s in services]
+        return [{'name': s.name, 'price': s.price} for s in services]
 
     def to_representation(self, validated_data):
         barber = validated_data['barber']
