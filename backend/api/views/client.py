@@ -5,8 +5,9 @@ from ..utils import (
     IsClientRole,
 )
 from api.serializers.client import (
-    GetAppointmentsSerializer,
-    CreateAppointmentSerializer,
+    GetClientAppointmentsSerializer,
+    CreateClientAppointmentSerializer,
+    CancelClientAppointmentSerializer,
     ReviewSerializer
 )
 from ..models import (
@@ -22,7 +23,7 @@ def get_client_appointments(request):
     """
     Get all appointments for the authenticated client.
     """
-    serializer = GetAppointmentsSerializer(data={}, context={'client_id': request.user})
+    serializer = GetClientAppointmentsSerializer(data={}, context={'client_id': request.user})
     serializer.is_valid(raise_exception=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -33,60 +34,27 @@ def create_client_appointment(request, barber_id):
     """
     Client only: Creates an appointmentt for the authenticated client.
     """
-    serializer = CreateAppointmentSerializer(data=request.data, context={'client_id': request.user, 'barber_id': barber_id})
+    serializer = CreateClientAppointmentSerializer(data=request.data, context={'client_id': request.user, 'barber_id': barber_id})
     serializer.is_valid(raise_exception=True)
     serializer.save()
 
     return Response({'detail': 'Appointment added successfully.'}, status=status.HTTP_201_CREATED)
 
-# @api_view(['GET', 'POST'])
-# @permission_classes([IsClientRole])
-# def get_client_appointments(request):
-#     """
-#     GET:  List own past appointments (COMPLETED or CANCELLED)
-#     POST: Create a new appointment only if no ONGOING currently
-#     """
-#     user = request.user
-#     client = user.client  
-
-#     if request.method == 'GET':
-#         past_appointments = Appointment.objects.filter(
-#             client=client,
-#             status__in=[AppointmentStatus.COMPLETED.value, AppointmentStatus.CANCELLED.value]
-#         ).order_by('-date', '-slot')
-#         serializer = GetAppointmentsSerializer(past_appointments, many=True)
-#         return Response(serializer.data, status=status.HTTP_200_OK)
-
-#     if Appointment.objects.filter(client=client, status=AppointmentStatus.ONGOING.value).exists():
-#         return Response({'detail': 'You already have an ongoing appointment.'}, status=status.HTTP_400_BAD_REQUEST)
-
-#     serializer = CreateAppointmentSerializer(data=request.data, context={'client': client})
-#     serializer.is_valid(raise_exception=True)
-#     appointment = serializer.save()  
-#     response_serializer = GetAppointmentsSerializer(appointment)
-#     return Response(response_serializer.data, status=status.HTTP_201_CREATED)
-
 
 @api_view(['DELETE'])
 @permission_classes([IsClientRole])
-def delete_client_appointment(request, appointment_id):
+def cancel_client_appointment(request, appointment_id):
     """
-    DELETE: Cancel an ongoing appointment if it belongs to the client
+    Client only: Cancels an ONGOING appointment by setting it's status to CANCELLED, for the authenticated client.
     """
-    user = request.user
-    try:
-        appointment = Appointment.objects.get(id=appointment_id, client=user)
-    except Appointment.DoesNotExist:
-        return Response({'detail': 'Appointment not found.'}, status=status.HTTP_404_NOT_FOUND)
+    serializer = CancelClientAppointmentSerializer(data={}, context={'client_id': request.user, 'appointment_id': appointment_id})
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
 
-    if appointment.status != AppointmentStatus.ONGOING.value:
-        return Response({'detail': 'Cannot cancel a non-ongoing appointment.'}, status=status.HTTP_400_BAD_REQUEST)
-
-    appointment.status = AppointmentStatus.CANCELLED.value
-    appointment.save()
-    return Response({'detail': 'Appointment cancelled successfully.'}, status=status.HTTP_204_NO_CONTENT)
+    return Response({'detail': 'Appointment cancelled successfully.'}, status=status.HTTP_200_OK)
 
 
+# TODO:
 @api_view(['GET'])
 @permission_classes([IsClientRole])
 def get_client_reviews(request):

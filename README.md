@@ -202,27 +202,28 @@ api/
 
 ## Admin Endpoints (`api/admin/`)
 
-| Endpoint                                                   | Method  | Description                                            | Status |
-| ---------------------------------------------------------- | ------- | ------------------------------------------------------ | ------ |
-| `/admin/barber/`                                           | POST    | Invite a barber through their email.                   | ✅ 🧪  |
-| `/admin/barber/<barber_id>/`                               | DELETE  | Remove a barber by ID                                  | ✅     |
-| `/admin/barber/<barber_id>/availability/`                  | POST    | Create availability for a barber on a specific date    | ✅     |
-| `/admin/barber/<barber_id>/availability/<availability_id>` | PATCH   | Edit an availability for a barber on a specific date   | ✅     |
-| `/admin/barber/<barber_id>/availability/<availability_id>` | DELELTE | Remove an availability for a barber on a specific date | ✅     |
-| `/admin/statistics/`                                       | GET     | Generate general statistics                            |        |
-| `/admin/appointments/`                                     | GET     | List all past appointments across the platform         |        |
+| Endpoint                                                    | Method  | Description                                            | Status |
+| ----------------------------------------------------------- | ------- | ------------------------------------------------------ | ------ |
+| `/admin/barber/`                                            | POST    | Invite a barber through their email.                   | ✅ 🧪  |
+| `/admin/barber/<barber_id>/`                                | DELETE  | Remove a barber by ID                                  | ✅     |
+| `/admin/barber/<barber_id>/availability/`                   | POST    | Create availability for a barber on a specific date    | ✅     |
+| `/admin/barber/<barber_id>/availability/<availability_id>/` | PATCH   | Edit an availability for a barber on a specific date   | ✅     |
+| `/admin/barber/<barber_id>/availability/<availability_id>/` | DELELTE | Remove an availability for a barber on a specific date | ✅     |
+| `/admin/statistics/`                                        | GET     | Generate general statistics                            |        |
+| `/admin/appointments/`                                      | GET     | List all past appointments across the platform         |        |
 
 ## Barber Endpoints (`api/barber/`)
 
-| Endpoint                       | Method | Description                                              | Status |
-| ------------------------------ | ------ | -------------------------------------------------------- | ------ |
-| `/barber/availabilities/`      | GET    | List availabilities of the authenticated barber          | ✅     |
-| `/barber/services/`            | GET    | List services of the authenticated barber                | ✅     |
-| `/barber/service/`             | POST   | Create a new service for the authenticated barber        | ✅     |
-| `/barber/service/<service_id>` | PATCH  | Edit a service owned by the authenticated barber         | ✅     |
-| `/barber/service/<service_id>` | DELETE | Remove a service owned by the authenticated barber       | ✅     |
-| `/barber/reviews/`             | GET    | View reviews received by the authenticated barberreviews |        |
-| `/barber/appointments/`        | GET    | View appointments for the authenticated barber           | ✅     |
+| Endpoint                        | Method | Description                                              | Status |
+| ------------------------------- | ------ | -------------------------------------------------------- | ------ |
+| `/barber/availabilities/`       | GET    | List availabilities of the authenticated barber          | ✅     |
+| `/barber/services/`             | GET    | List services of the authenticated barber                | ✅     |
+| `/barber/service/`              | POST   | Create a new service for the authenticated barber        | ✅     |
+| `/barber/service/<service_id>/` | PATCH  | Edit a service owned by the authenticated barber         | ✅     |
+| `/barber/service/<service_id>/` | DELETE | Remove a service owned by the authenticated barber       | ✅     |
+| `/barber/appointments/`         | GET    | List ongoing appointments of the authenticated barber    | ✅     |
+| `/barber/reviews/`              | GET    | View reviews received by the authenticated barberreviews |        |
+| `/barber/appointments/`         | GET    | View appointments for the authenticated barber           | ✅     |
 
 ## Client Endpoints (`api/client/`)
 
