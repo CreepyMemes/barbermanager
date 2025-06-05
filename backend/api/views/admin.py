@@ -44,7 +44,7 @@ def delete_barber(request, barber_id):
     serializer.is_valid(raise_exception=True)
     serializer.delete()
 
-    return Response({"detail": f"Barber with ID {barber_id} has been deleted."}, status=status.HTTP_200_OK)
+    return Response({"detail": f"Barber with ID {barber_id} has been deleted."}, status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['POST', 'PATCH', 'DELETE'])
@@ -65,12 +65,12 @@ def manage_barber_availability(request, barber_id):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         
-        return Response({"detail": "Availability slots updated."}, status=status.HTTP_200_OK)
+        return Response({"detail": "Availability updated successfully."}, status=status.HTTP_200_OK)
     
     elif request.method == 'DELETE':
         serializer = DeleteBarberAvailabilitySerializer(data=request.data, context={'barber_id': barber_id})
         serializer.is_valid(raise_exception=True)
         serializer.delete()
         
-        return Response({"detail": "Availability deleted."}, status=status.HTTP_200_OK)
+        return Response({"detail": "Availability deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
     
