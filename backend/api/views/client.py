@@ -1,44 +1,75 @@
-from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from api.utils.permissions import IsClientRole
-from api.models.appointment import Appointment, Review, AppointmentStatus
+from rest_framework import status
+from ..utils import (
+    IsClientRole,
+)
 from api.serializers.client import (
-    AppointmentSerializer,
-    AppointmentCreateSerializer,
+    GetAppointmentsSerializer,
+    CreateAppointmentSerializer,
     ReviewSerializer
 )
-@api_view(['GET', 'POST'])
-@permission_classes([IsAuthenticated, IsClientRole])
-def client_appointments_list_create(request):
+from ..models import (
+    Appointment, 
+    Review, 
+    AppointmentStatus
+)
+
+
+@api_view(['GET'])
+@permission_classes([IsClientRole])
+def get_client_appointments(request):
     """
-    GET:  List own past appointments (COMPLETED or CANCELLED)
-    POST: Create a new appointment only if no ONGOING currently
+    Get all appointments for the authenticated client.
     """
-    user = request.user
-    client = user.client  
-
-    if request.method == 'GET':
-        past_appointments = Appointment.objects.filter(
-            client=client,
-            status__in=[AppointmentStatus.COMPLETED.value, AppointmentStatus.CANCELLED.value]
-        ).order_by('-date', '-slot')
-        serializer = AppointmentSerializer(past_appointments, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    if Appointment.objects.filter(client=client, status=AppointmentStatus.ONGOING.value).exists():
-        return Response({'detail': 'You already have an ongoing appointment.'}, status=status.HTTP_400_BAD_REQUEST)
-
-    serializer = AppointmentCreateSerializer(data=request.data, context={'client': client})
+    serializer = GetAppointmentsSerializer(data={}, context={'client_id': request.user})
     serializer.is_valid(raise_exception=True)
-    appointment = serializer.save()  
-    response_serializer = AppointmentSerializer(appointment)
-    return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([IsClientRole])
+def create_client_appointment(request, barber_id):
+    """
+    Client only: Creates an appointmentt for the authenticated client.
+    """
+    serializer = CreateAppointmentSerializer(data=request.data, context={'client_id': request.user, 'barber_id': barber_id})
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+
+    return Response({'detail': 'Appointment added successfully.'}, status=status.HTTP_201_CREATED)
+
+# @api_view(['GET', 'POST'])
+# @permission_classes([IsClientRole])
+# def get_client_appointments(request):
+#     """
+#     GET:  List own past appointments (COMPLETED or CANCELLED)
+#     POST: Create a new appointment only if no ONGOING currently
+#     """
+#     user = request.user
+#     client = user.client  
+
+#     if request.method == 'GET':
+#         past_appointments = Appointment.objects.filter(
+#             client=client,
+#             status__in=[AppointmentStatus.COMPLETED.value, AppointmentStatus.CANCELLED.value]
+#         ).order_by('-date', '-slot')
+#         serializer = GetAppointmentsSerializer(past_appointments, many=True)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+
+#     if Appointment.objects.filter(client=client, status=AppointmentStatus.ONGOING.value).exists():
+#         return Response({'detail': 'You already have an ongoing appointment.'}, status=status.HTTP_400_BAD_REQUEST)
+
+#     serializer = CreateAppointmentSerializer(data=request.data, context={'client': client})
+#     serializer.is_valid(raise_exception=True)
+#     appointment = serializer.save()  
+#     response_serializer = GetAppointmentsSerializer(appointment)
+#     return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
 
 @api_view(['DELETE'])
-@permission_classes([IsAuthenticated, IsClientRole])
-def client_appointment_delete(request, appointment_id):
+@permission_classes([IsClientRole])
+def delete_client_appointment(request, appointment_id):
     """
     DELETE: Cancel an ongoing appointment if it belongs to the client
     """
@@ -57,8 +88,8 @@ def client_appointment_delete(request, appointment_id):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated, IsClientRole])
-def client_reviews_list(request):
+@permission_classes([IsClientRole])
+def get_client_reviews(request):
     """
     GET: List own reviews
     """
@@ -69,8 +100,8 @@ def client_reviews_list(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated, IsClientRole])
-def client_review_create(request, appointment_id):
+@permission_classes([IsClientRole])
+def create_client_review(request, appointment_id):
     """
     POST: Create a review for a completed appointment if not already reviewed
     URL: /client/reviews/<appointment_id>/
@@ -95,8 +126,8 @@ def client_review_create(request, appointment_id):
 
 
 @api_view(['PATCH'])
-@permission_classes([IsAuthenticated, IsClientRole])
-def client_review_edit(request, review_id):
+@permission_classes([IsClientRole])
+def edit_client_review(request, review_id):
     """
     PATCH: Edit own review
     URL: /client/reviews/<review_id>/
@@ -114,8 +145,8 @@ def client_review_edit(request, review_id):
 
 
 @api_view(['DELETE'])
-@permission_classes([IsAuthenticated, IsClientRole])
-def client_review_delete(request, review_id):
+@permission_classes([IsClientRole])
+def delete_client_review(request, review_id):
     """
     DELETE: Delete own review
     URL: /client/reviews/<review_id>/

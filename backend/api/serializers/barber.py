@@ -13,7 +13,7 @@ from ..models import (
 
 class GetBarberAvailabilitiesSerializer(BarberValidationMixin, serializers.Serializer):
     """
-    Returns all availabilities for a given barber
+    Barber only: Returns all availabilities for a given barber
     """
     def validate(self, attrs):
         attrs = self.validate_barber(attrs)
@@ -31,7 +31,7 @@ class GetBarberAvailabilitiesSerializer(BarberValidationMixin, serializers.Seria
 
 class GetBarberServicesSerializer(BarberValidationMixin, serializers.Serializer):
     """
-    Returns all services for a given barber
+    Barber only: Returns all services for a given barber
     """
     def validate(self, attrs):
         attrs = self.validate_barber(attrs)
