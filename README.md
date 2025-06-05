@@ -36,7 +36,6 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
     - [Barber Availability ✅](#barber-availability-)
     - [Client Appointments](#client-appointments)
     - [Reviews](#reviews)
-    - [Reviews](#reviews-1)
   - [Reminders](#reminders)
 - [Production Workflow](#production-workflow)
   - [Deployment](#deployment)
@@ -290,8 +289,6 @@ Model Example:
 
   - Exist in the barber’s availability for the specified date.
   - Not be already booked by another appointment.
-
-### Reviews
 
 ### Reviews
 
