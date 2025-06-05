@@ -66,8 +66,8 @@ class Appointment(models.Model):
     - Prevents double-booking by ensuring a barber can have only one appointment per slot on a given date.
     - Tracks the appointment status (e.g., ongoing, completed, canceled).
     """
-    client = models.ForeignKey( Client, on_delete=models.CASCADE, related_name='appointments',)
-    barber = models.ForeignKey( Barber, on_delete=models.CASCADE, related_name='appointments_received')
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='appointments')
+    barber = models.ForeignKey(Barber, on_delete=models.CASCADE, related_name='appointments_received')
     date = models.DateField()
     slot = models.TimeField()
     services = models.ManyToManyField(Service)

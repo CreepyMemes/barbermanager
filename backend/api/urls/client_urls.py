@@ -1,21 +1,22 @@
 from django.urls import path
 from ..views.client import (
-    client_appointments_list_create,
-    client_appointment_delete,
-    client_reviews_list,
-    client_review_create,
-    client_review_edit,
-    client_review_delete,
+    get_client_appointments,
+    create_client_appointment,
+    delete_client_appointment,
+    get_client_reviews,
+    create_client_review,
+    edit_client_review,
+    delete_client_review,
 )
 
 urlpatterns = [
-    # Appointments
-    path('appointments/', client_appointments_list_create, name='client-appointments-list-create'),
-    path('appointments/<int:appointment_id>/', client_appointment_delete, name='client-appointment-delete'),
+    path('appointments/', get_client_appointments, name='get_client_appointments'),
+    path('appointment/barber/<int:barber_id>/', create_client_appointment, name='create_client_appointment'),
+    path('appointment/<int:appointment_id>/', delete_client_appointment, name='delete_client_appointment'),
 
-    # Reviews
-    path('reviews/', client_reviews_list, name='client-reviews-list'),
-    path('reviews/<int:appointment_id>/', client_review_create, name='client-review-create'),
-    path('reviews/<int:review_id>/', client_review_edit, name='client-review-edit'),
-    path('reviews/<int:review_id>/', client_review_delete, name='client-review-delete'),
+    # TODO: Reviews
+    path('reviews/', get_client_reviews, name='get_client_reviews'),
+    path('review/<int:appointment_id>/', create_client_review, name='create_client_review'),
+    path('review/<int:review_id>/', edit_client_review, name='edit_client_review'),
+    path('review/<int:review_id>/', delete_client_review, name='delete_client_review'),
 ]
