@@ -9,6 +9,7 @@ from ..models import (
     User, 
     Barber,
     Availability,
+    Service,
 )
 
 
@@ -100,7 +101,7 @@ class EmailValidationMixin:
     """
     def validate_email(self, email):
         if User.objects.filter(email=email).exists():
-            raise serializers.ValidationError("A user with this email already exists.")
+            raise serializers.ValidationError(f'The email "{email}" is already taken.')
         return email
 
 
@@ -110,7 +111,7 @@ class UsernameValidationMixin:
     """
     def validate_username(self, username):
         if User.objects.filter(username=username).exists():
-            raise serializers.ValidationError("This username is already taken.")
+            raise serializers.ValidationError(f'The username "{username}" is already taken.')
         return username
 
 
@@ -144,23 +145,28 @@ class BarberValidationMixin:
         try:
             barber = Barber.objects.get(pk=barber_id, is_active=True)
         except Barber.DoesNotExist:
-            raise serializers.ValidationError('Barber with this ID does not exist or is inactive.')
+            raise serializers.ValidationError(f'Barber with ID: "{barber_id}" does not exist or is inactive.')
         
         attrs['barber'] = barber
         return attrs
 
 
-class NewAvailabilityValidationMixin:
+class AvailabilityValidationMixin:
     """
-    Mixin to validate if the given date for the specific barber doesn't already have existing availability
+    Mixin that ensures the barber doesn't already have an availability with the same date.
     """
-    def validate_new_date(self, attrs):
+    def validate_availability_date(self, attrs, availability_instance=None):
         barber = attrs['barber']
-        date = attrs['date']
+        availability_date = attrs['date']
 
-        if Availability.objects.filter(barber=barber, date=date).exists():
-            raise serializers.ValidationError(f'Availability for the date: {date} already exists.')
-        
+        availability =  Availability.objects.filter(barber=barber, date=availability_date)
+
+        if availability_instance:
+            availability = availability.exclude(pk=availability_instance.pk)
+
+        if availability.exists():
+            raise serializers.ValidationError(f'Availability with the date: "{availability_date}" for the barber: "{barber}" already exists.')
+
         return attrs
 
 
@@ -168,14 +174,50 @@ class FindAvailabilityValidationMixin:
     """
     Mixin to validate if the given date for the specific barber has an existing availabililty
     """
-    def validate_find_date(self, attrs):
+    def validate_find_availability(self, attrs):
         barber = attrs['barber']
-        date = attrs['date']
+        availability_id = self.context.get('availability_id')
 
         try:
-            availability = Availability.objects.get(barber=barber, date=date)
+            availability = Availability.objects.get(barber=barber, pk=availability_id)
         except Availability.DoesNotExist:
-            raise serializers.ValidationError(f'No availability exists for the date: {date}.')
+            raise serializers.ValidationError(f'Availability with the ID: "{availability_id}" for the barber: "{barber}" does not exist.')
         
         attrs['availability'] = availability
+        return attrs
+    
+
+class ServiceValidationMixin:
+    """
+    Mixin that ensures the barber doesn't already have a service with the same name (case-insensitive).
+    """
+    def validate_service_name(self, attrs, service_instance=None):
+        barber = attrs['barber']
+        service_name = attrs['name']
+
+        service = Service.objects.filter(barber=barber, name__iexact=service_name)
+
+        if service_instance:
+            service = service.exclude(pk=service_instance.pk)
+
+        if service.exists():
+            raise serializers.ValidationError(f'Service with the name: "{service_name}" for the barber: "{barber}" already exists.')
+        
+        return attrs
+
+
+class FindServiceValidationMixin:
+    """
+    Mixin to validate a service belonging to the given barber by service_id from context.
+    """
+    def validate_find_service(self, attrs):
+        barber = attrs['barber']
+        service_id = self.context.get('service_id')
+
+        try:
+            service = Service.objects.get(barber=barber, pk=service_id)
+        except Service.DoesNotExist:
+            raise serializers.ValidationError(f'Service with the ID: "{service_id}" for the barber: "{barber}" does not exist.')
+        
+        attrs['service'] = service
         return attrs

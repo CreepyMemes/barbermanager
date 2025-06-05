@@ -24,16 +24,8 @@ class RegisterClientSerializer(UsernameValidationMixin, EmailValidationMixin, Pa
     username = serializers.CharField(required=True)
 
     def create(self, validated_data):
-        email = validated_data.get('email')
-        username = validated_data.get('username')
-        password = validated_data.get('password')
-    
-        client = Client(
-            email=email,
-            username=username,
-            is_active=False,
-        )
-        client.set_password(password)
+        client = Client(email=validated_data['email'], username=validated_data['username'], is_active=False)
+        client.set_password(validated_data['password'])
         client.save()
 
         return client
@@ -45,6 +37,7 @@ class RegisterBarberSerializer(UsernameValidationMixin, PasswordValidationMixin,
     """
     username = serializers.CharField(required=True)
     password = serializers.CharField(required=True, write_only=True)
+    description = serializers.CharField(required=False)
 
     def validate(self, attrs):
         uidb64 = self.context.get('uidb64')
@@ -53,7 +46,7 @@ class RegisterBarberSerializer(UsernameValidationMixin, PasswordValidationMixin,
         if not uidb64 or not token:
             raise serializers.ValidationError("Missing uid or token.")
         
-        barber = get_user_from_uid_token(uidb64, token)
+        barber = get_user_from_uid_token(uidb64, token).barber
         attrs['barber'] = barber
 
         if barber.is_active:
@@ -62,13 +55,11 @@ class RegisterBarberSerializer(UsernameValidationMixin, PasswordValidationMixin,
         return attrs
     
     def create(self, validated_data):
-        barber = self.validated_data['barber']
-        password = validated_data.get('password')
-        username = validated_data.get('username')
-
-        barber.username = username
-        barber.set_password(password)
+        barber = validated_data['barber']
+        barber.username = validated_data['username']
+        barber.description = validated_data.get('description')
         barber.is_active = True
+        barber.set_password(validated_data['password'])
         barber.save()
 
         return barber
