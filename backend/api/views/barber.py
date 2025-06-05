@@ -7,46 +7,45 @@ from ..utils import (
 )
 from ..serializers import (
     CreateServiceSerializer,
-    ServiceSerializer,
+    UpdateServiceSerializer,
+    DeleteServiceSerializer,
     AppointmentSerializer,
 )
-from ..models import ( # TODO: move these to serializers
-    Service,
+from ..models import ( # TODO: move these to serializers (logic and validations shouldn't be in views)
     Appointment,
     AppointmentStatus,
 )
 from datetime import date
 
 
-@api_view(['POST'])
+@api_view(['POST', 'PATCH', 'DELETE'])
 @permission_classes([IsBarberRole])
-def create_service(request):
+def manage_services(request):
     """
-    Barber only: Creates a new service to the authenticated Barber
+    Admin only: Manages a barber's availability with (CREATE, UPDATE, DELETE operations).
     """
-    serializer = CreateServiceSerializer(data=request.data, context={'barber_id': request.user})
-    serializer.is_valid(raise_exception=True)
-    serializer.save()
-
-    return Response({'detail': 'Service added successfully.'}, status=status.HTTP_201_CREATED)
-
-
-@api_view(['PATCH', 'DELETE'])
-@permission_classes([IsBarberRole])
-def update_or_delete_service(request, service_id):
-    barber = request.user.barber
-    service = get_object_or_404(Service, id=service_id, barber=barber)
-
-    if request.method == 'PATCH':
-        serializer = ServiceSerializer(service, data=request.data, partial=True, context={'barber': barber})
+    if request.method == 'POST':
+        serializer = CreateServiceSerializer(data=request.data, context={'barber_id': request.user})
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response({'detail': 'Service updated successfully.'})
+
+        return Response({'detail': 'Service added successfully.'}, status=status.HTTP_201_CREATED)
+        
+    elif request.method == 'PATCH': # if new fields are added to Service, set (partial=True)
+        serializer = UpdateServiceSerializer(data=request.data, context={'barber_id': request.user})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        
+        return Response({"detail": "Service updated successfully."}, status=status.HTTP_200_OK)
     
     elif request.method == 'DELETE':
-        service.delete()
-        return Response({'detail': 'Service deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
-
+        pass
+        serializer = DeleteServiceSerializer(data=request.data, context={'barber_id': request.user})
+        serializer.is_valid(raise_exception=True)
+        serializer.delete()
+        
+        return Response({"detail": "Service deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+    
 
 @api_view(['GET'])
 @permission_classes([IsBarberRole])
