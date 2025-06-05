@@ -7,7 +7,9 @@ from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from ..models import (
     User, 
+    Client,
     Barber,
+    Appointment,
     Availability,
     Service,
 )
@@ -133,6 +135,63 @@ class UIDTokenValidationSerializer(serializers.Serializer):
         user = self.validate_uid_token()
         attrs['user'] = user
         return attrs
+    
+
+class ClientValidationMixin:
+    """
+    Mixin to validate that a client_id from context exists and is active. Also adds 'client' to attrs.
+    """
+    def validate_client(self, attrs):
+        client_id = self.context.get('client_id')
+
+        try:
+            client = Client.objects.get(pk=client_id, is_active=True)
+        except Client.DoesNotExist:
+            raise serializers.ValidationError(f'Client with ID: "{client_id}" does not exist or is inactive.')
+        
+        attrs['client'] = client
+        return attrs
+    
+
+class AppointmentValidationMixin:
+    """
+    Mixin that ensures the client doesn't already have an appointment with the same date, (same check with barber), 
+    checks if availability for the given barber exists and the given slot exists in the given availability
+    """
+    def validate_services_belong_to_barber(self, attrs):
+        barber = attrs['barber']
+        services = attrs['services']
+
+        for service in services:
+            if service.barber_id != barber.id:
+                raise serializers.ValidationError(f'Service with ID"{service.id}" for the barber "{barber}" does not exist.')
+            
+        return attrs
+
+    def validate_appointment_date_and_slot(self, attrs):
+        client = attrs['client']
+        barber = attrs['barber']
+        appointment_date = attrs['date']
+        appointment_slot = attrs['slot']
+    
+        if Appointment.objects.filter(client=client, date=appointment_date).exists():
+            raise serializers.ValidationError(f"Appointment for the date {appointment_date} for the client: {client} already existts.")
+
+        if Appointment.objects.filter(barber=barber, date=appointment_date, slot=appointment_slot).exists():
+            raise serializers.ValidationError(f"Appointment for the date: {appointment_date} in the slot: {appointment_slot} for the barber: {barber} already exists.")
+
+        try:
+            availability = Availability.objects.get(barber=barber, date=appointment_date)
+        except Availability.DoesNotExist:
+            raise serializers.ValidationError(f"Barber is not available on {appointment_date}.")
+        
+        slot_str = appointment_slot.strftime("%H:%M")
+
+        if slot_str not in availability.slots:
+            raise serializers.ValidationError(f"The Barber: {barber} is not available at {slot_str} on {appointment_date}.")
+
+        return attrs
+    
     
 
 class BarberValidationMixin:

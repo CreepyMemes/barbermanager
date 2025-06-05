@@ -226,15 +226,15 @@ api/
 
 ## Client Endpoints (`api/client/`)
 
-| Endpoint                                | Method | Description                                                                   | Status |
-| --------------------------------------- | ------ | ----------------------------------------------------------------------------- | ------ |
-| `/client/appointments/`                 | GET    | List past appointments of the authenticated client                            | ✅ 🧪~ |
-| `/client/appointment/`                  | POST   | Create a new appointment if no active one exists for the authenticated client | ✅     |
-| `/client/appointment/<appointment_id>/` | DELETE | Cancel an ongoing appointment belonging to the authenticated client           | ✅     |
-| `/client/reviews/`                      | GET    | List reviews posted by the authenticated client                               |        |
-| `/client/review/<appointment_id>/`      | POST   | Create a review for the barber of a completed appointment                     |        |
-| `/client/review/<review_id>/`           | PATCH  | Edit a review posted by the authenticated client                              |        |
-| `/client/review/<review_id>/`           | DELETE | Delete a review posted by the authenticated client                            |        |
+| Endpoint                                 | Method | Description                                                                   | Status |
+| ---------------------------------------- | ------ | ----------------------------------------------------------------------------- | ------ |
+| `/client/appointments/`                  | GET    | List past appointments of the authenticated client                            | ✅     |
+| `/client/appointment/barber/<barber_id>` | POST   | Create a new appointment if no active one exists for the authenticated client | ✅     |
+| `/client/appointment/<appointment_id>/`  | DELETE | Cancel an ongoing appointment belonging to the authenticated client           | ✅     |
+| `/client/reviews/`                       | GET    | List reviews posted by the authenticated client                               |        |
+| `/client/review/<appointment_id>/`       | POST   | Create a review for the barber of a completed appointment                     |        |
+| `/client/review/<review_id>/`            | PATCH  | Edit a review posted by the authenticated client                              |        |
+| `/client/review/<review_id>/`            | DELETE | Delete a review posted by the authenticated client                            |        |
 
 ## Public Endpoints (`api/public/`)
 
