@@ -6,6 +6,8 @@ from ..utils import (
 )
 from ..serializers import (
     AddServiceSerializer,
+    UpdateServiceSerializer,
+    DeleteServiceSerializer
 )
 
 
@@ -20,3 +22,26 @@ def add_service(request):
     serializer.save()
 
     return Response({'detail': 'Service added successfully.'}, status=status.HTTP_201_CREATED)
+
+
+@api_view(['PATCH', 'DELETE'])
+@permission_classes([IsBarberRole])
+def manage_service(request, service_id):
+    """
+    Barber only: Manages a service with (UPDATE, DELETE operations).
+    """
+    
+    if request.method == 'PATCH':
+        serializer = UpdateServiceSerializer(data=request.data, context={'service_id': service_id})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        
+        return Response({'detail': 'Service edited successfully.'}, status=status.HTTP_200_OK)
+    
+    elif request.method == 'DELETE':
+        serializer = DeleteServiceSerializer(data={"id": service_id})
+        serializer.is_valid(raise_exception=True)
+        serializer.delete()
+
+    return Response({"detail": f"Service with ID {service_id} has been deleted."}, status=status.HTTP_200_OK)
+    

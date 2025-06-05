@@ -216,8 +216,8 @@ api/
 | Endpoint                        | Method | Description                  | Status |
 | ------------------------------- | ------ | ---------------------------- | ------ |
 | `/barber/service/`              | POST   | Add a service                | ✅     |
-| `/barber/service/<service_id>/` | PATCH  | Edit a service               |        |
-| `/barber/service/<service_id>/` | DELETE | Remove a service             |        |
+| `/barber/service/<service_id>/` | PATCH  | Edit a service               | ✅     |
+| `/barber/service/<service_id>/` | DELETE | Remove a service             | ✅     |
 | `/barber/reviews/`              | GET    | List reviews of own services |        |
 | `/barber/appointments/`         | GET    | View upcoming appointments   |        |
 
