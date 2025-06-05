@@ -57,7 +57,7 @@ class CreateBarberAvailabilitySerializer(BarberValidationMixin, NewAvailabilityV
 
     def validate(self, attrs):
         attrs = self.validate_barber(attrs)
-        attrs = self.validate_new_date(attrs)
+        attrs = self.validate_new_availability_date(attrs)
         return attrs
 
     def create(self, validated_data):
@@ -73,7 +73,7 @@ class UpdateBarberAvailabilitySerializer(BarberValidationMixin, FindAvailability
 
     def validate(self, attrs):
         attrs = self.validate_barber(attrs)
-        attrs = self.validate_find_date(attrs)
+        attrs = self.validate_find_availability(attrs)
         return attrs
 
     def update(self, instance, validated_data):
@@ -93,7 +93,7 @@ class DeleteBarberAvailabilitySerializer(BarberValidationMixin, FindAvailability
 
     def validate(self, attrs):
         attrs = self.validate_barber(attrs)
-        attrs = self.validate_find_date(attrs)
+        attrs = self.validate_find_availability(attrs)
         return attrs
 
     def delete(self):

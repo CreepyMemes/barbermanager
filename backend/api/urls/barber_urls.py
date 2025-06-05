@@ -1,8 +1,10 @@
 from django.urls import path
-from ..views import barber as views
+from ..views import (
+    manage_services,
+    get_upcoming_appointments,
+)
 
 urlpatterns = [
-    path('service/', views.create_service),
-    path('service/<int:service_id>/', views.update_or_delete_service), 
-    path('appointments/', views.get_upcoming_appointments),
+    path('service/', manage_services, name='manage_services'),
+    path('appointments/', get_upcoming_appointments, name='get_upcoming_appointments'),
 ]
