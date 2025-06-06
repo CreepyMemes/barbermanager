@@ -2,7 +2,6 @@ from rest_framework import serializers
 from ..utils import (
     BarberValidationMixin,
     ServiceValidationMixin,
-    FindServiceValidationMixin,
 )
 from ..models import (
     Service,
@@ -22,7 +21,11 @@ class GetBarberAvailabilitiesSerializer(BarberValidationMixin, serializers.Seria
     
     def get_availabilities(self, barber_id):
         availabilities = Availability.objects.filter(barber_id=barber_id)
-        return [{'id': a.id, 'date': a.date, 'slots': a.slots} for a in availabilities]
+        return [{
+            'id': a.id, 
+            'date': a.date, 
+            'slots': a.slots
+        } for a in availabilities]
 
     def to_representation(self, validated_data):
         barber = validated_data['barber']
@@ -32,7 +35,7 @@ class GetBarberAvailabilitiesSerializer(BarberValidationMixin, serializers.Seria
 
 class GetBarberServicesSerializer(BarberValidationMixin, serializers.Serializer):
     """
-    Barber only: Returns all services for a given barber
+    Barber only: Returns all services offered by a given barber
     """
     def validate(self, attrs):
         attrs = self.validate_barber(attrs)
@@ -40,7 +43,11 @@ class GetBarberServicesSerializer(BarberValidationMixin, serializers.Serializer)
     
     def get_services(self, barber_id):
         services = Service.objects.filter(barber_id=barber_id)
-        return [{'id': s.id, 'name': s.name, 'price': s.price} for s in services]
+        return [{
+            'id': s.id, 
+            'name': s.name, 
+            'price': s.price
+        } for s in services]
 
     def to_representation(self, validated_data):
         barber = validated_data['barber']
@@ -50,7 +57,7 @@ class GetBarberServicesSerializer(BarberValidationMixin, serializers.Serializer)
 
 class CreateBarberServiceSerializer(BarberValidationMixin, ServiceValidationMixin, serializers.Serializer):
     """
-    Barber only: Creates a new service for a given barber.
+    Barber only: Creates a new service offering for a given barber.
     """
     name = serializers.CharField(required=True, max_length=100)
     price = serializers.DecimalField(required=True, max_digits=6, decimal_places=2) 
@@ -64,7 +71,7 @@ class CreateBarberServiceSerializer(BarberValidationMixin, ServiceValidationMixi
         return Service.objects.create(**validated_data)
     
 
-class UpdateBarberServiceSerializer(BarberValidationMixin, FindServiceValidationMixin, ServiceValidationMixin, serializers.Serializer):
+class UpdateBarberServiceSerializer(BarberValidationMixin, ServiceValidationMixin, serializers.Serializer):
     """
     Barber only: Updates a given existing service, for a given barber.
     """
@@ -97,9 +104,9 @@ class UpdateBarberServiceSerializer(BarberValidationMixin, FindServiceValidation
         return self.update(self.validated_data['service'], self.validated_data)
 
 
-class DeleteBarberServiceSerializer(BarberValidationMixin, FindServiceValidationMixin, serializers.Serializer):
+class DeleteBarberServiceSerializer(BarberValidationMixin, ServiceValidationMixin, serializers.Serializer):
     """
-    Barber only: Deletes a given service, for a given barber.
+    Barber only: Deletes a given existing service, for a given barber.
     """
     def validate(self, attrs):
         attrs = self.validate_barber(attrs)
@@ -120,7 +127,14 @@ class GeBarberAppointmentsSerializer(BarberValidationMixin, serializers.Serializ
     
     def get_appointments(self, barber_id):
         appointments = Appointment.objects.filter(barber_id=barber_id, status=AppointmentStatus.ONGOING.value)
-        return [{'id': a.id, 'client_id': a.client.id, 'date': a.date, 'slot': a.slot.strftime("%H:%M"), 'services': [s.id for s in a.services.all()], 'status': a.status} for a in appointments]
+        return [{
+            'id': a.id, 
+            'client_id': a.client.id, 
+            'date': a.date, 
+            'slot': a.slot.strftime("%H:%M"), 
+            'services': [s.id for s in a.services.all()], 
+            'status': a.status
+        } for a in appointments]
 
     def to_representation(self, validated_data):
         barber = validated_data['barber']

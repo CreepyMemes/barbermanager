@@ -12,7 +12,8 @@ from ..models import (
     Appointment,
     Availability,
     Service,
-    AppointmentStatus
+    Review,
+    AppointmentStatus,
 )
 
 
@@ -172,8 +173,12 @@ class BarberValidationMixin:
     
 class AppointmentValidationMixin:
     """
-    Mixin that ensures the client doesn't already have an appointment with the same date, (same check with barber), 
-    checks if availability for the given barber exists and the given slot exists in the given availability
+    Mixin that rovides validation methods for appointment management:
+
+    - Ensures that a client and barber do not have conflicting appointments on the same date or time slot, and that a client cannot have multiple ongoing appointments.
+    - Verifies provided services all belong to the specified barber before creating or modifying an appointment.
+    - Checks that an availability entry exists for the barber on the desired date, and that the requested time slot is included in the barber's available slots.
+    - Confirms the existence of a specific appointment for the client and ensures it is ONGOING before allowing cancellation.
     """
     def validate_services_belong_to_barber(self, attrs):
         barber = attrs['barber']
@@ -181,7 +186,7 @@ class AppointmentValidationMixin:
 
         for service in services:
             if service.barber_id != barber.id:
-                raise serializers.ValidationError(f'Service with ID"{service.id}" for the barber "{barber}" does not exist.')
+                raise serializers.ValidationError(f'Service with ID "{service.id}" for the barber "{barber}" does not exist.')
             
         return attrs
 
@@ -192,42 +197,37 @@ class AppointmentValidationMixin:
         appointment_slot = attrs['slot']
 
         if Appointment.objects.filter(client=client, status=AppointmentStatus.ONGOING.value).exists():
-            raise serializers.ValidationError(f'Client: {client} already has an ONGOING appointment.')
+            raise serializers.ValidationError(f'Client: "{client}" already has an ONGOING appointment.')
 
         if Appointment.objects.filter(client=client, date=appointment_date).exclude(status=AppointmentStatus.CANCELLED.value).exists():
-            raise serializers.ValidationError(f"Appointment for the date {appointment_date} for the client: {client} already exists.")
+            raise serializers.ValidationError(f'Appointment for the date "{appointment_date}" for the client: "{client}" already exists.')
 
         if Appointment.objects.filter(barber=barber, date=appointment_date, slot=appointment_slot).exclude(status=AppointmentStatus.CANCELLED.value).exists():
-            raise serializers.ValidationError(f"Appointment for the date: {appointment_date} in the slot: {appointment_slot} for the barber: {barber} already exists.")
+            raise serializers.ValidationError(f'Appointment for the date: "{appointment_date}" in the slot: "{appointment_slot}" for the barber: "{barber}" already exists.')
 
         try:
             availability = Availability.objects.get(barber=barber, date=appointment_date)
         except Availability.DoesNotExist:
-            raise serializers.ValidationError(f"Barber is not available on {appointment_date}.")
+            raise serializers.ValidationError(f'Barber is not available on "{appointment_date}".')
         
-        slot_str = appointment_slot.strftime("%H:%M")
+        slot_str = appointment_slot.strftime('%H:%M')
 
         if slot_str not in availability.slots:
-            raise serializers.ValidationError(f"Barber: {barber} is not available at {slot_str} on {appointment_date}.")
+            raise serializers.ValidationError(f'Barber: "{barber}" is not available at "{slot_str}" on "{appointment_date}".')
 
         return attrs
     
-    
-class CancelAppointmentValidationMixin:
-    """
-    Mixin that ensures the appointment exists, belongs to the client, and is ONGOING.
-    """
-    def validate_cancel_appointment(self, attrs):
+    def validate_find_appointment(self, attrs):
         client = attrs['client']
         appointment_id = self.context.get('appointment_id')
 
         try:
             appointment = Appointment.objects.get(pk=appointment_id, client=client)
         except Appointment.DoesNotExist:
-            raise serializers.ValidationError(f'Appointment with ID "{appointment_id}" for the client: {client} does not exist.')
+            raise serializers.ValidationError(f'Appointment with ID "{appointment_id}" for the client: "{client}" does not exist.')
         
         if appointment.status != AppointmentStatus.ONGOING.value:
-            raise serializers.ValidationError("Only ONGOING appointments can be cancelled.")
+            raise serializers.ValidationError('Only ONGOING appointments can be cancelled.')
 
         attrs['appointment'] = appointment
         return attrs
@@ -235,7 +235,10 @@ class CancelAppointmentValidationMixin:
 
 class AvailabilityValidationMixin:
     """
-    Mixin that ensures the barber doesn't already have an availability with the same date.
+    Mixin that provides validation methods for availability management:
+
+    - Ensures a barber does not already have an availability set for the same date, preventing duplicate availabilities on a single day.
+    - Validates the existence of an availability entry for the given barber and specified ID before allowing retrieval or update operations.
     """
     def validate_availability_date(self, attrs, availability_instance=None):
         barber = attrs['barber']
@@ -251,11 +254,6 @@ class AvailabilityValidationMixin:
 
         return attrs
 
-
-class FindAvailabilityValidationMixin:
-    """
-    Mixin to validate if the given date for the specific barber has an existing availabililty
-    """
     def validate_find_availability(self, attrs):
         barber = attrs['barber']
         availability_id = self.context.get('availability_id')
@@ -271,7 +269,10 @@ class FindAvailabilityValidationMixin:
 
 class ServiceValidationMixin:
     """
-    Mixin that ensures the barber doesn't already have a service with the same name (case-insensitive).
+    Mixin that provides validation methods for service-related operations:
+
+    - Ensures a barber does not already have a service with the same name (case-insensitive) before creating or updating a service.
+    - Ensures a service with the given ID exists and is owned by the specified barber before proceeding with actions that need to fetch or validate a particular service.
     """
     def validate_service_name(self, attrs, service_instance=None):
         barber = attrs['barber']
@@ -287,11 +288,6 @@ class ServiceValidationMixin:
         
         return attrs
 
-
-class FindServiceValidationMixin:
-    """
-    Mixin to validate a service belonging to the given barber by service_id from context.
-    """
     def validate_find_service(self, attrs):
         barber = attrs['barber']
         service_id = self.context.get('service_id')
@@ -302,4 +298,45 @@ class FindServiceValidationMixin:
             raise serializers.ValidationError(f'Service with the ID: "{service_id}" for the barber: "{barber}" does not exist.')
         
         attrs['service'] = service
+        return attrs
+    
+
+class ReviewValidationMixin:
+    """
+    Mixin that provides validation methods for review-related actions:
+    
+    - Ensures an appointment exists, belongs to the client, is completed, and has not yet been reviewed by the client for the barber before allowing review creation.
+    - Ensures a review exists and belongs to the requesting client when retrieving or modifying a review.
+    """
+    def validate_appointment_for_review(self, attrs):
+        client = attrs['client']
+        appointment_id = self.context.get('appointment_id')
+
+        try:
+            appointment = Appointment.objects.get(pk=appointment_id, client=client)
+        except Appointment.DoesNotExist:
+            raise serializers.ValidationError(f'Appointment with ID: "{appointment_id}" for the client: "{client}" does not exist.')
+
+        if appointment.status != AppointmentStatus.COMPLETED.value:
+            raise serializers.ValidationError('Only COMPLETED appointments can be reviewed.')
+
+        barber = appointment.barber
+
+        if Review.objects.filter(client=client, barber=barber).exists():
+            raise serializers.ValidationError(f'Client: "{client}" review for the barber: "{barber}" already exists.')
+        
+        attrs['appointment'] = appointment
+        attrs['barber'] = barber
+        return attrs
+    
+    def validate_find_review(self, attrs):
+        client = attrs['client']
+        review_id = self.context.get('review_id')
+
+        try:
+            review = Review.objects.get(client=client, pk=review_id)
+        except Review.DoesNotExist:
+            raise serializers.ValidationError(f'Review with the ID: "{review_id}" for the client: "{client}" does not exist.')
+        
+        attrs['review'] = review
         return attrs

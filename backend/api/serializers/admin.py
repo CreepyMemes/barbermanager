@@ -3,7 +3,6 @@ from ..utils import (
     EmailValidationMixin,
     BarberValidationMixin,
     AvailabilityValidationMixin,
-    FindAvailabilityValidationMixin,
 )
 from ..models import(
     Barber,
@@ -65,7 +64,7 @@ class CreateBarberAvailabilitySerializer(BarberValidationMixin, AvailabilityVali
         return Availability.objects.create(**validated_data)
 
 
-class UpdateBarberAvailabilitySerializer(BarberValidationMixin, FindAvailabilityValidationMixin, AvailabilityValidationMixin, serializers.Serializer):
+class UpdateBarberAvailabilitySerializer(BarberValidationMixin, AvailabilityValidationMixin, serializers.Serializer):
     """
     Admin only: Updates a given existing availability, for a given barber.
     """
@@ -98,7 +97,7 @@ class UpdateBarberAvailabilitySerializer(BarberValidationMixin, FindAvailability
         return self.update(self.validated_data['availability'], self.validated_data)
     
 
-class DeleteBarberAvailabilitySerializer(BarberValidationMixin, FindAvailabilityValidationMixin, serializers.Serializer):
+class DeleteBarberAvailabilitySerializer(BarberValidationMixin, AvailabilityValidationMixin, serializers.Serializer):
     """
     Admin only: Deletes a given availability, for a given barber.
     """
