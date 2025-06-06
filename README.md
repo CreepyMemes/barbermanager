@@ -215,15 +215,15 @@ api/
 
 ## Barber Endpoints (`api/barber/`)
 
-| Endpoint                         | Method | Description                                              | Status |
-| -------------------------------- | ------ | -------------------------------------------------------- | ------ |
-| `/barber/availabilities/`        | GET    | List availabilities of the authenticated barber          | ✅     |
-| `/barber/services/`              | GET    | List services of the authenticated barber                | ✅     |
-| `/barber/services/`              | POST   | Create a new service for the authenticated barber        | ✅     |
-| `/barber/services/<service_id>/` | PATCH  | Edit a service owned by the authenticated barber         | ✅     |
-| `/barber/services/<service_id>/` | DELETE | Remove a service owned by the authenticated barber       | ✅     |
-| `/barber/appointments/`          | GET    | List ongoing appointments of the authenticated barber    | ✅     |
-| `/barber/reviews/`               | GET    | View reviews received by the authenticated barberreviews |        |
+| Endpoint                         | Method | Description                                           | Status |
+| -------------------------------- | ------ | ----------------------------------------------------- | ------ |
+| `/barber/availabilities/`        | GET    | List availabilities of the authenticated barber       | ✅     |
+| `/barber/services/`              | GET    | List services of the authenticated barber             | ✅     |
+| `/barber/services/`              | POST   | Create a new service for the authenticated barber     | ✅     |
+| `/barber/services/<service_id>/` | PATCH  | Edit a service owned by the authenticated barber      | ✅     |
+| `/barber/services/<service_id>/` | DELETE | Remove a service owned by the authenticated barber    | ✅     |
+| `/barber/appointments/`          | GET    | List ongoing appointments of the authenticated barber | ✅     |
+| `/barber/reviews/`               | GET    | View reviews received by the authenticated barber     | ✅     |
 
 ## Client Endpoints (`api/client/`)
 

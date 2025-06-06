@@ -8,6 +8,7 @@ from ..models import (
     Appointment,
     Availability,
     AppointmentStatus,
+    Review,
 )
 
 
@@ -140,3 +141,27 @@ class GeBarberAppointmentsSerializer(BarberValidationMixin, serializers.Serializ
         barber = validated_data['barber']
         appointments = self.get_appointments(barber.id)
         return {'appointments': appointments}
+    
+
+class GetBarberReviewsSerializer(BarberValidationMixin, serializers.Serializer):
+    """
+    Barber only: Returns all reviews received by a given barber
+    """
+    def validate(self, attrs):
+        attrs = self.validate_barber(attrs)
+        return attrs
+
+    def get_reviews(self, barber):
+        reviews = Review.objects.filter(barber=barber).select_related('client', 'appointment')
+        return [{
+            'id': r.id,
+            'appointment_id': r.appointment.id,
+            'client_id': r.client.id,
+            'rating': r.rating,
+            'comment': r.comment,
+            'created_at': r.created_at.strftime('%Y-%m-%d')
+        } for r in reviews]
+
+    def to_representation(self, validated_data):
+        reviews = self.get_reviews(validated_data['barber'])
+        return {'reviews': reviews}

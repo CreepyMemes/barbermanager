@@ -11,6 +11,7 @@ from ..serializers import (
     UpdateBarberServiceSerializer,
     DeleteBarberServiceSerializer,
     GeBarberAppointmentsSerializer,
+    GetBarberReviewsSerializer,
 )
 
 
@@ -84,3 +85,13 @@ def get_barber_appointments(request):
     serializer.is_valid(raise_exception=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+@api_view(['GET'])
+@permission_classes([IsBarberRole])
+def get_barber_reviews(request):
+    """
+    Get all reviews received by the authenticated barber.
+    """
+    serializer = GetBarberReviewsSerializer(data={}, context={'barber_id': request.user})
+    serializer.is_valid(raise_exception=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
