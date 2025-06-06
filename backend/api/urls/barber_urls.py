@@ -11,7 +11,7 @@ from ..views import (
 urlpatterns = [
     path('availabilities/', get_barber_availabilities, name='get_barber_availabilities'),
     path('services/', get_barber_services, name='get_barber_services'),
-    path('service/', create_barber_service, name='create_barber_service'),
-    path('service/<int:service_id>/', manage_barber_service, name='manage_barber_service'),
+    path('services/', create_barber_service, name='create_barber_service'),
+    path('services/<int:service_id>/', manage_barber_service, name='manage_barber_service'),
     path('appointments/', get_barber_appointments, name='get_barber_appointments'),
 ]
