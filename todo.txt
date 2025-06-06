@@ -8,11 +8,11 @@ Important:
 
     - aggiungi endpoint get profilo barbiere
     - add edited flag for edited reviews
-    - implement automated tests for added endpoints
-
-Later:
     - implementa admin get appointments endpoint for all appointments
     - implementa admin statistycs
+
+Later:
+    - implement automated tests for added endpoints
     - configura `celery` per aggiornare appointment status e reminder email https://openwebui.rockpi.local/c/a9fa77de-1774-4f77-ab94-ed8d3df3096e
 
 Proposed:
