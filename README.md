@@ -309,6 +309,7 @@ Use celery to run background tasks to:
 ### Reviews
 
 Status: ✅
+
 Clients can submit a **single** review per barber, but **only** after completing an appointment. Each review is directly associated with both the barber and the related appointment.
 
 Model Example:
@@ -331,6 +332,7 @@ Model Example:
 ## Statistics
 
 Status: TODO
+
 Generate overall statistics about earning appointments etc...
 
 # Production Workflow
