@@ -7,8 +7,11 @@ from ..views import (
 )
 
 urlpatterns = [
+    # Barber User management
     path('barbers/', invite_barber, name='invite_barber'),
     path('barbers/<int:barber_id>/', delete_barber, name='delete_barber'),
+
+    # Barber Availability management
     path('barbers/<int:barber_id>/availabilities/', create_barber_availability, name='create_barber_availability'),
     path('barbers/<int:barber_id>/availabilities/<int:availability_id>/', manage_barber_availability, name='manage_barber_availability'),
 ]

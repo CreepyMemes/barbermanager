@@ -2,15 +2,24 @@
 What to do:
 
 1. Backend:
-- continua ad implementare gli API endpoint su README.md
 
-- implementa admin get appointments endpoint for all appointments
-- implementa reviews
-- implementa admin statistycs
-- aggiungi endpoint get profilo barbiere
-- implement automated tests for added endpoints
-- aggiungi name, surname, durante registrazione di barber, e client
-- aggiungi endpoint che permette di modificare name, surname e description a barber
+Important:
+    - continua ad implementare gli API endpoint su README.md
+
+    - aggiungi endpoint get profilo barbiere
+    - add edited flag for edited reviews
+    - implement automated tests for added endpoints
+
+Later:
+    - implementa admin get appointments endpoint for all appointments
+    - implementa admin statistycs
+    - configura `celery` per aggiornare appointment status e reminder email https://openwebui.rockpi.local/c/a9fa77de-1774-4f77-ab94-ed8d3df3096e
+
+Proposed:
+    - aggiungi name, surname, durante registrazione di barber, e client
+    - aggiungi endpoint che permette di modificare name, surname e description a barber
+    - add return json object after creation or update for anything  https://openwebui.rockpi.local/c/9d5f8f49-9f18-4937-ba9e-c7839bfb9b70
+
 
 
 ...
