@@ -11,7 +11,7 @@ from ..views.client import (
 
 urlpatterns = [
     path('appointments/', get_client_appointments, name='get_client_appointments'),
-    path('appointments/barber/<int:barber_id>/', create_client_appointment, name='create_client_appointment'),
+    path('appointments/barbers/<int:barber_id>/', create_client_appointment, name='create_client_appointment'),
     path('appointments/<int:appointment_id>/', cancel_client_appointment, name='delete_client_appointment'),
 
     # TODO: Reviews
