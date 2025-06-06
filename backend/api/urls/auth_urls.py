@@ -12,16 +12,20 @@ from ..views import (
 )
 
 urlpatterns = [
+    # Client registration management
     path('register/', register_client, name='register_client'),
     path('register/<uidb64>/<token>/', register_barber, name='register_barber'),
     path('verify/<uidb64>/<token>/', verify_client, name='verify_client_email'),
     
+    # Operations for authenticated users
     path('me/', get_user, name='get_user'),
     path('login/', login_user, name='login_user'),
     path('logout/', logout_user, name='logout_user'),
     
+    # Password recovery management
     path('reset-password/', request_password_reset, name='request_password_reset'),
     path('reset-password/<uidb64>/<token>/', confirm_password_reset, name='confirm_password_reset' ),
     
+    # Session refresh management
     path('refresh-token/', refresh_token, name='refresh_token'),
 ]

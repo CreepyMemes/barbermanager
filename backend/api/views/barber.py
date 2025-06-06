@@ -29,7 +29,7 @@ def get_barber_availabilities(request):
 @permission_classes([IsBarberRole])
 def get_barber_services(request):
     """
-    Get all services for the authenticated barber.
+    Get all services offered by the authenticated barber.
     """
     serializer = GetBarberServicesSerializer(data={}, context={'barber_id': request.user})
     serializer.is_valid(raise_exception=True)
@@ -40,7 +40,7 @@ def get_barber_services(request):
 @permission_classes([IsBarberRole])
 def create_barber_service(request):
     """
-    Barber only: Creates a service for the authenticated barber.
+    Barber only: Creates a new service offering for the authenticated barber.
     """
     serializer = CreateBarberServiceSerializer(data=request.data, context={'barber_id': request.user})
     serializer.is_valid(raise_exception=True)

@@ -33,10 +33,11 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
   - [Client Endpoints (`api/client/`)](#client-endpoints-apiclient)
   - [Public Endpoints (`api/public/`)](#public-endpoints-apipublic)
   - [Developer Notes](#developer-notes)
-    - [Barber Availability ✅](#barber-availability-)
-    - [Client Appointments ✅](#client-appointments-)
+    - [Barber Availability](#barber-availability)
+    - [Client Appointments](#client-appointments)
+    - [Tasks](#tasks)
     - [Reviews](#reviews)
-  - [Reminders](#reminders)
+  - [Statistics](#statistics)
 - [Production Workflow](#production-workflow)
   - [Deployment](#deployment)
 
@@ -226,15 +227,15 @@ api/
 
 ## Client Endpoints (`api/client/`)
 
-| Endpoint                                    | Method | Description                                                                   | Status |
-| ------------------------------------------- | ------ | ----------------------------------------------------------------------------- | ------ |
-| `/client/appointments/`                     | GET    | List past appointments of the authenticated client                            | ✅     |
-| `/client/appointments/barbers/<barber_id>/` | POST   | Create a new appointment if no active one exists for the authenticated client | ✅     |
-| `/client/appointments/<appointment_id>/`    | DELETE | Cancel an ongoing appointment belonging to the authenticated client           | ✅     |
-| `/client/reviews/`                          | GET    | List reviews posted by the authenticated client                               |        |
-| `/client/reviews/<appointment_id>/`         | POST   | Create a review for the barber of a completed appointment                     |        |
-| `/client/reviews/<review_id>/`              | PATCH  | Edit a review posted by the authenticated client                              |        |
-| `/client/reviews/<review_id>/`              | DELETE | Delete a review posted by the authenticated client                            |        |
+| Endpoint                                         | Method | Description                                                                   | Status |
+| ------------------------------------------------ | ------ | ----------------------------------------------------------------------------- | ------ |
+| `/client/appointments/`                          | GET    | List past appointments of the authenticated client                            | ✅     |
+| `/client/appointments/barbers/<barber_id>/`      | POST   | Create a new appointment if no active one exists for the authenticated client | ✅     |
+| `/client/appointments/<appointment_id>/`         | DELETE | Cancel an ongoing appointment belonging to the authenticated client           | ✅     |
+| `/client/reviews/`                               | GET    | List reviews posted by the authenticated client                               | ✅     |
+| `/client/reviews/appointments/<appointment_id>/` | POST   | Create a review for the barber of a completed appointment                     | ✅     |
+| `/client/reviews/<review_id>/`                   | PATCH  | Edit a review posted by the authenticated client                              | ✅     |
+| `/client/reviews/<review_id>/`                   | DELETE | Delete a review posted by the authenticated client                            | ✅     |
 
 ## Public Endpoints (`api/public/`)
 
@@ -247,7 +248,9 @@ api/
 
 ## Developer Notes
 
-### Barber Availability ✅
+### Barber Availability
+
+Status: ✅
 
 Barber availability is defined as a single record per barber per date, listing all 1-hour time slots during which the barber is available.
 
@@ -267,7 +270,9 @@ Model Example:
 - Availability data is managed exclusively by admins.
 - Only one availability entry is allowed per barber per date.
 
-### Client Appointments ✅
+### Client Appointments
+
+Status: ✅
 
 Clients can book a single available slot with a barber on a specific date, along with one or more services offered by that barber.
 
@@ -292,8 +297,18 @@ Model Example:
   - Exist in the barber’s availability for the specified date.
   - Not be already booked by another appointment.
 
+### Tasks
+
+Status: TODO
+
+Use celery to run background tasks to:
+
+- trigger automatic email reminders that trigger a bit before the appointment is due.
+- update ONGOING appointment status to COMPLETED when it is due
+
 ### Reviews
 
+Status: ✅
 Clients can submit a **single** review per barber, but **only** after completing an appointment. Each review is directly associated with both the barber and the related appointment.
 
 Model Example:
@@ -313,9 +328,10 @@ Model Example:
 - One review per client per barber.
 - Reviews are allowed **only** after the associated appointment is completed.
 
-## Reminders
+## Statistics
 
-TODO: some way to set automatic email reminders that trigger a bit before the appointment is due.
+Status: TODO
+Generate overall statistics about earning appointments etc...
 
 # Production Workflow
 
