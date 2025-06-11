@@ -18,6 +18,7 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
   - [2. Build and launch development containers](#2-build-and-launch-development-containers)
   - [To reset the environment](#to-reset-the-environment)
   - [Backend Development (Django API)](#backend-development-django-api)
+    - [Configuration](#configuration)
     - [To install new python dependencies](#to-install-new-python-dependencies)
     - [To run migrations](#to-run-migrations)
     - [to create a superuser](#to-create-a-superuser)
@@ -98,6 +99,19 @@ The Django dev server reloads automatically on code changes.
 > ```bash
 > docker compose -f docker-compose.dev.yml exec -it backend sh
 > ```
+
+### Configuration
+
+- Create a .env.local file containing your stmp server credentials, follow this example:
+
+```bash
+EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST='smtp.server.com'
+EMAIL_PORT=587
+EMAIL_USE_TLS=1
+EMAIL_HOST_USER='your@email.com'
+EMAIL_HOST_PASSWORD='your-password'
+```
 
 ### To install new python dependencies
 
