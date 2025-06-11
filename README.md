@@ -1,8 +1,13 @@
-[![Deploy to Production](https://github.com/CreepyMemes/barbermanager/actions/workflows/deploy.yml/badge.svg?branch=master)](https://github.com/CreepyMemes/barbermanager/actions/workflows/deploy.yml)
 
 <div align="center">
-    <img src="./frontend/public/logo.png" height="100px" alt="BarberManager Logo"/>
+  <img src="./frontend/public/logo.png" height="100px" alt="BarberManager Logo"/>
+  <h1>BarberManager</h1>
+
+  <!-- Badges -->
+ [![Deploy to Production](https://github.com/CreepyMemes/barbermanager/actions/workflows/deploy.yml/badge.svg?branch=master)](https://github.com/CreepyMemes/barbermanager/actions/workflows/deploy.yml)
+ [![Website](https://img.shields.io/badge/website-barbermanager.creepymemes.com-31C754?logo=cloudflare&logoColor=white)](https://barbermanager.creepymemes.com/)
 </div>
+
 
 # Project Documentation
 
