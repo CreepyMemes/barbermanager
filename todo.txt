@@ -7,18 +7,17 @@ Important:
     - continua ad implementare gli API endpoint su README.md
 
     - aggiungi endpoint get profilo barbiere
-    - add edited flag for edited reviews
     - implementa admin get appointments endpoint for all appointments
     - implementa admin statistycs
 
 Later:
     - implement automated tests for added endpoints
-    - configura `celery` per aggiornare appointment status e reminder email https://openwebui.rockpi.local/c/a9fa77de-1774-4f77-ab94-ed8d3df3096e
+    - configura `celery` task per inviare reminder email
 
 Proposed:
     - aggiungi name, surname, durante registrazione di barber, e client
     - aggiungi endpoint che permette di modificare name, surname e description a barber
-    - add return json object after creation or update for anything  https://openwebui.rockpi.local/c/9d5f8f49-9f18-4937-ba9e-c7839bfb9b70
+    - add return json object after creation or update for anything  https://openwebui.aspire.local/c/9d5f8f49-9f18-4937-ba9e-c7839bfb9b70
 
 
 
