@@ -1,3 +1,4 @@
+from django.utils import timezone
 from rest_framework import serializers
 from ..utils import (
     ClientValidationMixin,
@@ -97,7 +98,8 @@ class GetClientReviewsSerializer(ClientValidationMixin, serializers.Serializer):
             'barber_id': r.barber.id,
             'rating': r.rating,
             'comment': r.comment,
-            'created_at': r.created_at.strftime('%Y-%m-%d')
+            'created_at': r.created_at.strftime('%Y-%m-%d'),
+            'edited_at': r.edited_at.strftime('%Y-%m-%d') if r.edited_at else None
         } for r in reviews]
 
     def to_representation(self, validated_data):
@@ -147,9 +149,14 @@ class UpdateClientReviewSerializer(ClientValidationMixin, ReviewValidationMixin,
     def update(self, instance, validated_data):
         if 'rating' in validated_data:
             instance.rating = validated_data['rating']
+            updated = True
 
         if 'comment' in validated_data:
             instance.comment = validated_data['comment']
+            updated = True
+
+        if updated:
+            instance.edited_at = timezone.now()
 
         instance.save()
         return instance
