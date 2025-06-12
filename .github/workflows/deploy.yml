@@ -18,7 +18,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd ${{ secrets.PRODUCTION_PATH }}
-            cat << 'EOF' > .env.prod
-${{ secrets.ENV_PROD_CONTENT }}
-EOF
+            echo "${{ secrets.ENV_PROD_BACKEND }}" | base64 -d > .env.prod
+            cat .env.prod
             ./deploy.sh
