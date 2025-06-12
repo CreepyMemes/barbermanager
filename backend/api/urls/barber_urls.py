@@ -10,7 +10,7 @@ from ..views import (
 
 urlpatterns = [
     # Service management
-    path('services/', manage_barber_services, name='get_barber_services'),
+    path('services/', manage_barber_services, name='manage_barber_services'),
     path('services/<int:service_id>/', manage_barber_service, name='manage_barber_service'),
 
     # Getters for authenticated barber
