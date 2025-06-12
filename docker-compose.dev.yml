@@ -27,6 +27,8 @@ services:
     env_file:
       - ./backend/.env.dev
       - ./backend/.env.local
+    environment:
+      - RUN_MIGRATIONS=1
     depends_on:
       - db
       - redis

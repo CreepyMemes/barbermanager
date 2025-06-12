@@ -11,6 +11,7 @@ services:
 
   redis:
     image: redis:7
+    mem_limit: 100m
 
   backend:
     build:
@@ -18,6 +19,8 @@ services:
       dockerfile: Dockerfile.prod
     env_file:
       - ./backend/.env.prod
+    environment:
+      - RUN_MIGRATIONS=1
     depends_on:
       - db
     ports:
@@ -28,7 +31,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.prod
-    command: celery -A config worker -l info
+    command: celery -A config worker -l info --concurrency=1
     volumes:
       - ./backend:/app
     env_file:
@@ -36,7 +39,7 @@ services:
     depends_on:
       - db
       - redis
-    mem_limit: 100m
+    mem_limit: 200m
 
   celery-beat:
     build:
