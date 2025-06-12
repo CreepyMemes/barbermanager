@@ -9,6 +9,9 @@ services:
       - POSTGRES_PASSWORD=mypassword
     mem_limit: 100m
 
+  redis:
+    image: redis:7
+
   backend:
     build:
       context: ./backend
@@ -19,6 +22,34 @@ services:
       - db
     ports:
       - '127.0.0.1:7001:8000'
+    mem_limit: 100m
+
+  celery:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    command: celery -A config worker -l info
+    volumes:
+      - ./backend:/app
+    env_file:
+      - ./backend/.env.prod
+    depends_on:
+      - db
+      - redis
+    mem_limit: 100m
+
+  celery-beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    command: celery -A config beat -l info
+    volumes:
+      - ./backend:/app
+    env_file:
+      - ./backend/.env.prod
+    depends_on:
+      - db
+      - redis
     mem_limit: 100m
 
   frontend:
