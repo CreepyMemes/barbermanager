@@ -26,28 +26,27 @@ def get_barber_availabilities(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 @permission_classes([IsBarberRole])
-def get_barber_services(request):
+def manage_barber_services(request):
     """
-    Get all services offered by the authenticated barber.
-    """
-    serializer = GetBarberServicesSerializer(data={}, context={'barber_id': request.user})
-    serializer.is_valid(raise_exception=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    Barber only: Handles get and create operations for services offered by the authenticated barber.
 
-
-@api_view(['POST'])
-@permission_classes([IsBarberRole])
-def create_barber_service(request):
+    - GET: Gets all services offered by the authenticated barber.
+    - POST: Creates a new service offering for the authenticated barber.
     """
-    Barber only: Creates a new service offering for the authenticated barber.
-    """
-    serializer = CreateBarberServiceSerializer(data=request.data, context={'barber_id': request.user})
-    serializer.is_valid(raise_exception=True)
-    serializer.save()
+    if request.method == 'GET':
+        serializer = GetBarberServicesSerializer(data={}, context={'barber_id': request.user})
+        serializer.is_valid(raise_exception=True)
 
-    return Response({'detail': 'Service added successfully.'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    elif request.method == 'POST':
+        serializer = CreateBarberServiceSerializer(data=request.data, context={'barber_id': request.user})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response({'detail': 'Service added successfully.'}, status=status.HTTP_201_CREATED)
 
 
 @api_view(['PATCH', 'DELETE'])
