@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from datetime import timedelta
+from celery.schedules import crontab
 
 # Base directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -123,10 +124,24 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_BACKEND = os.environ['EMAIL_BACKEND']
 EMAIL_HOST = os.environ['EMAIL_HOST']
 EMAIL_PORT = int(os.environ['EMAIL_PORT'])
-EMAIL_USE_TLS = bool(os.environ['EMAIL_USE_TLS'])
+EMAIL_USE_TLS = bool(int(os.environ['EMAIL_USE_TLS']))
 EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER'] 
 EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD'] 
 
+# Celery tasks settings
+CELERY_BROKER_URL = os.environ['CELERY_BROKER_URL'] 
+CELERY_RESULT_BACKEND =os.environ['CELERY_RESULT_BACKEND'] 
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+CELERY_BEAT_SCHEDULE = {
+    'complete-ongoing-appointments': {
+        'task': 'api.tasks.complete_ongoing_appointments',
+        'schedule': crontab(minute='*/1'),
+    },
+}
+
 # WARNING: this is only for development
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWS_CREDENTIALS = True
+CORS_ALLOW_CREDENTIALS = True
