@@ -151,17 +151,19 @@ class GetBarberReviewsSerializer(BarberValidationMixin, serializers.Serializer):
         attrs = self.validate_barber(attrs)
         return attrs
 
-    def get_reviews(self, barber):
-        reviews = Review.objects.filter(barber=barber).select_related('client', 'appointment')
+    def get_reviews(self, barber_id):
+        reviews = Review.objects.filter(barber_id=barber_id).select_related('client', 'appointment')
         return [{
             'id': r.id,
             'appointment_id': r.appointment.id,
             'client_id': r.client.id,
             'rating': r.rating,
             'comment': r.comment,
-            'created_at': r.created_at.strftime('%Y-%m-%d')
+            'created_at': r.created_at.strftime('%Y-%m-%d'),
+            'edited_at': r.edited_at.strftime('%Y-%m-%d') if r.edited_at else None
         } for r in reviews]
 
     def to_representation(self, validated_data):
-        reviews = self.get_reviews(validated_data['barber'])
+        barber = validated_data['barber']
+        reviews = self.get_reviews(barber.id)
         return {'reviews': reviews}

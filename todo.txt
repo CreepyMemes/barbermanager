@@ -4,9 +4,6 @@ What to do:
 1. Backend:
 
 Important:
-    - continua ad implementare gli API endpoint su README.md
-
-    - aggiungi endpoint get profilo barbiere
     - implementa admin statistycs
     - implement automated tests for added endpoints
 
