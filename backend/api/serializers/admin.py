@@ -1,3 +1,4 @@
+from django.db.models import Sum, Avg
 from rest_framework import serializers
 from ..utils import (
     EmailValidationMixin,
@@ -8,6 +9,8 @@ from ..utils import (
 from ..models import(
     Barber,
     Availability,
+    Appointment,
+    Review,
 )
 
 
@@ -110,8 +113,35 @@ class DeleteBarberAvailabilitySerializer(BarberValidationMixin, FindAvailability
         self.validated_data['availability'].delete()
 
 
-class AdminStatisticsSerializer(serializers.Serializer):
-    total_appointments = serializers.IntegerField()
-    total_revenue = serializers.DecimalField(max_digits=10, decimal_places=2)
-    total_reviews = serializers.IntegerField()
-    average_rating = serializers.FloatField()
+class GetAdminStatisticsSerializer(serializers.Serializer):
+    """
+    Admin only: Returns general statistics counts, revenue, and average rating. 
+    """
+
+    def get_total_appointments(self):
+        return Appointment.objects.count()
+    
+    def get_total_revenue(self):
+        revenue = (
+            Appointment.objects.filter(status="COMPLETED")
+            .annotate(price_sum=Sum('services__price'))
+            .aggregate(total=Sum('price_sum'))['total']
+        )
+        return revenue or 0
+    
+    def get_total_reviews(self):
+        return Review.objects.count()
+    
+    def get_average_rating(self):
+        avg = Review.objects.aggregate(avg=Avg('rating'))['avg']
+        return round(avg or 0.0, 2)
+    
+    def to_representation(self, instance):
+        return {
+            'statistics': {
+                'total_appointments': self.get_total_appointments(),
+                'total_revenue': self.get_total_revenue(),
+                'total_reviews': self.get_total_reviews(),
+                'average_rating': self.get_average_rating(),
+            }
+        }
