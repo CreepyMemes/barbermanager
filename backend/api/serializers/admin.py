@@ -4,7 +4,6 @@ from ..utils import (
     EmailValidationMixin,
     BarberValidationMixin,
     AvailabilityValidationMixin,
-    FindAvailabilityValidationMixin,
 )
 from ..models import(
     Barber,
@@ -56,7 +55,7 @@ class CreateBarberAvailabilitySerializer(BarberValidationMixin, AvailabilityVali
     Admin only: Creates a barber's availability for a specific date.
     """
     date = serializers.DateField(required=True)
-    slots = serializers.ListField(required=True, child=serializers.RegexField(r'^\d\d:\d\d$', required=True), min_length=1)
+    slots = serializers.ListField(required=True, child=serializers.TimeField(required=True), min_length=1)
 
     def validate(self, attrs):
         attrs = self.validate_barber(attrs)
@@ -64,10 +63,11 @@ class CreateBarberAvailabilitySerializer(BarberValidationMixin, AvailabilityVali
         return attrs
 
     def create(self, validated_data):
+        validated_data["slots"] = [slot.strftime("%H:%M") for slot in validated_data["slots"]]
         return Availability.objects.create(**validated_data)
 
 
-class UpdateBarberAvailabilitySerializer(BarberValidationMixin, FindAvailabilityValidationMixin, AvailabilityValidationMixin, serializers.Serializer):
+class UpdateBarberAvailabilitySerializer(BarberValidationMixin, AvailabilityValidationMixin, serializers.Serializer):
     """
     Admin only: Updates a given existing availability, for a given barber.
     """
@@ -100,7 +100,7 @@ class UpdateBarberAvailabilitySerializer(BarberValidationMixin, FindAvailability
         return self.update(self.validated_data['availability'], self.validated_data)
     
 
-class DeleteBarberAvailabilitySerializer(BarberValidationMixin, FindAvailabilityValidationMixin, serializers.Serializer):
+class DeleteBarberAvailabilitySerializer(BarberValidationMixin, AvailabilityValidationMixin, serializers.Serializer):
     """
     Admin only: Deletes a given availability, for a given barber.
     """
@@ -112,7 +112,7 @@ class DeleteBarberAvailabilitySerializer(BarberValidationMixin, FindAvailability
     def delete(self):
         self.validated_data['availability'].delete()
 
-
+        
 class GetAdminStatisticsSerializer(serializers.Serializer):
     """
     Admin only: Returns general statistics counts, revenue, and average rating. 
@@ -144,3 +144,25 @@ class GetAdminStatisticsSerializer(serializers.Serializer):
                 'average_rating': self.get_average_rating(),
             }
         }
+
+      
+class GetAllAppointmentsSerializer(serializers.Serializer):
+    """
+    Admin only: Returns all appointments registered in the system
+    """
+    def get_appointments(self):
+        appointments = Appointment.objects.all()
+        return [{
+            'id': a.id, 
+            'client_id': a.client.id, 
+            'barber_id': a.barber.id, 
+            'date': a.date, 
+            'slot': a.slot.strftime("%H:%M"), 
+            'services': [s.id for s in a.services.all()], 
+            'status': a.status,
+            'reminder_email_sent': a.reminder_email_sent,
+        } for a in appointments]
+
+    def to_representation(self, validated_data):
+        appointments = self.get_appointments()
+        return {'appointments': appointments}

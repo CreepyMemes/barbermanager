@@ -11,6 +11,8 @@ then
     echo "PostgreSQL started"
 fi
 
-python manage.py migrate
+if [ "$RUN_MIGRATIONS" = "1" ]; then
+    python manage.py migrate
+fi
 
 exec "$@"

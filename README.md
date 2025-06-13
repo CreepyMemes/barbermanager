@@ -1,7 +1,12 @@
-[![Deploy to Production](https://github.com/CreepyMemes/barbermanager/actions/workflows/deploy.yml/badge.svg?branch=master)](https://github.com/CreepyMemes/barbermanager/actions/workflows/deploy.yml)
-
 <div align="center">
-    <img src="./frontend/public/logo.png" height="100px" alt="BarberManager Logo"/>
+  <img src="./frontend/public/logo.png" height="100px" alt="BarberManager Logo"/>
+  <h1>BarberManager</h1>
+
+  <!-- Badges -->
+
+[![Deploy to Production](https://github.com/CreepyMemes/barbermanager/actions/workflows/deploy.yml/badge.svg?branch=master)](https://github.com/CreepyMemes/barbermanager/actions/workflows/deploy.yml)
+[![Website](https://img.shields.io/badge/website-barbermanager.creepymemes.com-31C754?logo=cloudflare&logoColor=white)](https://barbermanager.creepymemes.com/)
+
 </div>
 
 # Project Documentation
@@ -13,11 +18,13 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
 - [Project Documentation](#project-documentation)
   - [Table of Contents](#table-of-contents)
   - [Requirements](#requirements)
+- [System Infrastructure](#system-infrastructure)
 - [Development Workflow](#development-workflow)
   - [1. Clone the repository:](#1-clone-the-repository)
   - [2. Build and launch development containers](#2-build-and-launch-development-containers)
   - [To reset the environment](#to-reset-the-environment)
   - [Backend Development (Django API)](#backend-development-django-api)
+    - [Configuration](#configuration)
     - [To install new python dependencies](#to-install-new-python-dependencies)
     - [To run migrations](#to-run-migrations)
     - [to create a superuser](#to-create-a-superuser)
@@ -33,10 +40,11 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
   - [Client Endpoints (`api/client/`)](#client-endpoints-apiclient)
   - [Public Endpoints (`api/public/`)](#public-endpoints-apipublic)
   - [Developer Notes](#developer-notes)
-    - [Barber Availability ✅](#barber-availability-)
+    - [Barber Availability](#barber-availability)
     - [Client Appointments](#client-appointments)
+    - [Tasks](#tasks)
     - [Reviews](#reviews)
-  - [Reminders](#reminders)
+  - [Statistics](#statistics)
 - [Production Workflow](#production-workflow)
   - [Deployment](#deployment)
 
@@ -47,6 +55,80 @@ Make sure the following are installed on your machine:
 - [Docker](https://docs.docker.com/engine/install/) installed
 - [Docker Compose](https://docs.docker.com/compose/install/) installed
 - [VSCode](https://code.visualstudio.com/) with the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension installed
+
+# System Infrastructure
+
+```mermaid
+flowchart TD
+    %% User and Client
+    enduser([User<br/>Browser/Mobile])
+
+    %% Frontend
+    FE[Frontend: Nginx<br/>Container: frontend]
+    subgraph Frontend Container
+    FE
+    end
+
+    %% Backend
+    BE[Backend: Django<br/>Container: backend]
+
+    subgraph Backend Container
+        BE
+    end
+
+    %% Postgres and Redis
+    RD[(Redis Broker<br/>Container: redis)]
+    PG[(Postgres DB<br/>Container: db)]
+
+    subgraph Infra Containers
+        RD
+        PG
+    end
+
+    %% Celery
+    CW[[Celery Worker<br/>Container: celery]]
+    CB[[Celery Beat<br/>Container: celery-beat]]
+
+    subgraph Celery Containers
+        CW
+        CB
+    end
+
+
+    %% Frontend
+    FE -- Serves React SPA --> enduser
+
+    %% Core Request/Response Flow
+    enduser -- HTTPS --> FE
+    FE -- HTTPS /API --> BE
+    BE -- Serves Rest API --> FE
+
+    %% Backend/DB/Cache
+    BE -- ORM (SQL) --> PG
+
+    %% Celery Worker process
+    CW -- ORM (SQL for task logic) --> PG
+    CW -- Pulls tasks --> RD
+
+    %% Celery Beat Schedules
+    CB -- Enqueues jobs --> RD
+
+    %% Relationships
+    BE -.-> CW
+    BE -.-> CB
+
+    %% Show persistent volumes
+    classDef volstyle fill:#E0E0E0,stroke:#999
+
+    %% Color / Service Types
+    style FE fill:#008000
+    style BE fill:#092e20
+
+    style RD fill:#D82C20
+    style PG fill:#0064a5
+    style CW fill:#64913D
+    style CB fill:#64913D
+```
 
 # Development Workflow
 
@@ -97,6 +179,19 @@ The Django dev server reloads automatically on code changes.
 > ```bash
 > docker compose -f docker-compose.dev.yml exec -it backend sh
 > ```
+
+### Configuration
+
+- Create a .env.local file containing your stmp server credentials, follow this example:
+
+```bash
+EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST='smtp.server.com'
+EMAIL_PORT=587
+EMAIL_USE_TLS=1
+EMAIL_HOST_USER='your@email.com'
+EMAIL_HOST_PASSWORD='your-password'
+```
 
 ### To install new python dependencies
 
@@ -202,52 +297,54 @@ api/
 
 ## Admin Endpoints (`api/admin/`)
 
-| Endpoint                                                   | Method  | Description                                            | Status |
-| ---------------------------------------------------------- | ------- | ------------------------------------------------------ | ------ |
-| `/admin/barber/`                                           | POST    | Invite a barber through their email.                   | ✅ 🧪  |
-| `/admin/barber/<barber_id>/`                               | DELETE  | Remove a barber by ID                                  | ✅     |
-| `/admin/barber/<barber_id>/availability/`                  | POST    | Create availability for a barber on a specific date    | ✅     |
-| `/admin/barber/<barber_id>/availability/<availability_id>` | PATCH   | Edit an availability for a barber on a specific date   | ✅     |
-| `/admin/barber/<barber_id>/availability/<availability_id>` | DELELTE | Remove an availability for a barber on a specific date | ✅     |
-| `/admin/statistics/`                                       | GET     | Generate general statistics                            |        |
-| `/admin/appointments/`                                     | GET     | List all past appointments across the platform         |        |
+| Endpoint                                                       | Method  | Description                                            | Status |
+| -------------------------------------------------------------- | ------- | ------------------------------------------------------ | ------ |
+| `/admin/barbers/`                                              | POST    | Invite a barber through their email.                   | ✅ 🧪  |
+| `/admin/barbers/<barber_id>/`                                  | DELETE  | Remove a barber by ID                                  | ✅     |
+| `/admin/barbers/<barber_id>/availabilities/`                   | POST    | Create availability for a barber on a specific date    | ✅     |
+| `/admin/barbers/<barber_id>/availabilities/<availability_id>/` | PATCH   | Edit an availability for a barber on a specific date   | ✅     |
+| `/admin/barbers/<barber_id>/availabilities/<availability_id>/` | DELELTE | Remove an availability for a barber on a specific date | ✅     |
+| `/admin/appointments/`                                         | GET     | List all past appointments across the platform         | ✅     |
+| `/admin/statistics/`                                           | GET     | Generate general statistics                            |        |
 
 ## Barber Endpoints (`api/barber/`)
 
-| Endpoint                       | Method | Description                                              | Status |
-| ------------------------------ | ------ | -------------------------------------------------------- | ------ |
-| `/barber/availabilities/`      | GET    | List availabilities of the authenticated barber          | ✅     |
-| `/barber/services/`            | GET    | List services of the authenticated barber                | ✅     |
-| `/barber/service/`             | POST   | Create a new service for the authenticated barber        | ✅     |
-| `/barber/service/<service_id>` | PATCH  | Edit a service owned by the authenticated barber         | ✅     |
-| `/barber/service/<service_id>` | DELETE | Remove a service owned by the authenticated barber       | ✅     |
-| `/barber/reviews/`             | GET    | View reviews received by the authenticated barberreviews |        |
-| `/barber/appointments/`        | GET    | View appointments for the authenticated barber           | ✅     |
+| Endpoint                         | Method | Description                                           | Status |
+| -------------------------------- | ------ | ----------------------------------------------------- | ------ |
+| `/barber/availabilities/`        | GET    | List availabilities of the authenticated barber       | ✅     |
+| `/barber/services/`              | GET    | List services of the authenticated barber             | ✅     |
+| `/barber/services/`              | POST   | Create a new service for the authenticated barber     | ✅     |
+| `/barber/services/<service_id>/` | PATCH  | Edit a service owned by the authenticated barber      | ✅     |
+| `/barber/services/<service_id>/` | DELETE | Remove a service owned by the authenticated barber    | ✅     |
+| `/barber/appointments/`          | GET    | List ongoing appointments of the authenticated barber | ✅     |
+| `/barber/reviews/`               | GET    | View reviews received by the authenticated barber     | ✅     |
 
 ## Client Endpoints (`api/client/`)
 
-| Endpoint                                 | Method | Description                                                                   | Status |
-| ---------------------------------------- | ------ | ----------------------------------------------------------------------------- | ------ |
-| `/client/appointments/`                  | GET    | List past appointments of the authenticated client                            | ✅     |
-| `/client/appointment/barber/<barber_id>` | POST   | Create a new appointment if no active one exists for the authenticated client | ✅     |
-| `/client/appointment/<appointment_id>/`  | DELETE | Cancel an ongoing appointment belonging to the authenticated client           | ✅     |
-| `/client/reviews/`                       | GET    | List reviews posted by the authenticated client                               |        |
-| `/client/review/<appointment_id>/`       | POST   | Create a review for the barber of a completed appointment                     |        |
-| `/client/review/<review_id>/`            | PATCH  | Edit a review posted by the authenticated client                              |        |
-| `/client/review/<review_id>/`            | DELETE | Delete a review posted by the authenticated client                            |        |
+| Endpoint                                         | Method | Description                                                                   | Status |
+| ------------------------------------------------ | ------ | ----------------------------------------------------------------------------- | ------ |
+| `/client/appointments/`                          | GET    | List past appointments of the authenticated client                            | ✅     |
+| `/client/appointments/barbers/<barber_id>/`      | POST   | Create a new appointment if no active one exists for the authenticated client | ✅     |
+| `/client/appointments/<appointment_id>/`         | DELETE | Cancel an ongoing appointment belonging to the authenticated client           | ✅     |
+| `/client/reviews/`                               | GET    | List reviews posted by the authenticated client                               | ✅     |
+| `/client/reviews/appointments/<appointment_id>/` | POST   | Create a review for the barber of a completed appointment                     | ✅     |
+| `/client/reviews/<review_id>/`                   | PATCH  | Edit a review posted by the authenticated client                              | ✅     |
+| `/client/reviews/<review_id>/`                   | DELETE | Delete a review posted by the authenticated client                            | ✅     |
 
 ## Public Endpoints (`api/public/`)
 
-| Endpoint                                     | Method | Description                                  | Status |
-| -------------------------------------------- | ------ | -------------------------------------------- | ------ |
-| `/public/barber/`                            | GET    | List all barbers                             | ✅     |
-| `/public/barber/<barber_id>/services/`       | GET    | List services offered by the selected barber | ✅     |
-| `/public/barber/<barber_id>/availabilities/` | GET    | List availabilities for the selecetd barber  | ✅     |
-| `/public/barber/<barber_id>/profile/`        | GET    | Get barber's profile, reviews, and services  |        |
+| Endpoint                                      | Method | Description                                  | Status |
+| --------------------------------------------- | ------ | -------------------------------------------- | ------ |
+| `/public/barbers/`                            | GET    | List all barbers                             | ✅     |
+| `/public/barbers/<barber_id>/availabilities/` | GET    | List availabilities for the selecetd barber  | ✅     |
+| `/public/barbers/<barber_id>/services/`       | GET    | List services offered by the selected barber | ✅     |
+| `/public/barbers/<barber_id>/profile/`        | GET    | Get barber's profile, reviews, and services  | ✅     |
 
 ## Developer Notes
 
-### Barber Availability ✅
+### Barber Availability
+
+Status: ✅
 
 Barber availability is defined as a single record per barber per date, listing all 1-hour time slots during which the barber is available.
 
@@ -268,6 +365,8 @@ Model Example:
 - Only one availability entry is allowed per barber per date.
 
 ### Client Appointments
+
+Status: ✅
 
 Clients can book a single available slot with a barber on a specific date, along with one or more services offered by that barber.
 
@@ -292,7 +391,20 @@ Model Example:
   - Exist in the barber’s availability for the specified date.
   - Not be already booked by another appointment.
 
+### Tasks
+
+Status: ✅
+
+Used `Celery` to run background tasks to:
+
+- trigger automatic email reminders that trigger a bit before the appointment is due.
+- update ONGOING appointment status to COMPLETED when it is due
+
+This was deployed with 3 services, `Celery worker`, `Celery beat` and `Redis broker`.
+
 ### Reviews
+
+Status: ✅
 
 Clients can submit a **single** review per barber, but **only** after completing an appointment. Each review is directly associated with both the barber and the related appointment.
 
@@ -313,9 +425,11 @@ Model Example:
 - One review per client per barber.
 - Reviews are allowed **only** after the associated appointment is completed.
 
-## Reminders
+## Statistics
 
-TODO: some way to set automatic email reminders that trigger a bit before the appointment is due.
+Status: TODO
+
+Generate overall statistics about earning appointments etc...
 
 # Production Workflow
 

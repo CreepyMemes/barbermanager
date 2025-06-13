@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 from enum import Enum
 from .user import Barber, Client
 
@@ -72,11 +73,12 @@ class Appointment(models.Model):
     slot = models.TimeField()
     services = models.ManyToManyField(Service)
     status = models.CharField( max_length=10, choices=AppointmentStatus.choices(), default=AppointmentStatus.ONGOING.value)
+    reminder_email_sent = models.BooleanField(default=False)
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['barber', 'date', 'slot'], name='unique_appointment_per_barber_date_slot'),
-            models.UniqueConstraint(fields=['client', 'date'], name='unique_appointment_per_client_date'),
+            models.UniqueConstraint(fields=['client', 'date'], condition=~Q(status=AppointmentStatus.CANCELLED.value), name='unique_appointment_per_client_date_if_not_cancelled'),
+            models.UniqueConstraint(fields=['barber', 'date', 'slot'], condition=~Q(status=AppointmentStatus.CANCELLED.value), name='unique_appointment_per_barber_date_slot_if_not_cancelled'),
         ]
 
     def __str__(self):
@@ -85,18 +87,26 @@ class Appointment(models.Model):
 
 class Review(models.Model):
     """
-    Represents a client's single review for a barber after a completed appointment with them.
+    Represents a single review by a client for a barber after a completed appointment.
+    
+    - Each review is linked to one appointment, one client, and one barber.
+    - A client can only leave one review per barber, regardless of the number of appointments.
+    - Only appointments that have been completed should be reviewed.
+    - Includes rating, optional comment, and timestamp of creation.
     """
-    appointment = models.OneToOneField( Appointment,  on_delete=models.CASCADE,  related_name='appointment_review')
-    client = models.ForeignKey( Client, on_delete=models.CASCADE, related_name='client_reviews')
-    barber = models.ForeignKey( Barber, on_delete=models.CASCADE, related_name='barber_reviews')
+    appointment = models.OneToOneField(Appointment,  on_delete=models.CASCADE,  related_name='appointment_review')
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='client_reviews')
+    barber = models.ForeignKey(Barber, on_delete=models.CASCADE, related_name='barber_reviews')
     rating = models.PositiveSmallIntegerField()
     comment = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    edited_at = models.DateTimeField(null=True, blank=True) 
 
     class Meta:
-        unique_together = ['client', 'barber']
+        constraints = [
+            models.UniqueConstraint(fields=['client', 'barber'], name='unique_client_review_per_barber')
+        ]
 
     def __str__(self):
-        return f"Review by {self.client.email} for {self.barber.email} - {self.rating} stars"
+        return f"Review by {self.client} for {self.barber} - {self.rating} stars"
     
