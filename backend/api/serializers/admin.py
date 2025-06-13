@@ -7,6 +7,7 @@ from ..utils import (
 from ..models import(
     Barber,
     Availability,
+    Appointment,
 )
 
 
@@ -108,3 +109,25 @@ class DeleteBarberAvailabilitySerializer(BarberValidationMixin, AvailabilityVali
 
     def delete(self):
         self.validated_data['availability'].delete()
+
+
+class GetAllAppointmentsSerializer(serializers.Serializer):
+    """
+    Admin only: Returns all appointments registered in the system
+    """
+    def get_appointments(self):
+        appointments = Appointment.objects.all()
+        return [{
+            'id': a.id, 
+            'client_id': a.client.id, 
+            'barber_id': a.barber.id, 
+            'date': a.date, 
+            'slot': a.slot.strftime("%H:%M"), 
+            'services': [s.id for s in a.services.all()], 
+            'status': a.status,
+            'reminder_email_sent': a.reminder_email_sent,
+        } for a in appointments]
+
+    def to_representation(self, validated_data):
+        appointments = self.get_appointments()
+        return {'appointments': appointments}

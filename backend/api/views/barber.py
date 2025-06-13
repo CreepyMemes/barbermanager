@@ -19,7 +19,7 @@ from ..serializers import (
 @permission_classes([IsBarberRole])
 def get_barber_availabilities(request):
     """
-    Get all availabilities for the authenticated barber.
+    Barber only: Get all availabilities for the authenticated barber.
     """
     serializer = GetBarberAvailabilitiesSerializer(data={}, context={'barber_id': request.user})
     serializer.is_valid(raise_exception=True)
@@ -78,7 +78,7 @@ def manage_barber_service(request, service_id):
 @permission_classes([IsBarberRole])
 def get_barber_appointments(request):
     """
-    Get all appointments for the authenticated barber.
+    Barber only: Get all appointments for the authenticated barber.
     """
     serializer = GeBarberAppointmentsSerializer(data={}, context={'barber_id': request.user})
     serializer.is_valid(raise_exception=True)
@@ -89,7 +89,7 @@ def get_barber_appointments(request):
 @permission_classes([IsBarberRole])
 def get_barber_reviews(request):
     """
-    Get all reviews received by the authenticated barber.
+    Barber only: Get all reviews received by the authenticated barber.
     """
     serializer = GetBarberReviewsSerializer(data={}, context={'barber_id': request.user})
     serializer.is_valid(raise_exception=True)
