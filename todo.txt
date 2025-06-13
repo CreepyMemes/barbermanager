@@ -9,10 +9,7 @@ Important:
     - aggiungi endpoint get profilo barbiere
     - implementa admin get appointments endpoint for all appointments
     - implementa admin statistycs
-
-Later:
     - implement automated tests for added endpoints
-    - configura `celery` task per inviare reminder email
 
 Proposed:
     - aggiungi name, surname, durante registrazione di barber, e client
