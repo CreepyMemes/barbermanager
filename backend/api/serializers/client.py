@@ -30,7 +30,8 @@ class GetClientAppointmentsSerializer(ClientValidationMixin, serializers.Seriali
             'date': a.date, 
             'slot': a.slot.strftime("%H:%M"), 
             'services': [s.id for s in a.services.all()], 
-            'status': a.status
+            'status': a.status,
+            'reminder_email_sent': a.reminder_email_sent,
         } for a in appointments]
 
     def to_representation(self, validated_data):

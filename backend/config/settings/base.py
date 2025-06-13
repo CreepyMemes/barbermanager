@@ -110,7 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = "Europe/Rome"
 USE_I18N = True
 USE_TZ = True
 
@@ -134,10 +134,14 @@ CELERY_RESULT_BACKEND =os.environ['CELERY_RESULT_BACKEND']
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'UTC'
+CELERY_TIMEZONE = "Europe/Rome"
 CELERY_BEAT_SCHEDULE = {
     'complete-ongoing-appointments': {
         'task': 'api.tasks.complete_ongoing_appointments',
+        'schedule': crontab(minute='*/1'),
+    },
+    'send-appointment-reminders': {
+        'task': 'api.tasks.send_appointment_reminders',
         'schedule': crontab(minute='*/1'),
     },
 }
