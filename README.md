@@ -305,7 +305,7 @@ api/
 | `/admin/barbers/<barber_id>/availabilities/<availability_id>/` | PATCH   | Edit an availability for a barber on a specific date   | ✅     |
 | `/admin/barbers/<barber_id>/availabilities/<availability_id>/` | DELELTE | Remove an availability for a barber on a specific date | ✅     |
 | `/admin/appointments/`                                         | GET     | List all past appointments across the platform         | ✅     |
-| `/admin/statistics/`                                           | GET     | Generate general statistics                            |        |
+| `/admin/statistics/`                                           | GET     | Generate general statistics                            | ✅     |
 
 ## Barber Endpoints (`api/barber/`)
 
@@ -427,9 +427,9 @@ Model Example:
 
 ## Statistics
 
-Status: TODO
+Status: ✅
 
-Generate overall statistics about earning appointments etc...
+Generate overall statistics about total revenue, appointments, reviews and average rating
 
 # Production Workflow
 

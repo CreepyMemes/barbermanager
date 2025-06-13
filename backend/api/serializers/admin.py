@@ -138,14 +138,14 @@ class GetAdminStatisticsSerializer(serializers.Serializer):
     def to_representation(self, instance):
         return {
             'statistics': {
-                'total_appointments': self.get_total_appointments(),
                 'total_revenue': self.get_total_revenue(),
+                'total_appointments': self.get_total_appointments(),
                 'total_reviews': self.get_total_reviews(),
                 'average_rating': self.get_average_rating(),
             }
         }
 
-      
+
 class GetAllAppointmentsSerializer(serializers.Serializer):
     """
     Admin only: Returns all appointments registered in the system
