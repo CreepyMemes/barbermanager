@@ -18,6 +18,7 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
 - [Project Documentation](#project-documentation)
   - [Table of Contents](#table-of-contents)
   - [Requirements](#requirements)
+- [System Infrastructure](#system-infrastructure)
 - [Development Workflow](#development-workflow)
   - [1. Clone the repository:](#1-clone-the-repository)
   - [2. Build and launch development containers](#2-build-and-launch-development-containers)
@@ -54,6 +55,80 @@ Make sure the following are installed on your machine:
 - [Docker](https://docs.docker.com/engine/install/) installed
 - [Docker Compose](https://docs.docker.com/compose/install/) installed
 - [VSCode](https://code.visualstudio.com/) with the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension installed
+
+# System Infrastructure
+
+```mermaid
+flowchart TD
+    %% User and Client
+    enduser([User<br/>Browser/Mobile])
+
+    %% Frontend
+    FE[Frontend: Nginx<br/>Container: frontend]
+    subgraph Frontend Container
+    FE
+    end
+
+    %% Backend
+    BE[Backend: Django<br/>Container: backend]
+
+    subgraph Backend Container
+        BE
+    end
+
+    %% Postgres and Redis
+    RD[(Redis Broker<br/>Container: redis)]
+    PG[(Postgres DB<br/>Container: db)]
+
+    subgraph Infra Containers
+        RD
+        PG
+    end
+
+    %% Celery
+    CW[[Celery Worker<br/>Container: celery]]
+    CB[[Celery Beat<br/>Container: celery-beat]]
+
+    subgraph Celery Containers
+        CW
+        CB
+    end
+
+
+    %% Frontend
+    FE -- Serves React SPA --> enduser
+
+    %% Core Request/Response Flow
+    enduser -- HTTPS --> FE
+    FE -- HTTPS /API --> BE
+    BE -- Serves Rest API --> FE
+
+    %% Backend/DB/Cache
+    BE -- ORM (SQL) --> PG
+
+    %% Celery Worker process
+    CW -- ORM (SQL for task logic) --> PG
+    CW -- Pulls tasks --> RD
+
+    %% Celery Beat Schedules
+    CB -- Enqueues jobs --> RD
+
+    %% Relationships
+    BE -.-> CW
+    BE -.-> CB
+
+    %% Show persistent volumes
+    classDef volstyle fill:#E0E0E0,stroke:#999
+
+    %% Color / Service Types
+    style FE fill:#008000
+    style BE fill:#092e20
+
+    style RD fill:#D82C20
+    style PG fill:#0064a5
+    style CW fill:#64913D
+    style CB fill:#64913D
+```
 
 # Development Workflow
 
@@ -229,8 +304,8 @@ api/
 | `/admin/barbers/<barber_id>/availabilities/`                   | POST    | Create availability for a barber on a specific date    | ✅     |
 | `/admin/barbers/<barber_id>/availabilities/<availability_id>/` | PATCH   | Edit an availability for a barber on a specific date   | ✅     |
 | `/admin/barbers/<barber_id>/availabilities/<availability_id>/` | DELELTE | Remove an availability for a barber on a specific date | ✅     |
-| `/admin/statistics/`                                           | GET     | Generate general statistics                            |        |
 | `/admin/appointments/`                                         | GET     | List all past appointments across the platform         | ✅     |
+| `/admin/statistics/`                                           | GET     | Generate general statistics                            |        |
 
 ## Barber Endpoints (`api/barber/`)
 
@@ -318,12 +393,14 @@ Model Example:
 
 ### Tasks
 
-Status: TODO
+Status: ✅
 
-Use celery to run background tasks to:
+Used `Celery` to run background tasks to:
 
 - trigger automatic email reminders that trigger a bit before the appointment is due.
 - update ONGOING appointment status to COMPLETED when it is due
+
+This was deployed with 3 services, `Celery worker`, `Celery beat` and `Redis broker`.
 
 ### Reviews
 
