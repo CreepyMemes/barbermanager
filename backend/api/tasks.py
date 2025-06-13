@@ -1,10 +1,15 @@
 import logging
+from datetime import datetime, timedelta
 from django.utils import timezone
 from django.db.models import Q
 from celery import shared_task
 from .models import (
     Appointment, 
     AppointmentStatus,
+)
+from .utils import(
+    send_client_reminder_email,
+    send_barber_reminder_email,
 )
 
 
@@ -16,14 +21,42 @@ def complete_ongoing_appointments():
     """
     Background task that automaically marks ONGOING appointments to COMPLETE when they are due.
     """
-    logger.warning("Running 'complete_past_appointments' via CELERY BEAT")
+    logger.warning("Running 'complete_ongoing_appointments' via CELERY BEAT")
 
-    date_today = timezone.now().date()
-    time_now = timezone.now().time()
+    now = timezone.localtime(timezone.now())  # Italy time!
+    
+    date_today = now.date()
+    time_now = now.time()
 
     # Only mark ONGOING as COMPLETE if (date < date_today) OR if (date == date_today AND slot <= time_now)
-    appointments = Appointment.objects.filter(status=AppointmentStatus.ONGOING.value).filter(
-        (Q(date__lt=date_today) | Q(date=date_today, slot__lte=time_now))
-    )
+    appointments = Appointment.objects.filter(status=AppointmentStatus.ONGOING.value).filter((Q(date__lt=date_today) | Q(date=date_today, slot__lte=time_now)))
 
     return appointments.update(status=AppointmentStatus.COMPLETED.value)
+
+
+@shared_task
+def send_appointment_reminders():
+    """
+    Background task that automaically sends reminder emails for appointments 1 hour before they are due.
+    """
+    logger.warning("Running 'send_appointment_reminders' via CELERY BEAT")
+
+    now = timezone.localtime(timezone.now())  # Italy time!
+
+    date_today = now.date()
+    time_hour_later = now + timedelta(hours=1)
+
+    # Only get appointments with ONGOING status, for today, for which reminder not sent, whose datetime is within the next hour
+    appointments = Appointment.objects.filter(status=AppointmentStatus.ONGOING.value, reminder_email_sent=False, date=date_today)
+
+    for appointment in appointments:
+        appointment_date = timezone.make_aware(datetime.combine(appointment.date, appointment.slot), timezone.get_current_timezone())
+        
+        # logger.warning(f"Checking: appointment id {appointment.id}: now={now} date+slot={appointment_date} 1hr_later={time_hour_later}")
+        
+        if now < appointment_date <= time_hour_later:
+            send_client_reminder_email(appointment.client, appointment.barber, appointment_date)
+            send_barber_reminder_email(appointment.barber, appointment.client, appointment_date)
+            
+            appointment.reminder_email_sent = True
+            appointment.save(update_fields=['reminder_email_sent'])

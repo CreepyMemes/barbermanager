@@ -68,6 +68,35 @@ def send_password_reset_email(email, uid, token, domain):
     send_mail(subject, message, 'barber.manager.verify@gmail.com', [email])
 
 
+def send_client_reminder_email(client, barber, appointment_datetime):
+    """
+    Sends a reminder email to the client 1 hour before their appointment.
+    """
+    subject = '[BarberManager] Appointment Reminder'
+    message = (
+        f'Hi {client},\n\n'
+        f'This is a reminder for your upcoming appointment with the barber {barber} '
+        f'on {appointment_datetime.strftime("%Y-%m-%d at %H:%M")}.\n\n'
+        'Please arrive on time.\n'
+        'Thank you for using BarberManager!'
+    )
+    send_mail(subject, message, 'barber.manager.verify@gmail.com', [client.email])
+
+
+def send_barber_reminder_email(barber, client, appointment_datetime):
+    """
+    Sends a reminder email to the barber 1 hour before an appointment.
+    """
+    subject = '[BarberManager] Upcoming Appointment Reminder'
+    message = (
+        f'Dear {barber},\n\n'
+        f'This is a reminder that you have an appointment with the client {client} '
+        f'on {appointment_datetime.strftime("%Y-%m-%d at %H:%M")}.\n\n'
+        'Get ready to provide great service!\n'
+        'BarberManager Team'
+    )
+    send_mail(subject, message, 'barber.manager.verify@gmail.com', [barber.email])
+
 def get_user_from_uid_token(uidb64, token, role=None):
     """
     Utility function that checks if a token previously registered to a user is valid.
