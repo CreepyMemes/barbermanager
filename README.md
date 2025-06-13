@@ -1,13 +1,13 @@
-
 <div align="center">
   <img src="./frontend/public/logo.png" height="100px" alt="ManageBarber Logo"/>
   <h1>ManageBarber</h1>
 
   <!-- Badges -->
- [![Deploy to Production](https://github.com/s1lentCommit/manageBarber/actions/workflows/deploy.yml/badge.svg?branch=master)](https://github.com/s1lentCommit/manageBarber/actions/workflows/deploy.yml)
- [![Website](https://img.shields.io/badge/website-manageBarber.s1lentCommit.com-31C754?logo=cloudflare&logoColor=white)](https://manageBarber.s1lentCommit.com/)
-</div>
 
+[![Deploy to Production](https://github.com/s1lentCommit/manageBarber/actions/workflows/deploy.yml/badge.svg?branch=master)](https://github.com/s1lentCommit/manageBarber/actions/workflows/deploy.yml)
+[![Website](https://img.shields.io/badge/website-manageBarber.s1lentCommit.com-31C754?logo=cloudflare&logoColor=white)](https://manageBarber.s1lentCommit.com/)
+
+</div>
 
 # Project Documentation
 
@@ -230,7 +230,7 @@ api/
 | `/admin/barbers/<barber_id>/availabilities/<availability_id>/` | PATCH   | Edit an availability for a barber on a specific date   | ✅     |
 | `/admin/barbers/<barber_id>/availabilities/<availability_id>/` | DELELTE | Remove an availability for a barber on a specific date | ✅     |
 | `/admin/statistics/`                                           | GET     | Generate general statistics                            |        |
-| `/admin/appointments/`                                         | GET     | List all past appointments across the platform         |        |
+| `/admin/appointments/`                                         | GET     | List all past appointments across the platform         | ✅     |
 
 ## Barber Endpoints (`api/barber/`)
 

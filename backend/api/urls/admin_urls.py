@@ -4,6 +4,7 @@ from ..views import (
     delete_barber,
     create_barber_availability,
     manage_barber_availability,
+    get_all_appointments,
 )
 
 urlpatterns = [
@@ -14,4 +15,7 @@ urlpatterns = [
     # Barber Availability management
     path('barbers/<int:barber_id>/availabilities/', create_barber_availability, name='create_barber_availability'),
     path('barbers/<int:barber_id>/availabilities/<int:availability_id>/', manage_barber_availability, name='manage_barber_availability'),
+
+    # Appointments
+    path('appointments/', get_all_appointments, name='get_all_appointments'),
 ]

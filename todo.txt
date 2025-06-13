@@ -7,7 +7,6 @@ Important:
     - continua ad implementare gli API endpoint su README.md
 
     - aggiungi endpoint get profilo barbiere
-    - implementa admin get appointments endpoint for all appointments
     - implementa admin statistycs
     - implement automated tests for added endpoints
 

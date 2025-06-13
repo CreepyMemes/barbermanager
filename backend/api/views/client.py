@@ -19,7 +19,7 @@ from api.serializers.client import (
 @permission_classes([IsClientRole])
 def get_client_appointments(request):
     """
-    Get all appointments for the authenticated client.
+    Client only: Get all appointments for the authenticated client.
     """
     serializer = GetClientAppointmentsSerializer(data={}, context={'client_id': request.user})
     serializer.is_valid(raise_exception=True)
