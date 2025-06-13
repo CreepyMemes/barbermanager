@@ -108,3 +108,10 @@ class DeleteBarberAvailabilitySerializer(BarberValidationMixin, FindAvailability
 
     def delete(self):
         self.validated_data['availability'].delete()
+
+
+class AdminStatisticsSerializer(serializers.Serializer):
+    total_appointments = serializers.IntegerField()
+    total_revenue = serializers.DecimalField(max_digits=10, decimal_places=2)
+    total_reviews = serializers.IntegerField()
+    average_rating = serializers.FloatField()

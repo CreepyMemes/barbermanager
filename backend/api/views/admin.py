@@ -15,7 +15,11 @@ from ..serializers import (
     CreateBarberAvailabilitySerializer,
     UpdateBarberAvailabilitySerializer,
     DeleteBarberAvailabilitySerializer,
+    AdminStatisticsSerializer
+
 )
+from ..models import Appointment, Review
+from django.db.models import Sum, Avg, F
 
 @api_view(['POST'])
 @permission_classes([IsAdminRole])
@@ -83,4 +87,29 @@ def manage_barber_availability(request, barber_id, availability_id):
         serializer.delete() 
         
         return Response({"detail": "Availability deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
-    
+
+
+@api_view(['GET'])
+@permission_classes([IsAdminRole])
+def get_admin_statistics(request):
+    """
+    Admin only: Returns general statistics including appointments, revenue, and reviews.
+    """
+    total_appointments = Appointment.objects.count()
+
+    total_revenue = Appointment.objects.filter(status="COMPLETED") \
+        .annotate(price_sum=Sum('services__price')) \
+        .aggregate(total=Sum('price_sum'))['total'] or 0
+
+    total_reviews = Review.objects.count()
+    average_rating = Review.objects.aggregate(avg=Avg('rating'))['avg'] or 0.0
+
+    data = {
+        "total_appointments": total_appointments,
+        "total_revenue": total_revenue,
+        "total_reviews": total_reviews,
+        "average_rating": round(average_rating, 2)
+    }
+
+    serializer = AdminStatisticsSerializer(data)
+    return Response(serializer.data, status=status.HTTP_200_OK)
