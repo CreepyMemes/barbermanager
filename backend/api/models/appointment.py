@@ -73,6 +73,7 @@ class Appointment(models.Model):
     slot = models.TimeField()
     services = models.ManyToManyField(Service)
     status = models.CharField( max_length=10, choices=AppointmentStatus.choices(), default=AppointmentStatus.ONGOING.value)
+    reminder_email_sent = models.BooleanField(default=False)
 
     class Meta:
         constraints = [
