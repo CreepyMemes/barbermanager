@@ -338,7 +338,7 @@ api/
 | `/public/barbers/`                            | GET    | List all barbers                             | ✅     |
 | `/public/barbers/<barber_id>/availabilities/` | GET    | List availabilities for the selecetd barber  | ✅     |
 | `/public/barbers/<barber_id>/services/`       | GET    | List services offered by the selected barber | ✅     |
-| `/public/barbers/<barber_id>/profile/`        | GET    | Get barber's profile, reviews, and services  |        |
+| `/public/barbers/<barber_id>/profile/`        | GET    | Get barber's profile, reviews, and services  | ✅     |
 
 ## Developer Notes
 
