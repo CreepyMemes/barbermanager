@@ -4,6 +4,7 @@ from ..views import (
     delete_barber,
     create_barber_availability,
     manage_barber_availability,
+    get_admin_statistics,
     get_all_appointments,
 )
 
@@ -18,4 +19,7 @@ urlpatterns = [
 
     # Appointments
     path('appointments/', get_all_appointments, name='get_all_appointments'),
+    
+    # Statistics 
+    path('statistics/', get_admin_statistics),
 ]
