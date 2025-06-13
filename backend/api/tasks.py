@@ -39,7 +39,7 @@ def send_appointment_reminders():
     """
     Background task that automaically sends reminder emails for appointments 1 hour before they are due.
     """
-    # logger.warning("Running 'send_appointment_reminders' via CELERY BEAT")
+    logger.warning("Running 'send_appointment_reminders' via CELERY BEAT")
 
     now = timezone.localtime(timezone.now())  # Italy time!
 
@@ -49,12 +49,10 @@ def send_appointment_reminders():
     # Only get appointments with ONGOING status, for today, for which reminder not sent, whose datetime is within the next hour
     appointments = Appointment.objects.filter(status=AppointmentStatus.ONGOING.value, reminder_email_sent=False, date=date_today)
 
-    logger.warning(f'{appointments}')
-
     for appointment in appointments:
         appointment_date = timezone.make_aware(datetime.combine(appointment.date, appointment.slot), timezone.get_current_timezone())
         
-        logger.warning(f"Checking: appointment id {appointment.id}: now={now} date+slot={appointment_date} 1hr_later={time_hour_later}")
+        # logger.warning(f"Checking: appointment id {appointment.id}: now={now} date+slot={appointment_date} 1hr_later={time_hour_later}")
         
         if now < appointment_date <= time_hour_later:
             send_client_reminder_email(appointment.client, appointment.barber, appointment_date)
