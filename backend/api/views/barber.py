@@ -10,47 +10,43 @@ from ..serializers import (
     CreateBarberServiceSerializer,
     UpdateBarberServiceSerializer,
     DeleteBarberServiceSerializer,
-    GetAppointmentsSerializer,
+    GeBarberAppointmentsSerializer,
+    GetBarberReviewsSerializer,
 )
-
-# TODO: move these to serializers (logic and validations shouldn't be in views)
-from ..models import Appointment, AppointmentStatus
-from datetime import date
 
 
 @api_view(['GET'])
 @permission_classes([IsBarberRole])
 def get_barber_availabilities(request):
     """
-    Get all availabilities for the authenticated barber.
+    Barber only: Get all availabilities for the authenticated barber.
     """
     serializer = GetBarberAvailabilitiesSerializer(data={}, context={'barber_id': request.user})
     serializer.is_valid(raise_exception=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 @permission_classes([IsBarberRole])
-def get_barber_services(request):
+def manage_barber_services(request):
     """
-    Get all services for the authenticated barber.
-    """
-    serializer = GetBarberServicesSerializer(data={}, context={'barber_id': request.user})
-    serializer.is_valid(raise_exception=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    Barber only: Handles get and create operations for services offered by the authenticated barber.
 
-
-@api_view(['POST'])
-@permission_classes([IsBarberRole])
-def create_barber_service(request):
+    - GET: Gets all services offered by the authenticated barber.
+    - POST: Creates a new service offering for the authenticated barber.
     """
-    Barber only: Creates a service for the authenticated barber.
-    """
-    serializer = CreateBarberServiceSerializer(data=request.data, context={'barber_id': request.user})
-    serializer.is_valid(raise_exception=True)
-    serializer.save()
+    if request.method == 'GET':
+        serializer = GetBarberServicesSerializer(data={}, context={'barber_id': request.user})
+        serializer.is_valid(raise_exception=True)
 
-    return Response({'detail': 'Service added successfully.'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    elif request.method == 'POST':
+        serializer = CreateBarberServiceSerializer(data=request.data, context={'barber_id': request.user})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response({'detail': 'Service added successfully.'}, status=status.HTTP_201_CREATED)
 
 
 @api_view(['PATCH', 'DELETE'])
@@ -78,23 +74,23 @@ def manage_barber_service(request, service_id):
         return Response({"detail": "Service deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
     
 
-# TODO:
 @api_view(['GET'])
 @permission_classes([IsBarberRole])
 def get_barber_appointments(request):
-    today = date.today()
-    print(f"User: {request.user}")
-    print(f"Today: {today}")
+    """
+    Barber only: Get all appointments for the authenticated barber.
+    """
+    serializer = GeBarberAppointmentsSerializer(data={}, context={'barber_id': request.user})
+    serializer.is_valid(raise_exception=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
-    appointments = Appointment.objects.filter(
-        barber=request.user,
-        date__gte=today,
-        status=AppointmentStatus.ONGOING.value
-    ).order_by('date', 'slot')
 
-    print(f"Appointments found: {appointments.count()}")
-    for app in appointments:
-        print(f"Appointment: {app.id}, date: {app.date}, status: {app.status}")
-
-    serializer = GetAppointmentsSerializer(appointments, many=True)
-    return Response(serializer.data)
+@api_view(['GET'])
+@permission_classes([IsBarberRole])
+def get_barber_reviews(request):
+    """
+    Barber only: Get all reviews received by the authenticated barber.
+    """
+    serializer = GetBarberReviewsSerializer(data={}, context={'barber_id': request.user})
+    serializer.is_valid(raise_exception=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)

@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from datetime import timedelta
+from celery.schedules import crontab
 
 # Base directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -109,7 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = "Europe/Rome"
 USE_I18N = True
 USE_TZ = True
 
@@ -120,13 +121,31 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Django's email service settings
-EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
-EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
-EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
-EMAIL_USE_TLS = bool(int(os.getenv('EMAIL_USE_TLS', 1)))
+EMAIL_BACKEND = os.environ['EMAIL_BACKEND']
+EMAIL_HOST = os.environ['EMAIL_HOST']
+EMAIL_PORT = int(os.environ['EMAIL_PORT'])
+EMAIL_USE_TLS = bool(int(os.environ['EMAIL_USE_TLS']))
 EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER'] 
 EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD'] 
 
+# Celery tasks settings
+CELERY_BROKER_URL = os.environ['CELERY_BROKER_URL'] 
+CELERY_RESULT_BACKEND =os.environ['CELERY_RESULT_BACKEND'] 
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = "Europe/Rome"
+CELERY_BEAT_SCHEDULE = {
+    'complete-ongoing-appointments': {
+        'task': 'api.tasks.complete_ongoing_appointments',
+        'schedule': crontab(minute='*/1'),
+    },
+    'send-appointment-reminders': {
+        'task': 'api.tasks.send_appointment_reminders',
+        'schedule': crontab(minute='*/1'),
+    },
+}
+
 # WARNING: this is only for development
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWS_CREDENTIALS = True
+CORS_ALLOW_CREDENTIALS = True

@@ -2,11 +2,16 @@
 What to do:
 
 1. Backend:
-- continua ad implementare gli API endpoint su README.md
 
-- implement automated tests for added endpoints
-- aggiungi name, surname, durante registrazione di barber, e client
-- aggiungi endpoint che permette di modificare name, surname e description a barber
+Important:
+    - implementa admin statistycs
+    - implement automated tests for added endpoints
+
+Proposed:
+    - aggiungi name, surname, durante registrazione di barber, e client
+    - aggiungi endpoint che permette di modificare name, surname e description a barber
+    - add return json object after creation or update for anything  https://openwebui.aspire.local/c/9d5f8f49-9f18-4937-ba9e-c7839bfb9b70
+
 
 
 ...
