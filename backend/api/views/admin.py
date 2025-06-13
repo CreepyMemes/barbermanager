@@ -15,8 +15,10 @@ from ..serializers import (
     CreateBarberAvailabilitySerializer,
     UpdateBarberAvailabilitySerializer,
     DeleteBarberAvailabilitySerializer,
+    GetAdminStatisticsSerializer,
     GetAllAppointmentsSerializer,
 )
+
 
 @api_view(['POST'])
 @permission_classes([IsAdminRole])
@@ -85,6 +87,18 @@ def manage_barber_availability(request, barber_id, availability_id):
         
         return Response({"detail": "Availability deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
 
+      
+@api_view(['GET'])
+@permission_classes([IsAdminRole])
+def get_admin_statistics(request):
+    """
+    Admin only: Returns general statistics including appointments, revenue, and reviews.
+    """
+    serializer = GetAdminStatisticsSerializer(data={}, context={})
+    serializer.is_valid(raise_exception=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+  
+  
 @api_view(['GET'])
 @permission_classes([IsAdminRole])
 def get_all_appointments(request):
@@ -94,3 +108,4 @@ def get_all_appointments(request):
     serializer = GetAllAppointmentsSerializer(data={})
     serializer.is_valid(raise_exception=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
