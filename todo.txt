@@ -4,27 +4,27 @@ What to do:
 1. Backend:
 
 Important:
-    - implementa admin statistycs
+    - aggiungi name, surname, durante registrazione di barber, e client
+    - aggiungi endpoint che permette di modificare name, surname e description a barber e client
     - implement automated tests for added endpoints
 
 Proposed:
-    - aggiungi name, surname, durante registrazione di barber, e client
-    - aggiungi endpoint che permette di modificare name, surname e description a barber
     - add return json object after creation or update for anything  https://openwebui.aspire.local/c/9d5f8f49-9f18-4937-ba9e-c7839bfb9b70
 
 
-
-...
-
 2. Frontend:
-- register page,
-- login page,
-- verify-email send GET request to verify then redirect to login page,
 
-- reset password button in login/register pages
-- reset password page
+Important:
+    - register page,
+    - login page,
+    - verify-email send GET request to verify then redirect to login page,
 
-- client, barber and admin pages
-- logout button
-- add barber in admin user page
-...
+    - reset password button in login/register pages
+    - reset password page
+
+    - client, barber and admin pages
+    - logout button
+    - add barber in admin user page
+
+Proposed:
+    - ...
