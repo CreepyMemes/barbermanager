@@ -117,7 +117,6 @@ class GetAdminStatisticsSerializer(serializers.Serializer):
     """
     Admin only: Returns general statistics counts, revenue, and average rating. 
     """
-
     def get_total_appointments(self):
         return Appointment.objects.count()
     
