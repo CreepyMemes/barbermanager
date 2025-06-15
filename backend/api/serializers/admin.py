@@ -72,7 +72,7 @@ class DeleteBarberSerializer(serializers.Serializer):
             raise serializers.ValidationError("Barber with this ID does not exist.")  
         
         if not self.barber.is_active:
-            raise serializers.ValidationError("Barber is not active and cannot be deleted.")
+            raise serializers.ValidationError("Barber is not active and cannot be deleted.") # TODO: not sure if this is a needed check, maybe we should let admin delete inactive barbers
         
         return value
     

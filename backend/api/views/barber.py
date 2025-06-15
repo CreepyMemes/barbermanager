@@ -6,7 +6,8 @@ from ..utils import (
 )
 from ..serializers import (
     GetBarberProfileSerializer,
-    UpdateBarberInfoSerializer,
+    UpdateBarberProfileSerializer,
+    DeleteBarberProfileSerializer,
     GetBarberAvailabilitiesSerializer,
     GetBarberServicesSerializer,
     CreateBarberServiceSerializer,
@@ -17,14 +18,15 @@ from ..serializers import (
 )
 
 
-@api_view(['GET', 'PATCH'])
+@api_view(['GET', 'PATCH', 'DELETE'])
 @permission_classes([IsBarberRole])
 def manage_barber_profile(request):
     """
-    Barber only: Handles get and update operations for the authenticated barber's profile info.
+    Barber only: Handles get and update operations for the authenticated barber's profile.
 
     - GET: Updates general profie information by the authenticated barber.
     - PATCH: Barber only: Gets all related profile information for authenticated barber.
+    - DELETE: Deletes the account of the authenticated barber.
     """
     if request.method == 'GET':
         serializer = GetBarberProfileSerializer(data={}, context={'barber_id': request.user})
@@ -33,12 +35,19 @@ def manage_barber_profile(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     elif request.method == 'PATCH':
-        serializer = UpdateBarberInfoSerializer(data=request.data, context={'barber_id': request.user})
+        serializer = UpdateBarberProfileSerializer(data=request.data, context={'barber_id': request.user})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         
         return Response({"detail": "Profile info updated successfully."}, status=status.HTTP_200_OK)
+    
+    elif request.method == 'DELETE':
+        serializer = DeleteBarberProfileSerializer(data={}, context={'barber_id': request.user})
+        serializer.is_valid(raise_exception=True)
+        serializer.delete()
         
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 @api_view(['GET'])
 @permission_classes([IsBarberRole])
@@ -96,7 +105,7 @@ def manage_barber_service(request, service_id):
         serializer.is_valid(raise_exception=True)
         serializer.delete()
         
-        return Response({"detail": "Service deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
     
 
 @api_view(['GET'])
@@ -107,6 +116,7 @@ def get_barber_appointments(request):
     """
     serializer = GeBarberAppointmentsSerializer(data={}, context={'barber_id': request.user})
     serializer.is_valid(raise_exception=True)
+
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -118,4 +128,5 @@ def get_barber_reviews(request):
     """
     serializer = GetBarberReviewsSerializer(data={}, context={'barber_id': request.user})
     serializer.is_valid(raise_exception=True)
+
     return Response(serializer.data, status=status.HTTP_200_OK)

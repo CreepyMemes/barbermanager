@@ -59,7 +59,7 @@ def delete_barber(request, barber_id):
     serializer.is_valid(raise_exception=True)
     serializer.delete()
 
-    return Response({"detail": f"Barber with ID {barber_id} has been deleted."}, status=status.HTTP_204_NO_CONTENT)
+    return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['POST'])
@@ -97,7 +97,7 @@ def manage_barber_availability(request, barber_id, availability_id):
         serializer.is_valid(raise_exception=True)
         serializer.delete() 
         
-        return Response({"detail": "Availability deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['GET'])
