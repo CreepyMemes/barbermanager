@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from ..utils import (
     BarberValidationMixin,
+    UsernameValidationMixin,
     ServiceValidationMixin,
     GetServicesMixin,
     GetReviewsMixin,
@@ -31,10 +32,51 @@ class GetBarberProfileSerializer(BarberValidationMixin, GetServicesMixin, GetRev
             'email': barber.email,
             'name': barber.name,
             'surname': barber.surname,
+            'description': barber.description,
             'services': services,
             'reviews': reviews,
         }
 
+
+class UpdateBarberInfoSerializer(BarberValidationMixin, UsernameValidationMixin, serializers.Serializer):
+    """
+    Barber only: Updates general informations about a given barber.
+    """
+    username = serializers.CharField(required=False)
+    name = serializers.CharField(required=False)
+    surname = serializers.CharField(required=False)
+    description = serializers.CharField(required=False)
+
+    def validate(self, attrs):
+        attrs = self.validate_barber(attrs)
+
+        if not any(field in attrs for field in ('username', 'name', 'surname', 'description')):
+            raise serializers.ValidationError('You must provide at least one field: username, name, surname or description.')
+        
+        if 'username' in attrs:
+            attrs = self.validate_username_unique(attrs, user_instance=attrs['barber'])
+
+        return attrs
+
+    def update(self, instance, validated_data):
+        if 'username' in validated_data:
+            instance.username = validated_data['username']
+
+        if 'name' in validated_data:
+            instance.name = validated_data['name']
+        
+        if 'surname' in validated_data:
+            instance.surname = validated_data['surname']
+        
+        if 'description' in validated_data:
+            instance.description = validated_data['description']
+
+        instance.save()
+        return instance
+
+    def save(self, **kwargs):
+        return self.update(self.validated_data['barber'], self.validated_data)
+    
 
 class GetBarberAvailabilitiesSerializer(BarberValidationMixin, GetAvailabilitiesMixin, serializers.Serializer):
     """
@@ -92,7 +134,7 @@ class UpdateBarberServiceSerializer(BarberValidationMixin, ServiceValidationMixi
         attrs = self.validate_barber(attrs)
         attrs = self.validate_find_service(attrs)
 
-        if 'name' not in attrs and 'price' not in attrs:
+        if not any(field in attrs for field in ('name', 'price')):
             raise serializers.ValidationError('You must provide at least one field: name or price.')
         
         if 'name' in attrs:

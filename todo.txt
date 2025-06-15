@@ -4,10 +4,11 @@ What to do:
 1. Backend:
 
 Important:
-    - aggiungi endpoint che permette di modificare name, surname e description a barber e client
+    - aggiungi endpoint che permette di eliminare il proprio profilo per barber e client
     - implement automated tests for added endpoints
 
 Proposed:
+    - add change email functionality in PATCH /profile endpoint, that automatically sends email verification
     - add return json object after creation or update for anything  https://openwebui.aspire.local/c/9d5f8f49-9f18-4937-ba9e-c7839bfb9b70
 
 

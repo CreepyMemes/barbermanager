@@ -26,6 +26,11 @@ class RegisterClientSerializer(UsernameValidationMixin, EmailValidationMixin, Pa
     surname = serializers.CharField(required=True)
     phone_number = serializers.CharField(required=False)
 
+    def validate(self, attrs):
+        attrs = self.validate_username_unique(attrs)
+        attrs = self.validate_email_unique(attrs)
+        return attrs
+    
     def create(self, validated_data):
         client = Client(
             email=validated_data['email'], 
@@ -54,6 +59,8 @@ class RegisterBarberSerializer(UsernameValidationMixin, PasswordValidationMixin,
     description = serializers.CharField(required=False)
 
     def validate(self, attrs):
+        attrs = self.validate_username_unique(attrs)
+
         uidb64 = self.context.get('uidb64')
         token = self.context.get('token')
 

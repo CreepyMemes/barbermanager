@@ -46,6 +46,10 @@ class InviteBarberSerializer(EmailValidationMixin, serializers.Serializer):
     """
     email = serializers.EmailField(required=True)
 
+    def validate(self, attrs):
+        attrs = self.validate_email_unique(attrs)
+        return attrs
+
     def create(self, validated_data):
         barber = Barber(email=validated_data['email'],is_active=False)
         barber.set_unusable_password()

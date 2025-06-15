@@ -313,6 +313,7 @@ api/
 | Endpoint                         | Method | Description                                           | Status |
 | -------------------------------- | ------ | ----------------------------------------------------- | ------ |
 | `/barber/profile/`               | GET    | Gets all related information for authenticated barber | ✅     |
+| `/barber/profile/`               | PATCH  | Lets authenticated barber update their related info   | ✅     |
 | `/barber/availabilities/`        | GET    | List availabilities of the authenticated barber       | ✅     |
 | `/barber/services/`              | GET    | List services of the authenticated barber             | ✅     |
 | `/barber/services/`              | POST   | Create a new service for the authenticated barber     | ✅     |
@@ -326,6 +327,7 @@ api/
 | Endpoint                                         | Method | Description                                                                   | Status |
 | ------------------------------------------------ | ------ | ----------------------------------------------------------------------------- | ------ |
 | `/client/profile/`                               | GET    | Gets all related information for authenticated client                         | ✅     |
+| `/client/profile/`                               | PATCH  | Lets authenticated clilent update their related info                          | ✅     |
 | `/client/appointments/`                          | GET    | List past appointments of the authenticated client                            | ✅     |
 | `/client/appointments/barbers/<barber_id>/`      | POST   | Create a new appointment if no active one exists for the authenticated client | ✅     |
 | `/client/appointments/<appointment_id>/`         | DELETE | Cancel an ongoing appointment belonging to the authenticated client           | ✅     |
