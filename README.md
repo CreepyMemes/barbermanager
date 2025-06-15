@@ -299,6 +299,7 @@ api/
 
 | Endpoint                                                       | Method  | Description                                            | Status |
 | -------------------------------------------------------------- | ------- | ------------------------------------------------------ | ------ |
+| `/admin/profile/`                                              | GET     | Gets all related information for authenticated admin   | ✅     |
 | `/admin/barbers/`                                              | POST    | Invite a barber through their email.                   | ✅ 🧪  |
 | `/admin/barbers/<barber_id>/`                                  | DELETE  | Remove a barber by ID                                  | ✅     |
 | `/admin/barbers/<barber_id>/availabilities/`                   | POST    | Create availability for a barber on a specific date    | ✅     |
@@ -311,6 +312,7 @@ api/
 
 | Endpoint                         | Method | Description                                           | Status |
 | -------------------------------- | ------ | ----------------------------------------------------- | ------ |
+| `/barber/profile/`               | GET    | Gets all related information for authenticated barber | ✅     |
 | `/barber/availabilities/`        | GET    | List availabilities of the authenticated barber       | ✅     |
 | `/barber/services/`              | GET    | List services of the authenticated barber             | ✅     |
 | `/barber/services/`              | POST   | Create a new service for the authenticated barber     | ✅     |
@@ -323,6 +325,7 @@ api/
 
 | Endpoint                                         | Method | Description                                                                   | Status |
 | ------------------------------------------------ | ------ | ----------------------------------------------------------------------------- | ------ |
+| `/client/profile/`                               | GET    | Gets all related information for authenticated client                         | ✅     |
 | `/client/appointments/`                          | GET    | List past appointments of the authenticated client                            | ✅     |
 | `/client/appointments/barbers/<barber_id>/`      | POST   | Create a new appointment if no active one exists for the authenticated client | ✅     |
 | `/client/appointments/<appointment_id>/`         | DELETE | Cancel an ongoing appointment belonging to the authenticated client           | ✅     |
@@ -338,7 +341,7 @@ api/
 | `/public/barbers/`                            | GET    | List all barbers                             | ✅     |
 | `/public/barbers/<barber_id>/availabilities/` | GET    | List availabilities for the selecetd barber  | ✅     |
 | `/public/barbers/<barber_id>/services/`       | GET    | List services offered by the selected barber | ✅     |
-| `/public/barbers/<barber_id>/profile/`        | GET    | Get barber's profile, reviews, and services  | ✅     |
+| `/public/barbers/<barber_id>/profile/`        | GET    | Get barber's profile public information      | ✅     |
 
 ## Developer Notes
 

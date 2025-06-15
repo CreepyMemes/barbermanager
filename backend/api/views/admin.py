@@ -10,6 +10,7 @@ from ..utils import (
     send_barber_invite_email,
 )
 from ..serializers import (
+    GetAdminProfileSerializer,
     InviteBarberSerializer,
     DeleteBarberSerializer,
     CreateBarberAvailabilitySerializer,
@@ -18,6 +19,17 @@ from ..serializers import (
     GetAdminStatisticsSerializer,
     GetAllAppointmentsSerializer,
 )
+
+
+@api_view(['GET'])
+@permission_classes([IsAdminRole])
+def get_admin_profile(request):
+    """
+    Admin only: Gets all related profile information for authenticated admin.
+    """
+    serializer = GetAdminProfileSerializer(data={}, context={'admin_id': request.user})
+    serializer.is_valid(raise_exception=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])

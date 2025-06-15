@@ -9,6 +9,7 @@ from ..models import (
     User, 
     Client,
     Barber,
+    Admin,
     Appointment,
     Availability,
     Service,
@@ -199,7 +200,23 @@ class BarberValidationMixin:
         attrs['barber'] = barber
         return attrs
     
+
+class AdminValidationMixin:
+    """
+    Mixin to validate that a admin_id from context exists and is active. Also adds 'admin' to attrs.
+    """
+    def validate_admin(self, attrs):
+        admin_id = self.context.get('admin_id')
+
+        try:
+            admin = Admin.objects.get(pk=admin_id, is_active=True)
+        except Admin.DoesNotExist:
+            raise serializers.ValidationError(f'Admin with ID: "{admin_id}" does not exist or is inactive.')
+        
+        attrs['admin'] = admin
+        return attrs
     
+
 class AppointmentValidationMixin:
     """
     Mixin that rovides validation methods for appointment management:
@@ -369,3 +386,141 @@ class ReviewValidationMixin:
         
         attrs['review'] = review
         return attrs
+    
+
+
+class GetBarbersMixin:
+    """
+    Mixin that provides getter methods to list all barbers for public use or admins.
+    """
+    def get_barbers_public(self):
+        barbers = Barber.objects.filter(is_active=True)
+        return [{
+            'id': b.id, 
+            'username': b.username, 
+            'name': b.name,
+            'surname': b.surname,
+            'description': b.description
+        } for b in barbers]
+    
+    def get_barbers_admin(self):
+        barbers = Barber.objects.filter()
+        return [{
+            'id': b.id, 
+            'is_active': b.is_active,
+            'username': b.username, 
+            'email': b.email, 
+            'name': b.name,
+            'surname': b.surname,
+            'description': b.description
+        } for b in barbers]
+
+
+class GetAppointmentsMixin:
+    """
+    Mixin that provides getter methods for appointments for clients, barbers or admins.
+    """
+    def get_appointments_client(self, client_id):
+        appointments = Appointment.objects.filter(client_id=client_id)
+        return [{
+            'id': a.id, 
+            'barber_id': a.barber.id,
+            'date': a.date, 
+            'slot': a.slot.strftime("%H:%M"), 
+            'services': [s.id for s in a.services.all()], 
+            'status': a.status,
+            'reminder_email_sent': a.reminder_email_sent,
+        } for a in appointments]
+    
+    def get_appointments_barber(self, barber_id):
+        appointments = Appointment.objects.filter(barber_id=barber_id, status=AppointmentStatus.ONGOING.value)
+        return [{
+            'id': a.id, 
+            'client_full_name': f'{a.client.name} {a.client.surname}', 
+            'date': a.date, 
+            'slot': a.slot.strftime("%H:%M"), 
+            'services': [s.id for s in a.services.all()], 
+            'status': a.status,
+            'reminder_email_sent': a.reminder_email_sent,
+        } for a in appointments]
+    
+    def get_appointments_admin(self):
+        appointments = Appointment.objects.all()
+        return [{
+            'id': a.id, 
+            'client_id': a.client.id, 
+            'barber_id': a.barber.id, 
+            'date': a.date, 
+            'slot': a.slot.strftime("%H:%M"), 
+            'services': [s.id for s in a.services.all()], 
+            'status': a.status,
+            'reminder_email_sent': a.reminder_email_sent,
+        } for a in appointments]
+    
+
+class GetReviewsMixin:
+    """
+    Mixin that provides getter methods for reviews for clients or barbers.
+    """
+    def get_reviews_client(self, client_id):
+        reviews = Review.objects.filter(client_id=client_id).select_related('barber', 'appointment')
+        return [{
+            'id': r.id,
+            'appointment_id': r.appointment.id,
+            'barber_id': r.barber.id,
+            'rating': r.rating,
+            'comment': r.comment,
+            'created_at': r.created_at.strftime('%Y-%m-%d'),
+            'edited_at': r.edited_at.strftime('%Y-%m-%d') if r.edited_at else None
+        } for r in reviews]
+    
+    def get_reviews_barber(self, barber_id):
+        reviews = Review.objects.filter(barber_id=barber_id).select_related('client', 'appointment')
+        return [{
+            'id': r.id,
+            'appointment_id': r.appointment.id,
+            'client_full_name': f'{r.client.name} {r.client.surname}', 
+            'rating': r.rating,
+            'comment': r.comment,
+            'created_at': r.created_at.strftime('%Y-%m-%d'),
+            'edited_at': r.edited_at.strftime('%Y-%m-%d') if r.edited_at else None
+        } for r in reviews]
+    
+    def get_reviews_admin(self):
+        reviews = Review.objects.all().select_related('client', 'barber', 'appointment')
+        return [{
+            'id': r.id, 
+            'appointment_id': r.appointment.id,
+            'client_id': r.client.id, 
+            'barber_id': r.barber.id, 
+            'rating': r.rating,
+            'comment': r.comment,
+            'created_at': r.created_at.strftime('%Y-%m-%d'),
+            'edited_at': r.edited_at.strftime('%Y-%m-%d') if r.edited_at else None
+        } for r in reviews]
+
+
+class GetServicesMixin:
+    """
+    Mixin that provides getter methods for services for barbers.
+    """
+    def get_services_barber(self, barber_id):
+        services = Service.objects.filter(barber_id=barber_id)
+        return [{
+            'id': s.id,
+            'name': s.name, 
+            'price': s.price
+        } for s in services]
+    
+
+class GetAvailabilitiesMixin:
+    """
+    Mixin that provides getter methods for services for barbers.
+    """
+    def get_availabilities_barber(self, barber_id):
+        availabilities = Availability.objects.filter(barber_id=barber_id)
+        return [{
+            'id': a.id, 
+            'date': a.date, 
+            'slots': a.slots
+        } for a in availabilities]

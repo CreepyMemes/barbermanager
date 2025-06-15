@@ -90,8 +90,6 @@ class Admin(User):
     Admins are created by the system using the `createsuperuser` command.
     They are granted full permissions (staff and superuser) and do not require an email.
     """
-    # admin_code = models.CharField(max_length=20, blank=True, null=True)  # e.g. some internal admin code
-    
     def save(self, *args, **kwargs):
         if not self.pk:
             self.role = Roles.ADMIN.value
@@ -107,7 +105,9 @@ class Client(User):
     Clients are regular users who can register themselves via the API.
     They must provide a valid email and username during registration.
     """
-    # phone_number = models.CharField(max_length=15, blank=True, null=True)  # Client-specific phone
+    name = models.CharField(max_length=50)
+    surname = models.CharField(max_length=50)
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -124,6 +124,8 @@ class Barber(User):
     Barbers can only register if invited by an admin. They register by 
     providing a username and password, email is set by admin invitation.
     """
+    name = models.CharField(max_length=50)
+    surname = models.CharField(max_length=50)
     description = models.TextField(blank=True, null=True)
 
     def save(self, *args, **kwargs):

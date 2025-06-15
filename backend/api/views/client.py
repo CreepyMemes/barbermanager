@@ -5,6 +5,7 @@ from ..utils import (
     IsClientRole,
 )
 from api.serializers.client import (
+    GetClientProfileSerializer,
     GetClientAppointmentsSerializer,
     CreateClientAppointmentSerializer,
     CancelClientAppointmentSerializer,
@@ -13,6 +14,17 @@ from api.serializers.client import (
     UpdateClientReviewSerializer,
     DeleteClientReviewSerializer,
 )
+
+
+@api_view(['GET'])
+@permission_classes([IsClientRole])
+def get_client_profile(request):
+    """
+    Client only: Gets all related profile information for authenticated client.
+    """
+    serializer = GetClientProfileSerializer(data={}, context={'client_id': request.user})
+    serializer.is_valid(raise_exception=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])

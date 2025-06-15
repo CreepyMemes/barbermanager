@@ -5,6 +5,7 @@ from ..utils import (
     IsBarberRole,
 )
 from ..serializers import (
+    GetBarberProfileSerializer,
     GetBarberAvailabilitiesSerializer,
     GetBarberServicesSerializer,
     CreateBarberServiceSerializer,
@@ -13,6 +14,17 @@ from ..serializers import (
     GeBarberAppointmentsSerializer,
     GetBarberReviewsSerializer,
 )
+
+
+@api_view(['GET'])
+@permission_classes([IsBarberRole])
+def get_barber_profile(request):
+    """
+    Barber only: Gets all related profile information for authenticated barber.
+    """
+    serializer = GetBarberProfileSerializer(data={}, context={'barber_id': request.user})
+    serializer.is_valid(raise_exception=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
