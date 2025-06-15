@@ -1,5 +1,3 @@
-from django.urls import reverse
-from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import  force_str
 from django.contrib.auth.tokens import default_token_generator
@@ -9,6 +7,7 @@ from ..models import (
     User, 
     Client,
     Barber,
+    Admin,
     Appointment,
     Availability,
     Service,
@@ -16,86 +15,6 @@ from ..models import (
     AppointmentStatus,
 )
 
-
-def send_client_verify_email(email, uid, token, domain):
-    """
-    Sends email confirmation link to client after registration.
-    """
-    path = reverse('verify_client_email', kwargs={'uidb64': uid, 'token': token})
-    link = f'{domain}{path}'
-
-    subject = '[BarberManager] Verify your email to register as a client'
-    message = (
-        f'Thank you for registering.\n\n'
-        f'Please click the link below to verify your account:\n'
-        f'{link}\n\n'
-        'If you did not register, please ignore this email.'
-    )
-    send_mail(subject, message, 'barber.manager.verify@gmail.com', [email])
-
-
-def send_barber_invite_email(email, uid, token, domain):
-    """
-    Sends barber invitation email with registration link.
-    """
-    path = reverse('register_barber', kwargs={'uidb64': uid, 'token': token})
-    link = f'{domain}{path}'
-
-    subject = '[BarberManager] You have been invited to register as a barber'
-    message = (
-        f'You have been invited to join as a barber.\n\n'
-        f'Please click the link below to complete your registration:\n'
-        f'{link}\n\n'
-        'If you did not expect this invitation, please ignore this email.'
-    )
-    send_mail(subject, message, 'barber.manager.verify@gmail.com', [email])
-
-
-def send_password_reset_email(email, uid, token, domain):
-    """
-    Sends password reset email with reset link.
-    """
-    path = reverse('confirm_password_reset', kwargs={'uidb64': uid, 'token': token})
-    link = f'{domain}{path}'
-
-    subject = '[BarberManager] You have requested to reset your password'
-    message = (
-        f'We received a request to reset your password.\n\n'
-        f'Please click the link below to set a new password:\n'
-        f'{link}\n\n'
-        'If you did not request a password reset, please ignore this email.'
-    )
-    send_mail(subject, message, 'barber.manager.verify@gmail.com', [email])
-
-
-def send_client_reminder_email(client, barber, appointment_datetime):
-    """
-    Sends a reminder email to the client 1 hour before their appointment.
-    """
-    subject = '[BarberManager] Appointment Reminder'
-    message = (
-        f'Hi {client},\n\n'
-        f'This is a reminder for your upcoming appointment with the barber {barber} '
-        f'on {appointment_datetime.strftime("%Y-%m-%d at %H:%M")}.\n\n'
-        'Please arrive on time.\n'
-        'Thank you for using BarberManager!'
-    )
-    send_mail(subject, message, 'barber.manager.verify@gmail.com', [client.email])
-
-
-def send_barber_reminder_email(barber, client, appointment_datetime):
-    """
-    Sends a reminder email to the barber 1 hour before an appointment.
-    """
-    subject = '[BarberManager] Upcoming Appointment Reminder'
-    message = (
-        f'Dear {barber},\n\n'
-        f'This is a reminder that you have an appointment with the client {client} '
-        f'on {appointment_datetime.strftime("%Y-%m-%d at %H:%M")}.\n\n'
-        'Get ready to provide great service!\n'
-        'BarberManager Team'
-    )
-    send_mail(subject, message, 'barber.manager.verify@gmail.com', [barber.email])
 
 def get_user_from_uid_token(uidb64, token, role=None):
     """
@@ -132,20 +51,38 @@ class EmailValidationMixin:
     """
     Utility mixin to handle common email validation checks
     """
-    def validate_email(self, email):
-        if User.objects.filter(email=email).exists():
+    def validate_email_unique(self, attrs, user_instance=None):
+        email = attrs['email']
+
+        user = User.objects.filter(email=email)
+
+        if user_instance:
+            user = user.exclude(pk=user_instance.pk)
+
+        if user.exists():
             raise serializers.ValidationError(f'The email "{email}" is already taken.')
-        return email
+        
+        attrs['email'] = email
+        return attrs
 
 
 class UsernameValidationMixin:
     """
     Utility mixin to handle common username validation checks
     """
-    def validate_username(self, username):
-        if User.objects.filter(username=username).exists():
+    def validate_username_unique(self, attrs, user_instance=None): 
+        username = attrs['username']
+
+        user = User.objects.filter(username=username)
+
+        if user_instance:
+            user = user.exclude(pk=user_instance.pk)
+        
+        if user.exists():
             raise serializers.ValidationError(f'The username "{username}" is already taken.')
-        return username
+        
+        attrs['username'] = username
+        return attrs
 
 
 class UIDTokenValidationSerializer(serializers.Serializer):
@@ -199,7 +136,23 @@ class BarberValidationMixin:
         attrs['barber'] = barber
         return attrs
     
+
+class AdminValidationMixin:
+    """
+    Mixin to validate that a admin_id from context exists and is active. Also adds 'admin' to attrs.
+    """
+    def validate_admin(self, attrs):
+        admin_id = self.context.get('admin_id')
+
+        try:
+            admin = Admin.objects.get(pk=admin_id, is_active=True)
+        except Admin.DoesNotExist:
+            raise serializers.ValidationError(f'Admin with ID: "{admin_id}" does not exist or is inactive.')
+        
+        attrs['admin'] = admin
+        return attrs
     
+
 class AppointmentValidationMixin:
     """
     Mixin that rovides validation methods for appointment management:
@@ -369,3 +322,141 @@ class ReviewValidationMixin:
         
         attrs['review'] = review
         return attrs
+    
+
+
+class GetBarbersMixin:
+    """
+    Mixin that provides getter methods to list all barbers for public use or admins.
+    """
+    def get_barbers_public(self):
+        barbers = Barber.objects.filter(is_active=True)
+        return [{
+            'id': b.id, 
+            'username': b.username, 
+            'name': b.name,
+            'surname': b.surname,
+            'description': b.description
+        } for b in barbers]
+    
+    def get_barbers_admin(self):
+        barbers = Barber.objects.filter()
+        return [{
+            'id': b.id, 
+            'is_active': b.is_active,
+            'username': b.username, 
+            'email': b.email, 
+            'name': b.name,
+            'surname': b.surname,
+            'description': b.description
+        } for b in barbers]
+
+
+class GetAppointmentsMixin:
+    """
+    Mixin that provides getter methods for appointments for clients, barbers or admins.
+    """
+    def get_appointments_client(self, client_id):
+        appointments = Appointment.objects.filter(client_id=client_id)
+        return [{
+            'id': a.id, 
+            'barber_id': a.barber.id,
+            'date': a.date, 
+            'slot': a.slot.strftime("%H:%M"), 
+            'services': [s.id for s in a.services.all()], 
+            'status': a.status,
+            'reminder_email_sent': a.reminder_email_sent,
+        } for a in appointments]
+    
+    def get_appointments_barber(self, barber_id):
+        appointments = Appointment.objects.filter(barber_id=barber_id, status=AppointmentStatus.ONGOING.value)
+        return [{
+            'id': a.id, 
+            'client_full_name': f'{a.client.name} {a.client.surname}', 
+            'date': a.date, 
+            'slot': a.slot.strftime("%H:%M"), 
+            'services': [s.id for s in a.services.all()], 
+            'status': a.status,
+            'reminder_email_sent': a.reminder_email_sent,
+        } for a in appointments]
+    
+    def get_appointments_admin(self):
+        appointments = Appointment.objects.all()
+        return [{
+            'id': a.id, 
+            'client_id': a.client.id, 
+            'barber_id': a.barber.id, 
+            'date': a.date, 
+            'slot': a.slot.strftime("%H:%M"), 
+            'services': [s.id for s in a.services.all()], 
+            'status': a.status,
+            'reminder_email_sent': a.reminder_email_sent,
+        } for a in appointments]
+    
+
+class GetReviewsMixin:
+    """
+    Mixin that provides getter methods for reviews for clients or barbers.
+    """
+    def get_reviews_client(self, client_id):
+        reviews = Review.objects.filter(client_id=client_id).select_related('barber', 'appointment')
+        return [{
+            'id': r.id,
+            'appointment_id': r.appointment.id,
+            'barber_id': r.barber.id,
+            'rating': r.rating,
+            'comment': r.comment,
+            'created_at': r.created_at.strftime('%Y-%m-%d'),
+            'edited_at': r.edited_at.strftime('%Y-%m-%d') if r.edited_at else None
+        } for r in reviews]
+    
+    def get_reviews_barber(self, barber_id):
+        reviews = Review.objects.filter(barber_id=barber_id).select_related('client', 'appointment')
+        return [{
+            'id': r.id,
+            'appointment_id': r.appointment.id,
+            'client_full_name': f'{r.client.name} {r.client.surname}', 
+            'rating': r.rating,
+            'comment': r.comment,
+            'created_at': r.created_at.strftime('%Y-%m-%d'),
+            'edited_at': r.edited_at.strftime('%Y-%m-%d') if r.edited_at else None
+        } for r in reviews]
+    
+    def get_reviews_admin(self):
+        reviews = Review.objects.all().select_related('client', 'barber', 'appointment')
+        return [{
+            'id': r.id, 
+            'appointment_id': r.appointment.id,
+            'client_id': r.client.id, 
+            'barber_id': r.barber.id, 
+            'rating': r.rating,
+            'comment': r.comment,
+            'created_at': r.created_at.strftime('%Y-%m-%d'),
+            'edited_at': r.edited_at.strftime('%Y-%m-%d') if r.edited_at else None
+        } for r in reviews]
+
+
+class GetServicesMixin:
+    """
+    Mixin that provides getter methods for services for barbers.
+    """
+    def get_services_barber(self, barber_id):
+        services = Service.objects.filter(barber_id=barber_id)
+        return [{
+            'id': s.id,
+            'name': s.name, 
+            'price': s.price
+        } for s in services]
+    
+
+class GetAvailabilitiesMixin:
+    """
+    Mixin that provides getter methods for services for barbers.
+    """
+    def get_availabilities_barber(self, barber_id):
+        availabilities = Availability.objects.filter(barber_id=barber_id)
+        return [{
+            'id': a.id, 
+            'date': a.date, 
+            'slots': a.slots
+        } for a in availabilities]

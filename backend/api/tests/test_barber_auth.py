@@ -73,7 +73,7 @@ class BarberAuthFlowTest(APITestCase):
         
         register_url = reverse(self.register_url, kwargs={'uidb64': uid, 'token': token})
 
-        data = {'username': 'newbarbertest', 'password': 'BarberPass123!'}
+        data = {'username': 'newbarbertest', 'password': 'BarberPass123!', 'name': 'test name', 'surname': 'test surname', 'name': 'test name', 'surname': 'test surname'}
         response = self.client.post(register_url, data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -96,7 +96,7 @@ class BarberAuthFlowTest(APITestCase):
         
         register_url = reverse(self.register_url, kwargs={'uidb64': 'invalid-uid', 'token': token})
 
-        data = {'username': 'newbarbertest', 'password': 'BarberPass123!'}
+        data = {'username': 'newbarbertest', 'password': 'BarberPass123!', 'name': 'test name', 'surname': 'test surname'}
         response = self.client.post(register_url, data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -113,7 +113,7 @@ class BarberAuthFlowTest(APITestCase):
         
         register_url = reverse(self.register_url, kwargs={'uidb64': uid, 'token': 'invalid-token'})
 
-        data = {'username': 'newbarbertest', 'password': 'BarberPass123!'}
+        data = {'username': 'newbarbertest', 'password': 'BarberPass123!', 'name': 'test name', 'surname': 'test surname'}
         response = self.client.post(register_url, data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -140,5 +140,5 @@ class BarberAuthFlowTest(APITestCase):
         response = self.client.post(self.invite_url, data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data.get('email')[0], f'The email "{email}" is already taken.')
+        self.assertEqual(response.data.get('detail'), f'The email "{email}" is already taken.')
 

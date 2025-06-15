@@ -1,5 +1,6 @@
 from django.urls import path
 from ..views import (
+    get_admin_profile,
     invite_barber,
     delete_barber,
     create_barber_availability,
@@ -22,4 +23,7 @@ urlpatterns = [
     
     # Statistics 
     path('statistics/', get_admin_statistics),
+
+    # Getters for authenticated admin
+    path('profile/', get_admin_profile, name='get_admin_profile'),
 ]

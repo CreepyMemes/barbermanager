@@ -1,5 +1,6 @@
 from django.urls import path
 from ..views.client import (
+    manage_client_profile,
     get_client_appointments,
     create_client_appointment,
     cancel_client_appointment,
@@ -9,6 +10,9 @@ from ..views.client import (
 )
 
 urlpatterns = [
+    # Client profile management
+    path('profile/', manage_client_profile, name='manage_client_profile'),
+
     # Appointment management
     path('appointments/', get_client_appointments, name='get_client_appointments'),
     path('appointments/barbers/<int:barber_id>/', create_client_appointment, name='create_client_appointment'),
