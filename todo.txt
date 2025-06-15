@@ -4,7 +4,6 @@ What to do:
 1. Backend:
 
 Important:
-    - aggiungi name, surname, durante registrazione di barber, e client
     - aggiungi endpoint che permette di modificare name, surname e description a barber e client
     - implement automated tests for added endpoints
 
