@@ -4,7 +4,6 @@ What to do:
 1. Backend:
 
 Important:
-    - aggiungi endpoint che permette di eliminare il proprio profilo per barber e client
     - implement automated tests for added endpoints
     - add testing in CI/CD while deploying, (still idk how)
 
