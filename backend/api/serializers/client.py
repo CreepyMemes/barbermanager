@@ -3,10 +3,12 @@ from rest_framework import serializers
 from ..utils import (
     ClientValidationMixin,
     BarberValidationMixin,
+    UsernameValidationMixin,
     AppointmentValidationMixin,
     ReviewValidationMixin,
     GetAppointmentsMixin,
     GetReviewsMixin,
+    phone_number_validator,
 )
 from ..models import (
     Appointment, 
@@ -33,12 +35,53 @@ class GetClientProfileSerializer(ClientValidationMixin, GetAppointmentsMixin, Ge
             'role': client.role,
             'username': client.username,
             'email': client.email,
+            'phone_number': client.phone_number,
             'name': client.name,
             'surname': client.surname,
             'appointments': appointments,
             'reviews': reviews,  
         }
 
+
+class UpdateClientInfoSerializer(ClientValidationMixin, UsernameValidationMixin, serializers.Serializer):
+    """
+    Client only: Updates general informations about a given client.
+    """
+    username = serializers.CharField(required=False)
+    name = serializers.CharField(required=False)
+    surname = serializers.CharField(required=False)
+    phone_number = serializers.CharField(max_length=16, validators=[phone_number_validator])
+
+    def validate(self, attrs):
+        attrs = self.validate_client(attrs)
+
+        if not any(field in attrs for field in ('username', 'name', 'surname', 'phone_number')):
+            raise serializers.ValidationError('You must provide at least one field: username, name, surname or phone_number.')
+        
+        if 'username' in attrs:
+            attrs = self.validate_username_unique(attrs, user_instance=attrs['client'])
+
+        return attrs
+
+    def update(self, instance, validated_data):
+        if 'username' in validated_data:
+            instance.username = validated_data['username']
+
+        if 'name' in validated_data:
+            instance.name = validated_data['name']
+        
+        if 'surname' in validated_data:
+            instance.surname = validated_data['surname']
+        
+        if 'phone_number' in validated_data:
+            instance.phone_number = validated_data['phone_number']
+
+        instance.save()
+        return instance
+
+    def save(self, **kwargs):
+        return self.update(self.validated_data['client'], self.validated_data)
+    
 
 class GetClientAppointmentsSerializer(ClientValidationMixin, GetAppointmentsMixin, serializers.Serializer):
     """

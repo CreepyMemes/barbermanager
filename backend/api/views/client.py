@@ -6,6 +6,7 @@ from ..utils import (
 )
 from api.serializers.client import (
     GetClientProfileSerializer,
+    UpdateClientInfoSerializer,
     GetClientAppointmentsSerializer,
     CreateClientAppointmentSerializer,
     CancelClientAppointmentSerializer,
@@ -16,16 +17,28 @@ from api.serializers.client import (
 )
 
 
-@api_view(['GET'])
+@api_view(['GET', 'PATCH'])
 @permission_classes([IsClientRole])
-def get_client_profile(request):
+def manage_client_profile(request):
     """
-    Client only: Gets all related profile information for authenticated client.
-    """
-    serializer = GetClientProfileSerializer(data={}, context={'client_id': request.user})
-    serializer.is_valid(raise_exception=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    Client only: Handles get and update operations for the authenticated clients's profile info.
 
+    - GET: Updates general profie information by the authenticated client.
+    - PATCH: Gets all related profile information for authenticated client.
+    """
+    if request.method == 'GET':
+        serializer = GetClientProfileSerializer(data={}, context={'client_id': request.user})
+        serializer.is_valid(raise_exception=True)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    elif request.method == 'PATCH':
+        serializer = UpdateClientInfoSerializer(data=request.data, context={'client_id': request.user})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        
+        return Response({"detail": "Profile info updated successfully."}, status=status.HTTP_200_OK)
+    
 
 @api_view(['GET'])
 @permission_classes([IsClientRole])

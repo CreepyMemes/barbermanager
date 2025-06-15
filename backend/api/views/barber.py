@@ -6,6 +6,7 @@ from ..utils import (
 )
 from ..serializers import (
     GetBarberProfileSerializer,
+    UpdateBarberInfoSerializer,
     GetBarberAvailabilitiesSerializer,
     GetBarberServicesSerializer,
     CreateBarberServiceSerializer,
@@ -16,16 +17,28 @@ from ..serializers import (
 )
 
 
-@api_view(['GET'])
+@api_view(['GET', 'PATCH'])
 @permission_classes([IsBarberRole])
-def get_barber_profile(request):
+def manage_barber_profile(request):
     """
-    Barber only: Gets all related profile information for authenticated barber.
-    """
-    serializer = GetBarberProfileSerializer(data={}, context={'barber_id': request.user})
-    serializer.is_valid(raise_exception=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    Barber only: Handles get and update operations for the authenticated barber's profile info.
 
+    - GET: Updates general profie information by the authenticated barber.
+    - PATCH: Barber only: Gets all related profile information for authenticated barber.
+    """
+    if request.method == 'GET':
+        serializer = GetBarberProfileSerializer(data={}, context={'barber_id': request.user})
+        serializer.is_valid(raise_exception=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    elif request.method == 'PATCH':
+        serializer = UpdateBarberInfoSerializer(data=request.data, context={'barber_id': request.user})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        
+        return Response({"detail": "Profile info updated successfully."}, status=status.HTTP_200_OK)
+        
 
 @api_view(['GET'])
 @permission_classes([IsBarberRole])
