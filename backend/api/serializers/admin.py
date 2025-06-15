@@ -1,9 +1,13 @@
 from django.db.models import Sum, Avg
 from rest_framework import serializers
 from ..utils import (
+    AdminValidationMixin,
     EmailValidationMixin,
     BarberValidationMixin,
     AvailabilityValidationMixin,
+    GetAppointmentsMixin,
+    GetBarbersMixin,
+    GetReviewsMixin,
 )
 from ..models import(
     Barber,
@@ -13,11 +17,38 @@ from ..models import(
 )
 
 
+class GetAdminProfileSerializer(AdminValidationMixin, GetBarbersMixin, GetAppointmentsMixin, GetReviewsMixin, serializers.Serializer):
+    """
+    Returns all the information related the profile of a given client
+    """
+    def validate(self, attrs):
+        attrs = self.validate_admin(attrs)
+        return attrs
+
+    def to_representation(self, validated_data):
+        admin = validated_data['admin']
+        barbers = self.get_barbers_admin()
+        appointments = self.get_appointments_admin()
+        reviews = self.get_reviews_admin()
+        return { 
+            'id': admin.id,
+            'role': admin.role,
+            'username': admin.username,
+            'barbers': barbers,
+            'appointments': appointments,
+            'reviews': reviews,
+        }
+
+
 class InviteBarberSerializer(EmailValidationMixin, serializers.Serializer):
     """
     Admin only: Invites a barber, accepts only email.
     """
     email = serializers.EmailField(required=True)
+
+    def validate(self, attrs):
+        attrs = self.validate_email_unique(attrs)
+        return attrs
 
     def create(self, validated_data):
         barber = Barber(email=validated_data['email'],is_active=False)
@@ -41,7 +72,7 @@ class DeleteBarberSerializer(serializers.Serializer):
             raise serializers.ValidationError("Barber with this ID does not exist.")  
         
         if not self.barber.is_active:
-            raise serializers.ValidationError("Barber is not active and cannot be deleted.")
+            raise serializers.ValidationError("Barber is not active and cannot be deleted.") # TODO: not sure if this is a needed check, maybe we should let admin delete inactive barbers
         
         return value
     
@@ -146,23 +177,10 @@ class GetAdminStatisticsSerializer(serializers.Serializer):
         }
 
 
-class GetAllAppointmentsSerializer(serializers.Serializer):
+class GetAllAppointmentsSerializer(GetAppointmentsMixin, serializers.Serializer):
     """
     Admin only: Returns all appointments registered in the system
     """
-    def get_appointments(self):
-        appointments = Appointment.objects.all()
-        return [{
-            'id': a.id, 
-            'client_id': a.client.id, 
-            'barber_id': a.barber.id, 
-            'date': a.date, 
-            'slot': a.slot.strftime("%H:%M"), 
-            'services': [s.id for s in a.services.all()], 
-            'status': a.status,
-            'reminder_email_sent': a.reminder_email_sent,
-        } for a in appointments]
-
     def to_representation(self, validated_data):
-        appointments = self.get_appointments()
+        appointments = self.get_appointments_admin()
         return {'appointments': appointments}

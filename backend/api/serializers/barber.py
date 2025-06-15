@@ -1,18 +1,96 @@
 from rest_framework import serializers
 from ..utils import (
     BarberValidationMixin,
+    UsernameValidationMixin,
     ServiceValidationMixin,
+    GetServicesMixin,
+    GetReviewsMixin,
+    GetAvailabilitiesMixin,
+    GetAppointmentsMixin,
 )
 from ..models import (
     Service,
-    Appointment,
-    Availability,
-    AppointmentStatus,
-    Review,
 )
 
 
-class GetBarberAvailabilitiesSerializer(BarberValidationMixin, serializers.Serializer):
+class GetBarberProfileSerializer(BarberValidationMixin, GetServicesMixin, GetReviewsMixin, serializers.Serializer):
+    """
+    Returns all the public information related to the profile of a given barber
+    """
+    def validate(self, attrs):
+        attrs = self.validate_barber(attrs)
+        return attrs
+    
+    def to_representation(self, validated_data):
+        barber = validated_data['barber']
+        services = self.get_services_barber(barber.id)
+        reviews = self.get_reviews_barber(barber.id)
+        return {
+            'id': barber.id,
+            'role': barber.role,
+            'username': barber.username,
+            'email': barber.email,
+            'name': barber.name,
+            'surname': barber.surname,
+            'description': barber.description,
+            'services': services,
+            'reviews': reviews,
+        }
+
+
+class DeleteBarberProfileSerializer(BarberValidationMixin, serializers.Serializer):
+    """
+    Barber only: Deletes a given existing barber account.
+    """
+    def validate(self, attrs):
+        attrs = self.validate_barber(attrs)
+        return attrs
+
+    def delete(self):
+        self.validated_data['barber'].delete()
+
+
+class UpdateBarberProfileSerializer(BarberValidationMixin, UsernameValidationMixin, serializers.Serializer):
+    """
+    Barber only: Updates general informations about a given barber.
+    """
+    username = serializers.CharField(required=False)
+    name = serializers.CharField(required=False)
+    surname = serializers.CharField(required=False)
+    description = serializers.CharField(required=False)
+
+    def validate(self, attrs):
+        attrs = self.validate_barber(attrs)
+
+        if not any(field in attrs for field in ('username', 'name', 'surname', 'description')):
+            raise serializers.ValidationError('You must provide at least one field: username, name, surname or description.')
+        
+        if 'username' in attrs:
+            attrs = self.validate_username_unique(attrs, user_instance=attrs['barber'])
+
+        return attrs
+
+    def update(self, instance, validated_data):
+        if 'username' in validated_data:
+            instance.username = validated_data['username']
+
+        if 'name' in validated_data:
+            instance.name = validated_data['name']
+        
+        if 'surname' in validated_data:
+            instance.surname = validated_data['surname']
+        
+        if 'description' in validated_data:
+            instance.description = validated_data['description']
+
+        instance.save()
+        return instance
+
+    def save(self, **kwargs):
+        return self.update(self.validated_data['barber'], self.validated_data)
+    
+
+class GetBarberAvailabilitiesSerializer(BarberValidationMixin, GetAvailabilitiesMixin, serializers.Serializer):
     """
     Barber only: Returns all availabilities for a given barber
     """
@@ -20,21 +98,14 @@ class GetBarberAvailabilitiesSerializer(BarberValidationMixin, serializers.Seria
         attrs = self.validate_barber(attrs)
         return attrs
     
-    def get_availabilities(self, barber_id):
-        availabilities = Availability.objects.filter(barber_id=barber_id)
-        return [{
-            'id': a.id, 
-            'date': a.date, 
-            'slots': a.slots
-        } for a in availabilities]
-
+    
     def to_representation(self, validated_data):
         barber = validated_data['barber']
-        availabilities = self.get_availabilities(barber.id)
+        availabilities = self.get_availabilities_barber(barber.id)
         return {'availability': availabilities}
 
 
-class GetBarberServicesSerializer(BarberValidationMixin, serializers.Serializer):
+class GetBarberServicesSerializer(BarberValidationMixin, GetServicesMixin, serializers.Serializer):
     """
     Barber only: Returns all services offered by a given barber
     """
@@ -42,17 +113,9 @@ class GetBarberServicesSerializer(BarberValidationMixin, serializers.Serializer)
         attrs = self.validate_barber(attrs)
         return attrs
     
-    def get_services(self, barber_id):
-        services = Service.objects.filter(barber_id=barber_id)
-        return [{
-            'id': s.id, 
-            'name': s.name, 
-            'price': s.price
-        } for s in services]
-
     def to_representation(self, validated_data):
         barber = validated_data['barber']
-        services = self.get_services(barber.id)
+        services = self.get_services_barber(barber.id)
         return {'services': services}
 
 
@@ -83,7 +146,7 @@ class UpdateBarberServiceSerializer(BarberValidationMixin, ServiceValidationMixi
         attrs = self.validate_barber(attrs)
         attrs = self.validate_find_service(attrs)
 
-        if 'name' not in attrs and 'price' not in attrs:
+        if not any(field in attrs for field in ('name', 'price')):
             raise serializers.ValidationError('You must provide at least one field: name or price.')
         
         if 'name' in attrs:
@@ -118,32 +181,21 @@ class DeleteBarberServiceSerializer(BarberValidationMixin, ServiceValidationMixi
         self.validated_data['service'].delete()
 
 
-class GeBarberAppointmentsSerializer(BarberValidationMixin, serializers.Serializer):
+class GeBarberAppointmentsSerializer(BarberValidationMixin, GetAppointmentsMixin, serializers.Serializer):
     """
     Barber only: Returns all ONGOING appointments for a given barber
     """
     def validate(self, attrs):
         attrs = self.validate_barber(attrs)
         return attrs
-    
-    def get_appointments(self, barber_id):
-        appointments = Appointment.objects.filter(barber_id=barber_id, status=AppointmentStatus.ONGOING.value)
-        return [{
-            'id': a.id, 
-            'client_id': a.client.id, 
-            'date': a.date, 
-            'slot': a.slot.strftime("%H:%M"), 
-            'services': [s.id for s in a.services.all()], 
-            'status': a.status
-        } for a in appointments]
 
     def to_representation(self, validated_data):
         barber = validated_data['barber']
-        appointments = self.get_appointments(barber.id)
+        appointments = self.get_appointments_barber(barber.id)
         return {'appointments': appointments}
     
 
-class GetBarberReviewsSerializer(BarberValidationMixin, serializers.Serializer):
+class GetBarberReviewsSerializer(BarberValidationMixin, GetReviewsMixin, serializers.Serializer):
     """
     Barber only: Returns all reviews received by a given barber
     """
@@ -151,19 +203,7 @@ class GetBarberReviewsSerializer(BarberValidationMixin, serializers.Serializer):
         attrs = self.validate_barber(attrs)
         return attrs
 
-    def get_reviews(self, barber_id):
-        reviews = Review.objects.filter(barber_id=barber_id).select_related('client', 'appointment')
-        return [{
-            'id': r.id,
-            'appointment_id': r.appointment.id,
-            'client_id': r.client.id,
-            'rating': r.rating,
-            'comment': r.comment,
-            'created_at': r.created_at.strftime('%Y-%m-%d'),
-            'edited_at': r.edited_at.strftime('%Y-%m-%d') if r.edited_at else None
-        } for r in reviews]
-
     def to_representation(self, validated_data):
         barber = validated_data['barber']
-        reviews = self.get_reviews(barber.id)
+        reviews = self.get_reviews_barber(barber.id)
         return {'reviews': reviews}

@@ -3,8 +3,12 @@ from rest_framework import serializers
 from ..utils import (
     ClientValidationMixin,
     BarberValidationMixin,
+    UsernameValidationMixin,
     AppointmentValidationMixin,
     ReviewValidationMixin,
+    GetAppointmentsMixin,
+    GetReviewsMixin,
+    phone_number_validator,
 )
 from ..models import (
     Appointment, 
@@ -14,7 +18,84 @@ from ..models import (
 )
 
 
-class GetClientAppointmentsSerializer(ClientValidationMixin, serializers.Serializer):
+class GetClientProfileSerializer(ClientValidationMixin, GetAppointmentsMixin, GetReviewsMixin, serializers.Serializer):
+    """
+    Returns all the information related the profile of a given client
+    """
+    def validate(self, attrs):
+        attrs = self.validate_client(attrs)
+        return attrs
+
+    def to_representation(self, validated_data):
+        client = validated_data['client']
+        appointments = self.get_appointments_client(client.id)
+        reviews = self.get_reviews_client(client.id)
+        return {
+            'id': client.id,
+            'role': client.role,
+            'username': client.username,
+            'email': client.email,
+            'phone_number': client.phone_number,
+            'name': client.name,
+            'surname': client.surname,
+            'appointments': appointments,
+            'reviews': reviews,  
+        }
+
+
+class UpdateClientProfileSerializer(ClientValidationMixin, UsernameValidationMixin, serializers.Serializer):
+    """
+    Client only: Updates general informations about a given client.
+    """
+    username = serializers.CharField(required=False)
+    name = serializers.CharField(required=False)
+    surname = serializers.CharField(required=False)
+    phone_number = serializers.CharField(max_length=16, validators=[phone_number_validator])
+
+    def validate(self, attrs):
+        attrs = self.validate_client(attrs)
+
+        if not any(field in attrs for field in ('username', 'name', 'surname', 'phone_number')):
+            raise serializers.ValidationError('You must provide at least one field: username, name, surname or phone_number.')
+        
+        if 'username' in attrs:
+            attrs = self.validate_username_unique(attrs, user_instance=attrs['client'])
+
+        return attrs
+
+    def update(self, instance, validated_data):
+        if 'username' in validated_data:
+            instance.username = validated_data['username']
+
+        if 'name' in validated_data:
+            instance.name = validated_data['name']
+        
+        if 'surname' in validated_data:
+            instance.surname = validated_data['surname']
+        
+        if 'phone_number' in validated_data:
+            instance.phone_number = validated_data['phone_number']
+
+        instance.save()
+        return instance
+
+    def save(self, **kwargs):
+        return self.update(self.validated_data['client'], self.validated_data)
+    
+
+class DeleteClientProfileSerializer(ClientValidationMixin, serializers.Serializer):
+    """
+    Client only: Deletes a given existing client account.
+    """
+    def validate(self, attrs):
+        attrs = self.validate_client(attrs)
+        return attrs
+
+    def delete(self):
+        self.validated_data['client'].delete()
+
+
+class GetClientAppointmentsSerializer(ClientValidationMixin, GetAppointmentsMixin, serializers.Serializer):
     """
     Client only: Returns all appointments for a given client
     """
@@ -22,21 +103,9 @@ class GetClientAppointmentsSerializer(ClientValidationMixin, serializers.Seriali
         attrs = self.validate_client(attrs)
         return attrs
     
-    def get_appointments(self, client_id):
-        appointments = Appointment.objects.filter(client_id=client_id)
-        return [{
-            'id': a.id, 
-            'barber_id': a.barber.id, 
-            'date': a.date, 
-            'slot': a.slot.strftime("%H:%M"), 
-            'services': [s.id for s in a.services.all()], 
-            'status': a.status,
-            'reminder_email_sent': a.reminder_email_sent,
-        } for a in appointments]
-
     def to_representation(self, validated_data):
         client = validated_data['client']
-        appointments = self.get_appointments(client.id)
+        appointments = self.get_appointments_client(client.id)
         return {'appointments': appointments}
     
 
@@ -62,8 +131,15 @@ class CreateClientAppointmentSerializer(ClientValidationMixin, BarberValidationM
         slot = validated_data['slot']
         services = validated_data['services']
 
-        appointment = Appointment.objects.create(client=client, barber=barber, date=date, slot=slot) # Default ONGOING status
+        appointment = Appointment(
+            client=client, 
+            barber=barber, 
+            date=date, 
+            slot=slot
+        )
+        appointment.save()
         appointment.services.set(services)
+
         return appointment
     
 
@@ -80,10 +156,11 @@ class CancelClientAppointmentSerializer(ClientValidationMixin, AppointmentValida
         appointment = self.validated_data['appointment']
         appointment.status = AppointmentStatus.CANCELLED.value
         appointment.save()
+
         return appointment
 
 
-class GetClientReviewsSerializer(ClientValidationMixin, serializers.Serializer):
+class GetClientReviewsSerializer(ClientValidationMixin, GetReviewsMixin, serializers.Serializer):
     """
     Client only: Returns all reviews posted by a given client
     """
@@ -91,20 +168,9 @@ class GetClientReviewsSerializer(ClientValidationMixin, serializers.Serializer):
         attrs = self.validate_client(attrs)
         return attrs
 
-    def get_reviews(self, client):
-        reviews = Review.objects.filter(client=client).select_related('barber', 'appointment')
-        return [{
-            'id': r.id,
-            'appointment_id': r.appointment.id,
-            'barber_id': r.barber.id,
-            'rating': r.rating,
-            'comment': r.comment,
-            'created_at': r.created_at.strftime('%Y-%m-%d'),
-            'edited_at': r.edited_at.strftime('%Y-%m-%d') if r.edited_at else None
-        } for r in reviews]
-
     def to_representation(self, validated_data):
-        reviews = self.get_reviews(validated_data['client'])
+        client = validated_data['client']
+        reviews = self.get_reviews_client(client.id)
         return {'reviews': reviews}
 
 
@@ -121,13 +187,17 @@ class CreateClientReviewSerializer(ClientValidationMixin, ReviewValidationMixin,
         return attrs
 
     def create(self, validated_data):
-        review = Review.objects.create(
+        review = Review(
             appointment=validated_data['appointment'],
             client=validated_data['client'],
             barber=validated_data['barber'],
             rating=validated_data['rating'],
-            comment=validated_data.get('comment') # Not required
         )
+        if 'comment' in validated_data:
+            review.comment = validated_data['comment']
+
+        review.save()
+
         return review
     
 
@@ -160,6 +230,7 @@ class UpdateClientReviewSerializer(ClientValidationMixin, ReviewValidationMixin,
             instance.edited_at = timezone.now()
 
         instance.save()
+
         return instance
 
     def save(self, **kwargs):

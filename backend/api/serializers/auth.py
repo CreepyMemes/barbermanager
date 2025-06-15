@@ -22,9 +22,26 @@ class RegisterClientSerializer(UsernameValidationMixin, EmailValidationMixin, Pa
     email = serializers.EmailField(required=True)
     password = serializers.CharField(required=True, write_only=True)
     username = serializers.CharField(required=True)
+    name = serializers.CharField(required=True)
+    surname = serializers.CharField(required=True)
+    phone_number = serializers.CharField(required=False)
 
+    def validate(self, attrs):
+        attrs = self.validate_username_unique(attrs)
+        attrs = self.validate_email_unique(attrs)
+        return attrs
+    
     def create(self, validated_data):
-        client = Client(email=validated_data['email'], username=validated_data['username'], is_active=False)
+        client = Client(
+            email=validated_data['email'], 
+            username=validated_data['username'], 
+            name=validated_data['name'],
+            surname=validated_data['surname'],
+            is_active=False
+        )
+        if 'phone_number' in validated_data:
+            client.phone_number = validated_data['phone_number']
+
         client.set_password(validated_data['password'])
         client.save()
 
@@ -37,9 +54,13 @@ class RegisterBarberSerializer(UsernameValidationMixin, PasswordValidationMixin,
     """
     username = serializers.CharField(required=True)
     password = serializers.CharField(required=True, write_only=True)
+    name = serializers.CharField(required=True)
+    surname = serializers.CharField(required=True)
     description = serializers.CharField(required=False)
 
     def validate(self, attrs):
+        attrs = self.validate_username_unique(attrs)
+
         uidb64 = self.context.get('uidb64')
         token = self.context.get('token')
 
@@ -57,8 +78,13 @@ class RegisterBarberSerializer(UsernameValidationMixin, PasswordValidationMixin,
     def create(self, validated_data):
         barber = validated_data['barber']
         barber.username = validated_data['username']
-        barber.description = validated_data.get('description')
+        barber.name = validated_data['name']
+        barber.surname = validated_data['surname']
         barber.is_active = True
+
+        if 'description' in validated_data:
+            barber.description = validated_data['description']
+
         barber.set_password(validated_data['password'])
         barber.save()
 

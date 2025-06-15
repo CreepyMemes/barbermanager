@@ -5,6 +5,9 @@ from ..utils import (
     IsClientRole,
 )
 from api.serializers.client import (
+    GetClientProfileSerializer,
+    UpdateClientProfileSerializer,
+    DeleteClientProfileSerializer,
     GetClientAppointmentsSerializer,
     CreateClientAppointmentSerializer,
     CancelClientAppointmentSerializer,
@@ -14,6 +17,37 @@ from api.serializers.client import (
     DeleteClientReviewSerializer,
 )
 
+
+@api_view(['GET', 'PATCH', 'DELETE'])
+@permission_classes([IsClientRole])
+def manage_client_profile(request):
+    """
+    Client only: Handles get, update and delete operations for the authenticated clients's profile.
+
+    - GET: Updates general profie information by the authenticated client.
+    - PATCH: Gets all related profile information for authenticated client.
+    - DELETE: Deletes the account of the authenticated client.
+    """
+    if request.method == 'GET':
+        serializer = GetClientProfileSerializer(data={}, context={'client_id': request.user})
+        serializer.is_valid(raise_exception=True)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    elif request.method == 'PATCH':
+        serializer = UpdateClientProfileSerializer(data=request.data, context={'client_id': request.user})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        
+        return Response({"detail": "Profile info updated successfully."}, status=status.HTTP_200_OK)
+    
+    elif request.method == 'DELETE':
+        serializer = DeleteClientProfileSerializer(data={}, context={'client_id': request.user})
+        serializer.is_valid(raise_exception=True)
+        serializer.delete()
+        
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
 
 @api_view(['GET'])
 @permission_classes([IsClientRole])
@@ -97,4 +131,5 @@ def manage_client_reviews(request, review_id):
         serializer = DeleteClientReviewSerializer(data={}, context={'client_id': request.user, 'review_id': review_id})
         serializer.is_valid(raise_exception=True)
         serializer.delete()
-        return Response({'detail': 'Review deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
