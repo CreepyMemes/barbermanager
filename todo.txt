@@ -6,6 +6,7 @@ What to do:
 Important:
     - aggiungi endpoint che permette di eliminare il proprio profilo per barber e client
     - implement automated tests for added endpoints
+    - add testing in CI/CD while deploying, (still idk how)
 
 Proposed:
     - add change email functionality in PATCH /profile endpoint, that automatically sends email verification
