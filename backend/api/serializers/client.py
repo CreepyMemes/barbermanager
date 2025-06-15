@@ -43,7 +43,7 @@ class GetClientProfileSerializer(ClientValidationMixin, GetAppointmentsMixin, Ge
         }
 
 
-class UpdateClientInfoSerializer(ClientValidationMixin, UsernameValidationMixin, serializers.Serializer):
+class UpdateClientProfileSerializer(ClientValidationMixin, UsernameValidationMixin, serializers.Serializer):
     """
     Client only: Updates general informations about a given client.
     """
@@ -82,6 +82,18 @@ class UpdateClientInfoSerializer(ClientValidationMixin, UsernameValidationMixin,
     def save(self, **kwargs):
         return self.update(self.validated_data['client'], self.validated_data)
     
+
+class DeleteClientProfileSerializer(ClientValidationMixin, serializers.Serializer):
+    """
+    Client only: Deletes a given existing client account.
+    """
+    def validate(self, attrs):
+        attrs = self.validate_client(attrs)
+        return attrs
+
+    def delete(self):
+        self.validated_data['client'].delete()
+
 
 class GetClientAppointmentsSerializer(ClientValidationMixin, GetAppointmentsMixin, serializers.Serializer):
     """

@@ -38,7 +38,19 @@ class GetBarberProfileSerializer(BarberValidationMixin, GetServicesMixin, GetRev
         }
 
 
-class UpdateBarberInfoSerializer(BarberValidationMixin, UsernameValidationMixin, serializers.Serializer):
+class DeleteBarberProfileSerializer(BarberValidationMixin, serializers.Serializer):
+    """
+    Barber only: Deletes a given existing barber account.
+    """
+    def validate(self, attrs):
+        attrs = self.validate_barber(attrs)
+        return attrs
+
+    def delete(self):
+        self.validated_data['barber'].delete()
+
+
+class UpdateBarberProfileSerializer(BarberValidationMixin, UsernameValidationMixin, serializers.Serializer):
     """
     Barber only: Updates general informations about a given barber.
     """
