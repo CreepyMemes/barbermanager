@@ -4,12 +4,11 @@ What to do:
 1. Backend:
 
 Important:
-    - add testing in CI/CD while deploying, (still idk how)
+    - add change email functionality in PATCH /profile endpoint, that automatically sends email verification
 
 Proposed:
-    - add change email functionality in PATCH /profile endpoint, that automatically sends email verification
     - see if it's possible to automatically test celery tasks
-    - see if you can autotmate api endpoints guide with tests marks
+    - see if it's possible to autotmate api endpoints guide and it's test marks
     - add return json object after creation or update for anything  https://openwebui.aspire.local/c/9d5f8f49-9f18-4937-ba9e-c7839bfb9b70
 
 
