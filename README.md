@@ -299,14 +299,14 @@ api/
 
 | Endpoint                                                       | Method  | Description                                            | Status |
 | -------------------------------------------------------------- | ------- | ------------------------------------------------------ | ------ |
-| `/admin/profile/`                                              | GET     | Gets all related information for authenticated admin   | ✅     |
+| `/admin/profile/`                                              | GET     | Gets all related information for authenticated admin   | ✅ 🧪  |
 | `/admin/barbers/`                                              | POST    | Invite a barber through their email.                   | ✅ 🧪  |
-| `/admin/barbers/<barber_id>/`                                  | DELETE  | Remove a barber by ID                                  | ✅     |
-| `/admin/barbers/<barber_id>/availabilities/`                   | POST    | Create availability for a barber on a specific date    | ✅     |
-| `/admin/barbers/<barber_id>/availabilities/<availability_id>/` | PATCH   | Edit an availability for a barber on a specific date   | ✅     |
-| `/admin/barbers/<barber_id>/availabilities/<availability_id>/` | DELELTE | Remove an availability for a barber on a specific date | ✅     |
-| `/admin/appointments/`                                         | GET     | List all past appointments across the platform         | ✅     |
-| `/admin/statistics/`                                           | GET     | Generate general statistics                            | ✅     |
+| `/admin/barbers/<barber_id>/`                                  | DELETE  | Remove a barber by ID                                  | ✅ 🧪  |
+| `/admin/barbers/<barber_id>/availabilities/`                   | POST    | Create availability for a barber on a specific date    | ✅ 🧪  |
+| `/admin/barbers/<barber_id>/availabilities/<availability_id>/` | PATCH   | Edit an availability for a barber on a specific date   | ✅ 🧪  |
+| `/admin/barbers/<barber_id>/availabilities/<availability_id>/` | DELELTE | Remove an availability for a barber on a specific date | ✅ 🧪  |
+| `/admin/appointments/`                                         | GET     | List all past appointments across the platform         | ✅ 🧪  |
+| `/admin/statistics/`                                           | GET     | Generate general statistics                            | ✅ 🧪  |
 
 ## Barber Endpoints (`api/barber/`)
 
