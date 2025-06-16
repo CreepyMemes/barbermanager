@@ -1,4 +1,4 @@
-name: Deploy to Production
+name: Test and Deploy to Production
 
 on:
   push:
@@ -6,7 +6,28 @@ on:
       - master
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
+
+      - name: Prepare backend env file
+        run: |
+          echo "${{ secrets.ENV_PROD_BACKEND_CONTENT }}" > ./backend/.env.prod
+
+      - name: Build and start services
+        run: docker compose -f docker-compose.prod.yml up -d --build
+
+      - name: Run backend tests
+        run: docker compose -f docker-compose.prod.yml exec -T backend python manage.py test api
+
   deploy:
+    needs: test
+
     runs-on: ubuntu-latest
 
     steps:
@@ -18,5 +39,5 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd ${{ secrets.PRODUCTION_PATH }}
-            echo "${{ secrets.ENV_PROD_BACKEND_CONTENT }}" > ${{ secrets.ENV_PROD_BACKEND_PATH }}
+            echo "${{ secrets.ENV_PROD_BACKEND_CONTENT }}" > ./backend/.env.prod
             ./deploy.sh
