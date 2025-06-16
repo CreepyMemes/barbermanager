@@ -1,6 +1,7 @@
-<div align="center"><img src="./Implementazione/frontend/public/logo.png" height="100px" alt="BarberManager Logo"/></div>
-
-<h1 align="center">BarberManager – Un software gestionale per barber shop</h1>
+<div align="center">
+  <img src="../frontend/public/logo.png" height="100px" alt="BarberManager Logo"/>
+  <h1>BarberManager – Un software gestionale per barber shop</h1>
+</div>
 
 # Descrizione
 
