@@ -22,7 +22,7 @@ urlpatterns = [
     path('appointments/', get_all_appointments, name='get_all_appointments'),
     
     # Statistics 
-    path('statistics/', get_admin_statistics),
+    path('statistics/', get_admin_statistics, name='get_admin_statistics'),
 
     # Getters for authenticated admin
     path('profile/', get_admin_profile, name='get_admin_profile'),

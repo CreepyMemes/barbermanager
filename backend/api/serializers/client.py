@@ -50,7 +50,7 @@ class UpdateClientProfileSerializer(ClientValidationMixin, UsernameValidationMix
     username = serializers.CharField(required=False)
     name = serializers.CharField(required=False)
     surname = serializers.CharField(required=False)
-    phone_number = serializers.CharField(max_length=16, validators=[phone_number_validator])
+    phone_number = serializers.CharField(required=False, max_length=16, validators=[phone_number_validator])
 
     def validate(self, attrs):
         attrs = self.validate_client(attrs)
