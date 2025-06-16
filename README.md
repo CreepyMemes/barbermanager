@@ -342,10 +342,10 @@ api/
 
 | Endpoint                                      | Method | Description                                  | Status |
 | --------------------------------------------- | ------ | -------------------------------------------- | ------ |
-| `/public/barbers/`                            | GET    | List all barbers                             | ✅     |
-| `/public/barbers/<barber_id>/availabilities/` | GET    | List availabilities for the selecetd barber  | ✅     |
-| `/public/barbers/<barber_id>/services/`       | GET    | List services offered by the selected barber | ✅     |
-| `/public/barbers/<barber_id>/profile/`        | GET    | Get barber's profile public information      | ✅     |
+| `/public/barbers/`                            | GET    | List all barbers                             | ✅ 🧪  |
+| `/public/barbers/<barber_id>/availabilities/` | GET    | List availabilities for the selecetd barber  | ✅ 🧪  |
+| `/public/barbers/<barber_id>/services/`       | GET    | List services offered by the selected barber | ✅ 🧪  |
+| `/public/barbers/<barber_id>/profile/`        | GET    | Get barber's profile public information      | ✅ 🧪  |
 
 ## Developer Notes
 
