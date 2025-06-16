@@ -1,5 +1,0 @@
-- una volta finita la parte backend correggi i diagrammi di casi d'uso
-- rifai i diagrammi di classi di analisi
-- correggi i diagrammi di sequenza e i rispettivi di attivita
-- fai i diagrammi di classi di progettazione
-...

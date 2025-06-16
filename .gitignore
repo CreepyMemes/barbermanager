@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python,django,react,node
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,django,react,node
 
+### Docs ###
+docs/0-esempi/
+
 ### Django ###
 *.log
 *.pot
