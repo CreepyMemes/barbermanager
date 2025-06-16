@@ -4,11 +4,11 @@ What to do:
 1. Backend:
 
 Important:
-    - implement automated tests for added endpoints
     - add testing in CI/CD while deploying, (still idk how)
 
 Proposed:
     - add change email functionality in PATCH /profile endpoint, that automatically sends email verification
+    - see if you can autotmate api endpoints guide with tests marks
     - add return json object after creation or update for anything  https://openwebui.aspire.local/c/9d5f8f49-9f18-4937-ba9e-c7839bfb9b70
 
 
