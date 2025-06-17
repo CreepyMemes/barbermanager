@@ -3,8 +3,9 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.conf import settings
-from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.response import Response
+from rest_framework.parsers import JSONParser
 from rest_framework import status
 from ..utils import (
     IsAdminRole,
@@ -46,6 +47,7 @@ def get_admin_profile(request):
 )
 @api_view(['POST'])
 @permission_classes([IsAdminRole])
+@parser_classes([JSONParser]) 
 def invite_barber(request):
     """
     Admin only: Invite a barber by email. Sends a link with encoded email (uid).
@@ -87,6 +89,7 @@ def delete_barber(request, barber_id):
 )
 @api_view(['POST'])
 @permission_classes([IsAdminRole])
+@parser_classes([JSONParser]) 
 def create_barber_availability(request, barber_id):
     """
     Admin only: Creates an availability for the selected barber.
@@ -111,6 +114,7 @@ def create_barber_availability(request, barber_id):
 )
 @api_view(['PATCH', 'DELETE'])
 @permission_classes([IsAdminRole])
+@parser_classes([JSONParser]) 
 def manage_barber_availability(request, barber_id, availability_id):
     """
     Admin only: Handles update and delete operations for a specific availability by the selected barber.

@@ -1,6 +1,7 @@
 from drf_spectacular.utils import extend_schema, OpenApiResponse
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.response import Response
+from rest_framework.parsers import JSONParser
 from rest_framework import status
 from ..utils import (
     IsClientRole,
@@ -37,6 +38,7 @@ from api.serializers.client import (
 )
 @api_view(['GET', 'PATCH', 'DELETE'])
 @permission_classes([IsClientRole])
+@parser_classes([JSONParser]) 
 def manage_client_profile(request):
     """
     Client only: Handles get, update and delete operations for the authenticated clients's profile.
@@ -72,6 +74,7 @@ def manage_client_profile(request):
 )
 @api_view(['GET'])
 @permission_classes([IsClientRole])
+@parser_classes([JSONParser]) 
 def get_client_appointments(request):
     """
     Client only: Get all appointments for the authenticated client.
@@ -88,6 +91,7 @@ def get_client_appointments(request):
 )
 @api_view(['POST'])
 @permission_classes([IsClientRole])
+@parser_classes([JSONParser]) 
 def create_client_appointment(request, barber_id):
     """
     Client only: Creates an appointmentt for the authenticated client.
@@ -105,6 +109,7 @@ def create_client_appointment(request, barber_id):
 )
 @api_view(['DELETE'])
 @permission_classes([IsClientRole])
+@parser_classes([JSONParser]) 
 def cancel_client_appointment(request, appointment_id):
     """
     Client only: Cancels an ONGOING appointment by setting it's status to CANCELLED, for the authenticated client.
@@ -122,6 +127,7 @@ def cancel_client_appointment(request, appointment_id):
 )
 @api_view(['GET'])
 @permission_classes([IsClientRole])
+@parser_classes([JSONParser]) 
 def get_client_reviews(request):
     """
     Get all reviews posted by the authenticated client.
@@ -138,6 +144,7 @@ def get_client_reviews(request):
 )
 @api_view(['POST'])
 @permission_classes([IsClientRole])
+@parser_classes([JSONParser]) 
 def create_client_review(request, appointment_id):
     """
     Client only:  Creates a new review post for the barber associated to the authenticated client's appointment
@@ -162,6 +169,7 @@ def create_client_review(request, appointment_id):
 )
 @api_view(['PATCH', 'DELETE'])
 @permission_classes([IsClientRole])
+@parser_classes([JSONParser]) 
 def manage_client_reviews(request, review_id):
     """
     Edit or delete a review by the authenticated client.

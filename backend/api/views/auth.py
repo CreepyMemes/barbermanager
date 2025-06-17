@@ -3,9 +3,10 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.conf import settings
-from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes, parser_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
+from rest_framework.parsers import JSONParser
 from rest_framework import status
 from ..utils import(
     send_client_verify_email,
@@ -36,6 +37,7 @@ from ..serializers import (
 @api_view(['POST'])
 @permission_classes([AllowAny])
 @authentication_classes([]) 
+@parser_classes([JSONParser]) 
 def register_client(request):
     """
     Client self registration. Creates inactive client and sends confirmation email.
@@ -63,6 +65,7 @@ def register_client(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 @authentication_classes([]) 
+@parser_classes([JSONParser]) 
 def register_barber(request, uidb64, token): 
     """
     Barber completes registration via invite link by setting username and password.
@@ -85,6 +88,7 @@ def register_barber(request, uidb64, token):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 @authentication_classes([]) 
+@parser_classes([JSONParser]) 
 def verify_client(request, uidb64, token):
     """
     Verifies client account from confirmation email link.
@@ -109,6 +113,7 @@ def verify_client(request, uidb64, token):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 @authentication_classes([]) 
+@parser_classes([JSONParser]) 
 def login_user(request):
     """
     Login with email OR username + password.
@@ -130,6 +135,7 @@ def login_user(request):
 )
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
+@parser_classes([JSONParser]) 
 def logout_user(request):
     """
     Logout by blacklisting the refresh token.
@@ -153,6 +159,7 @@ def logout_user(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 @authentication_classes([]) 
+@parser_classes([JSONParser]) 
 def request_password_reset(request):
     """
     Request password reset by email, sends reset email with token.
@@ -181,6 +188,7 @@ def request_password_reset(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 @authentication_classes([]) 
+@parser_classes([JSONParser]) 
 def confirm_password_reset(request, uidb64, token):
     """
     Confirm password reset by setting new password.
@@ -204,6 +212,7 @@ def confirm_password_reset(request, uidb64, token):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 @authentication_classes([]) 
+@parser_classes([JSONParser]) 
 def refresh_token(request):
     """
     Refresh the access token using a refresh token passed as 'refresh_token' in the request.
@@ -220,6 +229,7 @@ def refresh_token(request):
 )
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
+@parser_classes([JSONParser]) 
 def get_user(request):
     """
     Return the authenticated user's information.
