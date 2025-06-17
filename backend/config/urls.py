@@ -1,10 +1,9 @@
 from django.contrib import admin
 from django.conf import settings
 from django.urls import path, include
-from api.views import SpectacularJSONAPIView, SpectacularSwaggerView
+from api.views import SpectacularJSONAPIView, SpectacularSwaggerViewTopBar
 
 
-# Main project's api endpoints
 urlpatterns = [
     # Backend API endpoints
     path('api/', include('api.urls')),
@@ -13,7 +12,7 @@ urlpatterns = [
     path('api/schema/', SpectacularJSONAPIView.as_view(), name='schema'),
 
     # Swagger UI Documentation
-    path('api/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path("api/", SpectacularSwaggerViewTopBar.as_view(url_name='schema'), name="swagger-ui"),
 ]
 
 # Add admin dashboard only in dev environment
