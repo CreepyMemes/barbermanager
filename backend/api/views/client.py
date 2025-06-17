@@ -20,19 +20,20 @@ from api.serializers.client import (
 
 
 @extend_schema(
-    summary="Get, Update or Delete the authenticated client's profile",
-    description=(
-        "GET: Get all related profile information for authenticated client.\n"
-        "PATCH: Update general profile information (username/name/surname/phone_number).\n"
-        "DELETE: Delete the account of the authenticated client."
-    ),
-    request=UpdateClientProfileSerializer,  # Only for PATCH
-    responses={
-        200: OpenApiResponse(GetClientProfileSerializer, description="Profile info retrieved/updated successfully."),
-        204: OpenApiResponse(description="Profile deleted successfully."),
-        400: OpenApiResponse(description="Bad Request"),
-    },
-    methods=["GET", "PATCH", "DELETE"]
+    methods=["GET"],
+    responses={200: GetClientProfileSerializer},
+    description="Get all related profile information for the authenticated client.",
+)
+@extend_schema(
+    methods=["PATCH"],
+    request=UpdateClientProfileSerializer,
+    responses={200: OpenApiResponse(description="Profile info updated successfully.")},
+    description="Update general profile information (username, name, surname, phone_number) for the authenticated client.",
+)
+@extend_schema(
+    methods=["DELETE"],
+    responses={204: OpenApiResponse(description="Profile deleted successfully.")},
+    description="Delete the account of the authenticated client.",
 )
 @api_view(['GET', 'PATCH', 'DELETE'])
 @permission_classes([IsClientRole])
@@ -66,8 +67,8 @@ def manage_client_profile(request):
     
 
 @extend_schema(
-    summary="List appointments for the authenticated client",
     responses={200: GetClientAppointmentsSerializer},
+    description="Get all appointments for the authenticated client.",
 )
 @api_view(['GET'])
 @permission_classes([IsClientRole])
@@ -81,12 +82,9 @@ def get_client_appointments(request):
 
 
 @extend_schema(
-    summary="Create appointment for the authenticated client",
     request=CreateClientAppointmentSerializer,
-    responses={
-        201: OpenApiResponse(description="Appointment added successfully."),
-        400: OpenApiResponse(description="Bad request or validation error."),
-    }
+    responses={201: OpenApiResponse(description="Appointment added successfully.")},
+    description="Create an appointment for the authenticated client.",
 )
 @api_view(['POST'])
 @permission_classes([IsClientRole])
@@ -102,11 +100,8 @@ def create_client_appointment(request, barber_id):
 
 
 @extend_schema(
-    summary="Cancel an ongoing appointment for the authenticated client",
-    responses={
-        200: OpenApiResponse(description="Appointment cancelled successfully."),
-        400: OpenApiResponse(description="Validation error or not ONGOING."),
-    },
+    responses={200: OpenApiResponse(description="Appointment cancelled successfully.")},
+    description="Cancel an ongoing appointment for the authenticated client.",
 )
 @api_view(['DELETE'])
 @permission_classes([IsClientRole])
@@ -122,8 +117,8 @@ def cancel_client_appointment(request, appointment_id):
 
 
 @extend_schema(
-    summary="List all reviews posted by the authenticated client",
     responses={200: GetClientReviewsSerializer},
+    description="Get all reviews posted by the authenticated client.",
 )
 @api_view(['GET'])
 @permission_classes([IsClientRole])
@@ -137,12 +132,9 @@ def get_client_reviews(request):
 
 
 @extend_schema(
-    summary="Create a review for a completed appointment",
     request=CreateClientReviewSerializer,
-    responses={
-        201: OpenApiResponse(description="Review created successfully."),
-        400: OpenApiResponse(description="Validation error or appointment not completed."),
-    },
+    responses={201: OpenApiResponse(description="Review created successfully.")},
+    description="Create a review for a completed appointment.",
 )
 @api_view(['POST'])
 @permission_classes([IsClientRole])
@@ -158,15 +150,15 @@ def create_client_review(request, appointment_id):
 
 
 @extend_schema(
-    summary="Update or delete a review by the authenticated client",
-    description="PATCH: Update rating or comment. DELETE: Remove the review.",
-    request=UpdateClientReviewSerializer,  # Only for PATCH
-    responses={
-        200: OpenApiResponse(description="Review updated successfully."),
-        204: OpenApiResponse(description="Review deleted successfully."),
-        400: OpenApiResponse(description="Validation or permission error."),
-    },
-    methods=["PATCH", "DELETE"]
+    methods=["PATCH"],
+    request=UpdateClientReviewSerializer,
+    responses={200: OpenApiResponse(description="Review updated successfully.")},
+    description="Update a review by the authenticated client.",
+)
+@extend_schema(
+    methods=["DELETE"],
+    responses={204: OpenApiResponse(description="Review deleted successfully.")},
+    description="Delete a review by the authenticated client.",
 )
 @api_view(['PATCH', 'DELETE'])
 @permission_classes([IsClientRole])
