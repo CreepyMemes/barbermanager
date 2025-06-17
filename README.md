@@ -379,11 +379,11 @@ The deployment process is **fully automated** via [GitHub Actions](https://githu
 
 ```mermaid
 flowchart TD
-    PR([🔀 Pull Request])
+    PR(🔀 Pull Request)
     Tests{{🧪 Run Tests}}
-    Passed([✅ Tests Passed • Able to Merge])
-    Failed([❌ Tests Failed • Cannot Merge])
-    Deployment([🚀 Deploy])
+    Passed([✅ Able to Merge])
+    Failed([❌ Cannot Merge])
+    Deployment(🚀 Deploy)
     PR --> Tests
     Tests -- Passed --> Passed
     Tests -- Failed --> Failed
@@ -395,6 +395,6 @@ flowchart TD
 2. **Merge & Deploy Automatically:**  
    If tests pass, the pull request can be merged.  
    Once merged, the code is automatically deployed to the server via SSH.
-   
+
 - Environment variables are provided securely with GitHub Secrets.
 - Deployments use a custom `deploy.sh` script for zero downtime.
