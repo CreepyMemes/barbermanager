@@ -1,20 +1,12 @@
 <div align="center">
   <img src="./frontend/public/logo.png" height="100px" alt="BarberManager Logo"/>
-
   <h1>BarberManager</h1>
-
   <p><strong>Scalable Appointment Management Platform for Barber shops</strong></p>
 
-  <br/>
-  <a href="https://github.com/CreepyMemes/barbermanager/actions/workflows/deploy.yml">
-    <img src="https://github.com/CreepyMemes/barbermanager/actions/workflows/deploy.yml/badge.svg?branch=master" alt="Deploy to Production"/>
-  </a>
-  <a href="https://barbermanager.creepymemes.com/">
-    <img src="https://img.shields.io/badge/BarberManager-barbermanager.creepymemes.com-555555?labelColor=F38020&logo=cloudflare&logoColor=white" alt="Website"/>
-  </a>
-  <a href="https://barbermanager.creepymemes.com/api/">
-    <img src="https://img.shields.io/badge/Swagger%20UI-Api%20Documentation-555555?labelColor=6ec225&logo=swagger&logoColor=white" alt="API Documentation"/>
-  </a>
+[![Deploy to Production](https://github.com/CreepyMemes/barbermanager/actions/workflows/deploy.yml/badge.svg?branch=master)](https://github.com/CreepyMemes/barbermanager/actions/workflows/deploy.yml)
+[![Website](https://img.shields.io/badge/Website-barbermanager.creepymemes.com-F38020?labelColor=555555&logo=cloudflare&logoColor=white)](https://barbermanager.creepymemes.com/)
+[![API Documentation](https://img.shields.io/badge/Swagger%20UI-API%20Documentation-6ec225?labelColor=555555&logo=swagger&logoColor=white)](https://barbermanager.creepymemes.com/api/)
+
 </div>
 
 ## Overview
