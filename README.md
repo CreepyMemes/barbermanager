@@ -1,10 +1,9 @@
 <div align="center">
   <img src="./frontend/public/logo.png" height="100px" alt="BarberManager Logo"/>
   <h1>BarberManager</h1>
-  <p><strong>Scalable Appointment Management Platform for Barber shops</strong></p>
 
 [![Deploy to Production](https://github.com/CreepyMemes/barbermanager/actions/workflows/deploy.yml/badge.svg?branch=master)](https://github.com/CreepyMemes/barbermanager/actions/workflows/deploy.yml)
-[![Website](https://img.shields.io/badge/Website-barbermanager.creepymemes.com-F38020?labelColor=555555&logo=cloudflare&logoColor=white)](https://barbermanager.creepymemes.com/)
+[![BarberManager](https://img.shields.io/badge/BarberManager-Live%20Website-F38020?labelColor=555555&logo=cloudflare&logoColor=white)](https://barbermanager.creepymemes.com/)
 [![API Documentation](https://img.shields.io/badge/Swagger%20UI-API%20Documentation-6ec225?labelColor=555555&logo=swagger&logoColor=white)](https://barbermanager.creepymemes.com/api/)
 
 </div>
@@ -58,7 +57,7 @@ The tech stack uses **React** (Vite) frontend, **Django** backend, and relies on
 - 💬 **Client Reviews**: Only permitted after completed appointments; one per client-barber pair.
 - 📊 **Dashboard Statistics**: See business insights & feedback.
 - 🐳 **Portable Development**: Containerized via Docker and VSCode Dev Containers for zero-conf dev setup.
-- 🔒 **Secure & Scalable**: Uses industry best practices for deployment.
+- ♾️ **DevOps & CI/CD**: GitHub Actions automate testing, linting, and deployment.
 
 ## Architecture
 
