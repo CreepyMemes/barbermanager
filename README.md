@@ -1,94 +1,102 @@
 <div align="center">
   <img src="./frontend/public/logo.png" height="100px" alt="BarberManager Logo"/>
+
   <h1>BarberManager</h1>
 
-  <!-- Badges -->
+  <p><strong>Scalable Appointment Management Platform for Barber shops</strong></p>
 
-[![Deploy to Production](https://github.com/CreepyMemes/barbermanager/actions/workflows/deploy.yml/badge.svg?branch=master)](https://github.com/CreepyMemes/barbermanager/actions/workflows/deploy.yml)
-[![Website](https://img.shields.io/badge/website-barbermanager.creepymemes.com-31C754?logo=cloudflare&logoColor=white)](https://barbermanager.creepymemes.com/)
-
+  <br/>
+  <a href="https://github.com/CreepyMemes/barbermanager/actions/workflows/deploy.yml">
+    <img src="https://github.com/CreepyMemes/barbermanager/actions/workflows/deploy.yml/badge.svg?branch=master" alt="Deploy to Production"/>
+  </a>
+  <a href="https://barbermanager.creepymemes.com/">
+    <img src="https://img.shields.io/badge/BarberManager-barbermanager.creepymemes.com-555555?labelColor=F38020&logo=cloudflare&logoColor=white" alt="Website"/>
+  </a>
+  <a href="https://barbermanager.creepymemes.com/api/">
+    <img src="https://img.shields.io/badge/Swagger%20UI-Api%20Documentation-555555?labelColor=6ec225&logo=swagger&logoColor=white" alt="API Documentation"/>
+  </a>
 </div>
 
-# Project Documentation
+## Overview
 
-This project is containerized using **Docker**, **Docker Compose** and **VSCode Dev Containers** for easy setup and cross-platform consistency.
+BarberManager is a containerized barber shop management system web application.
+
+It provides an appointment booking system for clients, availability management for barbers, and automated reminders.
+
+The tech stack uses **React** (Vite) frontend, **Django** backend, and relies on **Docker Compose** for easy cross-platform development & deployment.
 
 ## Table of Contents
 
-- [Project Documentation](#project-documentation)
-  - [Table of Contents](#table-of-contents)
+- [Overview](#overview)
+- [Table of Contents](#table-of-contents)
+- [Features](#features)
+- [Architecture](#architecture)
+- [Quickstart](#quickstart)
   - [Requirements](#requirements)
-- [System Architecture](#system-architecture)
-- [Backend API Documentation](#backend-api-documentation)
-- [Development Workflow](#development-workflow)
-  - [1. Clone the repository:](#1-clone-the-repository)
-  - [2. Build and launch development containers](#2-build-and-launch-development-containers)
-  - [To reset the environment](#to-reset-the-environment)
-  - [Backend Development (Django API)](#backend-development-django-api)
-    - [Configuration](#configuration)
-    - [To install new python dependencies](#to-install-new-python-dependencies)
-    - [To run migrations](#to-run-migrations)
-    - [to create a superuser](#to-create-a-superuser)
-    - [To run test cases](#to-run-test-cases)
-    - [To check test case coverage](#to-check-test-case-coverage)
-    - [To generate model diagram](#to-generate-model-diagram)
-  - [Frontend Development (React + Vite)](#frontend-development-react--vite)
-    - [To install new npm Packages](#to-install-new-npm-packages)
-  - [Developer Notes](#developer-notes)
-    - [Barber Availability](#barber-availability)
-    - [Client Appointments](#client-appointments)
-    - [Tasks](#tasks)
-    - [Reviews](#reviews)
-  - [Statistics](#statistics)
+  - [Development Workflow](#development-workflow)
+    - [Clone the repository](#clone-the-repository)
+    - [Build and launch all containers](#build-and-launch-all-containers)
+    - [(Optional) Reset dev environment](#optional-reset-dev-environment)
+- [Development Guide](#development-guide)
+  - [Backend (Django)](#backend-django)
+    - [Environment setup](#environment-setup)
+    - [Dependencies](#dependencies)
+    - [Migrations](#migrations)
+    - [SuperUser](#superuser)
+    - [Run tests](#run-tests)
+    - [Model diagram](#model-diagram)
+  - [Frontend (React + Vite)](#frontend-react--vite)
+    - [Dependencies](#dependencies-1)
+    - [Run tests](#run-tests-1)
+- [Core Models \& Business Logic](#core-models--business-logic)
+  - [Barber Availability](#barber-availability)
+  - [Client Appointments](#client-appointments)
+  - [Automated Tasks](#automated-tasks)
+  - [Reviews](#reviews)
+- [Statistics](#statistics)
 - [Production Workflow](#production-workflow)
   - [Deployment](#deployment)
+    - [CI/CD Workflow Overview](#cicd-workflow-overview)
 
-## Requirements
+## Features
 
-Make sure the following are installed on your machine:
+- 💇‍♂️ **Barber Availability**: Admins define 1-hour slot schedules for each barber.
+- 📅 **Client Appointments**: Clients can book available slots with their chosen barber & service(s).
+- ⏰ **Reminders & Automation**: Email reminders and automatic appointment status updates via Celery tasks.
+- 💬 **Client Reviews**: Only permitted after completed appointments; one per client-barber pair.
+- 📊 **Dashboard Statistics**: See business insights & feedback.
+- 🐳 **Portable Development**: Containerized via Docker and VSCode Dev Containers for zero-conf dev setup.
+- 🔒 **Secure & Scalable**: Uses industry best practices for deployment.
 
-- [Docker](https://docs.docker.com/engine/install/) installed
-- [Docker Compose](https://docs.docker.com/compose/install/) installed
-- [VSCode](https://code.visualstudio.com/) with the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension installed
-
-# System Architecture
+## Architecture
 
 ```mermaid
 flowchart TD
-    %% User and Client
     enduser([User<br/>Browser/Mobile])
 
-    %% Frontend
     FE[Frontend: Nginx<br/>Container: frontend]
     subgraph Frontend Container
-    FE
+        FE
     end
 
-    %% Backend
     BE[Backend: Django<br/>Container: backend]
-
     subgraph Backend Container
         BE
     end
 
-    %% Postgres and Redis
     RD[(Redis Broker<br/>Container: redis)]
     PG[(Postgres DB<br/>Container: db)]
-
     subgraph Infra Containers
         RD
         PG
     end
 
-    %% Celery
     CW[[Celery Worker<br/>Container: celery]]
     CB[[Celery Beat<br/>Container: celery-beat]]
-
     subgraph Celery Containers
         CW
         CB
     end
-
 
     %% Frontend
     FE -- Serves React SPA --> enduser
@@ -112,25 +120,24 @@ flowchart TD
     BE -.-> CW
     BE -.-> CB
 
-    %% Show persistent volumes
-    classDef volstyle fill:#E0E0E0,stroke:#999
-
     %% Color / Service Types
     style FE fill:#008000
     style BE fill:#092e20
-
     style RD fill:#D82C20
     style PG fill:#0064a5
     style CW fill:#64913D
     style CB fill:#64913D
 ```
 
-# Backend API Documentation
+## Quickstart
 
-You can find the API `Swagger` documentation here:
-https://barbermanager.creepymemes.com/api
+### Requirements
 
-# Development Workflow
+- [Docker](https://docs.docker.com/engine/install/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+- [VSCode](https://code.visualstudio.com/) (+ [Dev Containers Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers))
+
+### Development Workflow
 
 This section is about the development workflow in programming and testing the application on local machine.
 
@@ -143,32 +150,43 @@ This section is about the development workflow in programming and testing the ap
 > Open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on macOS).
 > Select `Remote-Containers: Reopen in Container`.
 
-## 1. Clone the repository:
+#### Clone the repository
+
+If the repository is public:
+
+```bash
+git clone https://github.com/CreepyMemes/barbermanager.git
+cd barbermanager/
+```
+
+If the repository is private:
 
 > [!IMPORTANT]
 > Change **TOKEN** to your github token
->
-> ```bash
-> git clone https://CreepyMemes:TOKEN@github.com/CreepyMemes/BarberManager.git
-> cd BarberManager/Implementazione
-> ```
 
-## 2. Build and launch development containers
+```bash
+git clone https://CreepyMemes:TOKEN@github.com/CreepyMemes/barbermanager.git
+cd barbermanager
+```
+
+#### Build and launch all containers
 
 ```bash
 docker compose -f docker-compose.dev.yml up --build
 ```
 
-## To reset the environment
+- Frontend: [http://localhost:3000](http://localhost:3000)
+- Backend: [http://localhost:8000](http://localhost:8000)
+
+#### (Optional) Reset dev environment
 
 ```bash
 docker compose -f docker-compose.dev.yml down --volumes --remove-orphans
 ```
 
-- Frontend available at: [http://localhost:3000](http://localhost:3000)
-- Backend available at: [http://localhost:8000](http://localhost:8000)
+## Development Guide
 
-## Backend Development (Django API)
+### Backend (Django)
 
 The Django dev server reloads automatically on code changes.
 
@@ -180,11 +198,11 @@ The Django dev server reloads automatically on code changes.
 > docker compose -f docker-compose.dev.yml exec -it backend sh
 > ```
 
-### Configuration
+#### Environment setup
 
-- Create a .env.local file containing your stmp server credentials, follow this example:
+Create `.env.local` for SMTP/email:
 
-```bash
+```sh
 EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST='smtp.server.com'
 EMAIL_PORT=587
@@ -193,63 +211,57 @@ EMAIL_HOST_USER='your@email.com'
 EMAIL_HOST_PASSWORD='your-password'
 ```
 
-### To install new python dependencies
+#### Dependencies
+
+To install new dependencies, for either base, prod or dev:
 
 ```bash
 pip install <package>
-
-# If for both prod and dev
 pip freeze > requirements/base.txt
-
-# If for dev
 pip freeze > requirements/dev.txt
-
-# If for prod
 pip freeze > requirements/prod.txt
 ```
 
-### To run migrations
+#### Migrations
+
+To migrate database:
 
 ```bash
 python manage.py migrate
 ```
 
-### to create a superuser
+#### SuperUser
+
+To create an admin user:
 
 ```bash
 python manage.py createsuperuser
 ```
 
-### To run test cases
+#### Run tests
+
+To simply run all tests:
 
 ```bash
 python manage.py test api
 ```
 
-### To check test case coverage
-
-This is a useful installed package `coverage` that highlights which part of the codebase are being tested, helps with developing testcases, to use:
+To check test coverage, we use `coverage` package that highlights which part of the codebase are being tested:
 
 ```bash
-# to run
 coverage run --source="." manage.py test api
-
-# To check results, generates htmlconv find index.html
 coverage html
-
-# Or just print retults in terminal
-coverage report
 ```
 
-### To generate model diagram
+#### Model diagram
 
-This is a useful installed package `django-extensions` that has many features, of which a diagram generator for all the implemented models found in the project, to use:
+To generate a models diagram, we use `django-extensions` package that includes a diagram generator for all the implemented models found in the project, to use:
 
 ```bash
 python manage.py graph_models -a -o models_diagram.png
 ```
 
-## Frontend Development (React + Vite)
+### Frontend (React + Vite)
 
 Vite provides automatic hot-reloading when frontend files are modified.
 
@@ -261,13 +273,20 @@ Vite provides automatic hot-reloading when frontend files are modified.
 > docker compose -f docker-compose.dev.yml exec -it frontend sh
 > ```
 
-### To install new npm Packages
+#### Dependencies
+
+To install new dependencies, for either prod or dev:
 
 ```bash
+npm install <package> --save-dev
 npm install <package>
 ```
 
-## Developer Notes
+#### Run tests
+
+[TODO]
+
+## Core Models & Business Logic
 
 ### Barber Availability
 
@@ -312,22 +331,18 @@ Model Example:
 
 **Rules & Constraints:**
 
-- A client may have only **one** appointment with `status = "ONGOING"` at a time.
-- The selected `slot` must:
+- A client can only have **one** appointment with `status = "ONGOING"` at a time.
+- The selected `slot` must: Exist in the barber’s availability for the specified date and not be already booked.
 
-  - Exist in the barber’s availability for the specified date.
-  - Not be already booked by another appointment.
-
-### Tasks
+### Automated Tasks
 
 Status: ✅
 
-Used `Celery` to run background tasks to:
+Used `Celery` deployed with 3 docker services, `Celery worker`, `Celery beat` and `Redis broker` to run these background tasks:
 
-- trigger automatic email reminders that trigger a bit before the appointment is due.
-- update ONGOING appointment status to COMPLETED when it is due
-
-This was deployed with 3 services, `Celery worker`, `Celery beat` and `Redis broker`.
+- Email reminders before 1 hour before appointment is due, sent to barber and client.
+- Status updates (ONGOING → COMPLETED) when the appointment is due.
+- Powered by Celery Worker, Celery Beat, and Redis broker.
 
 ### Reviews
 
@@ -356,12 +371,35 @@ Model Example:
 
 Status: ✅
 
-Generate overall statistics about total revenue, appointments, reviews and average rating
+Admin statistics dashboard includes:
 
-# Production Workflow
+- Total revenue
+- Total appointments
+- Review count
+- Average barber rating
 
-The Barber Manager website can be accessed at: [http://barbermanager.creepymemes.com](http://barbermanager.creepymemes.com)
+## Production Workflow
 
-## Deployment
+The site is **live** at:  
+[https://barbermanager.creepymemes.com](https://barbermanager.creepymemes.com)
 
-The deployment process is fully automated using `GitHub Actions CI/CD`. Any push to the `master` branch will automatically trigger a redeployment, ensuring the latest changes are always live.
+### Deployment
+
+The deployment process is **fully automated** via [GitHub Actions](https://github.com/features/actions). Every push to the `master` branch (excluding docs/meta files) triggers the CI/CD pipeline:
+
+#### CI/CD Workflow Overview
+
+```mermaid
+graph TD
+    A[Push to master] --> B[Run Tests]
+    B -- Passed --> C[Deploy to Server]
+    B -- Failed --> D[Fail: Not Deployed]
+```
+
+1. **Build & Test:**  
+   Runs in a production-like Docker environment.
+2. **Deploy Automatically:**  
+   If tests pass, code is deployed to the server via SSH.
+
+- Environment variables come from GitHub Secrets.
+- Deployments use a custom `deploy.sh` script for zero downtime.
