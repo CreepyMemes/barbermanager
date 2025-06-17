@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema, OpenApiResponse
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
@@ -18,6 +19,21 @@ from api.serializers.client import (
 )
 
 
+@extend_schema(
+    summary="Get, Update or Delete the authenticated client's profile",
+    description=(
+        "GET: Get all related profile information for authenticated client.\n"
+        "PATCH: Update general profile information (username/name/surname/phone_number).\n"
+        "DELETE: Delete the account of the authenticated client."
+    ),
+    request=UpdateClientProfileSerializer,  # Only for PATCH
+    responses={
+        200: OpenApiResponse(GetClientProfileSerializer, description="Profile info retrieved/updated successfully."),
+        204: OpenApiResponse(description="Profile deleted successfully."),
+        400: OpenApiResponse(description="Bad Request"),
+    },
+    methods=["GET", "PATCH", "DELETE"]
+)
 @api_view(['GET', 'PATCH', 'DELETE'])
 @permission_classes([IsClientRole])
 def manage_client_profile(request):
@@ -49,6 +65,10 @@ def manage_client_profile(request):
         return Response(status=status.HTTP_204_NO_CONTENT)
     
 
+@extend_schema(
+    summary="List appointments for the authenticated client",
+    responses={200: GetClientAppointmentsSerializer},
+)
 @api_view(['GET'])
 @permission_classes([IsClientRole])
 def get_client_appointments(request):
@@ -60,6 +80,14 @@ def get_client_appointments(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@extend_schema(
+    summary="Create appointment for the authenticated client",
+    request=CreateClientAppointmentSerializer,
+    responses={
+        201: OpenApiResponse(description="Appointment added successfully."),
+        400: OpenApiResponse(description="Bad request or validation error."),
+    }
+)
 @api_view(['POST'])
 @permission_classes([IsClientRole])
 def create_client_appointment(request, barber_id):
@@ -73,6 +101,13 @@ def create_client_appointment(request, barber_id):
     return Response({'detail': 'Appointment added successfully.'}, status=status.HTTP_201_CREATED)
 
 
+@extend_schema(
+    summary="Cancel an ongoing appointment for the authenticated client",
+    responses={
+        200: OpenApiResponse(description="Appointment cancelled successfully."),
+        400: OpenApiResponse(description="Validation error or not ONGOING."),
+    },
+)
 @api_view(['DELETE'])
 @permission_classes([IsClientRole])
 def cancel_client_appointment(request, appointment_id):
@@ -86,6 +121,10 @@ def cancel_client_appointment(request, appointment_id):
     return Response({'detail': 'Appointment cancelled successfully.'}, status=status.HTTP_200_OK)
 
 
+@extend_schema(
+    summary="List all reviews posted by the authenticated client",
+    responses={200: GetClientReviewsSerializer},
+)
 @api_view(['GET'])
 @permission_classes([IsClientRole])
 def get_client_reviews(request):
@@ -97,6 +136,14 @@ def get_client_reviews(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@extend_schema(
+    summary="Create a review for a completed appointment",
+    request=CreateClientReviewSerializer,
+    responses={
+        201: OpenApiResponse(description="Review created successfully."),
+        400: OpenApiResponse(description="Validation error or appointment not completed."),
+    },
+)
 @api_view(['POST'])
 @permission_classes([IsClientRole])
 def create_client_review(request, appointment_id):
@@ -110,6 +157,17 @@ def create_client_review(request, appointment_id):
     return Response({'detail': 'Review created successfully.'}, status=status.HTTP_201_CREATED)
 
 
+@extend_schema(
+    summary="Update or delete a review by the authenticated client",
+    description="PATCH: Update rating or comment. DELETE: Remove the review.",
+    request=UpdateClientReviewSerializer,  # Only for PATCH
+    responses={
+        200: OpenApiResponse(description="Review updated successfully."),
+        204: OpenApiResponse(description="Review deleted successfully."),
+        400: OpenApiResponse(description="Validation or permission error."),
+    },
+    methods=["PATCH", "DELETE"]
+)
 @api_view(['PATCH', 'DELETE'])
 @permission_classes([IsClientRole])
 def manage_client_reviews(request, review_id):
