@@ -18,7 +18,8 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
 - [Project Documentation](#project-documentation)
   - [Table of Contents](#table-of-contents)
   - [Requirements](#requirements)
-- [System Infrastructure](#system-infrastructure)
+- [System Architecture](#system-architecture)
+- [Backend API Documentation](#backend-api-documentation)
 - [Development Workflow](#development-workflow)
   - [1. Clone the repository:](#1-clone-the-repository)
   - [2. Build and launch development containers](#2-build-and-launch-development-containers)
@@ -33,12 +34,6 @@ This project is containerized using **Docker**, **Docker Compose** and **VSCode 
     - [To generate model diagram](#to-generate-model-diagram)
   - [Frontend Development (React + Vite)](#frontend-development-react--vite)
     - [To install new npm Packages](#to-install-new-npm-packages)
-- [API Endpoint Guide \[TODO\]](#api-endpoint-guide-todo)
-  - [Auth Endpoints (`api/auth/`)](#auth-endpoints-apiauth)
-  - [Admin Endpoints (`api/admin/`)](#admin-endpoints-apiadmin)
-  - [Barber Endpoints (`api/barber/`)](#barber-endpoints-apibarber)
-  - [Client Endpoints (`api/client/`)](#client-endpoints-apiclient)
-  - [Public Endpoints (`api/public/`)](#public-endpoints-apipublic)
   - [Developer Notes](#developer-notes)
     - [Barber Availability](#barber-availability)
     - [Client Appointments](#client-appointments)
@@ -56,7 +51,7 @@ Make sure the following are installed on your machine:
 - [Docker Compose](https://docs.docker.com/compose/install/) installed
 - [VSCode](https://code.visualstudio.com/) with the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension installed
 
-# System Infrastructure
+# System Architecture
 
 ```mermaid
 flowchart TD
@@ -129,6 +124,11 @@ flowchart TD
     style CW fill:#64913D
     style CB fill:#64913D
 ```
+
+# Backend API Documentation
+
+You can find the API `Swagger` documentation here:
+https://barbermanager.creepymemes.com/api
 
 # Development Workflow
 
@@ -266,86 +266,6 @@ Vite provides automatic hot-reloading when frontend files are modified.
 ```bash
 npm install <package>
 ```
-
-# API Endpoint Guide [TODO]
-
-```
-api/
-├── auth/
-├── admin/
-├── barber/
-├── client/
-└── public/
-```
-
-- ✅ Implemented endpoint
-- 🧪 Implemented testcases (`~`: incomplete)
-
-## Auth Endpoints (`api/auth/`)
-
-| Endpoint                                 | Method | Description                                     | Status |
-| ---------------------------------------- | ------ | ----------------------------------------------- | ------ |
-| `/auth/register/`                        | POST   | Register a new client.                          | ✅ 🧪  |
-| `/auth/register/<uidb64>/<token>/`       | POST   | Register a barber after an invitation email.    | ✅ 🧪  |
-| `/auth/verify/<uidb64>/<token>/`         | GET    | Verify a client's email address.                | ✅ 🧪  |
-| `/auth/me/`                              | GET    | Get the currently logged-in user's profile.     | ✅ 🧪  |
-| `/auth/login/`                           | POST   | Log in a user.                                  | ✅ 🧪  |
-| `/auth/logout/`                          | POST   | Log out the current user                        | ✅ 🧪  |
-| `/auth/reset-password/`                  | POST   | Send password reset link via email.             | ✅ 🧪  |
-| `/auth/reset-password/<uidb64>/<token>/` | POST   | Confirm and apply password reset.               | ✅ 🧪  |
-| `/auth/refresh-token/`                   | POST   | Get a new access token using the refresh token. | ✅ 🧪  |
-
-## Admin Endpoints (`api/admin/`)
-
-| Endpoint                                                       | Method  | Description                                            | Status |
-| -------------------------------------------------------------- | ------- | ------------------------------------------------------ | ------ |
-| `/admin/profile/`                                              | GET     | Gets all related information for authenticated admin   | ✅ 🧪  |
-| `/admin/barbers/`                                              | POST    | Invite a barber through their email.                   | ✅ 🧪  |
-| `/admin/barbers/<barber_id>/`                                  | DELETE  | Remove a barber by ID                                  | ✅ 🧪  |
-| `/admin/barbers/<barber_id>/availabilities/`                   | POST    | Create availability for a barber on a specific date    | ✅ 🧪  |
-| `/admin/barbers/<barber_id>/availabilities/<availability_id>/` | PATCH   | Edit an availability for a barber on a specific date   | ✅ 🧪  |
-| `/admin/barbers/<barber_id>/availabilities/<availability_id>/` | DELELTE | Remove an availability for a barber on a specific date | ✅ 🧪  |
-| `/admin/appointments/`                                         | GET     | List all past appointments across the platform         | ✅ 🧪  |
-| `/admin/statistics/`                                           | GET     | Generate general statistics                            | ✅ 🧪  |
-
-## Barber Endpoints (`api/barber/`)
-
-| Endpoint                         | Method | Description                                           | Status |
-| -------------------------------- | ------ | ----------------------------------------------------- | ------ |
-| `/barber/profile/`               | GET    | Gets all related information for authenticated barber | ✅ 🧪  |
-| `/barber/profile/`               | PATCH  | Lets authenticated barber update their related info   | ✅ 🧪  |
-| `/barber/profile/`               | DELETE | Lets authenticated barber delete their account        | ✅ 🧪  |
-| `/barber/availabilities/`        | GET    | List availabilities of the authenticated barber       | ✅ 🧪  |
-| `/barber/services/`              | GET    | List services of the authenticated barber             | ✅ 🧪  |
-| `/barber/services/`              | POST   | Create a new service for the authenticated barber     | ✅ 🧪  |
-| `/barber/services/<service_id>/` | PATCH  | Edit a service owned by the authenticated barber      | ✅ 🧪  |
-| `/barber/services/<service_id>/` | DELETE | Remove a service owned by the authenticated barber    | ✅ 🧪  |
-| `/barber/appointments/`          | GET    | List ongoing appointments of the authenticated barber | ✅ 🧪  |
-| `/barber/reviews/`               | GET    | View reviews received by the authenticated barber     | ✅ 🧪  |
-
-## Client Endpoints (`api/client/`)
-
-| Endpoint                                         | Method | Description                                                                   | Status |
-| ------------------------------------------------ | ------ | ----------------------------------------------------------------------------- | ------ |
-| `/client/profile/`                               | GET    | Gets all related information for authenticated client                         | ✅ 🧪  |
-| `/client/profile/`                               | PATCH  | Lets authenticated clilent update their related info                          | ✅ 🧪  |
-| `/client/profile/`                               | DELETE | Lets authenticated client delete their account                                | ✅ 🧪  |
-| `/client/appointments/`                          | GET    | List past appointments of the authenticated client                            | ✅ 🧪  |
-| `/client/appointments/barbers/<barber_id>/`      | POST   | Create a new appointment if no active one exists for the authenticated client | ✅ 🧪  |
-| `/client/appointments/<appointment_id>/`         | DELETE | Cancel an ongoing appointment belonging to the authenticated client           | ✅ 🧪  |
-| `/client/reviews/`                               | GET    | List reviews posted by the authenticated client                               | ✅ 🧪  |
-| `/client/reviews/appointments/<appointment_id>/` | POST   | Create a review for the barber of a completed appointment                     | ✅ 🧪  |
-| `/client/reviews/<review_id>/`                   | PATCH  | Edit a review posted by the authenticated client                              | ✅ 🧪  |
-| `/client/reviews/<review_id>/`                   | DELETE | Delete a review posted by the authenticated client                            | ✅ 🧪  |
-
-## Public Endpoints (`api/public/`)
-
-| Endpoint                                      | Method | Description                                  | Status |
-| --------------------------------------------- | ------ | -------------------------------------------- | ------ |
-| `/public/barbers/`                            | GET    | List all barbers                             | ✅ 🧪  |
-| `/public/barbers/<barber_id>/availabilities/` | GET    | List availabilities for the selecetd barber  | ✅ 🧪  |
-| `/public/barbers/<barber_id>/services/`       | GET    | List services offered by the selected barber | ✅ 🧪  |
-| `/public/barbers/<barber_id>/profile/`        | GET    | Get barber's profile public information      | ✅ 🧪  |
 
 ## Developer Notes
 
