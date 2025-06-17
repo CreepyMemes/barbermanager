@@ -1,7 +1,7 @@
 from .base import *
 
 DEBUG = False
-FRONTEND_URL = 'https://manageBarber.s1lentCommit.com/api' # TODO: change to frontend
+FRONTEND_URL = 'https://manageBarber.s1lentCommit.com' # TODO: change to frontend
 REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = (
     'rest_framework.renderers.JSONRenderer',
 )
