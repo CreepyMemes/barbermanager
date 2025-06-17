@@ -1,6 +1,7 @@
 from drf_spectacular.utils import extend_schema, OpenApiResponse
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.response import Response
+from rest_framework.parsers import JSONParser
 from rest_framework import status
 from ..utils import (
     IsBarberRole,
@@ -37,6 +38,7 @@ from ..serializers import (
 )
 @api_view(['GET', 'PATCH', 'DELETE'])
 @permission_classes([IsBarberRole])
+@parser_classes([JSONParser]) 
 def manage_barber_profile(request):
     """
     Barber only: Handles get and update operations for the authenticated barber's profile.
@@ -72,6 +74,7 @@ def manage_barber_profile(request):
 )
 @api_view(['GET'])
 @permission_classes([IsBarberRole])
+@parser_classes([JSONParser]) 
 def get_barber_availabilities(request):
     """
     Barber only: Get all availabilities for the authenticated barber.
@@ -94,6 +97,7 @@ def get_barber_availabilities(request):
 )
 @api_view(['GET', 'POST'])
 @permission_classes([IsBarberRole])
+@parser_classes([JSONParser]) 
 def manage_barber_services(request):
     """
     Barber only: Handles get and create operations for services offered by the authenticated barber.
@@ -128,6 +132,7 @@ def manage_barber_services(request):
 )
 @api_view(['PATCH', 'DELETE'])
 @permission_classes([IsBarberRole])
+@parser_classes([JSONParser]) 
 def manage_barber_service(request, service_id):
     """
     Barber only: Handles update and delete operations for a specific service by the authenticated barber.
@@ -157,6 +162,7 @@ def manage_barber_service(request, service_id):
 )
 @api_view(['GET'])
 @permission_classes([IsBarberRole])
+@parser_classes([JSONParser]) 
 def get_barber_appointments(request):
     """
     Barber only: Get all appointments for the authenticated barber.
@@ -173,6 +179,7 @@ def get_barber_appointments(request):
 )
 @api_view(['GET'])
 @permission_classes([IsBarberRole])
+@parser_classes([JSONParser]) 
 def get_barber_reviews(request):
     """
     Barber only: Get all reviews received by the authenticated barber.
