@@ -148,6 +148,16 @@ CELERY_BEAT_SCHEDULE = {
     },
 }
 
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Barber Manager API",
+    "DESCRIPTION": "Manage barbershop scheduling, reviews, and users.",
+    "VERSION": "1.0.0",
+    "SWAGGER_UI_SETTINGS": {
+    },
+    "SERVERS": [{"url": "/api"}],
+    "SERVE_INCLUDE_SCHEMA": False,
+}
+
 # WARNING: this is only for development
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
