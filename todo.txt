@@ -6,7 +6,6 @@ What to do:
 Important:
     - add image uploading capability
     - add change email functionality in PATCH /profile endpoint, that automatically sends email verification
-    - make actions workflow test and deploy separate, make test run in pull requests, while deploy only in push
 
 Proposed:
     - add endpoint for coverage html
