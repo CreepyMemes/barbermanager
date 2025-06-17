@@ -152,8 +152,15 @@ SPECTACULAR_SETTINGS = {
     "TITLE": "Barber Manager API",
     "DESCRIPTION": "Manage barbershop scheduling, reviews, and users.",
     "VERSION": "1.0.0",
-    "SWAGGER_UI_SETTINGS": {
-    },
+    "SWAGGER_UI_SETTINGS": '''{
+        deepLinking: true,
+        urls: [
+            {url: "/api/schema/", name: "v1"},
+        ],
+        presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+        layout: "StandaloneLayout",
+    }''',
+
     "SERVERS": [{"url": "/api"}],
     "SERVE_INCLUDE_SCHEMA": False,
 }
