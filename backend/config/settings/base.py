@@ -163,6 +163,7 @@ SPECTACULAR_SETTINGS = {
 
     "SERVERS": [{"url": "/api"}],
     "SERVE_INCLUDE_SCHEMA": False,
+    "SCHEMA_PATH_PREFIX_TRIM": "/api",
 }
 
 # WARNING: this is only for development
