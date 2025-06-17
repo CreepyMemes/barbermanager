@@ -25,4 +25,4 @@ jobs:
         run: docker compose -f docker-compose.prod.yml up -d --build
 
       - name: Run backend tests
-        run: docker compose -f docker-compose.prod.yml run -T --rm backend python -u manage.py test api
+        run: docker compose -f docker-compose.prod.yml run --rm backend python manage.py test api
