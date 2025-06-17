@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema, OpenApiResponse
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
@@ -21,6 +22,11 @@ from ..serializers import (
 )
 
 
+@extend_schema(
+    methods=['GET'],
+    responses={200: GetAdminProfileSerializer},
+    description="Admin only: Gets all related profile information for authenticated admin.",
+)
 @api_view(['GET'])
 @permission_classes([IsAdminRole])
 def get_admin_profile(request):
@@ -32,6 +38,12 @@ def get_admin_profile(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@extend_schema(
+    methods=['POST'],
+    request=InviteBarberSerializer,
+    responses={201: OpenApiResponse(description="Barber invited successfully.")},
+    description="Admin only: Invite a barber by email. Sends a link with encoded email (uid).",
+)
 @api_view(['POST'])
 @permission_classes([IsAdminRole])
 def invite_barber(request):
@@ -49,6 +61,11 @@ def invite_barber(request):
     return Response({'detail': 'Barber invited successfully.'}, status=status.HTTP_201_CREATED)
 
 
+@extend_schema(
+    methods=['DELETE'],
+    responses={204: OpenApiResponse(description="Barber deleted successfully.")},
+    description="Admin only: Deletes a barber by ID using the serializer.",
+)
 @api_view(['DELETE'])
 @permission_classes([IsAdminRole])
 def delete_barber(request, barber_id):
@@ -62,6 +79,12 @@ def delete_barber(request, barber_id):
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+@extend_schema(
+    methods=['POST'],
+    request=CreateBarberAvailabilitySerializer,
+    responses={201: OpenApiResponse(description="Availability created successfully.")},
+    description="Admin only: Creates an availability for the selected barber.",
+)
 @api_view(['POST'])
 @permission_classes([IsAdminRole])
 def create_barber_availability(request, barber_id):
@@ -75,6 +98,17 @@ def create_barber_availability(request, barber_id):
     return Response({"detail": "Availability created successfully."}, status=status.HTTP_201_CREATED)
 
 
+@extend_schema(
+    methods=['PATCH'],
+    request=UpdateBarberAvailabilitySerializer,
+    responses={200: OpenApiResponse(description="Availability updated successfully.")},
+    description="Admin only: Edit the details (date/slots) of a given availability.",
+)
+@extend_schema(
+    methods=['DELETE'],
+    responses={204: OpenApiResponse(description="Availability deleted successfully.")},
+    description="Admin only: Remove a given availability.",
+)
 @api_view(['PATCH', 'DELETE'])
 @permission_classes([IsAdminRole])
 def manage_barber_availability(request, barber_id, availability_id):
@@ -100,6 +134,11 @@ def manage_barber_availability(request, barber_id, availability_id):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+@extend_schema(
+    methods=['GET'],
+    responses={200: GetAdminStatisticsSerializer},
+    description="Admin only: Returns general statistics including appointments, revenue, and reviews.",
+)
 @api_view(['GET'])
 @permission_classes([IsAdminRole])
 def get_admin_statistics(request):
@@ -111,6 +150,11 @@ def get_admin_statistics(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@extend_schema(
+    methods=['GET'],
+    responses={200: GetAllAppointmentsSerializer},
+    description="Admin only: Get all appointments present in the system.",
+)
 @api_view(['GET'])
 @permission_classes([IsAdminRole])
 def get_all_appointments(request):
