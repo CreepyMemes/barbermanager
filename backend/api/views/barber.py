@@ -22,18 +22,18 @@ from ..serializers import (
 @extend_schema(
     methods=['GET'],
     responses={200: GetBarberProfileSerializer},
-    description="Get all public information related to the authenticated barber's profile.",
+    description="Barber only: Get all public information related to the authenticated barber's profile.",
 )
 @extend_schema(
     methods=['PATCH'],
     request=UpdateBarberProfileSerializer,
     responses={200: OpenApiResponse(description="Profile info updated successfully.")},
-    description="Update information for the authenticated barber's profile.",
+    description="Barber only: Update information for the authenticated barber's profile.",
 )
 @extend_schema(
     methods=['DELETE'],
     responses={204: OpenApiResponse(description="Barber deleted successfully.")},
-    description="Delete the authenticated barber's account.",
+    description="Barber only: Delete the authenticated barber's account.",
 )
 @api_view(['GET', 'PATCH', 'DELETE'])
 @permission_classes([IsBarberRole])
@@ -68,7 +68,7 @@ def manage_barber_profile(request):
 
 @extend_schema(
     responses={200: GetBarberAvailabilitiesSerializer},
-    description="Get all availabilities for the authenticated barber.",
+    description="Barber only: Get all availabilities for the authenticated barber.",
 )
 @api_view(['GET'])
 @permission_classes([IsBarberRole])
@@ -84,13 +84,13 @@ def get_barber_availabilities(request):
 @extend_schema(
     methods=['GET'],
     responses={200: GetBarberServicesSerializer},
-    description="List all services offered by the authenticated barber.",
+    description="Barber only: List all services offered by the authenticated barber.",
 )
 @extend_schema(
     methods=['POST'],
     request=CreateBarberServiceSerializer,
     responses={201: OpenApiResponse(description="Service added successfully.")},
-    description="Create a new service offering for the authenticated barber.",
+    description="Barber only: Create a new service offering for the authenticated barber.",
 )
 @api_view(['GET', 'POST'])
 @permission_classes([IsBarberRole])
@@ -119,12 +119,12 @@ def manage_barber_services(request):
     methods=['PATCH'],
     request=UpdateBarberServiceSerializer,
     responses={200: OpenApiResponse(description="Service updated successfully.")},
-    description="Edit the details (name/price) of a given service.",
+    description="Barber only: Edit the details (name/price) of a given service.",
 )
 @extend_schema(
     methods=['DELETE'],
     responses={204: OpenApiResponse(description="Service deleted successfully.")},
-    description="Delete a given service.",
+    description="Barber only: Delete a given service.",
 )
 @api_view(['PATCH', 'DELETE'])
 @permission_classes([IsBarberRole])
@@ -153,7 +153,7 @@ def manage_barber_service(request, service_id):
 
 @extend_schema(
     responses={200: GeBarberAppointmentsSerializer},
-    description="Get all ONGOING appointments for the authenticated barber.",
+    description="Barber only: Get all ONGOING appointments for the authenticated barber.",
 )
 @api_view(['GET'])
 @permission_classes([IsBarberRole])
@@ -169,7 +169,7 @@ def get_barber_appointments(request):
 
 @extend_schema(
     responses={200: GetBarberReviewsSerializer},
-    description="Get all reviews received by the authenticated barber.",
+    description="Barber only: Get all reviews received by the authenticated barber.",
 )
 @api_view(['GET'])
 @permission_classes([IsBarberRole])
