@@ -371,26 +371,30 @@ Admin statistics dashboard includes:
 
 ## Production Workflow
 
-The site is **live** at:  
-[https://barbermanager.creepymemes.com](https://barbermanager.creepymemes.com)
-
 ### Deployment
 
-The deployment process is **fully automated** via [GitHub Actions](https://github.com/features/actions). Every push to the `master` branch (excluding docs/meta files) triggers the CI/CD pipeline:
+The deployment process is **fully automated** via [GitHub Actions](https://github.com/features/actions). The CI/CD pipeline is triggered by every **Pull Request**:
 
 #### CI/CD Workflow Overview
 
 ```mermaid
-graph TD
-    A[Push to master] --> B[Run Tests]
-    B -- Passed --> C[Deploy to Server]
-    B -- Failed --> D[Fail: Not Deployed]
+flowchart TD
+    PR([🔀 Pull Request])
+    Tests{{🧪 Run Tests}}
+    Passed([✅ Tests Passed • Able to Merge])
+    Failed([❌ Tests Failed • Cannot Merge])
+    Deployment([🚀 Deploy])
+    PR --> Tests
+    Tests -- Passed --> Passed
+    Tests -- Failed --> Failed
+    Passed -- Merge --> Deployment
 ```
 
 1. **Build & Test:**  
-   Runs in a production-like Docker environment.
-2. **Deploy Automatically:**  
-   If tests pass, code is deployed to the server via SSH.
-
-- Environment variables come from GitHub Secrets.
+   All pull requests trigger automated builds and tests in a production-like Docker environment.
+2. **Merge & Deploy Automatically:**  
+   If tests pass, the pull request can be merged.  
+   Once merged, the code is automatically deployed to the server via SSH.
+   
+- Environment variables are provided securely with GitHub Secrets.
 - Deployments use a custom `deploy.sh` script for zero downtime.
