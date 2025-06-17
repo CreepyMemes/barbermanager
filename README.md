@@ -1,20 +1,12 @@
 <div align="center">
   <img src="./frontend/public/logo.png" height="100px" alt="ManageBarber Logo"/>
-
   <h1>ManageBarber</h1>
-
   <p><strong>Scalable Appointment Management Platform for Barber shops</strong></p>
 
-  <br/>
-  <a href="https://github.com/s1lentCommit/manageBarber/actions/workflows/deploy.yml">
-    <img src="https://github.com/s1lentCommit/manageBarber/actions/workflows/deploy.yml/badge.svg?branch=master" alt="Deploy to Production"/>
-  </a>
-  <a href="https://manageBarber.s1lentCommit.com/">
-    <img src="https://img.shields.io/badge/ManageBarber-manageBarber.s1lentCommit.com-555555?labelColor=F38020&logo=cloudflare&logoColor=white" alt="Website"/>
-  </a>
-  <a href="https://manageBarber.s1lentCommit.com/api/">
-    <img src="https://img.shields.io/badge/Swagger%20UI-Api%20Documentation-555555?labelColor=6ec225&logo=swagger&logoColor=white" alt="API Documentation"/>
-  </a>
+[![Deploy to Production](https://github.com/s1lentCommit/manageBarber/actions/workflows/deploy.yml/badge.svg?branch=master)](https://github.com/s1lentCommit/manageBarber/actions/workflows/deploy.yml)
+[![Website](https://img.shields.io/badge/Website-manageBarber.s1lentCommit.com-F38020?labelColor=555555&logo=cloudflare&logoColor=white)](https://manageBarber.s1lentCommit.com/)
+[![API Documentation](https://img.shields.io/badge/Swagger%20UI-API%20Documentation-6ec225?labelColor=555555&logo=swagger&logoColor=white)](https://manageBarber.s1lentCommit.com/api/)
+
 </div>
 
 ## Overview
