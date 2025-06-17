@@ -1,4 +1,3 @@
-import logging
 from datetime import datetime, timedelta
 from django.utils import timezone
 from django.db.models import Q
@@ -13,16 +12,11 @@ from .utils import(
 )
 
 
-logger = logging.getLogger(__name__)
-
-
 @shared_task
 def complete_ongoing_appointments():
     """
     Background task that automaically marks ONGOING appointments to COMPLETE when they are due.
     """
-    logger.warning("Running 'complete_ongoing_appointments' via CELERY BEAT")
-
     now = timezone.localtime(timezone.now())  # Italy time!
     
     date_today = now.date()
@@ -39,8 +33,6 @@ def send_appointment_reminders():
     """
     Background task that automaically sends reminder emails for appointments 1 hour before they are due.
     """
-    logger.warning("Running 'send_appointment_reminders' via CELERY BEAT")
-
     now = timezone.localtime(timezone.now())  # Italy time!
 
     date_today = now.date()
