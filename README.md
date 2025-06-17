@@ -22,6 +22,8 @@ The tech stack uses **React** (Vite) frontend, **Django** backend, and relies on
 - [Table of Contents](#table-of-contents)
 - [Features](#features)
 - [Architecture](#architecture)
+- [API Documentation](#api-documentation)
+- [Live Deployment](#live-deployment)
 - [Quickstart](#quickstart)
   - [Requirements](#requirements)
   - [Development Workflow](#development-workflow)
@@ -63,55 +65,28 @@ The tech stack uses **React** (Vite) frontend, **Django** backend, and relies on
 
 ```mermaid
 flowchart TD
-    enduser([User<br/>Browser/Mobile])
+    US([User <br> Browser/Mobile])
+    FE[Frontend: Nginx <br> Container: frontend]
+    BE[Backend: Django <br> Container: backend]
+    RD[(Redis Broker <br> Container: redis)]
+    PG[(Postgres DB: <br> Container: db)]
 
-    FE[Frontend: Nginx<br/>Container: frontend]
-    subgraph Frontend Container
-        FE
+    subgraph Celery Services
+        CW[[Celery Worker <br> Container: celery]]
+        CB[[Celery Beat  <br> Container: celery-beat]]
     end
 
-    BE[Backend: Django<br/>Container: backend]
-    subgraph Backend Container
-        BE
-    end
+    US -- React SPA --> FE
+    FE -- RESTful API  --> BE
 
-    RD[(Redis Broker<br/>Container: redis)]
-    PG[(Postgres DB<br/>Container: db)]
-    subgraph Infra Containers
-        RD
-        PG
-    end
-
-    CW[[Celery Worker<br/>Container: celery]]
-    CB[[Celery Beat<br/>Container: celery-beat]]
-    subgraph Celery Containers
-        CW
-        CB
-    end
-
-    %% Frontend
-    FE -- Serves React SPA --> enduser
-
-    %% Core Request/Response Flow
-    enduser -- HTTPS --> FE
-    FE -- HTTPS /API --> BE
-    BE -- Serves Rest API --> FE
-
-    %% Backend/DB/Cache
-    BE -- ORM (SQL) --> PG
-
-    %% Celery Worker process
-    CW -- ORM (SQL for task logic) --> PG
-    CW -- Pulls tasks --> RD
-
-    %% Celery Beat Schedules
-    CB -- Enqueues jobs --> RD
-
-    %% Relationships
     BE -.-> CW
     BE -.-> CB
 
-    %% Color / Service Types
+    BE -- ORM (SQL) --> PG
+    CW -- ORM (SQL for task logic) --> PG
+    CW -- Pulls tasks --> RD
+    CB -- Enqueues jobs --> RD
+
     style FE fill:#008000
     style BE fill:#092e20
     style RD fill:#D82C20
@@ -119,6 +94,35 @@ flowchart TD
     style CW fill:#64913D
     style CB fill:#64913D
 ```
+
+## API Documentation
+
+BarberManager offers extensive, interactive API documentation using **Swagger UI**.  
+You can explore all backend endpoints, models, request/response formats, and try out live requests directly in your browser.
+
+➡️ **[View the API Documentation here.](https://barbermanager.creepymemes.com/api/)**  
+Or click the green "Swagger UI" badge at the top of this README.
+
+Typical API documentation features:
+
+- **Visual interface** for exploring all available endpoints and methods.
+- **Live "Try it Out"** feature for authenticating and testing API calls.
+- **Model schemas** and required/optional field details for each operation.
+
+This documentation is always up-to-date with the deployed backend and is a helpful resource for frontend developers, integrators, and testers.
+
+## Live Deployment
+
+You can try out BarberManager yourself on our live, production website!
+
+➡️ **[Open the Live Website](https://barbermanager.creepymemes.com/)**  
+Or click the orange "BarberManager" badge at the top of this README.
+
+The live deployment features:
+
+- The latest available version, always kept up to date through automated CI/CD.
+- Full access to the web app's core features as described in this documentation.
+- A real working environment for testing, demos, or exploring as a developer, admin, or client.
 
 ## Quickstart
 
