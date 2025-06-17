@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework_simplejwt.token_blacklist',
     'rest_framework',
+    'drf_spectacular',
     'corsheaders',
     'api',
 ]
@@ -46,6 +47,7 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
     'EXCEPTION_HANDLER': 'api.utils.customExceptionHandler',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 # Setting up JWT token lifetime
@@ -144,6 +146,23 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'api.tasks.send_appointment_reminders',
         'schedule': crontab(minute='*/1'),
     },
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Barber Manager API",
+    "DESCRIPTION": "Manage barbershop scheduling, reviews, and users.",
+    "VERSION": "1.0.0",
+    "SWAGGER_UI_SETTINGS": '''{
+        deepLinking: true,
+        urls: [
+            {url: "/api/schema/", name: "v1"},
+        ],
+        presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+        layout: "StandaloneLayout",
+    }''',
+
+    "SERVERS": [{"url": "/api"}],
+    "SERVE_INCLUDE_SCHEMA": False,
 }
 
 # WARNING: this is only for development
