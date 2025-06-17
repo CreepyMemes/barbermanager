@@ -5,11 +5,11 @@ What to do:
 
 Important:
     - add image uploading capability
-    - add change email functionality in PATCH /profile endpoint, that automatically sends email verification
+    - add admin get all clients and barbers endpoins
+    - add celery tasks testing, just by calling the methods, can't test celery service
 
 Proposed:
-    - add endpoint for coverage html
-    - see if it's possible to automatically test celery tasks
+    - add change email functionality in PATCH /profile endpoint, that automatically sends email verification
     - add return json object after creation or update for anything  https://openwebui.aspire.local/c/9d5f8f49-9f18-4937-ba9e-c7839bfb9b70
 
 -----------------------------------------------------------------------------------------------------------------------------------------
