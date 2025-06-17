@@ -12,7 +12,7 @@ Proposed:
     - see if it's possible to automatically test celery tasks
     - add return json object after creation or update for anything  https://openwebui.aspire.local/c/9d5f8f49-9f18-4937-ba9e-c7839bfb9b70
 
-
+-----------------------------------------------------------------------------------------------------------------------------------------
 2. Frontend:
 
 Important:
@@ -30,6 +30,7 @@ Important:
 Proposed:
     - ...
 
+-----------------------------------------------------------------------------------------------------------------------------------------
 3. Docs:
 
 Important:
