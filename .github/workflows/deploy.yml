@@ -9,14 +9,6 @@ on:
       - 'todo.txt'
       - 'README.md'
 
-  pull_request:
-    branches:
-      - master
-    paths-ignore:
-      - 'docs/**'
-      - 'todo.txt'
-      - 'README.md'
-
 jobs:
   test:
     runs-on: ubuntu-latest
