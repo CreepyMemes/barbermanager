@@ -4,10 +4,8 @@ on:
   pull_request:
     branches:
       - master
-    paths-ignore:
-      - 'docs/**'
-      - 'todo.txt'
-      - 'README.md'
+    paths:
+      - 'backend/**'
 
 jobs:
   test:
