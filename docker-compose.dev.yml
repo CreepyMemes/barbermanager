@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:15
+    image: postgres:15-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
@@ -11,7 +11,7 @@ services:
       - '5432:5432' # Exposed for DBeaver database analysis
 
   redis:
-    image: redis:7
+    image: redis:7-alpine
     ports:
       - '6379:6379'
 
