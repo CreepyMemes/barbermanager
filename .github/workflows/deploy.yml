@@ -22,5 +22,5 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd ${{ secrets.PRODUCTION_PATH }}
-            echo "${{ secrets.ENV_PROD_BACKEND_CONTENT }}" > ./backend/.env.prod
+            echo "${{ secrets.ENV_CONTENT }}" > .env
             ./deploy.sh
