@@ -17,7 +17,7 @@ jobs:
 
       - name: Prepare backend env file
         run: |
-          echo "${{ secrets.ENV_PROD_BACKEND_CONTENT }}" > ./backend/.env.prod
+          echo "${{ secrets.ENV_CONTENT }}" > .env
 
       - name: Run backend tests
         run: docker compose -f docker-compose.prod.yml run --rm backend python manage.py test api
