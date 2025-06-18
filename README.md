@@ -204,12 +204,15 @@ DJANGO_ALLOWED_HOSTS=*
 DJANGO_SETTINGS_MODULE=config.settings.dev # change .dev or .prod
 
 # Database config
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
 POSTGRES_DB=mydb
 POSTGRES_USER=myuser
 POSTGRES_PASSWORD=mypassword
 
 # Email config
 EMAIL_HOST='smtp.server.com'
+EMAIL_PORT=587
 EMAIL_HOST_USER='your.stmp@email.com'
 EMAIL_HOST_PASSWORD='your stmp pass here'
 ```
