@@ -207,6 +207,9 @@ DJANGO_SETTINGS_MODULE=config.settings.dev # change .dev or .prod
 POSTGRES_DB=mydb
 POSTGRES_USER=myuser
 POSTGRES_PASSWORD=mypassword
+DATABASE=postgres
+SQL_HOST=db
+SQL_PORT=5432
 
 # Email config
 EMAIL_HOST='smtp.server.com'
