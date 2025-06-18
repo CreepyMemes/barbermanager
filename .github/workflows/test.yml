@@ -20,4 +20,4 @@ jobs:
           echo "${{ secrets.ENV_PROD_BACKEND_CONTENT }}" > ./backend/.env.prod
 
       - name: Run backend tests
-        run: docker compose -f docker-compose.prod.yml run --rm backend sh -c "python manage.py test api"
+        run: docker compose -f docker-compose.prod.yml run --rm backend python manage.py test api
