@@ -4,9 +4,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_DB=mydb
-      - POSTGRES_USER=myuser
-      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     mem_limit: 100m
 
   redis:
@@ -18,11 +18,12 @@ services:
       context: ./backend
       dockerfile: Dockerfile.prod
     env_file:
-      - ./backend/.env.prod
+      - .env
     environment:
       - RUN_MIGRATIONS=1
     depends_on:
       - db
+      - redis
     ports:
       - '127.0.0.1:7001:8000'
     mem_limit: 100m
@@ -31,34 +32,32 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.prod
-    command: celery -A config worker -l info --concurrency=1
-    volumes:
-      - ./backend:/app
     env_file:
-      - ./backend/.env.prod
+      - .env
     depends_on:
       - db
       - redis
+    command: celery -A config worker -l info --concurrency=1
     mem_limit: 200m
 
   celery-beat:
     build:
       context: ./backend
       dockerfile: Dockerfile.prod
-    command: celery -A config beat -l info
-    volumes:
-      - ./backend:/app
     env_file:
-      - ./backend/.env.prod
+      - .env
     depends_on:
       - db
       - redis
+    command: celery -A config beat -l info
     mem_limit: 100m
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile.prod
+    env_file:
+      - .env
     ports:
       - '127.0.0.1:3001:80'
     mem_limit: 50m

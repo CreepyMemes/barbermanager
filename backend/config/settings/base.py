@@ -93,12 +93,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database settings
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('SQL_ENGINE', 'django.db.backends.postgresql'),
-        'NAME': os.environ['SQL_DATABASE'],
-        'USER': os.environ['SQL_USER'],
-        'PASSWORD': os.environ['SQL_PASSWORD'],
-        'HOST': os.getenv('SQL_HOST', 'localhost'),
-        'PORT': os.getenv('SQL_PORT', '5432'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'HOST': 'db',
+        'PORT': '5432',
+        'NAME': os.environ['POSTGRES_DB'],
+        'USER': os.environ['POSTGRES_USER'],
+        'PASSWORD': os.environ['POSTGRES_PASSWORD'],
     }
 }
 
@@ -123,16 +123,18 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Django's email service settings
-EMAIL_BACKEND = os.environ['EMAIL_BACKEND']
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 EMAIL_HOST = os.environ['EMAIL_HOST']
-EMAIL_PORT = int(os.environ['EMAIL_PORT'])
-EMAIL_USE_TLS = bool(int(os.environ['EMAIL_USE_TLS']))
 EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER'] 
 EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD'] 
 
 # Celery tasks settings
-CELERY_BROKER_URL = os.environ['CELERY_BROKER_URL'] 
-CELERY_RESULT_BACKEND =os.environ['CELERY_RESULT_BACKEND'] 
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_WORKER_STATE_DB = '/tmp/celeryworker.state'
+CELERY_BEAT_SCHEDULE_FILENAME = '/tmp/celerybeat.schedule'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
