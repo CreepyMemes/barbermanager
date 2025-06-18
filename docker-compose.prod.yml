@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:15
+    image: postgres:15-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
@@ -10,7 +10,7 @@ services:
     mem_limit: 100m
 
   redis:
-    image: redis:7
+    image: redis:7-alpine
     mem_limit: 100m
 
   backend:
