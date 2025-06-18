@@ -32,7 +32,7 @@ The tech stack uses **React** (Vite) frontend, **Django** backend, and relies on
     - [(Optional) Reset dev environment](#optional-reset-dev-environment)
 - [Development Guide](#development-guide)
   - [Backend (Django)](#backend-django)
-    - [Environment setup](#environment-setup)
+    - [Configuration](#configuration)
     - [Dependencies](#dependencies)
     - [Migrations](#migrations)
     - [SuperUser](#superuser)
@@ -193,17 +193,25 @@ The Django dev server reloads automatically on code changes.
 > docker compose -f docker-compose.dev.yml exec -it backend sh
 > ```
 
-#### Environment setup
+#### Configuration
 
-Create `.env.local` for SMTP/email:
+Create a new `.env` file in root directory, and enter your credentials there, follow the example at `.env.example`:
 
 ```sh
-EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
+# Django config
+SECRET_KEY=your-super-secret-key-here
+DJANGO_ALLOWED_HOSTS=*
+DJANGO_SETTINGS_MODULE=config.settings.dev # change .dev or .prod
+
+# Database config
+POSTGRES_DB=mydb
+POSTGRES_USER=myuser
+POSTGRES_PASSWORD=mypassword
+
+# Email config
 EMAIL_HOST='smtp.server.com'
-EMAIL_PORT=587
-EMAIL_USE_TLS=1
-EMAIL_HOST_USER='your@email.com'
-EMAIL_HOST_PASSWORD='your-password'
+EMAIL_HOST_USER='your.stmp@email.com'
+EMAIL_HOST_PASSWORD='your stmp pass here'
 ```
 
 #### Dependencies
