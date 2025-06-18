@@ -20,7 +20,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile.dev
     env_file:
-      - .env
+      - .env.dev
     environment:
       - RUN_MIGRATIONS=1
     depends_on:
@@ -37,7 +37,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile.dev
     env_file:
-      - .env
+      - .env.dev
     volumes:
       - ./backend:/app
     depends_on:
@@ -50,7 +50,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile.dev
     env_file:
-      - .env
+      - .env.dev
     volumes:
       - ./backend:/app
     depends_on:
