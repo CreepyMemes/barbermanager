@@ -18,7 +18,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile.prod
     env_file:
-      - .env
+      - .env.prod
     environment:
       - RUN_MIGRATIONS=1
     depends_on:
@@ -33,7 +33,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile.prod
     env_file:
-      - .env
+      - .env.prod
     depends_on:
       - db
       - redis
@@ -45,7 +45,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile.prod
     env_file:
-      - .env
+      - .env.prod
     depends_on:
       - db
       - redis
@@ -57,7 +57,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.prod
     env_file:
-      - .env
+      - .env.prod
     ports:
       - '127.0.0.1:3001:80'
     mem_limit: 50m
