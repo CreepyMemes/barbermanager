@@ -167,7 +167,7 @@ cd barbermanager
 #### Build and launch all containers
 
 ```bash
-docker compose -f docker-compose.dev.yml up --build
+docker compose -f docker-compose.dev.yml --env-file .env.dev up --build
 ```
 
 - Frontend: [http://localhost:3000](http://localhost:3000)
@@ -190,7 +190,7 @@ The Django dev server reloads automatically on code changes.
 > by running the following command:
 >
 > ```bash
-> docker compose -f docker-compose.dev.yml exec -it backend sh
+> docker compose -f docker-compose.dev.yml --env-file .env.dev exec -it backend sh
 > ```
 
 #### Configuration
@@ -273,7 +273,7 @@ Vite provides automatic hot-reloading when frontend files are modified.
 > by running the following command:
 >
 > ```bash
-> docker compose -f docker-compose.dev.yml exec -it frontend sh
+> docker compose -f docker-compose.dev.yml --env-file .env.dev exec -it frontend sh
 > ```
 
 #### Dependencies
