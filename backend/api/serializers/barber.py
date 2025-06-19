@@ -3,17 +3,18 @@ from ..utils import (
     BarberValidationMixin,
     UsernameValidationMixin,
     ServiceValidationMixin,
-    GetServicesMixin,
-    GetReviewsMixin,
+    GetBarbersMixin,
     GetAvailabilitiesMixin,
+    GetServicesMixin,
     GetAppointmentsMixin,
+    GetReviewsMixin,
 )
 from ..models import (
     Service,
 )
 
 
-class GetBarberProfileSerializer(BarberValidationMixin, GetServicesMixin, GetReviewsMixin, serializers.Serializer):
+class GetBarberProfileSerializer(BarberValidationMixin, GetBarbersMixin, serializers.Serializer):
     """
     Returns all the public information related to the profile of a given barber
     """
@@ -23,19 +24,7 @@ class GetBarberProfileSerializer(BarberValidationMixin, GetServicesMixin, GetRev
     
     def to_representation(self, validated_data):
         barber = validated_data['barber']
-        services = self.get_services_barber(barber.id)
-        reviews = self.get_reviews_barber(barber.id)
-        return {
-            'id': barber.id,
-            'role': barber.role,
-            'username': barber.username,
-            'email': barber.email,
-            'name': barber.name,
-            'surname': barber.surname,
-            'description': barber.description,
-            'services': services,
-            'reviews': reviews,
-        }
+        return {'profile': self.get_barber_private(barber)}
 
 
 class DeleteBarberProfileSerializer(BarberValidationMixin, serializers.Serializer):
@@ -98,11 +87,9 @@ class GetBarberAvailabilitiesSerializer(BarberValidationMixin, GetAvailabilities
         attrs = self.validate_barber(attrs)
         return attrs
     
-    
     def to_representation(self, validated_data):
         barber = validated_data['barber']
-        availabilities = self.get_availabilities_barber(barber.id)
-        return {'availability': availabilities}
+        return {'availabilities': self.get_availabilities_public(barber.id)}
 
 
 class GetBarberServicesSerializer(BarberValidationMixin, GetServicesMixin, serializers.Serializer):
@@ -115,8 +102,7 @@ class GetBarberServicesSerializer(BarberValidationMixin, GetServicesMixin, seria
     
     def to_representation(self, validated_data):
         barber = validated_data['barber']
-        services = self.get_services_barber(barber.id)
-        return {'services': services}
+        return {'services': self.get_services_public(barber.id)}
 
 
 class CreateBarberServiceSerializer(BarberValidationMixin, ServiceValidationMixin, serializers.Serializer):
@@ -183,7 +169,7 @@ class DeleteBarberServiceSerializer(BarberValidationMixin, ServiceValidationMixi
 
 class GeBarberAppointmentsSerializer(BarberValidationMixin, GetAppointmentsMixin, serializers.Serializer):
     """
-    Barber only: Returns all ONGOING appointments for a given barber
+    Barber only: Returns all appointments for a given barber
     """
     def validate(self, attrs):
         attrs = self.validate_barber(attrs)
@@ -191,8 +177,7 @@ class GeBarberAppointmentsSerializer(BarberValidationMixin, GetAppointmentsMixin
 
     def to_representation(self, validated_data):
         barber = validated_data['barber']
-        appointments = self.get_appointments_barber(barber.id)
-        return {'appointments': appointments}
+        return {'appointments': self.get_appointments_public(barber_id=barber.id)}
     
 
 class GetBarberReviewsSerializer(BarberValidationMixin, GetReviewsMixin, serializers.Serializer):
@@ -205,5 +190,4 @@ class GetBarberReviewsSerializer(BarberValidationMixin, GetReviewsMixin, seriali
 
     def to_representation(self, validated_data):
         barber = validated_data['barber']
-        reviews = self.get_reviews_barber(barber.id)
-        return {'reviews': reviews}
+        return {'reviews': self.get_reviews_public(barber_id=barber.id)}

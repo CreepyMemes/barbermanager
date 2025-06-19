@@ -5,7 +5,6 @@ from django.core import mail
 from rest_framework.test import APITestCase
 from rest_framework import status
 from api.models import (
-    User,
     Admin,
     Barber,
     Client,
@@ -24,23 +23,19 @@ class AdminProfileTest(APITestCase):
     def setUp(self):
         # Endpoint URLs
         self.profile_url = reverse("get_admin_profile")
-        self.invite_url = reverse("invite_barber")  # POST
-        # Delete barber, create availability, manage availability use arg URLs
-        self.statistics_url = reverse("get_admin_statistics")
+        self.invite_url = reverse("invite_barber")
+        self.get_all_barbers = reverse("get_all_barbers")
+        self.get_all_clients = reverse("get_all_clients")
         self.all_appointments_url = reverse("get_all_appointments")
+
         # Create test admin
         self.admin_password = "AdminPass321!"
-        self.admin = Admin.objects.create_user(
-            username="adminuser",
+        self.admin_username = "adminuser"
+        self.admin = Admin.objects.create_superuser(
+            username=self.admin_username,
             password=self.admin_password,
-            email="admin@email.com",
-            is_active=True,
         )
-        self.admin.refresh_from_db()
-        self.admin.role = Roles.ADMIN.value
-        self.admin.is_staff = True
-        self.admin.is_superuser = True
-        self.admin.save()
+
         # Create a sample barber (active) and one inactive for some tests
         self.barber = Barber.objects.create_user(
             username="barby",
@@ -58,6 +53,7 @@ class AdminProfileTest(APITestCase):
             surname="Barb",
             is_active=False,
         )
+
         # Make a client
         self.client_user = Client.objects.create_user(
             username="clnt",
@@ -91,47 +87,167 @@ class AdminProfileTest(APITestCase):
 
     def test_get_admin_profile_success(self):
         """
-        Admin can fetch their profile, and sees all barbers, appointments, and reviews.
+        Admin can fetch their profile, and sees all statistics on their dashboard.
         """
-        # Setup some barbers, appointments, reviews to show up in list
-        Service.objects.create(barber=self.barber, name="Haircut", price=Decimal("22"))
-        appt = Appointment.objects.create(
+        service_1 = Service.objects.create(
+            barber=self.barber, 
+            name="Haircut", 
+            price=Decimal("5.5")
+        )
+
+        service_2 = Service.objects.create(
+            barber=self.barber, 
+            name="Buzz", 
+            price=Decimal("10.00")
+        )
+
+        # Create cancelled appointment
+        appointment_1 = Appointment.objects.create(
             client=self.client_user,
             barber=self.barber,
             date=datetime.date.today(),
-            slot=datetime.time(12, 30),
+            slot=datetime.time(12, 0),
+            status=AppointmentStatus.CANCELLED.value,
+        )
+        appointment_1.services.add(service_1, service_2)
+
+        # Create appointment same day as cancelled one
+        appointment_2 = Appointment.objects.create(
+            client=self.client_user, 
+            barber=self.barber,
+            date=datetime.date.today() ,
+            slot=datetime.time(14, 0),
+            status=AppointmentStatus.COMPLETED.value,
+        )
+        appointment_2.services.add(service_1, service_2)
+
+        # Create completed appointment on another day
+        appointment_3 = Appointment.objects.create(
+            client=self.client_user, 
+            barber=self.barber,
+            date=datetime.date.today() + datetime.timedelta(days=1), 
+            slot=datetime.time(14, 0),
+            status=AppointmentStatus.COMPLETED.value,
+        )
+        appointment_3.services.add(service_2)
+        
+        # Create ongoing appointment on another day
+        appointment_4 = Appointment.objects.create(
+            client=self.client_user, 
+            barber=self.barber,
+            date=datetime.date.today() + datetime.timedelta(days=2),
+            slot=datetime.time(15, 0),
             status=AppointmentStatus.ONGOING.value,
         )
+        appointment_4.services.add(service_2)
+        
+        # Create reveiw for completed appointment
         Review.objects.create(
-            appointment=appt,
-            client=self.client_user,
-            barber=self.barber,
-            rating=4,
-            comment="Nice cut",
+            appointment=appointment_2, 
+            client=self.client_user, 
+            barber=self.barber, 
+            rating=5, 
+            comment="top!"
         )
-        self.login_as_admin()
-        resp = self.client.get(self.profile_url)
-        self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        self.assertEqual(resp.data["id"], self.admin.id)
-        self.assertEqual(resp.data["role"], Roles.ADMIN.value)
-        # "barbers" is a list with detailed barbers, including the test ones
-        barber_ids = [b["id"] for b in resp.data["barbers"]]
-        self.assertIn(self.barber.id, barber_ids)
-        # "appointments" and "reviews" lists exist
-        self.assertTrue(isinstance(resp.data["appointments"], list))
-        self.assertTrue(isinstance(resp.data["reviews"], list))
 
+        # Create another client
+        client_1 = Client.objects.create_user(
+            username="testerclient",
+            password="sugomadic",
+            email="clients@xxx.com",
+            name="Bomber",
+            surname="Romber",
+            is_active=True,
+        )
+
+        # Create another barber
+        barber_1 = Barber.objects.create_user(
+            username="testerbarber",
+            password="ligmabals",
+            email="barbers@xxx.com",
+            name="Dudong",
+            surname="Sorcer",
+            is_active=True,
+        )
+
+        # Create appointment by another client
+        appointment_5 = Appointment.objects.create(
+            client=client_1, 
+            barber=barber_1,
+            date=datetime.date.today(),
+            slot=datetime.time(14, 0),
+            status=AppointmentStatus.COMPLETED.value,
+        )
+        appointment_5.services.add(service_2)
+
+        # Create reveiw by another client
+        Review.objects.create(
+            appointment=appointment_5, 
+            client=client_1, 
+            barber=self.barber, 
+            rating=2, 
+            comment="trash..."
+        )
+
+        self.login_as_admin()
+
+        response = self.client.get(self.profile_url)  
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        profile = response.data["profile"]
+        self.assertEqual(profile, self.admin.to_dict())
+        
 
     def test_get_admin_profile_requires_admin(self):
         """
         Only admins can access profile admin endpoint (403/401 otherwise).
         """
         # Not authenticated at all
-        resp = self.client.get(self.profile_url)
-        self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)
+        response = self.client.get(self.profile_url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
         self.login_as_client()
-        resp = self.client.get(self.profile_url)
-        self.assertEqual(resp.status_code, status.HTTP_403_FORBIDDEN)
+        response = self.client.get(self.profile_url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+    def test_get_barbers_list_success(self):
+        """
+        Return a list of all barbers to authenticated admin
+        """
+        self.login_as_admin()
+
+        response = self.client.get(self.get_all_barbers)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+        barbers = response.data["barbers"]
+        self.assertIn(self.barber.to_dict(), barbers)
+        self.assertIn(self.barber_inactive.to_dict(), barbers)
+
+
+    def test_get_clients_list_success(self):
+        """
+        Return a list of all clients to authenticated admin
+        """
+
+        # Create another client
+        client_1 = Client.objects.create_user(
+            username="testerclient",
+            password="sugomadic",
+            email="clients@xxx.com",
+            name="Bomber",
+            surname="Romber",
+            is_active=True,
+        )
+
+        self.login_as_admin()
+
+        response = self.client.get(self.get_all_clients)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        clients = response.data["clients"]
+        self.assertIn(self.client_user.to_dict(), clients)
+        self.assertIn(client_1.to_dict(), clients)
 
 
     def test_invite_barber_success(self):
@@ -272,19 +388,25 @@ class AdminProfileTest(APITestCase):
         """
         Admin can patch date or slots of an availability by id.
         """
-        avail = Availability.objects.create(
-            barber=self.barber, date=datetime.date.today(), slots=["09:30"]
+        availability = Availability.objects.create(
+            barber=self.barber, 
+            date=datetime.date.today(), 
+            slots=["09:30"]
         )
+
         new_slots = ["10:30", "11:30"]
+        new_date = datetime.date.today() + datetime.timedelta(days=1)
+
         self.login_as_admin()
-        url = reverse(
-            "manage_barber_availability",
-            kwargs={"barber_id": self.barber.id, "availability_id": avail.id},
-        )
-        resp = self.client.patch(url, {"slots": new_slots}, format="json")
-        self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        avail.refresh_from_db()
-        self.assertEqual(sorted(avail.slots), sorted(new_slots))
+
+        url = reverse("manage_barber_availability", kwargs={"barber_id": self.barber.id, "availability_id": availability.id})
+        
+        response = self.client.patch(url, {"slots": new_slots, "date": new_date}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+        availability.refresh_from_db()
+        self.assertEqual(availability.date, new_date)
+        self.assertEqual(sorted(availability.slots), sorted(new_slots))
 
 
     def test_update_availability_not_found(self):
@@ -366,48 +488,26 @@ class AdminProfileTest(APITestCase):
         self.assertIn("does not exist", str(resp.data["detail"]))
 
 
-    def test_admin_statistics(self):
-        """
-        Admin receives correct statistics (appointments, reviews, revenue, average rating).
-        """
-        # Populate system with data
-        service = Service.objects.create(barber=self.barber, name="Buzz", price=Decimal("35.00"))
-        appt1 = Appointment.objects.create(
-            client=self.client_user, barber=self.barber,
-            date=datetime.date.today(), slot=datetime.time(14, 0),
-            status=AppointmentStatus.COMPLETED.value
-        )
-        appt1.services.add(service)
-        appt2 = Appointment.objects.create(
-            client=self.client_user, barber=self.barber,
-            date=datetime.date.today(), slot=datetime.time(15, 0),
-            status=AppointmentStatus.CANCELLED.value
-        )
-        # Only COMPLETED with actual service counts for revenue
-        Review.objects.create(appointment=appt1, client=self.client_user, barber=self.barber, rating=5, comment="top!")
-        self.login_as_admin()
-        resp = self.client.get(self.statistics_url)
-        self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        stats = resp.data["statistics"]
-        self.assertEqual(stats["total_appointments"], 2)
-        self.assertEqual(float(stats["total_revenue"]), 35.0)
-        self.assertEqual(stats["total_reviews"], 1)
-        self.assertAlmostEqual(float(stats["average_rating"]), 5.0, places=1)
-
-
     def test_admin_get_all_appointments(self):
         """
         Admin can fetch all system appointments: should include all records.
         """
-        s1 = Service.objects.create(barber=self.barber, name="Trim", price=20)
-        a1 = Appointment.objects.create(
+        service_1 = Service.objects.create(
+            barber=self.barber, 
+            name="Trim", 
+            price=20
+        )
+        appointment_1 = Appointment.objects.create(
             client=self.client_user, barber=self.barber,
             date=datetime.date.today(), slot=datetime.time(9, 0),
             status=AppointmentStatus.COMPLETED.value
         )
-        a1.services.add(s1)
+        appointment_1.services.add(service_1)
+
         self.login_as_admin()
-        resp = self.client.get(self.all_appointments_url)
-        self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        self.assertIn("appointments", resp.data)
-        self.assertTrue(any(a["id"] == a1.id for a in resp.data["appointments"]))
+
+        response = self.client.get(self.all_appointments_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertIn("appointments", response.data)
+        self.assertTrue(any(a["id"] == appointment_1.id for a in response.data["appointments"]))

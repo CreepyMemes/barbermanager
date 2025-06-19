@@ -5,31 +5,33 @@ from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
 from rest_framework import status
 from ..serializers import (
-    GetBarberListSerializer,
+    GetBarbersPublicSerializer,
     GetBarberAvailabilitiesSerializer,
     GetBarberServicesSerializer,
-    GetBarberProfileSerializer,
+    GetBarberProfilePublicSerializer,
+    GetClientProfilePublicSerializer
 )
 
 
 @extend_schema(
-    responses={200: GetBarberListSerializer},
+    responses={200: GetBarbersPublicSerializer},
     description="Return a list of all active barbers.",
 )
 @api_view(['GET'])
 @permission_classes([AllowAny])
 @authentication_classes([])
 @parser_classes([JSONParser]) 
-def get_barbers_list(request):
+def get_barbers_public(request):
     """
     Return a list of all active barbers
     """
-    serializer = GetBarberListSerializer(instance={}) 
+    serializer = GetBarbersPublicSerializer(data={}, instance={}) 
+    serializer.is_valid(raise_exception=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @extend_schema(
-    responses={200: GetBarberProfileSerializer},
+    responses={200: GetBarberProfilePublicSerializer},
     description="Get all public profile information for a barber. (Public)",
 )
 @api_view(['GET'])
@@ -40,7 +42,24 @@ def get_barber_profile_public(request, barber_id):
     """
     Get all services for the given barber.
     """
-    serializer = GetBarberProfileSerializer(data={}, context={'barber_id': barber_id})
+    serializer = GetBarberProfilePublicSerializer(data={}, context={'barber_id': barber_id})
+    serializer.is_valid(raise_exception=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@extend_schema(
+    responses={200: GetClientProfilePublicSerializer},
+    description="Get all public profile information for a client. (Public)",
+)
+@api_view(['GET'])
+@permission_classes([AllowAny])
+@authentication_classes([]) 
+@parser_classes([JSONParser]) 
+def get_client_profile_public(request, client_id):
+    """
+    Get all services for the given client.
+    """
+    serializer = GetClientProfilePublicSerializer(data={}, context={'client_id': client_id})
     serializer.is_valid(raise_exception=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 

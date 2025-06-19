@@ -6,6 +6,7 @@ from ..utils import (
     UsernameValidationMixin,
     AppointmentValidationMixin,
     ReviewValidationMixin,
+    GetClientsMixin,
     GetAppointmentsMixin,
     GetReviewsMixin,
     phone_number_validator,
@@ -18,9 +19,9 @@ from ..models import (
 )
 
 
-class GetClientProfileSerializer(ClientValidationMixin, GetAppointmentsMixin, GetReviewsMixin, serializers.Serializer):
+class GetClientProfileSerializer(ClientValidationMixin, GetClientsMixin, serializers.Serializer):
     """
-    Returns all the information related the profile of a given client
+    Returns all the information related to the profile of a given client
     """
     def validate(self, attrs):
         attrs = self.validate_client(attrs)
@@ -28,19 +29,7 @@ class GetClientProfileSerializer(ClientValidationMixin, GetAppointmentsMixin, Ge
 
     def to_representation(self, validated_data):
         client = validated_data['client']
-        appointments = self.get_appointments_client(client.id)
-        reviews = self.get_reviews_client(client.id)
-        return {
-            'id': client.id,
-            'role': client.role,
-            'username': client.username,
-            'email': client.email,
-            'phone_number': client.phone_number,
-            'name': client.name,
-            'surname': client.surname,
-            'appointments': appointments,
-            'reviews': reviews,  
-        }
+        return {'profile': self.get_client_private(client) }
 
 
 class UpdateClientProfileSerializer(ClientValidationMixin, UsernameValidationMixin, serializers.Serializer):
@@ -105,8 +94,7 @@ class GetClientAppointmentsSerializer(ClientValidationMixin, GetAppointmentsMixi
     
     def to_representation(self, validated_data):
         client = validated_data['client']
-        appointments = self.get_appointments_client(client.id)
-        return {'appointments': appointments}
+        return {'appointments': self.get_appointments_public(client_id=client.id, show_all=True)}
     
 
 class CreateClientAppointmentSerializer(ClientValidationMixin, BarberValidationMixin, AppointmentValidationMixin, serializers.Serializer):
@@ -170,8 +158,7 @@ class GetClientReviewsSerializer(ClientValidationMixin, GetReviewsMixin, seriali
 
     def to_representation(self, validated_data):
         client = validated_data['client']
-        reviews = self.get_reviews_client(client.id)
-        return {'reviews': reviews}
+        return {'reviews': self.get_reviews_public(client_id=client.id)}
 
 
 class CreateClientReviewSerializer(ClientValidationMixin, ReviewValidationMixin, serializers.Serializer):
