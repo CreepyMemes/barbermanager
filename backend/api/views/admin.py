@@ -13,12 +13,13 @@ from ..utils import (
 )
 from ..serializers import (
     GetAdminProfileSerializer,
+    GetAllBarbersSerializer,
+    GetAllClientsSerializer,
     InviteBarberSerializer,
     DeleteBarberSerializer,
     CreateBarberAvailabilitySerializer,
     UpdateBarberAvailabilitySerializer,
     DeleteBarberAvailabilitySerializer,
-    GetAdminStatisticsSerializer,
     GetAllAppointmentsSerializer,
 )
 
@@ -35,6 +36,54 @@ def get_admin_profile(request):
     Admin only: Gets all related profile information for authenticated admin.
     """
     serializer = GetAdminProfileSerializer(data={}, context={'admin_id': request.user})
+    serializer.is_valid(raise_exception=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@extend_schema(
+    responses={200: GetAllBarbersSerializer},
+    description="Admin only: Returns all barbers registered and their data .",
+)
+@api_view(['GET'])
+@permission_classes([IsAdminRole])
+@parser_classes([JSONParser]) 
+def get_all_barbers(request):
+    """
+    Admin only: Returns all barbers registered and their data 
+    """
+    serializer = GetAllBarbersSerializer(data={}, instance={}) 
+    serializer.is_valid(raise_exception=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@extend_schema(
+    responses={200: GetAllClientsSerializer},
+    description="Admin only: Returns all clients registered and their data .",
+)
+@api_view(['GET'])
+@permission_classes([IsAdminRole])
+@parser_classes([JSONParser]) 
+def get_all_clients(request):
+    """
+    Admin only: Returns all clients registered and their data 
+    """
+    serializer = GetAllClientsSerializer(data={}, instance={}) 
+    serializer.is_valid(raise_exception=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@extend_schema(
+    methods=['GET'],
+    responses={200: GetAllAppointmentsSerializer},
+    description="Admin only: Get all appointments present in the system.",
+)
+@api_view(['GET'])
+@permission_classes([IsAdminRole])
+def get_all_appointments(request):
+    """
+    Admin only: Get all appointments present in the system
+    """
+    serializer = GetAllAppointmentsSerializer(data={}, instance={})
     serializer.is_valid(raise_exception=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -136,36 +185,3 @@ def manage_barber_availability(request, barber_id, availability_id):
         serializer.delete() 
         
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-@extend_schema(
-    methods=['GET'],
-    responses={200: GetAdminStatisticsSerializer},
-    description="Admin only: Returns general statistics including appointments, revenue, and reviews.",
-)
-@api_view(['GET'])
-@permission_classes([IsAdminRole])
-def get_admin_statistics(request):
-    """
-    Admin only: Returns general statistics including appointments, revenue, and reviews.
-    """
-    serializer = GetAdminStatisticsSerializer(data={}, context={})
-    serializer.is_valid(raise_exception=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-@extend_schema(
-    methods=['GET'],
-    responses={200: GetAllAppointmentsSerializer},
-    description="Admin only: Get all appointments present in the system.",
-)
-@api_view(['GET'])
-@permission_classes([IsAdminRole])
-def get_all_appointments(request):
-    """
-    Admin only: Get all appointments present in the system
-    """
-    serializer = GetAllAppointmentsSerializer(data={})
-    serializer.is_valid(raise_exception=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
-

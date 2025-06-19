@@ -26,6 +26,7 @@ class ClientProfileTest(APITestCase):
         self.profile_url = reverse("manage_client_profile")
         self.appointments_url = reverse("get_client_appointments")
         self.reviews_url = reverse("get_client_reviews")
+
         self.barber_password = "BarberPass123!"
         self.barber = Barber.objects.create_user(
             username="barberA",
@@ -33,27 +34,23 @@ class ClientProfileTest(APITestCase):
             password=self.barber_password,
             name="BarbName",
             surname="BarbSurname",
-            is_active=True,
         )
-        self.barber.refresh_from_db()
-        self.barber.role = Roles.BARBER.value
-        self.barber.save()
 
-        self.client_password = "ClientPwd123!"
+        self.client_username = "johndoe_"
         self.client_email = "user@abc.com"
+        self.client_password = "ClientPwd123!"
+        self.client_name = "John"
+        self.client_surname = "Doe"
+        self.client_phone_number = "+12025551234"
+        
         self.client_user = Client.objects.create_user(
-            username="john",
+            username=self.client_username,
             email=self.client_email,
             password=self.client_password,
-            name="John",
-            surname="Smith",
-            phone_number="+12025551234",
-            is_active=True,
+            name=self.client_name,
+            surname=self.client_surname,
+            phone_number=self.client_phone_number,
         )
-
-        self.client_user.refresh_from_db()
-        self.client_user.role = Roles.CLIENT.value
-        self.client_user.save()
 
         # For "not-owner" checks
         self.other_client = Client.objects.create_user(
@@ -62,7 +59,6 @@ class ClientProfileTest(APITestCase):
             password="OtherPwd123!",
             name="Jane",
             surname="Doe",
-            is_active=True,
         )
 
     def login_as_client(self):
@@ -81,22 +77,19 @@ class ClientProfileTest(APITestCase):
         token = resp.data["token"]["access_token"]
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
 
-    ### PROFILE TESTS ###
 
     def test_get_profile_success(self):
         """
         Authenticated client can get their full profile including appointments and reviews.
         """
         self.login_as_client()
-        resp = self.client.get(self.profile_url)
-        self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        # Should include the correct fields
-        self.assertEqual(resp.data["id"], self.client_user.id)
-        self.assertEqual(resp.data["username"], self.client_user.username)
-        self.assertEqual(resp.data["email"], self.client_user.email)
-        self.assertEqual(resp.data["phone_number"], self.client_user.phone_number)
-        self.assertIn("appointments", resp.data)
-        self.assertIn("reviews", resp.data)
+
+        response = self.client.get(self.profile_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        profile = response.data["profile"]
+        self.assertEqual(profile, self.client_user.to_dict())
+
 
     def test_get_profile_requires_auth_and_client_role(self):
         """
@@ -109,6 +102,7 @@ class ClientProfileTest(APITestCase):
         self.login_as_barber()
         response = self.client.get(self.profile_url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
 
     def test_update_profile_success_partial(self):
         """
@@ -125,6 +119,7 @@ class ClientProfileTest(APITestCase):
         self.assertEqual(self.client_user.surname, patch["surname"])
         self.assertEqual(self.client_user.phone_number, patch["phone_number"])
 
+
     def test_update_profile_username_unique_constraint(self):
         """
         Username cannot be changed to one in use.
@@ -135,6 +130,7 @@ class ClientProfileTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("taken", str(response.data["detail"]).lower())
 
+
     def test_update_profile_requires_field(self):
         """
         Updating profile with no fields returns validation error.
@@ -143,6 +139,7 @@ class ClientProfileTest(APITestCase):
         resp = self.client.patch(self.profile_url, {}, format="json")
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("must provide at least one field", str(resp.data["detail"]))
+
 
     def test_update_profile_phone_number_invalid(self):
         """
@@ -153,6 +150,7 @@ class ClientProfileTest(APITestCase):
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("phone number must be entered", str(resp.data["phone_number"][0]).lower())
 
+
     def test_delete_profile_success(self):
         """
         Client can delete their profile.
@@ -162,7 +160,6 @@ class ClientProfileTest(APITestCase):
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Client.objects.filter(pk=self.client_user.pk).exists())
 
-    ### APPOINTMENT TESTS ###
 
     def test_list_appointments(self):
         """
@@ -187,6 +184,7 @@ class ClientProfileTest(APITestCase):
         self.assertEqual(len(resp.data["appointments"]), 2)
         self.assertTrue(any(app["id"] == app_1.id for app in resp.data["appointments"]))
 
+
     def test_list_appointments_requires_auth_client(self):
         """
         Only authenticated clients may list appointments.
@@ -196,6 +194,7 @@ class ClientProfileTest(APITestCase):
         self.login_as_barber()
         resp2 = self.client.get(self.appointments_url)
         self.assertEqual(resp2.status_code, status.HTTP_403_FORBIDDEN)
+
 
     def test_create_appointment_success(self):
         """
@@ -221,6 +220,7 @@ class ClientProfileTest(APITestCase):
         self.assertEqual(str(appt.date), str(today))
         self.assertEqual([x.id for x in appt.services.all()], [s1.id, s2.id])
 
+
     def test_create_appointment_requires_barber_exists(self):
         """
         Cannot create appointment with non-existent, inactive, or wrong barber.
@@ -235,6 +235,7 @@ class ClientProfileTest(APITestCase):
         resp = self.client.post(url, data, format="json")
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("does not exist", str(resp.data["detail"]).lower())
+
 
     def test_create_appointment_rejects_conflicts(self):
         """
@@ -264,6 +265,7 @@ class ClientProfileTest(APITestCase):
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("already has an ONGOING appointment".lower(), str(resp.data["detail"]).lower())
 
+
     def test_create_appointment_rejects_wrong_service(self):
         """
         Cannot create appointment with a service not provided by the barber.
@@ -286,6 +288,7 @@ class ClientProfileTest(APITestCase):
         resp = self.client.post(url, data, format="json")
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("does not exist", str(resp.data["detail"]))
+
 
     def test_create_appointment_rejects_if_unavailable(self):
         """
@@ -312,6 +315,7 @@ class ClientProfileTest(APITestCase):
         self.assertEqual(resp2.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("not available", str(resp2.data["detail"]).lower())
 
+
     def test_cancel_appointment_success(self):
         """
         Client can cancel their ONGOING appointment.
@@ -329,6 +333,7 @@ class ClientProfileTest(APITestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         appt.refresh_from_db()
         self.assertEqual(appt.status, AppointmentStatus.CANCELLED.value)
+
 
     def test_cancel_appointment_not_found_or_not_ongoing(self):
         """
@@ -360,7 +365,6 @@ class ClientProfileTest(APITestCase):
         self.assertEqual(resp2.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("does not exist", str(resp2.data["detail"]))
 
-    ### REVIEW TESTS ###
 
     def test_list_reviews(self):
         """
@@ -383,6 +387,7 @@ class ClientProfileTest(APITestCase):
         self.assertTrue(any(r["id"] == rev.id for r in resp.data["reviews"]))
         self.assertEqual(resp.data["reviews"][0]["comment"], "Nice cut!")
 
+
     def test_list_reviews_requires_client_only(self):
         """
         Only clients can list their reviews.
@@ -392,6 +397,7 @@ class ClientProfileTest(APITestCase):
         self.login_as_barber()
         resp2 = self.client.get(self.reviews_url)
         self.assertEqual(resp2.status_code, status.HTTP_403_FORBIDDEN)
+
 
     def test_create_review_success(self):
         """
@@ -414,6 +420,7 @@ class ClientProfileTest(APITestCase):
         self.assertEqual(review.appointment, appt)
         self.assertEqual(review.comment, "Spectacular")
 
+
     def test_create_review_fail_non_completed_appointment(self):
         """
         Cannot review a non-completed appointment.
@@ -430,6 +437,7 @@ class ClientProfileTest(APITestCase):
         resp = self.client.post(url, {"rating": 4, "comment": ""}, format="json")
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("Only COMPLETED appointments can be reviewed", str(resp.data["detail"]))
+
 
     def test_create_review_cannot_duplicate(self):
         """
@@ -451,6 +459,7 @@ class ClientProfileTest(APITestCase):
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("review for the barber", str(resp.data["detail"]))
 
+
     def test_create_review_fail_wrong_appointment(self):
         """
         Can only review your own appointments.
@@ -467,6 +476,7 @@ class ClientProfileTest(APITestCase):
         resp = self.client.post(url, {"rating": 2, "comment": ""}, format="json")
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("does not exist", str(resp.data["detail"]))
+
 
     def test_update_review_success(self):
         """
@@ -489,6 +499,7 @@ class ClientProfileTest(APITestCase):
         self.assertEqual(rev.comment, "Better")
         self.assertIsNotNone(rev.edited_at)
 
+
     def test_update_review_requires_field(self):
         """
         Cannot update a review with no fields specified.
@@ -509,6 +520,7 @@ class ClientProfileTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("at least one field", str(response.data["detail"]))
 
+
     def test_update_review_not_found(self):
         """
         Cannot update a review not owned or not found.
@@ -518,6 +530,7 @@ class ClientProfileTest(APITestCase):
         resp = self.client.patch(url, {"rating": 4}, format="json")
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("does not exist", str(resp.data["detail"]))
+
 
     def test_delete_review_success(self):
         """
@@ -536,6 +549,7 @@ class ClientProfileTest(APITestCase):
         resp = self.client.delete(url)
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Review.objects.filter(pk=rev.id).exists())
+
 
     def test_delete_review_not_found(self):
         """
