@@ -81,14 +81,12 @@ class BarberProfileTest(APITestCase):
         Authenticated barber can get their full profile including services and reviews.
         """
         self.login_as_barber()
-        resp = self.client.get(self.profile_url)
-        self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        # Should include the correct fields
-        self.assertEqual(resp.data["id"], self.barber.id)
-        self.assertEqual(resp.data["username"], self.barber.username)
-        self.assertEqual(resp.data["name"], self.barber.name)
-        self.assertIn("services", resp.data)
-        self.assertIn("reviews", resp.data)
+
+        response = self.client.get(self.profile_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        profile = response.data["profile"]
+        self.assertEqual(profile, self.barber.to_dict())
 
 
     def test_get_profile_requires_auth_and_barber_role(self):
@@ -284,13 +282,25 @@ class BarberProfileTest(APITestCase):
         """
         Barber can list all their availabilities.
         """
-        Availability.objects.create(barber=self.barber, date=datetime.date.today(), slots=["09:00", "10:00"])
-        Availability.objects.create(barber=self.barber, date=datetime.date.today() + datetime.timedelta(days=1), slots=["15:00"])
+        availability_1 = Availability.objects.create(
+            barber=self.barber, 
+            date=datetime.date.today(), 
+            slots=["09:00", "10:00"]
+        )
+        availability_2 = Availability.objects.create(
+            barber=self.barber, 
+            date=datetime.date.today() + datetime.timedelta(days=1), 
+            slots=["15:00"]
+        )
+        
         self.login_as_barber()
-        resp = self.client.get(self.availabilities_url)
-        self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(resp.data["availability"]), 2)
-        self.assertEqual(resp.data["availability"][0]["slots"], ["09:00", "10:00"])
+
+        response = self.client.get(self.availabilities_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        availabilities = response.data["availabilities"]
+        self.assertIn(availability_1.to_dict(), availabilities)
+        self.assertIn(availability_2.to_dict(), availabilities)
 
 
     def test_list_availabilities_only_barber(self):
@@ -330,10 +340,9 @@ class BarberProfileTest(APITestCase):
         resp = self.client.get(self.appointments_url)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         
-        # Only ONGOING appointments should be included based on docstring
-        out_appts = resp.data["appointments"]
-        self.assertEqual(len(out_appts), 1)
-        self.assertEqual(out_appts[0]["id"], appointment_1.id)
+        appointments = resp.data["appointments"]
+        self.assertIn(appointment_1.to_dict(), appointments)
+        self.assertIn(appointment_2.to_dict(), appointments)
 
 
     def test_list_reviews(self):

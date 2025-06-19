@@ -38,15 +38,14 @@ def send_appointment_reminders():
     date_today = now.date()
     time_hour_later = now + timedelta(hours=1)
 
-    # Only get appointments with ONGOING status, for today, for which reminder not sent, whose datetime is within the next hour
-    appointments = Appointment.objects.filter(status=AppointmentStatus.ONGOING.value, reminder_email_sent=False, date=date_today)
+    # Only get appointments with ONGOING and COMPLETED status, for today, for which reminder not sent, whose datetime is within the next hour
+    statuses = [AppointmentStatus.ONGOING.value, AppointmentStatus.COMPLETED.value]
+    appointments = Appointment.objects.filter(status__in=statuses, reminder_email_sent=False, date=date_today)
 
     for appointment in appointments:
         appointment_date = timezone.make_aware(datetime.combine(appointment.date, appointment.slot), timezone.get_current_timezone())
         
-        # logger.warning(f"Checking: appointment id {appointment.id}: now={now} date+slot={appointment_date} 1hr_later={time_hour_later}")
-        
-        if now < appointment_date <= time_hour_later:
+        if (now - timedelta(minutes=10)) < appointment_date <= time_hour_later:
             send_client_reminder_email(appointment.client, appointment.barber, appointment_date)
             send_barber_reminder_email(appointment.barber, appointment.client, appointment_date)
             
