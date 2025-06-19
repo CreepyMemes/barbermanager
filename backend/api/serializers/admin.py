@@ -5,21 +5,20 @@ from ..utils import (
     EmailValidationMixin,
     BarberValidationMixin,
     AvailabilityValidationMixin,
+    GetAdminsMixin,
     GetAppointmentsMixin,
     GetBarbersMixin,
-    GetReviewsMixin,
+    GetClientsMixin,
 )
 from ..models import(
     Barber,
     Availability,
-    Appointment,
-    Review,
 )
 
 
-class GetAdminProfileSerializer(AdminValidationMixin, GetBarbersMixin, GetAppointmentsMixin, GetReviewsMixin, serializers.Serializer):
+class GetAdminProfileSerializer(AdminValidationMixin, GetAdminsMixin, serializers.Serializer):
     """
-    Returns all the information related the profile of a given client
+    Returns all the information related the profile of a given admin
     """
     def validate(self, attrs):
         attrs = self.validate_admin(attrs)
@@ -27,18 +26,32 @@ class GetAdminProfileSerializer(AdminValidationMixin, GetBarbersMixin, GetAppoin
 
     def to_representation(self, validated_data):
         admin = validated_data['admin']
-        barbers = self.get_barbers_admin()
-        appointments = self.get_appointments_admin()
-        reviews = self.get_reviews_admin()
-        return { 
-            'id': admin.id,
-            'role': admin.role,
-            'username': admin.username,
-            'barbers': barbers,
-            'appointments': appointments,
-            'reviews': reviews,
-        }
+        return {'profile': self.get_admin_private(admin) }
 
+
+class GetAllBarbersSerializer(GetBarbersMixin, serializers.Serializer):
+    """
+    Returns all barbers registered and their data 
+    """
+    def to_representation(self, instance):
+        return {'barbers': self.get_barbers_private(show_all=True)}
+
+
+class GetAllClientsSerializer(GetClientsMixin, serializers.Serializer):
+    """
+    Returns all clients registered and their data 
+    """
+    def to_representation(self, instance):
+        return {'clients': self.get_clients_private(show_all=True)}
+
+
+class GetAllAppointmentsSerializer(GetAppointmentsMixin, serializers.Serializer):
+    """
+    Admin only: Returns all appointments registered in the system
+    """
+    def to_representation(self, instance):
+        return {'appointments': self.get_appointments_public(show_all=True)}
+    
 
 class InviteBarberSerializer(EmailValidationMixin, serializers.Serializer):
     """
@@ -143,44 +156,3 @@ class DeleteBarberAvailabilitySerializer(BarberValidationMixin, AvailabilityVali
     def delete(self):
         self.validated_data['availability'].delete()
 
-        
-class GetAdminStatisticsSerializer(serializers.Serializer):
-    """
-    Admin only: Returns general statistics counts, revenue, and average rating. 
-    """
-    def get_total_appointments(self):
-        return Appointment.objects.count()
-    
-    def get_total_revenue(self):
-        revenue = (
-            Appointment.objects.filter(status="COMPLETED")
-            .annotate(price_sum=Sum('services__price'))
-            .aggregate(total=Sum('price_sum'))['total']
-        )
-        return revenue or 0
-    
-    def get_total_reviews(self):
-        return Review.objects.count()
-    
-    def get_average_rating(self):
-        avg = Review.objects.aggregate(avg=Avg('rating'))['avg']
-        return round(avg or 0.0, 2)
-    
-    def to_representation(self, instance):
-        return {
-            'statistics': {
-                'total_revenue': self.get_total_revenue(),
-                'total_appointments': self.get_total_appointments(),
-                'total_reviews': self.get_total_reviews(),
-                'average_rating': self.get_average_rating(),
-            }
-        }
-
-
-class GetAllAppointmentsSerializer(GetAppointmentsMixin, serializers.Serializer):
-    """
-    Admin only: Returns all appointments registered in the system
-    """
-    def to_representation(self, validated_data):
-        appointments = self.get_appointments_admin()
-        return {'appointments': appointments}

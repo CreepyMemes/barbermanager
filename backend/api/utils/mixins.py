@@ -322,141 +322,229 @@ class ReviewValidationMixin:
         
         attrs['review'] = review
         return attrs
-    
 
+
+class GetAdminsMixin:
+    """
+    Mixin for retrieving and serializing Admin models.
+    """
+    def get_admins_queryset(self):
+        """
+        Returns Admin queryset in the system.
+        """
+        return Admin.objects.all()
+    
+    def get_admin_private(self, admin):
+        """
+        Returns all data for a single admin.
+        """
+        return admin.to_dict()
+    
+    def get_admins_private(self):
+        """
+        Returns all admins as full dicts.
+        """
+        return [self.get_admin_private(a) for a in self.get_admins_queryset()]
+    
 
 class GetBarbersMixin:
     """
-    Mixin that provides getter methods to list all barbers for public use or admins.
+    Mixin for retrieving and serializing Barber models.
     """
+    _PUBLIC_EXCLUDES = ['email', 'username', 'availabilities', 'is_active']
+
+    def get_barbers_queryset(self, show_all=False):
+        """
+        Returns Barber queryset in the system.
+        If show_all is True, returns all barbers.
+        """
+        return Barber.objects.filter(is_active=True) if not show_all else Barber.objects.all()
+    
+    def get_barber_public(self, barber):
+        """
+        Returns only the public data for a single barber.
+        """
+        data = barber.to_dict().copy()
+        for field in self._PUBLIC_EXCLUDES:
+            data.pop(field, None)
+        return data
+    
+    def get_barber_private(self, barber):
+        """
+        Returns all data for a single barber.
+        """
+        return barber.to_dict()
+    
+    def get_barbers_private(self, show_all=False):
+        """
+        Returns all barbers as full dicts (all or only active).
+        """
+        return [self.get_barber_private(b) for b in self.get_barbers_queryset(show_all=show_all)]
+    
     def get_barbers_public(self):
-        barbers = Barber.objects.filter(is_active=True)
-        return [{
-            'id': b.id, 
-            'username': b.username, 
-            'name': b.name,
-            'surname': b.surname,
-            'description': b.description
-        } for b in barbers]
-    
-    def get_barbers_admin(self):
-        barbers = Barber.objects.filter()
-        return [{
-            'id': b.id, 
-            'is_active': b.is_active,
-            'username': b.username, 
-            'email': b.email, 
-            'name': b.name,
-            'surname': b.surname,
-            'description': b.description
-        } for b in barbers]
+        """
+        Returns all active barbers as public dicts.
+        """
+        return [self.get_barber_public(b) for b in self.get_barbers_queryset()]
 
 
-class GetAppointmentsMixin:
+class GetClientsMixin:
     """
-    Mixin that provides getter methods for appointments for clients, barbers or admins.
+    Mixin for retrieving and serializing Client models.
     """
-    def get_appointments_client(self, client_id):
-        appointments = Appointment.objects.filter(client_id=client_id)
-        return [{
-            'id': a.id, 
-            'barber_id': a.barber.id,
-            'date': a.date, 
-            'slot': a.slot.strftime("%H:%M"), 
-            'services': [s.id for s in a.services.all()], 
-            'status': a.status,
-            'reminder_email_sent': a.reminder_email_sent,
-        } for a in appointments]
-    
-    def get_appointments_barber(self, barber_id):
-        appointments = Appointment.objects.filter(barber_id=barber_id, status=AppointmentStatus.ONGOING.value)
-        return [{
-            'id': a.id, 
-            'client_full_name': f'{a.client.name} {a.client.surname}', 
-            'date': a.date, 
-            'slot': a.slot.strftime("%H:%M"), 
-            'services': [s.id for s in a.services.all()], 
-            'status': a.status,
-            'reminder_email_sent': a.reminder_email_sent,
-        } for a in appointments]
-    
-    def get_appointments_admin(self):
-        appointments = Appointment.objects.all()
-        return [{
-            'id': a.id, 
-            'client_id': a.client.id, 
-            'barber_id': a.barber.id, 
-            'date': a.date, 
-            'slot': a.slot.strftime("%H:%M"), 
-            'services': [s.id for s in a.services.all()], 
-            'status': a.status,
-            'reminder_email_sent': a.reminder_email_sent,
-        } for a in appointments]
-    
+    _PUBLIC_EXCLUDES = ['email', 'name', 'surname', 'phone_number', 'appointments', 'is_active']
 
-class GetReviewsMixin:
-    """
-    Mixin that provides getter methods for reviews for clients or barbers.
-    """
-    def get_reviews_client(self, client_id):
-        reviews = Review.objects.filter(client_id=client_id).select_related('barber', 'appointment')
-        return [{
-            'id': r.id,
-            'appointment_id': r.appointment.id,
-            'barber_id': r.barber.id,
-            'rating': r.rating,
-            'comment': r.comment,
-            'created_at': r.created_at.strftime('%Y-%m-%d'),
-            'edited_at': r.edited_at.strftime('%Y-%m-%d') if r.edited_at else None
-        } for r in reviews]
+    def get_clients_queryset(self, show_all=False):
+        """
+        Returns Client queryset in the system.
+        If show_all is True, returns all clients.
+        """
+        return Client.objects.filter(is_active=True) if not show_all else Client.objects.all()
     
-    def get_reviews_barber(self, barber_id):
-        reviews = Review.objects.filter(barber_id=barber_id).select_related('client', 'appointment')
-        return [{
-            'id': r.id,
-            'appointment_id': r.appointment.id,
-            'client_full_name': f'{r.client.name} {r.client.surname}', 
-            'rating': r.rating,
-            'comment': r.comment,
-            'created_at': r.created_at.strftime('%Y-%m-%d'),
-            'edited_at': r.edited_at.strftime('%Y-%m-%d') if r.edited_at else None
-        } for r in reviews]
+    def get_client_public(self, client):
+        """
+        Returns only the public data for a single client.
+        """
+        data = client.to_dict().copy()
+        for field in self._PUBLIC_EXCLUDES:
+            data.pop(field, None)
+        return data
     
-    def get_reviews_admin(self):
-        reviews = Review.objects.all().select_related('client', 'barber', 'appointment')
-        return [{
-            'id': r.id, 
-            'appointment_id': r.appointment.id,
-            'client_id': r.client.id, 
-            'barber_id': r.barber.id, 
-            'rating': r.rating,
-            'comment': r.comment,
-            'created_at': r.created_at.strftime('%Y-%m-%d'),
-            'edited_at': r.edited_at.strftime('%Y-%m-%d') if r.edited_at else None
-        } for r in reviews]
-
-
-class GetServicesMixin:
-    """
-    Mixin that provides getter methods for services for barbers.
-    """
-    def get_services_barber(self, barber_id):
-        services = Service.objects.filter(barber_id=barber_id)
-        return [{
-            'id': s.id,
-            'name': s.name, 
-            'price': s.price
-        } for s in services]
+    def get_client_private(self, client):
+        """
+        Returns all data for a single client.
+        """
+        return client.to_dict()
+    
+    def get_clients_private(self, show_all=False):
+        """
+        Returns all clients as full dicts (all or only active).
+        """
+        return [self.get_client_private(b) for b in self.get_clients_queryset(show_all=show_all)]
+    
+    def get_clients_public(self):
+        """
+        Returns all active clients as public dicts.
+        """
+        return [self.get_client_public(b) for b in self.get_clients_queryset()]
     
 
 class GetAvailabilitiesMixin:
     """
-    Mixin that provides getter methods for services for barbers.
+    Mixin for retrieving and serializing Availability models.
     """
-    def get_availabilities_barber(self, barber_id):
-        availabilities = Availability.objects.filter(barber_id=barber_id)
-        return [{
-            'id': a.id, 
-            'date': a.date, 
-            'slots': a.slots
-        } for a in availabilities]
+    def get_availabilities_queryset(self, barber_id, show_all=False):
+        """
+        Returns Availability queryset for a specific barber.
+        If show_all is True, returns all availabilities.
+        """
+        return Availability.objects.filter(barber_id=barber_id) if not show_all else Availability.objects.all()
+    
+    def get_availability_public(self, availability):
+        """
+        Returns all data for a single availability.
+        """
+        return availability.to_dict()
+    
+    def get_availabilities_public(self, barber_id, show_all=False):
+        """
+        Returns all barbers as full dicts (all or only active).
+        """
+        return [self.get_availability_public(b) for b in self.get_availabilities_queryset(barber_id=barber_id, show_all=show_all)]
+
+
+class GetServicesMixin:
+    """
+    Mixin for retrieving and serializing Service models.
+    """
+    def get_services_queryset(self, barber_id, show_all=False):
+        """
+        Returns Service queryset for a specific barber.
+        If show_all is True, returns all services.
+        """
+        return Service.objects.filter(barber_id=barber_id) if not show_all else Service.objects.all()
+    
+    def get_service_public(self, service):
+        """
+        Returns all data for a single service.
+        """
+        return service.to_dict()
+    
+    def get_services_public(self, barber_id, show_all=False):
+        """
+        Returns all barbers as full dicts (all or only active).
+        """
+        return [self.get_service_public(b) for b in self.get_services_queryset(barber_id=barber_id, show_all=show_all)]
+
+
+class GetAppointmentsMixin:
+    """
+    Mixin for retrieving and serializing Appointment models.
+    """
+    def get_appointments_queryset(self, barber_id=None, client_id=None, show_all=False):
+        """
+        Returns Appointment queryset filtered by barber or client.
+        If show_all is True, returns all appointments.
+        """
+        if show_all:
+            return Appointment.objects.all()
+        
+        if barber_id and client_id:
+            raise serializers.ValidationError('Appointments Queryset Error: Provide only a barber_id or a client_id, not both.')
+
+        if not barber_id and not client_id:
+            raise serializers.ValidationError('Appointments Queryset Error: Provide either a barber_id or a client_id.')
+        
+        if barber_id:
+            return Appointment.objects.filter(barber_id=barber_id)
+        
+        return Appointment.objects.filter(client_id=client_id)
+    
+    def get_appointment_public(self, appointment):
+        """
+        Returns all data for a single appointment.
+        """
+        return appointment.to_dict()
+    
+
+    def get_appointments_public(self, barber_id=None, client_id=None, show_all=False):
+        """
+        Returns all barbers as full dicts (all or only active).
+        """
+        return [self.get_appointment_public(b) for b in self.get_appointments_queryset(barber_id=barber_id, client_id=client_id, show_all=show_all)]
+    
+
+class GetReviewsMixin:
+    """
+    Mixin for retrieving and serializing Review models.
+    """
+    def get_reviews_queryset(self, barber_id=None, client_id=None, show_all=False):
+        """
+        Returns Review queryset filtered by barber or client.
+        If show_all is True, returns all reviews.
+        """
+        if show_all:
+            return Review.objects.all()
+        
+        if barber_id and client_id:
+            raise serializers.ValidationError('Reviews Queryset Error: Provide only a barber_id or a client_id, not both.')
+
+        if not barber_id and not client_id:
+            raise serializers.ValidationError('Reviews Queryset Error: Provide either a barber_id or a client_id.')
+        
+        if barber_id:
+            return Review.objects.filter(barber_id=barber_id)
+        
+        return Review.objects.filter(client_id=client_id)
+    
+    def get_review_public(self, review):
+        """
+        Returns all data for a single review.
+        """
+        return review.to_dict()
+    
+    def get_reviews_public(self, barber_id=None, client_id=None, show_all=False):
+        """
+        Returns all barbers as full dicts (all or only active).
+        """
+        return [self.get_review_public(b) for b in self.get_reviews_queryset(barber_id=barber_id, client_id=client_id, show_all=show_all)]

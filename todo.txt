@@ -5,7 +5,6 @@ What to do:
 
 Important:
     - add image uploading capability
-    - add admin get all clients and barbers endpoins
     - add celery tasks testing, just by calling the methods, can't test celery service
 
 Proposed:
