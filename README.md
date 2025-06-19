@@ -41,12 +41,6 @@ The tech stack uses **React** (Vite) frontend, **Django** backend, and relies on
   - [Frontend (React + Vite)](#frontend-react--vite)
     - [Dependencies](#dependencies-1)
     - [Run tests](#run-tests-1)
-- [Core Models \& Business Logic](#core-models--business-logic)
-  - [Barber Availability](#barber-availability)
-  - [Client Appointments](#client-appointments)
-  - [Automated Tasks](#automated-tasks)
-  - [Reviews](#reviews)
-- [Statistics](#statistics)
 - [Production Workflow](#production-workflow)
   - [Deployment](#deployment)
     - [CI/CD Workflow Overview](#cicd-workflow-overview)
@@ -66,33 +60,79 @@ The tech stack uses **React** (Vite) frontend, **Django** backend, and relies on
 ```mermaid
 flowchart TD
     US([User <br> Browser/Mobile])
-    FE[Frontend: Nginx <br> Container: frontend]
-    BE[Backend: Django <br> Container: backend]
-    RD[(Redis Broker <br> Container: redis)]
-    PG[(Postgres DB: <br> Container: db)]
 
-    subgraph Celery Services
-        CW[[Celery Worker <br> Container: celery]]
-        CB[[Celery Beat  <br> Container: celery-beat]]
+    RP[Reverse Proxy: Nginx]
+
+    subgraph FrontendInfra[Frontend Infrastructure]
+      subgraph frontend[Container: 'frontend']
+        SF[Server: Nginx]
+        BL[Builder: Vite]
+        FE[Frontend: React SPA]
+      end
     end
 
-    US -- React SPA --> FE
-    FE -- RESTful API  --> BE
+    subgraph BackendInfra[Backend Infrastructure]
+      subgraph backend[Container: 'backend']
+        SB[WSGI: Gunicorn]
+        BE[Backend: Django REST API]
+      end
 
-    BE -.-> CW
-    BE -.-> CB
+      subgraph celery[Container: 'celery']
+          CW[[Worker: Celery]]
+      end
 
-    BE -- ORM (SQL) --> PG
-    CW -- ORM (SQL for task logic) --> PG
+      subgraph celery-beat[Container: 'celery-beat']
+          CB[[Beat: Celery]]
+      end
+
+      subgraph db[Container: 'db']
+        PG[(Datatbase: Postgres)]
+      end
+
+      subgraph redis[Container: 'redis']
+        RD[(Broker: Redis)]
+      end
+    end
+
+    %% User
+    US -- HTTPS --> RP
+    RP -- Routes --> SF
+    RP -- Routes --> SB
+
+    %% Frontend Infrastructutre
+    SF -- Serves --> BL
+    BL -- Builds --> FE
+
+    %% Backend Infrastructutre
+    SB -- Serves --> BE
+    BE -- ORM Access --> PG
+    CW -- ORM Access (for task logic) --> PG
     CW -- Pulls tasks --> RD
-    CB -- Enqueues jobs --> RD
+    CB -- Enqueues tasks --> RD
+    BE .-> CW
+    BE .-> CB
 
-    style FE fill:#008000
+    style FrontendInfra fill:#0005
+    style BackendInfra fill:#0005
+
+    style frontend fill:#2496ED50
+    style backend fill:#2496ED50
+    style celery fill:#2496ED50
+    style celery-beat fill:#2496ED50
+    style db fill:#2496ED50
+    style redis fill:#2496ED50
+
+    style SF fill:#009639
+    style BL fill:#646CFF
+    style FE fill:#61DAFB
+    style FE color:#000
+    style RP fill:#009639
     style BE fill:#092e20
-    style RD fill:#D82C20
-    style PG fill:#0064a5
-    style CW fill:#64913D
-    style CB fill:#64913D
+    style SB fill:#499848
+    style RD fill:#FF4438
+    style PG fill:#4169E1
+    style CW fill:#37814A
+    style CB fill:#37814A
 ```
 
 ## API Documentation
@@ -292,98 +332,6 @@ npm install <package>
 
 [TODO]
 
-## Core Models & Business Logic
-
-### Barber Availability
-
-Status: ✅
-
-Barber availability is defined as a single record per barber per date, listing all 1-hour time slots during which the barber is available.
-
-Model Example:
-
-```json
-{
-  "barber": 3, // Barber ID associated to the availability
-  "date": "2025-05-20",
-  "slots": ["09:00", "10:00", "11:00", "14:00", "15:00"]
-}
-```
-
-**Rules & Constraints:**
-
-- Each time slot represents a fixed 1-hour window.
-- Availability data is managed exclusively by admins.
-- Only one availability entry is allowed per barber per date.
-
-### Client Appointments
-
-Status: ✅
-
-Clients can book a single available slot with a barber on a specific date, along with one or more services offered by that barber.
-
-Model Example:
-
-```json
-{
-  "client": 12,
-  "barber": 3,
-  "date": "2025-05-20",
-  "slot": "09:00",
-  "status": "ONGOING",
-  "services": [4, 7] // Service IDs associated to the appointment
-}
-```
-
-**Rules & Constraints:**
-
-- A client can only have **one** appointment with `status = "ONGOING"` at a time.
-- The selected `slot` must: Exist in the barber’s availability for the specified date and not be already booked.
-
-### Automated Tasks
-
-Status: ✅
-
-Used `Celery` deployed with 3 docker services, `Celery worker`, `Celery beat` and `Redis broker` to run these background tasks:
-
-- Email reminders before 1 hour before appointment is due, sent to barber and client.
-- Status updates (ONGOING → COMPLETED) when the appointment is due.
-- Powered by Celery Worker, Celery Beat, and Redis broker.
-
-### Reviews
-
-Status: ✅
-
-Clients can submit a **single** review per barber, but **only** after completing an appointment. Each review is directly associated with both the barber and the related appointment.
-
-Model Example:
-
-```json
-{
-  "appointment": 101, // Appointment ID associated to the review
-  "client": 12,
-  "barber": 3,
-  "rating": 5, // Rating vote (1 - 5)
-  "comment": "Great cut, very professional!"
-}
-```
-
-**Rules & Constraints:**
-
-- One review per client per barber.
-- Reviews are allowed **only** after the associated appointment is completed.
-
-## Statistics
-
-Status: ✅
-
-Admin statistics dashboard includes:
-
-- Total revenue
-- Total appointments
-- Review count
-- Average barber rating
-
 ## Production Workflow
 
 ### Deployment
@@ -395,10 +343,10 @@ The deployment process is **fully automated** via [GitHub Actions](https://githu
 ```mermaid
 flowchart TD
     PR(🔀 Pull Request)
-    Tests{{🧪 Run Tests}}
+    Tests{{🧪 Runs Tests}}
     Passed([✅ Able to Merge])
     Failed([❌ Cannot Merge])
-    Deployment(🚀 Deploy)
+    Deployment(🚀 Runs Deployment)
     PR --> Tests
     Tests -- Passed --> Passed
     Tests -- Failed --> Failed
