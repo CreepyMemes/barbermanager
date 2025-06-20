@@ -21,7 +21,6 @@ from ..serializers import (
     RequestPasswordResetSerializer,
     ConfirmPasswordResetSerializer,
     RefreshTokenCustomSerializer,
-    GetUserSerializer,
 )
 
 
@@ -220,19 +219,3 @@ def refresh_token(request):
     serializer = RefreshTokenCustomSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     return Response(serializer.get_response(), status=status.HTTP_200_OK)
-
-
-@extend_schema(
-    methods=['GET'],
-    responses={200: GetUserSerializer},
-    description="Return the authenticated user's information.",
-)
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-@parser_classes([JSONParser]) 
-def get_user(request):
-    """
-    Return the authenticated user's information.
-    """
-    serializer = GetUserSerializer(request.user)
-    return Response(serializer.data, status.HTTP_200_OK)
