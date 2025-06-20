@@ -1,8 +1,8 @@
 from django.urls import path
 from ..views import (
+    manage_barber_profile,
     get_barber_availabilities,
-    get_barber_services,
-    create_barber_service,
+    manage_barber_services,
     manage_barber_service,
     get_barber_appointments,
     get_barber_reviews,
@@ -10,9 +10,11 @@ from ..views import (
 
 
 urlpatterns = [
+    # Barber profile management
+    path('profile/', manage_barber_profile, name='manage_barber_profile'),
+
     # Service management
-    path('services/', get_barber_services, name='get_barber_services'),
-    path('services/', create_barber_service, name='create_barber_service'),
+    path('services/', manage_barber_services, name='manage_barber_services'),
     path('services/<int:service_id>/', manage_barber_service, name='manage_barber_service'),
 
     # Getters for authenticated barber

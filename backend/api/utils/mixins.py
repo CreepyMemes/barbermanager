@@ -1,5 +1,3 @@
-from django.urls import reverse
-from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import  force_str
 from django.contrib.auth.tokens import default_token_generator
@@ -9,63 +7,13 @@ from ..models import (
     User, 
     Client,
     Barber,
+    Admin,
     Appointment,
     Availability,
     Service,
     Review,
     AppointmentStatus,
 )
-
-
-def send_client_verify_email(email, uid, token, domain):
-    """
-    Sends email confirmation link to client after registration.
-    """
-    path = reverse('verify_client_email', kwargs={'uidb64': uid, 'token': token})
-    link = f'{domain}{path}'
-
-    subject = '[BarberManager] Verify your email to register as a client'
-    message = (
-        f'Thank you for registering.\n\n'
-        f'Please click the link below to verify your account:\n'
-        f'{link}\n\n'
-        'If you did not register, please ignore this email.'
-    )
-    send_mail(subject, message, 'barber.manager.verify@gmail.com', [email])
-
-
-def send_barber_invite_email(email, uid, token, domain):
-    """
-    Sends barber invitation email with registration link.
-    """
-    path = reverse('register_barber', kwargs={'uidb64': uid, 'token': token})
-    link = f'{domain}{path}'
-
-    subject = '[BarberManager] You have been invited to register as a barber'
-    message = (
-        f'You have been invited to join as a barber.\n\n'
-        f'Please click the link below to complete your registration:\n'
-        f'{link}\n\n'
-        'If you did not expect this invitation, please ignore this email.'
-    )
-    send_mail(subject, message, 'barber.manager.verify@gmail.com', [email])
-
-
-def send_password_reset_email(email, uid, token, domain):
-    """
-    Sends password reset email with reset link.
-    """
-    path = reverse('confirm_password_reset', kwargs={'uidb64': uid, 'token': token})
-    link = f'{domain}{path}'
-
-    subject = '[BarberManager] You have requested to reset your password'
-    message = (
-        f'We received a request to reset your password.\n\n'
-        f'Please click the link below to set a new password:\n'
-        f'{link}\n\n'
-        'If you did not request a password reset, please ignore this email.'
-    )
-    send_mail(subject, message, 'barber.manager.verify@gmail.com', [email])
 
 
 def get_user_from_uid_token(uidb64, token, role=None):
@@ -103,20 +51,38 @@ class EmailValidationMixin:
     """
     Utility mixin to handle common email validation checks
     """
-    def validate_email(self, email):
-        if User.objects.filter(email=email).exists():
+    def validate_email_unique(self, attrs, user_instance=None):
+        email = attrs['email']
+
+        user = User.objects.filter(email=email)
+
+        if user_instance:
+            user = user.exclude(pk=user_instance.pk)
+
+        if user.exists():
             raise serializers.ValidationError(f'The email "{email}" is already taken.')
-        return email
+        
+        attrs['email'] = email
+        return attrs
 
 
 class UsernameValidationMixin:
     """
     Utility mixin to handle common username validation checks
     """
-    def validate_username(self, username):
-        if User.objects.filter(username=username).exists():
+    def validate_username_unique(self, attrs, user_instance=None): 
+        username = attrs['username']
+
+        user = User.objects.filter(username=username)
+
+        if user_instance:
+            user = user.exclude(pk=user_instance.pk)
+        
+        if user.exists():
             raise serializers.ValidationError(f'The username "{username}" is already taken.')
-        return username
+        
+        attrs['username'] = username
+        return attrs
 
 
 class UIDTokenValidationSerializer(serializers.Serializer):
@@ -170,7 +136,23 @@ class BarberValidationMixin:
         attrs['barber'] = barber
         return attrs
     
+
+class AdminValidationMixin:
+    """
+    Mixin to validate that a admin_id from context exists and is active. Also adds 'admin' to attrs.
+    """
+    def validate_admin(self, attrs):
+        admin_id = self.context.get('admin_id')
+
+        try:
+            admin = Admin.objects.get(pk=admin_id, is_active=True)
+        except Admin.DoesNotExist:
+            raise serializers.ValidationError(f'Admin with ID: "{admin_id}" does not exist or is inactive.')
+        
+        attrs['admin'] = admin
+        return attrs
     
+
 class AppointmentValidationMixin:
     """
     Mixin that rovides validation methods for appointment management:
@@ -340,3 +322,229 @@ class ReviewValidationMixin:
         
         attrs['review'] = review
         return attrs
+
+
+class GetAdminsMixin:
+    """
+    Mixin for retrieving and serializing Admin models.
+    """
+    def get_admins_queryset(self):
+        """
+        Returns Admin queryset in the system.
+        """
+        return Admin.objects.all()
+    
+    def get_admin_private(self, admin):
+        """
+        Returns all data for a single admin.
+        """
+        return admin.to_dict()
+    
+    def get_admins_private(self):
+        """
+        Returns all admins as full dicts.
+        """
+        return [self.get_admin_private(a) for a in self.get_admins_queryset()]
+    
+
+class GetBarbersMixin:
+    """
+    Mixin for retrieving and serializing Barber models.
+    """
+    _PUBLIC_EXCLUDES = ['email', 'username', 'availabilities', 'is_active']
+
+    def get_barbers_queryset(self, show_all=False):
+        """
+        Returns Barber queryset in the system.
+        If show_all is True, returns all barbers.
+        """
+        return Barber.objects.filter(is_active=True) if not show_all else Barber.objects.all()
+    
+    def get_barber_public(self, barber):
+        """
+        Returns only the public data for a single barber.
+        """
+        data = barber.to_dict().copy()
+        for field in self._PUBLIC_EXCLUDES:
+            data.pop(field, None)
+        return data
+    
+    def get_barber_private(self, barber):
+        """
+        Returns all data for a single barber.
+        """
+        return barber.to_dict()
+    
+    def get_barbers_private(self, show_all=False):
+        """
+        Returns all barbers as full dicts (all or only active).
+        """
+        return [self.get_barber_private(b) for b in self.get_barbers_queryset(show_all=show_all)]
+    
+    def get_barbers_public(self):
+        """
+        Returns all active barbers as public dicts.
+        """
+        return [self.get_barber_public(b) for b in self.get_barbers_queryset()]
+
+
+class GetClientsMixin:
+    """
+    Mixin for retrieving and serializing Client models.
+    """
+    _PUBLIC_EXCLUDES = ['email', 'name', 'surname', 'phone_number', 'appointments', 'is_active']
+
+    def get_clients_queryset(self, show_all=False):
+        """
+        Returns Client queryset in the system.
+        If show_all is True, returns all clients.
+        """
+        return Client.objects.filter(is_active=True) if not show_all else Client.objects.all()
+    
+    def get_client_public(self, client):
+        """
+        Returns only the public data for a single client.
+        """
+        data = client.to_dict().copy()
+        for field in self._PUBLIC_EXCLUDES:
+            data.pop(field, None)
+        return data
+    
+    def get_client_private(self, client):
+        """
+        Returns all data for a single client.
+        """
+        return client.to_dict()
+    
+    def get_clients_private(self, show_all=False):
+        """
+        Returns all clients as full dicts (all or only active).
+        """
+        return [self.get_client_private(b) for b in self.get_clients_queryset(show_all=show_all)]
+    
+    def get_clients_public(self):
+        """
+        Returns all active clients as public dicts.
+        """
+        return [self.get_client_public(b) for b in self.get_clients_queryset()]
+    
+
+class GetAvailabilitiesMixin:
+    """
+    Mixin for retrieving and serializing Availability models.
+    """
+    def get_availabilities_queryset(self, barber_id, show_all=False):
+        """
+        Returns Availability queryset for a specific barber.
+        If show_all is True, returns all availabilities.
+        """
+        return Availability.objects.filter(barber_id=barber_id) if not show_all else Availability.objects.all()
+    
+    def get_availability_public(self, availability):
+        """
+        Returns all data for a single availability.
+        """
+        return availability.to_dict()
+    
+    def get_availabilities_public(self, barber_id, show_all=False):
+        """
+        Returns all barbers as full dicts (all or only active).
+        """
+        return [self.get_availability_public(b) for b in self.get_availabilities_queryset(barber_id=barber_id, show_all=show_all)]
+
+
+class GetServicesMixin:
+    """
+    Mixin for retrieving and serializing Service models.
+    """
+    def get_services_queryset(self, barber_id, show_all=False):
+        """
+        Returns Service queryset for a specific barber.
+        If show_all is True, returns all services.
+        """
+        return Service.objects.filter(barber_id=barber_id) if not show_all else Service.objects.all()
+    
+    def get_service_public(self, service):
+        """
+        Returns all data for a single service.
+        """
+        return service.to_dict()
+    
+    def get_services_public(self, barber_id, show_all=False):
+        """
+        Returns all barbers as full dicts (all or only active).
+        """
+        return [self.get_service_public(b) for b in self.get_services_queryset(barber_id=barber_id, show_all=show_all)]
+
+
+class GetAppointmentsMixin:
+    """
+    Mixin for retrieving and serializing Appointment models.
+    """
+    def get_appointments_queryset(self, barber_id=None, client_id=None, show_all=False):
+        """
+        Returns Appointment queryset filtered by barber or client.
+        If show_all is True, returns all appointments.
+        """
+        if show_all:
+            return Appointment.objects.all()
+        
+        if barber_id and client_id:
+            raise serializers.ValidationError('Appointments Queryset Error: Provide only a barber_id or a client_id, not both.')
+
+        if not barber_id and not client_id:
+            raise serializers.ValidationError('Appointments Queryset Error: Provide either a barber_id or a client_id.')
+        
+        if barber_id:
+            return Appointment.objects.filter(barber_id=barber_id)
+        
+        return Appointment.objects.filter(client_id=client_id)
+    
+    def get_appointment_public(self, appointment):
+        """
+        Returns all data for a single appointment.
+        """
+        return appointment.to_dict()
+    
+
+    def get_appointments_public(self, barber_id=None, client_id=None, show_all=False):
+        """
+        Returns all barbers as full dicts (all or only active).
+        """
+        return [self.get_appointment_public(b) for b in self.get_appointments_queryset(barber_id=barber_id, client_id=client_id, show_all=show_all)]
+    
+
+class GetReviewsMixin:
+    """
+    Mixin for retrieving and serializing Review models.
+    """
+    def get_reviews_queryset(self, barber_id=None, client_id=None, show_all=False):
+        """
+        Returns Review queryset filtered by barber or client.
+        If show_all is True, returns all reviews.
+        """
+        if show_all:
+            return Review.objects.all()
+        
+        if barber_id and client_id:
+            raise serializers.ValidationError('Reviews Queryset Error: Provide only a barber_id or a client_id, not both.')
+
+        if not barber_id and not client_id:
+            raise serializers.ValidationError('Reviews Queryset Error: Provide either a barber_id or a client_id.')
+        
+        if barber_id:
+            return Review.objects.filter(barber_id=barber_id)
+        
+        return Review.objects.filter(client_id=client_id)
+    
+    def get_review_public(self, review):
+        """
+        Returns all data for a single review.
+        """
+        return review.to_dict()
+    
+    def get_reviews_public(self, barber_id=None, client_id=None, show_all=False):
+        """
+        Returns all barbers as full dicts (all or only active).
+        """
+        return [self.get_review_public(b) for b in self.get_reviews_queryset(barber_id=barber_id, client_id=client_id, show_all=show_all)]

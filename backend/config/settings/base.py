@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from datetime import timedelta
+from celery.schedules import crontab
 
 # Base directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,6 +21,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework_simplejwt.token_blacklist',
     'rest_framework',
+    'drf_spectacular',
     'corsheaders',
     'api',
 ]
@@ -45,6 +47,7 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
     'EXCEPTION_HANDLER': 'api.utils.customExceptionHandler',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 # Setting up JWT token lifetime
@@ -90,12 +93,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database settings
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('SQL_ENGINE', 'django.db.backends.postgresql'),
-        'NAME': os.environ['SQL_DATABASE'],
-        'USER': os.environ['SQL_USER'],
-        'PASSWORD': os.environ['SQL_PASSWORD'],
-        'HOST': os.getenv('SQL_HOST', 'localhost'),
-        'PORT': os.getenv('SQL_PORT', '5432'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'HOST': os.environ['POSTGRES_HOST'],
+        'PORT': os.environ['POSTGRES_PORT'],
+        'NAME': os.environ['POSTGRES_DB'],
+        'USER': os.environ['POSTGRES_USER'],
+        'PASSWORD': os.environ['POSTGRES_PASSWORD'],
     }
 }
 
@@ -109,7 +112,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = "Europe/Rome"
 USE_I18N = True
 USE_TZ = True
 
@@ -120,13 +123,51 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Django's email service settings
-EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
-EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
-EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
-EMAIL_USE_TLS = bool(int(os.getenv('EMAIL_USE_TLS', 1)))
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_PORT = os.environ['EMAIL_PORT']
+EMAIL_HOST = os.environ['EMAIL_HOST']
 EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER'] 
 EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD'] 
 
+# Celery tasks settings
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_WORKER_STATE_DB = '/tmp/celeryworker.state'
+CELERY_BEAT_SCHEDULE_FILENAME = '/tmp/celerybeat.schedule'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = "Europe/Rome"
+CELERY_BEAT_SCHEDULE = {
+    'complete-ongoing-appointments': {
+        'task': 'api.tasks.complete_ongoing_appointments',
+        'schedule': crontab(minute='*/1'),
+    },
+    'send-appointment-reminders': {
+        'task': 'api.tasks.send_appointment_reminders',
+        'schedule': crontab(minute='*/1'),
+    },
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Barber Manager API",
+    "DESCRIPTION": "Manage barbershop scheduling, reviews, and users.",
+    "VERSION": "1.0.0",
+    "SWAGGER_UI_SETTINGS": '''{
+        deepLinking: true,
+        urls: [
+            {url: "/api/schema/", name: "v1"},
+        ],
+        presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+        layout: "StandaloneLayout",
+    }''',
+
+    "SERVERS": [{"url": "/api"}],
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SCHEMA_PATH_PREFIX_TRIM": "/api",
+}
+
 # WARNING: this is only for development
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWS_CREDENTIALS = True
+CORS_ALLOW_CREDENTIALS = True

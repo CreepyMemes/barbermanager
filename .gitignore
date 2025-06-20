@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python,django,react,node
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,django,react,node
 
+### Docs ###
+docs/0-esempi/
+
 ### Django ###
 *.log
 *.pot
@@ -136,6 +139,8 @@ celerybeat.pid
 
 # Environments
 .env.prod
+.env.dev
+.env
 .venv
 env/
 venv/
@@ -294,6 +299,7 @@ dist
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
+.VSCodeCounter
 
 # yarn v2
 .yarn/cache

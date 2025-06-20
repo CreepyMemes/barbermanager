@@ -1,39 +1,73 @@
 services:
   db:
-    image: postgres:15
+    image: postgres:15-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_DB=mydb
-      - POSTGRES_USER=myuser
-      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
-       - '5432:5432' # Exposed for DBeaver database analysis
+      - '5432:5432' # Exposed for DBeaver database analysis
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
 
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile.dev
-    command: python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - ./backend:/app
-    ports:
-      - '8000:8000'
     env_file:
-      - ./backend/.env.dev
+      - .env.dev
+    environment:
+      - RUN_MIGRATIONS=1
     depends_on:
       - db
+      - redis
+    ports:
+      - '8000:8000'
+    volumes:
+      - ./backend:/app
+    command: python manage.py runserver 0.0.0.0:8000
+
+  celery:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    env_file:
+      - .env.dev
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - db
+      - redis
+    command: celery -A config worker -l info
+
+  celery-beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    env_file:
+      - .env.dev
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - db
+      - redis
+    command: celery -A config beat -l info
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile.dev
-    command: npm run dev -- --host
     volumes:
       - ./frontend:/app
       - /app/node_modules # Doing this unsyncs node_modules folder from host machine
     ports:
       - '3000:5173'
+    command: npm run dev -- --host
 
 volumes:
   postgres_data:
