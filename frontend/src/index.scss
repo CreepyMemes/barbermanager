@@ -38,3 +38,20 @@ body {
   background-color: $dark-color;
   min-height: calc(100vh - 2 * 4vw);
 }
+
+
+button {
+  color: white;
+  background-color: black;
+  padding: 50px;
+  margin: 20px;
+  border: 5px solid aquamarine;
+  border-radius: 10px;
+}
+
+input{
+  width: 40%;
+  font-size: large;
+  border: 2px solid orange;
+  border-radius: 10px;
+}
