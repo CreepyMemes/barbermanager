@@ -1,8 +1,14 @@
+from django.db.models import Sum, Avg
 from rest_framework import serializers
 from ..utils import (
+    AdminValidationMixin,
     EmailValidationMixin,
     BarberValidationMixin,
     AvailabilityValidationMixin,
+    GetAdminsMixin,
+    GetAppointmentsMixin,
+    GetBarbersMixin,
+    GetClientsMixin,
 )
 from ..models import(
     Barber,
@@ -10,11 +16,52 @@ from ..models import(
 )
 
 
+class GetAdminProfileSerializer(AdminValidationMixin, GetAdminsMixin, serializers.Serializer):
+    """
+    Returns all the information related the profile of a given admin
+    """
+    def validate(self, attrs):
+        attrs = self.validate_admin(attrs)
+        return attrs
+
+    def to_representation(self, validated_data):
+        admin = validated_data['admin']
+        return {'profile': self.get_admin_private(admin) }
+
+
+class GetAllBarbersSerializer(GetBarbersMixin, serializers.Serializer):
+    """
+    Returns all barbers registered and their data 
+    """
+    def to_representation(self, instance):
+        return {'barbers': self.get_barbers_private(show_all=True)}
+
+
+class GetAllClientsSerializer(GetClientsMixin, serializers.Serializer):
+    """
+    Returns all clients registered and their data 
+    """
+    def to_representation(self, instance):
+        return {'clients': self.get_clients_private(show_all=True)}
+
+
+class GetAllAppointmentsSerializer(GetAppointmentsMixin, serializers.Serializer):
+    """
+    Admin only: Returns all appointments registered in the system
+    """
+    def to_representation(self, instance):
+        return {'appointments': self.get_appointments_public(show_all=True)}
+    
+
 class InviteBarberSerializer(EmailValidationMixin, serializers.Serializer):
     """
     Admin only: Invites a barber, accepts only email.
     """
     email = serializers.EmailField(required=True)
+
+    def validate(self, attrs):
+        attrs = self.validate_email_unique(attrs)
+        return attrs
 
     def create(self, validated_data):
         barber = Barber(email=validated_data['email'],is_active=False)
@@ -38,7 +85,7 @@ class DeleteBarberSerializer(serializers.Serializer):
             raise serializers.ValidationError("Barber with this ID does not exist.")  
         
         if not self.barber.is_active:
-            raise serializers.ValidationError("Barber is not active and cannot be deleted.")
+            raise serializers.ValidationError("Barber is not active and cannot be deleted.") # TODO: not sure if this is a needed check, maybe we should let admin delete inactive barbers
         
         return value
     
@@ -108,3 +155,4 @@ class DeleteBarberAvailabilitySerializer(BarberValidationMixin, AvailabilityVali
 
     def delete(self):
         self.validated_data['availability'].delete()
+

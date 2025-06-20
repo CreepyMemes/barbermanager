@@ -3,7 +3,7 @@ from rest_framework import status
 from django.urls import reverse
 from django.core import mail
 import re
-from api.models import User
+from api.models import User, Client
 
 
 class AuthFlowTest(APITestCase):
@@ -20,21 +20,25 @@ class AuthFlowTest(APITestCase):
         self.user_email = 'resetuser@example.com'
         self.user_password = 'StrongPassw0rd!'
         self.user_username = 'resetuser'
+        self.user_name = 'Name Test'
+        self.user_surname = 'Surname Test'
 
         # Create an active user (used only if needed)
-        self.user = User.objects.create_user(
+        self.client_user = Client.objects.create_user(
             username=self.user_username,
             email=self.user_email,
             password=self.user_password,
+            name=self.user_name,
+            surname=self.user_surname,
             is_active=True
         )
 
 
-    def register_and_get_verification_link(self, email='testclient@example.com', username='testclient', password='StrongPassw0rd!'):
+    def register_and_get_verification_link(self, email='testclient@example.com', username='testclient', password='StrongPassw0rd!', name='test name', surname='test surname'):
         """
         Helper to register a user and extract the verification link uid and token from the email.
         """
-        data = {'email': email, 'password': password, 'username': username}
+        data = {'email': email, 'password': password, 'username': username, 'name': name, 'surname': surname}
         response = self.client.post(self.register_url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(len(mail.outbox), 1)

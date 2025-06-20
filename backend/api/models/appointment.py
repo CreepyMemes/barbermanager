@@ -24,7 +24,7 @@ class Service(models.Model):
     - A barber can offer multiple different services, but cannot have two services with the same name.
     - Includes details such as the service name and its price.
     """
-    barber = models.ForeignKey(Barber, on_delete=models.CASCADE, related_name='services')
+    barber = models.ForeignKey(Barber, on_delete=models.CASCADE, related_name='services_offered')
     name = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=6, decimal_places=2)
 
@@ -33,9 +33,17 @@ class Service(models.Model):
             models.UniqueConstraint(fields=['barber', 'name'], name='unique_service_name_per_barber')
         ]
 
-    def __str__(self):
-        return f"{self.name} - {self.barber.email}"
-
+    def to_dict(self):
+        """
+        Returns a JSON-serializable dict representation of the service.
+        """
+        return {
+            'id': self.id,
+            'barber_id': self.barber.id,
+            'name': self.name,
+            'price': self.price,
+        }
+    
 
 class Availability(models.Model):
     """
@@ -45,7 +53,7 @@ class Availability(models.Model):
     - The 'slots' field contains a list of available 1-hour time slots in "HH:MM" format.
     - Used by admins to manage and update barbers' availability for appointments.
     """
-    barber = models.ForeignKey(Barber, on_delete=models.CASCADE, related_name='availabilities',)
+    barber = models.ForeignKey(Barber, on_delete=models.CASCADE, related_name='availabilities_assigned',)
     date = models.DateField()
     slots = models.JSONField()  # Example: ["09:00", "10:00", "11:00"]
     
@@ -54,8 +62,16 @@ class Availability(models.Model):
             models.UniqueConstraint(fields=['barber', 'date'], name='unique_availability_date_per_barber')
         ]
 
-    def __str__(self):
-        return f'{self.barber.email} - {self.date} Slots: {self.slots}'
+    def to_dict(self):
+        """
+        Returns a JSON-serializable dict representation of the availability.
+        """
+        return {
+            'id': self.id,
+            'barber_id': self.barber.id,
+            'date': self.date,
+            'slots': self.slots,
+        }
 
 
 class Appointment(models.Model):
@@ -67,12 +83,13 @@ class Appointment(models.Model):
     - Prevents double-booking by ensuring a barber can have only one appointment per slot on a given date.
     - Tracks the appointment status (e.g., ongoing, completed, canceled).
     """
-    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='appointments')
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='appointments_created')
     barber = models.ForeignKey(Barber, on_delete=models.CASCADE, related_name='appointments_received')
     date = models.DateField()
     slot = models.TimeField()
     services = models.ManyToManyField(Service)
     status = models.CharField( max_length=10, choices=AppointmentStatus.choices(), default=AppointmentStatus.ONGOING.value)
+    reminder_email_sent = models.BooleanField(default=False)
 
     class Meta:
         constraints = [
@@ -80,8 +97,27 @@ class Appointment(models.Model):
             models.UniqueConstraint(fields=['barber', 'date', 'slot'], condition=~Q(status=AppointmentStatus.CANCELLED.value), name='unique_appointment_per_barber_date_slot_if_not_cancelled'),
         ]
 
-    def __str__(self):
-        return f"{self.client.email} -> {self.barber.email} on {self.date} at {self.slot}"
+    @property
+    def service_ids(self):
+        """
+        Returns a list of dicts representing this barber's services.
+        """
+        return list(self.services.values_list('id', flat=True))
+    
+    def to_dict(self):
+        """
+        Returns a JSON-serializable dict representation of the appointment.
+        """
+        return {
+            'id': self.id,
+            'client_id': self.client.id,
+            'barber_id': self.barber.id,
+            'service_ids': self.service_ids,
+            'date': self.date,
+            'slot': self.slot.strftime("%H:%M"),
+            'status': self.status,
+            'reminder_email_sent': self.reminder_email_sent,
+        }
 
 
 class Review(models.Model):
@@ -99,12 +135,24 @@ class Review(models.Model):
     rating = models.PositiveSmallIntegerField()
     comment = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    edited_at = models.DateTimeField(null=True, blank=True) 
 
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['client', 'barber'], name='unique_client_review_per_barber')
         ]
 
-    def __str__(self):
-        return f"Review by {self.client} for {self.barber} - {self.rating} stars"
-    
+    def to_dict(self):
+        """
+        Returns a JSON-serializable dict representation of the review.
+        """
+        return {
+            'id': self.id,
+            'appointment_id': self.appointment.id,
+            'client_id': self.client.id,
+            'barber_id': self.barber.id,
+            'rating': self.rating,
+            'comment': self.comment,
+            'created_at': self.created_at.strftime('%Y-%m-%d'),
+            'edited_at': self.edited_at.strftime('%Y-%m-%d') if self.edited_at else None,
+        }

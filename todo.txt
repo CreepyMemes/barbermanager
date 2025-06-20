@@ -4,35 +4,39 @@ What to do:
 1. Backend:
 
 Important:
-    - continua ad implementare gli API endpoint su README.md
-
-    - aggiungi endpoint get profilo barbiere
-    - add edited flag for edited reviews
-    - implementa admin get appointments endpoint for all appointments
-    - implementa admin statistycs
-
-Later:
-    - implement automated tests for added endpoints
-    - configura `celery` per aggiornare appointment status e reminder email https://openwebui.rockpi.local/c/a9fa77de-1774-4f77-ab94-ed8d3df3096e
+    - add image uploading capability
+    - add celery tasks testing, just by calling the methods, can't test celery service
 
 Proposed:
-    - aggiungi name, surname, durante registrazione di barber, e client
-    - aggiungi endpoint che permette di modificare name, surname e description a barber
-    - add return json object after creation or update for anything  https://openwebui.rockpi.local/c/9d5f8f49-9f18-4937-ba9e-c7839bfb9b70
+    - add change email functionality in PATCH /profile endpoint, that automatically sends email verification
+    - add return json object after creation or update for anything  https://openwebui.aspire.local/c/9d5f8f49-9f18-4937-ba9e-c7839bfb9b70
 
-
-
-...
-
+-----------------------------------------------------------------------------------------------------------------------------------------
 2. Frontend:
-- register page,
-- login page,
-- verify-email send GET request to verify then redirect to login page,
 
-- reset password button in login/register pages
-- reset password page
+Important:
+    - register page,
+    - login page,
+    - verify-email send GET request to verify then redirect to login page,
 
-- client, barber and admin pages
-- logout button
-- add barber in admin user page
-...
+    - reset password button in login/register pages
+    - reset password page
+
+    - client, barber and admin pages
+    - logout button
+    - add barber in admin user page
+
+Proposed:
+    - ...
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+3. Docs:
+
+Important:
+    - una volta finita la parte backend correggi i diagrammi di casi d'uso
+    - rifai i diagrammi di classi di analisi
+    - correggi i diagrammi di sequenza e i rispettivi di attivita
+    - fai i diagrammi di classi di progettazione
+
+Proposed:
+    - ...
