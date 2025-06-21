@@ -41,7 +41,6 @@ class UserManager(BaseUserManager):
 
         return user
     
-
     def create_superuser(self, username, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
@@ -66,7 +65,8 @@ class User(AbstractUser):
     """
     email = models.EmailField(null=True, blank=True)
     role = models.CharField(max_length=10, choices=Roles.choices(), default=Roles.CLIENT.value)
-
+    profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
+    
     objects = UserManager()
 
     USERNAME_FIELD = 'username'
@@ -80,7 +80,17 @@ class User(AbstractUser):
                 name='unique_email_non_admin'
             )
         ]
-        
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'role': self.role,
+            'is_active': self.is_active,
+            'username': self.username,
+            'email': self.email,
+            'profile_picture_url': self.profile_picture.url if self.profile_picture else None,
+        }
+
 
 class Admin(User):
     """
@@ -133,18 +143,16 @@ class Admin(User):
         return round(float(avg), 2) if avg else None
     
     def to_dict(self):
-        return {
-            'id': self.id,
-            'role': self.role,
-            'is_active': self.is_active,
-            'username': self.username,
+        base = super().to_dict()
+        base.update({
             'total_clients': self.total_clients,
             'total_barbers': self.total_barbers,
             'total_appointments': self.total_appointments,
             'total_revenue': self.total_revenue,
             'total_reviews': self.total_reviews,
             'average_rating': self.average_rating,
-        }
+        })
+        return base
 
 
 class Client(User):
@@ -180,18 +188,15 @@ class Client(User):
         return [review.to_dict() for review in self.client_reviews.all()]
     
     def to_dict(self):
-        return {
-            'id': self.id,
-            'role': self.role,
-            'is_active': self.is_active,
-            'username': self.username,
-            'email': self.email,
+        base = super().to_dict()
+        base.update({      
             'name': self.name,
             'surname': self.surname,
             'phone_number': self.phone_number,
             'appointments': self.appointments,
             'reviews': self.reviews,
-        }
+        })
+        return base
 
 
 class Barber(User):
@@ -245,12 +250,8 @@ class Barber(User):
         """
         Returns a JSON-serializable dict representation of the review.
         """
-        return {
-            'id': self.id,
-            'role': self.role,
-            'is_active': self.is_active,
-            'username': self.username,
-            'email': self.email,
+        base = super().to_dict()
+        base.update({
             'name': self.name,
             'surname': self.surname,
             'description': self.description,
@@ -258,4 +259,5 @@ class Barber(User):
             'availabilities': self.availabilities,
             'reviews': self.reviews,
             'average_rating': self.average_rating,
-        }
+        })
+        return base

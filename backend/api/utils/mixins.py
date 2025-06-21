@@ -105,35 +105,19 @@ class UIDTokenValidationSerializer(serializers.Serializer):
         return attrs
     
 
-class ClientValidationMixin:
+class UserValidationMixin:
     """
-    Mixin to validate that a client_id from context exists and is active. Also adds 'client' to attrs.
+    Mixin to validate that a user_id from context exists and is active. Also adds 'user' to attrs.
     """
-    def validate_client(self, attrs):
-        client_id = self.context.get('client_id')
+    def validate_user(self, attrs):
+        user_id = self.context.get('user_id')
 
         try:
-            client = Client.objects.get(pk=client_id, is_active=True)
-        except Client.DoesNotExist:
-            raise serializers.ValidationError(f'Client with ID: "{client_id}" does not exist or is inactive.')
+            user = User.objects.get(pk=user_id, is_active=True)
+        except User.DoesNotExist:
+            raise serializers.ValidationError(f'User with ID: "{user_id}" does not exist or is inactive.')
         
-        attrs['client'] = client
-        return attrs
-    
-
-class BarberValidationMixin:
-    """
-    Mixin to validate that a barber_id from context exists and is active. Also adds 'barber' to attrs.
-    """
-    def validate_barber(self, attrs):
-        barber_id = self.context.get('barber_id')
-
-        try:
-            barber = Barber.objects.get(pk=barber_id, is_active=True)
-        except Barber.DoesNotExist:
-            raise serializers.ValidationError(f'Barber with ID: "{barber_id}" does not exist or is inactive.')
-        
-        attrs['barber'] = barber
+        attrs['user'] = user
         return attrs
     
 
@@ -152,6 +136,38 @@ class AdminValidationMixin:
         attrs['admin'] = admin
         return attrs
     
+
+class ClientValidationMixin:
+    """
+    Mixin to validate that a client_id from context exists and is active. Also adds 'client' to attrs.
+    """
+    def validate_client(self, attrs):
+        client_id = self.context.get('client_id')
+
+        try:
+            client = Client.objects.get(pk=client_id, is_active=True)
+        except Client.DoesNotExist:
+            raise serializers.ValidationError(f'Client with ID: "{client_id}" does not exist or is inactive.')
+        
+        attrs['client'] = client
+        return attrs
+
+
+class BarberValidationMixin:
+    """
+    Mixin to validate that a barber_id from context exists and is active. Also adds 'barber' to attrs.
+    """
+    def validate_barber(self, attrs):
+        barber_id = self.context.get('barber_id')
+
+        try:
+            barber = Barber.objects.get(pk=barber_id, is_active=True)
+        except Barber.DoesNotExist:
+            raise serializers.ValidationError(f'Barber with ID: "{barber_id}" does not exist or is inactive.')
+        
+        attrs['barber'] = barber
+        return attrs
+
 
 class AppointmentValidationMixin:
     """
