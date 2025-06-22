@@ -4,7 +4,6 @@ from django.db.models import Q, UniqueConstraint, Avg, Sum
 from django.db import models
 from enum import Enum
 
-
 class Roles(Enum):
     """
     User role definitions: Admin, Client, Barber.
@@ -63,9 +62,16 @@ class User(AbstractUser):
     """
     Custom user model using our custom manager.
     """
+    def _get_profile_image_path(instance, filename):
+        """
+        Methohd that imports here to avoid circular import issues.
+        """
+        from ..utils import get_profile_image_path
+        return get_profile_image_path(instance, filename)
+
     email = models.EmailField(null=True, blank=True)
     role = models.CharField(max_length=10, choices=Roles.choices(), default=Roles.CLIENT.value)
-    profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
+    profile_image = models.ImageField(upload_to=_get_profile_image_path, null=True, blank=True)
     
     objects = UserManager()
 
@@ -88,7 +94,7 @@ class User(AbstractUser):
             'is_active': self.is_active,
             'username': self.username,
             'email': self.email,
-            'profile_picture_url': self.profile_picture.url if self.profile_picture else None,
+            'profile_image': self.profile_image.url if self.profile_image else None,
         }
 
 
@@ -160,9 +166,16 @@ class Client(User):
     Clients are regular users who can register themselves via the API.
     They must provide a valid email and username during registration.
     """
+    def _phone_number_validator():
+        """
+        Methohd that imports here to avoid circular import issues.
+        """
+        from ..utils import phone_number_validator
+        return phone_number_validator
+    
     name = models.CharField(max_length=50)
     surname = models.CharField(max_length=50)
-    phone_number = models.CharField(max_length=16, blank=True, null=True)
+    phone_number = models.CharField(validators=[_phone_number_validator()], max_length=16, blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.pk:
