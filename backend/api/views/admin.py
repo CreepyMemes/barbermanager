@@ -35,7 +35,7 @@ def get_admin_profile(request):
     """
     Admin only: Gets all related profile information for authenticated admin.
     """
-    serializer = GetAdminProfileSerializer(data={}, context={'admin_id': request.user})
+    serializer = GetAdminProfileSerializer(data={}, context={'admin': request.user})
     serializer.is_valid(raise_exception=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 

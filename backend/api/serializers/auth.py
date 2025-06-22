@@ -111,7 +111,7 @@ class VerifyClientEmailSerializer(UIDTokenValidationSerializer):
         client.save()
 
         return client
-    
+
 
 class LoginSerializer(serializers.Serializer):
     """
@@ -186,7 +186,7 @@ class LogoutSerializer(serializers.Serializer):
             self.token.blacklist()
         except AttributeError:
             raise serializers.ValidationError("Token blacklisting not supported.")
-    
+
 
 class RequestPasswordResetSerializer(serializers.Serializer):
     """
@@ -202,7 +202,7 @@ class RequestPasswordResetSerializer(serializers.Serializer):
             return user
         except User.DoesNotExist:
             return  # Silently continue for security
-        
+
 
 class ConfirmPasswordResetSerializer(PasswordValidationMixin, UIDTokenValidationSerializer):
     """
@@ -243,13 +243,3 @@ class RefreshTokenCustomSerializer(TokenRefreshSerializer):
             'expires_in': int(api_settings.ACCESS_TOKEN_LIFETIME.total_seconds()),
             'token_type': 'Bearer',
         }
-    
-
-class GetUserSerializer(serializers.ModelSerializer):
-    """
-    Get information on currently logged in user
-    """
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'email', 'role']
-        read_only_fields = fields 
