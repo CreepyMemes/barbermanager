@@ -30,6 +30,7 @@ services:
       - '8000:8000'
     volumes:
       - ./backend:/app
+      - media_data:/app/media
     command: python manage.py runserver 0.0.0.0:8000
 
   celery:
@@ -71,3 +72,4 @@ services:
 
 volumes:
   postgres_data:
+  media_data:

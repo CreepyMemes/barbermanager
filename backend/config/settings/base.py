@@ -117,7 +117,11 @@ USE_I18N = True
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+
+# User uploaded media dirs
+MEDIA_URL = '/media/'
+MEDIA_ROOT = '/app/media'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -166,6 +170,7 @@ SPECTACULAR_SETTINGS = {
     "SERVERS": [{"url": "/api"}],
     # "SERVE_INCLUDE_SCHEMA": False,
     "SCHEMA_PATH_PREFIX_TRIM": "/api",
+    'COMPONENT_SPLIT_REQUEST': True,
 }
 
 # WARNING: this is only for development

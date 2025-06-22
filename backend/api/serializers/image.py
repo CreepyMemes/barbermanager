@@ -7,14 +7,15 @@ class UploadProfileImageSerializer(UserValidationMixin, serializers.Serializer):
     """
     Uploads a profile image to the profile of a given user
     """
-    profile_picture = serializers.ImageField(required=True)
+    profile_image = serializers.ImageField(required=True)
 
     def validate(self, attrs):
         attrs = self.validate_user(attrs)
         return attrs
 
     def update(self, instance, validated_data):
-        instance.profile_picture = validated_data['profile_picture']
+        instance.profile_image.delete(save=False) # Delete previous image (if any) before updating
+        instance.profile_image = validated_data['profile_image']
         instance.save()
         return instance
     
@@ -32,6 +33,6 @@ class DeleteProfileImageSerializer(UserValidationMixin, serializers.Serializer):
 
     def delete(self):
         user = self.validated_data['user']
-
-        if user.profile_picture:
-            user.profile_picture.delete()
+        user.profile_image.delete(save=False)
+        user.profile_image = None
+        user.save()

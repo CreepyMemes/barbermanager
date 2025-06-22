@@ -4,10 +4,10 @@ What to do:
 1. Backend:
 
 Important:
-    - add image uploading capability
     - add celery tasks testing, just by calling the methods, can't test celery service
 
 Proposed:
+    - split monolithic app into multiple apps
     - add change email functionality in PATCH /profile endpoint, that automatically sends email verification
     - add return json object after creation or update for anything  https://openwebui.aspire.local/c/9d5f8f49-9f18-4937-ba9e-c7839bfb9b70
 
