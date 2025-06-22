@@ -20,12 +20,7 @@ class BarberProfileTest(APITestCase):
     Tests for the barber profile management and service/availability endpoints.
     """
     def setUp(self):
-        self.login_url = reverse("login_user")
-        self.profile_url = reverse("manage_barber_profile")
-        self.services_url = reverse("manage_barber_services")
-        self.availabilities_url = reverse("get_barber_availabilities")
-        self.appointments_url = reverse("get_barber_appointments")
-        self.reviews_url = reverse("get_barber_reviews") # Endpoint URLs
+        # Endpoint URLs
         self.login_url = reverse("login_user")
         self.profile_url = reverse("manage_barber_profile")
         self.services_url = reverse("manage_barber_services")
@@ -36,7 +31,7 @@ class BarberProfileTest(APITestCase):
         # Create a barber user and a plain client
         self.barber_password = "BarberPass123!"
         self.barber_email = "barber@example.com"
-        self.barber = Barber.objects.create_user(
+        self.barber_user = Barber.objects.create_user(
             username="barber1",
             email=self.barber_email,
             password=self.barber_password,
@@ -44,9 +39,6 @@ class BarberProfileTest(APITestCase):
             surname="barb surname",
             is_active=True,
         )
-        self.barber.refresh_from_db()
-        self.barber.role = Roles.BARBER.value
-        self.barber.save()
 
         self.client_user = Client.objects.create_user(
             username="clientUser",
@@ -62,7 +54,7 @@ class BarberProfileTest(APITestCase):
         """
         Authenticate as the test barber.
         """
-        resp = self.client.post(self.login_url, {"username": self.barber.username, "password": self.barber_password}, format="json")
+        resp = self.client.post(self.login_url, {"username": self.barber_user.username, "password": self.barber_password}, format="json")
         token = resp.data["token"]["access_token"]
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
 
@@ -86,7 +78,8 @@ class BarberProfileTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         profile = response.data["profile"]
-        self.assertEqual(profile, self.barber.to_dict())
+        self.assertEqual(profile, self.barber_user.to_dict())
+        self.assertEqual(profile['role'], Roles.BARBER.value)
 
 
     def test_get_profile_requires_auth_and_barber_role(self):
@@ -113,10 +106,10 @@ class BarberProfileTest(APITestCase):
         resp = self.client.patch(self.profile_url, patch, format="json")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         self.assertEqual(resp.data["detail"], "Profile info updated successfully.")
-        self.barber.refresh_from_db()
-        self.assertEqual(self.barber.name, "Changed1")
-        self.assertEqual(self.barber.username, "Changed2")
-        self.assertEqual(self.barber.description, "Changed3")
+        self.barber_user.refresh_from_db()
+        self.assertEqual(self.barber_user.name, "Changed1")
+        self.assertEqual(self.barber_user.username, "Changed2")
+        self.assertEqual(self.barber_user.description, "Changed3")
 
 
     def test_update_profile_username_unique_constraint(self):
@@ -155,15 +148,15 @@ class BarberProfileTest(APITestCase):
         resp = self.client.delete(self.profile_url)
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
         # Account should not exist anymore
-        self.assertFalse(Barber.objects.filter(pk=self.barber.pk).exists())
+        self.assertFalse(Barber.objects.filter(pk=self.barber_user.pk).exists())
 
 
     def test_list_services(self):
         """
         Authenticated barber can list all their services.
         """
-        Service.objects.create(barber=self.barber, name="Cut", price=Decimal("10.99"))
-        Service.objects.create(barber=self.barber, name="Shave", price=Decimal("7.99"))
+        Service.objects.create(barber=self.barber_user, name="Cut", price=Decimal("10.99"))
+        Service.objects.create(barber=self.barber_user, name="Shave", price=Decimal("7.99"))
         self.login_as_barber()
         resp = self.client.get(self.services_url)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
@@ -191,7 +184,7 @@ class BarberProfileTest(APITestCase):
         resp = self.client.post(self.services_url, data, format="json")
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
         self.assertIn("Service added successfully", resp.data["detail"])
-        service = Service.objects.get(barber=self.barber, name="Buzz Cut")
+        service = Service.objects.get(barber=self.barber_user, name="Buzz Cut")
         self.assertEqual(str(service.price), data["price"])
 
 
@@ -199,7 +192,7 @@ class BarberProfileTest(APITestCase):
         """
         Creating service fails if name exists (case-insensitive).
         """
-        Service.objects.create(barber=self.barber, name="beard trim", price=Decimal("15.00"))
+        Service.objects.create(barber=self.barber_user, name="beard trim", price=Decimal("15.00"))
         self.login_as_barber()
         resp = self.client.post(self.services_url, {"name": "Beard Trim", "price": "25.00"}, format="json")
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
@@ -210,7 +203,7 @@ class BarberProfileTest(APITestCase):
         """
         Barber can patch (partial update) a given service.
         """
-        service = Service.objects.create(barber=self.barber, name="Trim", price=Decimal("9.99"))
+        service = Service.objects.create(barber=self.barber_user, name="Trim", price=Decimal("9.99"))
         self.login_as_barber()
         url = reverse("manage_barber_service", kwargs={"service_id": service.id})
         resp = self.client.patch(url, {"price": "11.11"}, format="json")
@@ -223,8 +216,8 @@ class BarberProfileTest(APITestCase):
         """
         Cannot update a service's name to one already in use.
         """
-        s1 = Service.objects.create(barber=self.barber, name="a", price=1)
-        s2 = Service.objects.create(barber=self.barber, name="b", price=2)
+        s1 = Service.objects.create(barber=self.barber_user, name="a", price=1)
+        s2 = Service.objects.create(barber=self.barber_user, name="b", price=2)
         self.login_as_barber()
         url = reverse("manage_barber_service", kwargs={"service_id": s2.id})
         resp = self.client.patch(url, {"name": "a"}, format="json")
@@ -236,7 +229,7 @@ class BarberProfileTest(APITestCase):
         """
         Update service requires at least a name or price.
         """
-        service = Service.objects.create(barber=self.barber, name="Skin", price=10)
+        service = Service.objects.create(barber=self.barber_user, name="Skin", price=10)
         self.login_as_barber()
         url = reverse("manage_barber_service", kwargs={"service_id": service.id})
         resp = self.client.patch(url, {}, format="json")
@@ -259,7 +252,7 @@ class BarberProfileTest(APITestCase):
         """
         Barber can delete one of their own services.
         """
-        service = Service.objects.create(barber=self.barber, name="Old", price=3)
+        service = Service.objects.create(barber=self.barber_user, name="Old", price=3)
         self.login_as_barber()
         url = reverse("manage_barber_service", kwargs={"service_id": service.id})
         resp = self.client.delete(url)
@@ -283,12 +276,12 @@ class BarberProfileTest(APITestCase):
         Barber can list all their availabilities.
         """
         availability_1 = Availability.objects.create(
-            barber=self.barber, 
+            barber=self.barber_user, 
             date=datetime.date.today(), 
             slots=["09:00", "10:00"]
         )
         availability_2 = Availability.objects.create(
-            barber=self.barber, 
+            barber=self.barber_user, 
             date=datetime.date.today() + datetime.timedelta(days=1), 
             slots=["15:00"]
         )
@@ -320,7 +313,7 @@ class BarberProfileTest(APITestCase):
         """
         appointment_1 = Appointment.objects.create(
             client=self.client_user, 
-            barber=self.barber,
+            barber=self.barber_user,
             date=datetime.date.today(), 
             slot=datetime.time(14, 0),
             status=AppointmentStatus.ONGOING.value
@@ -330,7 +323,7 @@ class BarberProfileTest(APITestCase):
 
         appointment_2 = Appointment.objects.create(
             client=client, 
-            barber=self.barber,
+            barber=self.barber_user,
             date=datetime.date.today(), 
             slot=datetime.time(15, 0),
             status=AppointmentStatus.COMPLETED.value
@@ -351,11 +344,11 @@ class BarberProfileTest(APITestCase):
         """
         client = Client.objects.create_user(username="c3", password="x", email="c3@e.com", is_active=True)
         app = Appointment.objects.create(
-            client=client, barber=self.barber,
+            client=client, barber=self.barber_user,
             date=datetime.date.today(), slot=datetime.time(10, 0),
             status=AppointmentStatus.COMPLETED.value)
         
-        rev = Review.objects.create(appointment=app, client=client, barber=self.barber, rating=5, comment="Great!")
+        rev = Review.objects.create(appointment=app, client=client, barber=self.barber_user, rating=5, comment="Great!")
         self.login_as_barber()
         resp = self.client.get(self.reviews_url)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)

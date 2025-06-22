@@ -1,11 +1,9 @@
 import datetime
-from decimal import Decimal
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 
 from api.models import (
-    User,
     Barber,
     Client,
     Service,
@@ -89,6 +87,7 @@ class ClientProfileTest(APITestCase):
 
         profile = response.data["profile"]
         self.assertEqual(profile, self.client_user.to_dict())
+        self.assertEqual(profile['role'], Roles.CLIENT.value)
 
 
     def test_get_profile_requires_auth_and_client_role(self):
