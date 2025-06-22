@@ -4,7 +4,6 @@ from django.db.models import Q, UniqueConstraint, Avg, Sum
 from django.db import models
 from enum import Enum
 
-
 class Roles(Enum):
     """
     User role definitions: Admin, Client, Barber.
@@ -41,7 +40,6 @@ class UserManager(BaseUserManager):
 
         return user
     
-
     def create_superuser(self, username, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
@@ -64,9 +62,17 @@ class User(AbstractUser):
     """
     Custom user model using our custom manager.
     """
+    def _get_profile_image_path(instance, filename):
+        """
+        Methohd that imports here to avoid circular import issues.
+        """
+        from ..utils import get_profile_image_path
+        return get_profile_image_path(instance, filename)
+
     email = models.EmailField(null=True, blank=True)
     role = models.CharField(max_length=10, choices=Roles.choices(), default=Roles.CLIENT.value)
-
+    profile_image = models.ImageField(upload_to=_get_profile_image_path, null=True, blank=True)
+    
     objects = UserManager()
 
     USERNAME_FIELD = 'username'
@@ -80,7 +86,17 @@ class User(AbstractUser):
                 name='unique_email_non_admin'
             )
         ]
-        
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'role': self.role,
+            'is_active': self.is_active,
+            'username': self.username,
+            'email': self.email,
+            'profile_image': self.profile_image.url if self.profile_image else None,
+        }
+
 
 class Admin(User):
     """
@@ -133,18 +149,16 @@ class Admin(User):
         return round(float(avg), 2) if avg else None
     
     def to_dict(self):
-        return {
-            'id': self.id,
-            'role': self.role,
-            'is_active': self.is_active,
-            'username': self.username,
+        base = super().to_dict()
+        base.update({
             'total_clients': self.total_clients,
             'total_barbers': self.total_barbers,
             'total_appointments': self.total_appointments,
             'total_revenue': self.total_revenue,
             'total_reviews': self.total_reviews,
             'average_rating': self.average_rating,
-        }
+        })
+        return base
 
 
 class Client(User):
@@ -152,9 +166,16 @@ class Client(User):
     Clients are regular users who can register themselves via the API.
     They must provide a valid email and username during registration.
     """
+    def _phone_number_validator():
+        """
+        Methohd that imports here to avoid circular import issues.
+        """
+        from ..utils import phone_number_validator
+        return phone_number_validator
+    
     name = models.CharField(max_length=50)
     surname = models.CharField(max_length=50)
-    phone_number = models.CharField(max_length=16, blank=True, null=True)
+    phone_number = models.CharField(validators=[_phone_number_validator()], max_length=16, blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -180,18 +201,15 @@ class Client(User):
         return [review.to_dict() for review in self.client_reviews.all()]
     
     def to_dict(self):
-        return {
-            'id': self.id,
-            'role': self.role,
-            'is_active': self.is_active,
-            'username': self.username,
-            'email': self.email,
+        base = super().to_dict()
+        base.update({      
             'name': self.name,
             'surname': self.surname,
             'phone_number': self.phone_number,
             'appointments': self.appointments,
             'reviews': self.reviews,
-        }
+        })
+        return base
 
 
 class Barber(User):
@@ -245,12 +263,8 @@ class Barber(User):
         """
         Returns a JSON-serializable dict representation of the review.
         """
-        return {
-            'id': self.id,
-            'role': self.role,
-            'is_active': self.is_active,
-            'username': self.username,
-            'email': self.email,
+        base = super().to_dict()
+        base.update({
             'name': self.name,
             'surname': self.surname,
             'description': self.description,
@@ -258,4 +272,5 @@ class Barber(User):
             'availabilities': self.availabilities,
             'reviews': self.reviews,
             'average_rating': self.average_rating,
-        }
+        })
+        return base

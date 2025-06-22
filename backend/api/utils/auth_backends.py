@@ -1,5 +1,4 @@
 from django.contrib.auth.backends import ModelBackend
-from ..models import User
 
 
 class UsernameOrEmailBackend(ModelBackend):
@@ -8,6 +7,8 @@ class UsernameOrEmailBackend(ModelBackend):
     Gives precedence to username (especially for admins with no email).
     """
     def authenticate(self, request, username=None, password=None, **kwargs):
+        from ..models import User
+        
         if not username or not password:
             return None
         

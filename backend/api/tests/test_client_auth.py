@@ -1,12 +1,13 @@
 from rest_framework.test import APITestCase
 from rest_framework import status
+from unittest.mock import patch
 from django.urls import reverse
 from django.core import mail
 import re
 from api.models import User, Client
 
-
-class AuthFlowTest(APITestCase):
+@patch('django.core.mail.send_mail', return_value=1) 
+class ClientAuthFlowTest(APITestCase):
     """
     Tests for full user registration, email verification, login, and logout flows.
     """
@@ -60,7 +61,7 @@ class AuthFlowTest(APITestCase):
         return user, match.group('uidb64'), match.group('token')
 
 
-    def test_full_registration_verification_login_logout_flow(self):
+    def test_full_registration_verification_login_logout_flow(self, mock_send_mail):
         """
         Full flow: register -> verify email -> login (username/email) -> logout.
         """
@@ -98,7 +99,7 @@ class AuthFlowTest(APITestCase):
         self.assertEqual(logout_response.data.get('detail'), 'Logout successful.')
 
 
-    def test_verify_with_invalid_link(self):
+    def test_verify_with_invalid_link(self, mock_send_mail):
         """
         Verify email with invalid uid/token returns error.
         """
@@ -108,7 +109,7 @@ class AuthFlowTest(APITestCase):
         self.assertEqual(response.data.get('detail'), 'Invalid link.')
 
 
-    def test_verify_with_expired_or_wrong_token(self):
+    def test_verify_with_expired_or_wrong_token(self, mock_send_mail):
         """
         Verify email with expired or wrong token returns error.
         """
@@ -119,7 +120,7 @@ class AuthFlowTest(APITestCase):
         self.assertEqual(response.data.get('detail'), 'Invalid or expired token.')
 
 
-    def test_login_fails_with_unverified_account(self):
+    def test_login_fails_with_unverified_account(self, mock_send_mail):
         """
         Login fails if account is inactive (email not verified).
         """
@@ -130,7 +131,7 @@ class AuthFlowTest(APITestCase):
         self.assertEqual(response.data.get('detail'), 'Account inactive. Please verify your email.')
 
 
-    def test_login_fails_with_wrong_credentials(self):
+    def test_login_fails_with_wrong_credentials(self, mock_send_mail):
         """
         Login fails with incorrect password.
         """
@@ -145,7 +146,7 @@ class AuthFlowTest(APITestCase):
         self.assertEqual(response.data.get('detail'), 'Invalid credentials.')
 
 
-    def test_logout_fails_without_refresh_token(self):
+    def test_logout_fails_without_refresh_token(self, mock_send_mail):
         """
         Logout fails if refresh token not provided.
         """
@@ -164,7 +165,7 @@ class AuthFlowTest(APITestCase):
         self.assertEqual(response.data.get('refresh_token')[0], 'This field is required.')
 
 
-    def test_logout_fails_with_invalid_refresh_token(self):
+    def test_logout_fails_with_invalid_refresh_token(self, mock_send_mail):
         """
         Logout fails with invalid refresh token.
         """

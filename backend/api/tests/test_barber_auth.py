@@ -1,11 +1,12 @@
 from rest_framework.test import APITestCase
 from rest_framework import status
+from unittest.mock import patch
 from django.urls import reverse
 from django.core import mail
 import re
 from api.models import User, Roles
 
-
+@patch('django.core.mail.send_mail', return_value=1) 
 class BarberAuthFlowTest(APITestCase):
     """
     Tests for barber invitation and registration flows.
@@ -62,7 +63,7 @@ class BarberAuthFlowTest(APITestCase):
         return response, match.group('uidb64'), match.group('token')
     
 
-    def test_register_barber_success(self):
+    def test_register_barber_success(self, mock_send_mail):
         """
         A barber can register successfully using a valid uid and token.
         """
@@ -86,7 +87,7 @@ class BarberAuthFlowTest(APITestCase):
         self.assertEqual(user.role, Roles.BARBER.value)
 
 
-    def test_register_barber_invalid_uid(self):
+    def test_register_barber_invalid_uid(self, mock_send_mail):
         """
         Registering with invalid UID returns error.
         """
@@ -103,7 +104,7 @@ class BarberAuthFlowTest(APITestCase):
         self.assertEqual(response.data.get('detail'), 'Invalid link.')
 
 
-    def test_register_barber_invalid_token(self):
+    def test_register_barber_invalid_token(self, mock_send_mail):
         """
         Registering with invalid UID returns error.
         """
@@ -120,7 +121,7 @@ class BarberAuthFlowTest(APITestCase):
         self.assertEqual(response.data.get('detail'), 'Invalid or expired token.')
 
 
-    def test_invite_barber_already_regsitered(self):
+    def test_invite_barber_already_regsitered(self, mock_send_mail):
         """
         Trying to register a barber who already exists returns error.
         """
