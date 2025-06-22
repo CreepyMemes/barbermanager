@@ -48,20 +48,20 @@ def manage_barber_profile(request):
     - DELETE: Deletes the account of the authenticated barber.
     """
     if request.method == 'GET':
-        serializer = GetBarberProfileSerializer(data={}, context={'barber_id': request.user})
+        serializer = GetBarberProfileSerializer(data={}, context={'barber': request.user})
         serializer.is_valid(raise_exception=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     elif request.method == 'PATCH':
-        serializer = UpdateBarberProfileSerializer(data=request.data, context={'barber_id': request.user})
+        serializer = UpdateBarberProfileSerializer(data=request.data, context={'barber': request.user})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         
         return Response({"detail": "Profile info updated successfully."}, status=status.HTTP_200_OK)
     
     elif request.method == 'DELETE':
-        serializer = DeleteBarberProfileSerializer(data={}, context={'barber_id': request.user})
+        serializer = DeleteBarberProfileSerializer(data={}, context={'barber': request.user})
         serializer.is_valid(raise_exception=True)
         serializer.delete()
         
@@ -79,7 +79,7 @@ def get_barber_availabilities(request):
     """
     Barber only: Get all availabilities for the authenticated barber.
     """
-    serializer = GetBarberAvailabilitiesSerializer(data={}, context={'barber_id': request.user})
+    serializer = GetBarberAvailabilitiesSerializer(data={}, context={'barber': request.user})
     serializer.is_valid(raise_exception=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -106,13 +106,13 @@ def manage_barber_services(request):
     - POST: Creates a new service offering for the authenticated barber.
     """
     if request.method == 'GET':
-        serializer = GetBarberServicesSerializer(data={}, context={'barber_id': request.user})
+        serializer = GetBarberServicesSerializer(data={}, context={'barber': request.user})
         serializer.is_valid(raise_exception=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == 'POST':
-        serializer = CreateBarberServiceSerializer(data=request.data, context={'barber_id': request.user})
+        serializer = CreateBarberServiceSerializer(data=request.data, context={'barber': request.user})
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
@@ -141,7 +141,7 @@ def manage_barber_service(request, service_id):
     - DELETE: Remove a given service.
     """
     if request.method == 'PATCH':
-        serializer = UpdateBarberServiceSerializer(data=request.data, context={'barber_id': request.user, 'service_id': service_id})
+        serializer = UpdateBarberServiceSerializer(data=request.data, context={'barber': request.user, 'service_id': service_id})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         
@@ -149,7 +149,7 @@ def manage_barber_service(request, service_id):
     
 
     elif request.method == 'DELETE':
-        serializer = DeleteBarberServiceSerializer(data={}, context={'barber_id': request.user, 'service_id': service_id})
+        serializer = DeleteBarberServiceSerializer(data={}, context={'barber': request.user, 'service_id': service_id})
         serializer.is_valid(raise_exception=True)
         serializer.delete()
         
@@ -167,7 +167,7 @@ def get_barber_appointments(request):
     """
     Barber only: Get all appointments for the authenticated barber.
     """
-    serializer = GeBarberAppointmentsSerializer(data={}, context={'barber_id': request.user})
+    serializer = GeBarberAppointmentsSerializer(data={}, context={'barber': request.user})
     serializer.is_valid(raise_exception=True)
 
     return Response(serializer.data, status=status.HTTP_200_OK)
@@ -184,7 +184,7 @@ def get_barber_reviews(request):
     """
     Barber only: Get all reviews received by the authenticated barber.
     """
-    serializer = GetBarberReviewsSerializer(data={}, context={'barber_id': request.user})
+    serializer = GetBarberReviewsSerializer(data={}, context={'barber': request.user})
     serializer.is_valid(raise_exception=True)
 
     return Response(serializer.data, status=status.HTTP_200_OK)

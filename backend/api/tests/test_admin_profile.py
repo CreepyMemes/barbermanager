@@ -196,6 +196,7 @@ class AdminProfileTest(APITestCase):
 
         profile = response.data["profile"]
         self.assertEqual(profile, self.admin.to_dict())
+        self.assertEqual(profile['role'], Roles.ADMIN.value)
         
 
     def test_get_admin_profile_requires_admin(self):
