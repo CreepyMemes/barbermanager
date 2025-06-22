@@ -20,13 +20,15 @@ class ClientProfileTest(APITestCase):
     """
 
     def setUp(self):
+        # Endpoint URLs
         self.login_url = reverse("login_user")
         self.profile_url = reverse("manage_client_profile")
         self.appointments_url = reverse("get_client_appointments")
         self.reviews_url = reverse("get_client_reviews")
 
+        # Create Users
         self.barber_password = "BarberPass123!"
-        self.barber = Barber.objects.create_user(
+        self.barber_user = Barber.objects.create_user(
             username="barberA",
             email="barb@abc.com",
             password=self.barber_password,
@@ -34,30 +36,24 @@ class ClientProfileTest(APITestCase):
             surname="BarbSurname",
         )
 
-        self.client_username = "johndoe_"
-        self.client_email = "user@abc.com"
         self.client_password = "ClientPwd123!"
-        self.client_name = "John"
-        self.client_surname = "Doe"
-        self.client_phone_number = "+12025551234"
-        
         self.client_user = Client.objects.create_user(
-            username=self.client_username,
-            email=self.client_email,
+            username="johndoe_",
+            email="user@abc.com",
             password=self.client_password,
-            name=self.client_name,
-            surname=self.client_surname,
-            phone_number=self.client_phone_number,
+            name="John",
+            surname="Doe",
+            phone_number="+12025551234",
         )
 
-        # For "not-owner" checks
-        self.other_client = Client.objects.create_user(
+        self.client_user_other = Client.objects.create_user( # For "not-owner" checks
             username="jane",
             email="jane@abc.com",
             password="OtherPwd123!",
             name="Jane",
             surname="Doe",
         )
+
 
     def login_as_client(self):
         """
@@ -67,11 +63,12 @@ class ClientProfileTest(APITestCase):
         token = resp.data["token"]["access_token"]
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
 
+
     def login_as_barber(self):
         """
         Authenticate as a test barber (not a client).
         """
-        resp = self.client.post(self.login_url, {"username": self.barber.username, "password": self.barber_password}, format="json")
+        resp = self.client.post(self.login_url, {"username": self.barber_user.username, "password": self.barber_password}, format="json")
         token = resp.data["token"]["access_token"]
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
 
@@ -97,8 +94,10 @@ class ClientProfileTest(APITestCase):
         # Not authenticated
         response = self.client.get(self.profile_url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
         # Auth as barber, not client
         self.login_as_barber()
+
         response = self.client.get(self.profile_url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -164,15 +163,15 @@ class ClientProfileTest(APITestCase):
         """
         Client can list all their appointments.
         """
-        s1 = Service.objects.create(barber=self.barber, name="Hair", price=10)
+        s1 = Service.objects.create(barber=self.barber_user, name="Hair", price=10)
         app_1 = Appointment.objects.create(
-            client=self.client_user, barber=self.barber,
+            client=self.client_user, barber=self.barber_user,
             date=datetime.date.today(), slot=datetime.time(10, 0),
             status=AppointmentStatus.ONGOING.value,
         )
         app_1.services.set([s1])
         app_2 = Appointment.objects.create(
-            client=self.client_user, barber=self.barber,
+            client=self.client_user, barber=self.barber_user,
             date=datetime.date.today() + datetime.timedelta(days=1), slot=datetime.time(11, 0),
             status=AppointmentStatus.COMPLETED.value,
         )
@@ -199,25 +198,44 @@ class ClientProfileTest(APITestCase):
         """
         Client can create a valid appointment with a barber and services.
         """
-        s1 = Service.objects.create(barber=self.barber, name="Haircut", price=10)
-        s2 = Service.objects.create(barber=self.barber, name="Shave", price=15)
-        today = datetime.date.today()
-        slot = datetime.time(9, 0)
-        Availability.objects.create(barber=self.barber, date=today, slots=["09:00", "11:00"])
+        service_1 = Service.objects.create(
+            barber=self.barber_user, 
+            name="Haircut", 
+            price=10
+        )
+
+        service_2 = Service.objects.create(
+            barber=self.barber_user, 
+            name="Shave", 
+            price=15
+        )
+
+        Availability.objects.create(
+            barber=self.barber_user, 
+            date=datetime.date.today(), 
+            slots=["09:00", "11:00"]
+        )
+
         self.login_as_client()
-        url = reverse("create_client_appointment", kwargs={"barber_id": self.barber.id})
+
+        url = reverse("create_client_appointment", kwargs={"barber_id": self.barber_user.id})
+
         data = {
-            "date": today,
+            "date": datetime.date.today(),
             "slot": "09:00",
-            "services": [s1.id, s2.id],
+            "services": [service_1.id, service_2.id],
         }
-        resp = self.client.post(url, data, format="json")
-        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
-        self.assertIn("Appointment added successfully", resp.data["detail"])
-        appt = Appointment.objects.get(client=self.client_user)
-        self.assertEqual(appt.barber, self.barber)
-        self.assertEqual(str(appt.date), str(today))
-        self.assertEqual([x.id for x in appt.services.all()], [s1.id, s2.id])
+
+        response = self.client.post(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        self.assertIn("Appointment added successfully", response.data["detail"])
+
+        appointment = Appointment.objects.get(client=self.client_user)
+
+        self.assertEqual(appointment.barber, self.barber_user)
+        self.assertEqual(str(appointment.date), str(datetime.date.today()))
+        self.assertEqual([x.id for x in appointment.services.all()], [service_1.id, service_2.id])
 
 
     def test_create_appointment_requires_barber_exists(self):
@@ -240,20 +258,20 @@ class ClientProfileTest(APITestCase):
         """
         Rejects double bookings for same client/date or same barber/slot or ongoing.
         """
-        s1 = Service.objects.create(barber=self.barber, name="Cut", price=9)
+        s1 = Service.objects.create(barber=self.barber_user, name="Cut", price=9)
         today = datetime.date.today()
         slot = datetime.time(9, 0)
         # Set available
-        Availability.objects.create(barber=self.barber, date=today, slots=["09:00"])
+        Availability.objects.create(barber=self.barber_user, date=today, slots=["09:00"])
 
         # Prior appointment (ONGOING for client)
         appt = Appointment.objects.create(
-            client=self.client_user, barber=self.barber, date=today, slot=slot,
+            client=self.client_user, barber=self.barber_user, date=today, slot=slot,
             status=AppointmentStatus.ONGOING.value
         )
         appt.services.set([s1])
         self.login_as_client()
-        url = reverse("create_client_appointment", kwargs={"barber_id": self.barber.id})
+        url = reverse("create_client_appointment", kwargs={"barber_id": self.barber_user.id})
         data = {
             "date": today,
             "slot": "09:00",
@@ -274,11 +292,11 @@ class ClientProfileTest(APITestCase):
             is_active=True
         )
         s_other = Service.objects.create(barber=their_barber, name="Wax", price=10)
-        s_our = Service.objects.create(barber=self.barber, name="Buzz", price=9)
+        s_our = Service.objects.create(barber=self.barber_user, name="Buzz", price=9)
         dt = datetime.date.today()
-        Availability.objects.create(barber=self.barber, date=dt, slots=["13:00"])
+        Availability.objects.create(barber=self.barber_user, date=dt, slots=["13:00"])
         self.login_as_client()
-        url = reverse("create_client_appointment", kwargs={"barber_id": self.barber.id})
+        url = reverse("create_client_appointment", kwargs={"barber_id": self.barber_user.id})
         data = {
             "date": dt,
             "slot": "13:00",
@@ -293,11 +311,11 @@ class ClientProfileTest(APITestCase):
         """
         Cannot create appointment if barber not available (no availability or slot missing).
         """
-        s1 = Service.objects.create(barber=self.barber, name="Mass", price=8)
+        s1 = Service.objects.create(barber=self.barber_user, name="Mass", price=8)
         dt = datetime.date.today()
         # No Availability for barber
         self.login_as_client()
-        url = reverse("create_client_appointment", kwargs={"barber_id": self.barber.id})
+        url = reverse("create_client_appointment", kwargs={"barber_id": self.barber_user.id})
         data = {
             "date": dt,
             "slot": "08:00",  # not available
@@ -307,7 +325,7 @@ class ClientProfileTest(APITestCase):
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("not available", str(resp.data["detail"]).lower())
 
-        Availability.objects.create(barber=self.barber, date=dt, slots=["13:00"])
+        Availability.objects.create(barber=self.barber_user, date=dt, slots=["13:00"])
         # Now date exists, but slot is missing
         data["slot"] = "08:00"
         resp2 = self.client.post(url, data, format="json")
@@ -319,9 +337,9 @@ class ClientProfileTest(APITestCase):
         """
         Client can cancel their ONGOING appointment.
         """
-        s1 = Service.objects.create(barber=self.barber, name="B", price=7)
+        s1 = Service.objects.create(barber=self.barber_user, name="B", price=7)
         appt = Appointment.objects.create(
-            client=self.client_user, barber=self.barber,
+            client=self.client_user, barber=self.barber_user,
             date=datetime.date.today(), slot=datetime.time(8,0),
             status=AppointmentStatus.ONGOING.value
         )
@@ -338,9 +356,9 @@ class ClientProfileTest(APITestCase):
         """
         Only ONGOING appts can be cancelled; not found or wrong client returns error.
         """
-        s1 = Service.objects.create(barber=self.barber, name="V", price=5)
+        s1 = Service.objects.create(barber=self.barber_user, name="V", price=5)
         appt = Appointment.objects.create(
-            client=self.client_user, barber=self.barber,
+            client=self.client_user, barber=self.barber_user,
             date=datetime.date.today(), slot=datetime.time(8,0),
             status=AppointmentStatus.COMPLETED.value
         )
@@ -354,7 +372,7 @@ class ClientProfileTest(APITestCase):
 
         # Not your appointment
         appt2 = Appointment.objects.create(
-            client=self.other_client, barber=self.barber,
+            client=self.client_user_other, barber=self.barber_user,
             date=datetime.date.today(), slot=datetime.time(9,0),
             status=AppointmentStatus.ONGOING.value
         )
@@ -370,15 +388,15 @@ class ClientProfileTest(APITestCase):
         Client can list all the reviews they've posted.
         """
         # Need at least one completed appointment and review created
-        s1 = Service.objects.create(barber=self.barber, name="BE", price=6)
+        s1 = Service.objects.create(barber=self.barber_user, name="BE", price=6)
         appt = Appointment.objects.create(
-            client=self.client_user, barber=self.barber,
+            client=self.client_user, barber=self.barber_user,
             date=datetime.date.today(), slot=datetime.time(22,0),
             status=AppointmentStatus.COMPLETED.value
         )
         appt.services.set([s1])
         rev = Review.objects.create(
-            appointment=appt, client=self.client_user, barber=self.barber, rating=4, comment="Nice cut!"
+            appointment=appt, client=self.client_user, barber=self.barber_user, rating=4, comment="Nice cut!"
         )
         self.login_as_client()
         resp = self.client.get(self.reviews_url)
@@ -402,9 +420,9 @@ class ClientProfileTest(APITestCase):
         """
         Client can create a review on a completed appointment (appointment->barber).
         """
-        s1 = Service.objects.create(barber=self.barber, name="Mow", price=10)
+        s1 = Service.objects.create(barber=self.barber_user, name="Mow", price=10)
         appt = Appointment.objects.create(
-            client=self.client_user, barber=self.barber,
+            client=self.client_user, barber=self.barber_user,
             date=datetime.date.today(), slot=datetime.time(12,0),
             status=AppointmentStatus.COMPLETED.value
         )
@@ -414,7 +432,7 @@ class ClientProfileTest(APITestCase):
         data = {"rating": 5, "comment": "Spectacular"}
         resp = self.client.post(url, data, format="json")
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
-        review = Review.objects.get(client=self.client_user, barber=self.barber)
+        review = Review.objects.get(client=self.client_user, barber=self.barber_user)
         self.assertEqual(review.rating, 5)
         self.assertEqual(review.appointment, appt)
         self.assertEqual(review.comment, "Spectacular")
@@ -424,9 +442,9 @@ class ClientProfileTest(APITestCase):
         """
         Cannot review a non-completed appointment.
         """
-        s1 = Service.objects.create(barber=self.barber, name="Face", price=6)
+        s1 = Service.objects.create(barber=self.barber_user, name="Face", price=6)
         appt = Appointment.objects.create(
-            client=self.client_user, barber=self.barber,
+            client=self.client_user, barber=self.barber_user,
             date=datetime.date.today(), slot=datetime.time(15,0),
             status=AppointmentStatus.ONGOING.value
         )
@@ -442,15 +460,15 @@ class ClientProfileTest(APITestCase):
         """
         Client can only review a given barber once.
         """
-        s1 = Service.objects.create(barber=self.barber, name="Legs", price=6)
+        s1 = Service.objects.create(barber=self.barber_user, name="Legs", price=6)
         completed = Appointment.objects.create(
-            client=self.client_user, barber=self.barber,
+            client=self.client_user, barber=self.barber_user,
             date=datetime.date.today(), slot=datetime.time(17,0),
             status=AppointmentStatus.COMPLETED.value
         )
         completed.services.set([s1])
         review = Review.objects.create(
-            appointment=completed, client=self.client_user, barber=self.barber, rating=3, comment="zzz"
+            appointment=completed, client=self.client_user, barber=self.barber_user, rating=3, comment="zzz"
         )
         self.login_as_client()
         url = reverse("create_client_review", kwargs={"appointment_id": completed.id})
@@ -463,9 +481,9 @@ class ClientProfileTest(APITestCase):
         """
         Can only review your own appointments.
         """
-        s1 = Service.objects.create(barber=self.barber, name="Lol", price=7)
+        s1 = Service.objects.create(barber=self.barber_user, name="Lol", price=7)
         appt = Appointment.objects.create(
-            client=self.other_client, barber=self.barber,
+            client=self.client_user_other, barber=self.barber_user,
             date=datetime.date.today(), slot=datetime.time(11,0),
             status=AppointmentStatus.COMPLETED.value
         )
@@ -481,14 +499,14 @@ class ClientProfileTest(APITestCase):
         """
         Client can update their own review's rating/comment.
         """
-        s1 = Service.objects.create(barber=self.barber, name="BU", price=1)
+        s1 = Service.objects.create(barber=self.barber_user, name="BU", price=1)
         appt = Appointment.objects.create(
-            client=self.client_user, barber=self.barber,
+            client=self.client_user, barber=self.barber_user,
             date=datetime.date.today(), slot=datetime.time(20,0),
             status=AppointmentStatus.COMPLETED.value
         )
         appt.services.set([s1])
-        rev = Review.objects.create(appointment=appt, client=self.client_user, barber=self.barber, rating=3, comment="Old comment")
+        rev = Review.objects.create(appointment=appt, client=self.client_user, barber=self.barber_user, rating=3, comment="Old comment")
         self.login_as_client()
         url = reverse("manage_client_reviews", kwargs={"review_id": rev.id})
         resp = self.client.patch(url, {"rating": 2, "comment": "Better"}, format="json")
@@ -503,14 +521,14 @@ class ClientProfileTest(APITestCase):
         """
         Cannot update a review with no fields specified.
         """
-        s1 = Service.objects.create(barber=self.barber, name="XY", price=8)
+        s1 = Service.objects.create(barber=self.barber_user, name="XY", price=8)
         appt = Appointment.objects.create(
-            client=self.client_user, barber=self.barber,
+            client=self.client_user, barber=self.barber_user,
             date=datetime.date.today(), slot=datetime.time(18,0),
             status=AppointmentStatus.COMPLETED.value
         )
         appt.services.set([s1])
-        rev = Review.objects.create(appointment=appt, client=self.client_user, barber=self.barber, rating=2, comment="hi")
+        rev = Review.objects.create(appointment=appt, client=self.client_user, barber=self.barber_user, rating=2, comment="hi")
 
         self.login_as_client()
         url = reverse("manage_client_reviews", kwargs={"review_id": rev.id})
@@ -535,14 +553,14 @@ class ClientProfileTest(APITestCase):
         """
         Client can delete their review.
         """
-        s1 = Service.objects.create(barber=self.barber, name="XC", price=4)
+        s1 = Service.objects.create(barber=self.barber_user, name="XC", price=4)
         appt = Appointment.objects.create(
-            client=self.client_user, barber=self.barber,
+            client=self.client_user, barber=self.barber_user,
             date=datetime.date.today(), slot=datetime.time(19,0),
             status=AppointmentStatus.COMPLETED.value
         )
         appt.services.set([s1])
-        rev = Review.objects.create(appointment=appt, client=self.client_user, barber=self.barber, rating=1, comment="x")
+        rev = Review.objects.create(appointment=appt, client=self.client_user, barber=self.barber_user, rating=1, comment="x")
         self.login_as_client()
         url = reverse("manage_client_reviews", kwargs={"review_id": rev.id})
         resp = self.client.delete(url)

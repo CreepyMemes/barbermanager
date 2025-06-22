@@ -73,76 +73,98 @@ class UIDTokenValidationSerializer(serializers.Serializer):
         return attrs
     
 
-class UserValidationMixin:
+class ModelInstanceOrIDValidationMixin:
+    """
+    Mixin to fetch and validate a user model instance from either an instance or a PK in context.
+    """
+    def validate_user_model(self, model, attrs):
+        from ..models import User
+        model_name = model.__name__
+        out_key = model_name.lower()
+        context_keys = [out_key, f"{out_key}_id"]
+        found = None
+        
+        # Get value for the first key found
+        for key in context_keys:
+            if key in self.context:
+                found = self.context[key]
+                break
+        
+        if not found:
+            raise serializers.ValidationError(f"No {model_name} or ID provided in context.")
+        
+        # If it's the correct model instance, return directly
+        if isinstance(found, model):
+            if not found.is_active:
+                raise serializers.ValidationError(f"{model_name} is inactive.")
+            
+            attrs[out_key] = found
+            return attrs
+        
+        # If instance of User, get the correct related model (client/barber/admin):
+        if isinstance(found, User):
+            user_type_name = model_name.lower()
+
+            if hasattr(found, user_type_name):
+                user_type = getattr(found, user_type_name, None)
+
+                if user_type:
+                    if not user_type.is_active:
+                        raise serializers.ValidationError(f"{model_name} is inactive.")
+                    
+                    attrs[out_key] = user_type
+                    return attrs
+                
+            raise serializers.ValidationError(f"User does not have a {user_type_name} profile.")
+
+        # If it's a valid integer pk, query for instance
+        if isinstance(found, int):
+            try:
+                user = model.objects.get(pk=found, is_active=True)
+            except model.DoesNotExist:
+                raise serializers.ValidationError(f'{model_name} with ID: "{found}" does not exist or is inactive.')
+            
+            attrs[out_key] = user
+            return attrs
+
+        # If it's neither, fallback error
+        raise serializers.ValidationError(f"{model_name} must be provided as an instance or a primary key, not '{found}'.")
+
+
+class UserValidationMixin(ModelInstanceOrIDValidationMixin):
     """
     Mixin to validate that a user_id from context exists and is active. Also adds 'user' to attrs.
     """
     def validate_user(self, attrs):
         from ..models import User
+        return self.validate_user_model(User, attrs)
 
-        user_id = self.context.get('user_id')
 
-        try:
-            user = User.objects.get(pk=user_id, is_active=True)
-        except User.DoesNotExist:
-            raise serializers.ValidationError(f'User with ID: "{user_id}" does not exist or is inactive.')
-        
-        attrs['user'] = user
-        return attrs
-    
-
-class AdminValidationMixin:
+class AdminValidationMixin(ModelInstanceOrIDValidationMixin):
     """
-    Mixin to validate that a admin_id from context exists and is active. Also adds 'admin' to attrs.
+    Mixin to validate that an Admin instance or ID from context, ensure active, adds 'admin' to attrs.
     """
     def validate_admin(self, attrs):
         from ..models import Admin
-
-        admin_id = self.context.get('admin_id')
-
-        try:
-            admin = Admin.objects.get(pk=admin_id, is_active=True)
-        except Admin.DoesNotExist:
-            raise serializers.ValidationError(f'Admin with ID: "{admin_id}" does not exist or is inactive.')
-        
-        attrs['admin'] = admin
-        return attrs
+        return self.validate_user_model(Admin, attrs)
     
 
-class ClientValidationMixin:
+class ClientValidationMixin(ModelInstanceOrIDValidationMixin):
     """
-    Mixin to validate that a client_id from context exists and is active. Also adds 'client' to attrs.
+    Mixin to validate that a Client instance or ID from context, ensure active, adds 'client' to attrs.
     """
     def validate_client(self, attrs):
         from ..models import Client
-
-        client_id = self.context.get('client_id')
-
-        try:
-            client = Client.objects.get(pk=client_id, is_active=True)
-        except Client.DoesNotExist:
-            raise serializers.ValidationError(f'Client with ID: "{client_id}" does not exist or is inactive.')
-        
-        attrs['client'] = client
-        return attrs
+        return self.validate_user_model(Client, attrs)
 
 
-class BarberValidationMixin:
+class BarberValidationMixin(ModelInstanceOrIDValidationMixin):
     """
-    Mixin to validate that a barber_id from context exists and is active. Also adds 'barber' to attrs.
+    Mixin to validate that a Barber instance or ID from context, ensure active, adds 'barber' to attrs.
     """
     def validate_barber(self, attrs):
         from ..models import Barber
-
-        barber_id = self.context.get('barber_id')
-
-        try:
-            barber = Barber.objects.get(pk=barber_id, is_active=True)
-        except Barber.DoesNotExist:
-            raise serializers.ValidationError(f'Barber with ID: "{barber_id}" does not exist or is inactive.')
-        
-        attrs['barber'] = barber
-        return attrs
+        return self.validate_user_model(Barber, attrs)
 
 
 class AppointmentValidationMixin:

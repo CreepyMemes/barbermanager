@@ -48,20 +48,20 @@ def manage_client_profile(request):
     - DELETE: Deletes the account of the authenticated client.
     """
     if request.method == 'GET':
-        serializer = GetClientProfileSerializer(data={}, context={'client_id': request.user})
+        serializer = GetClientProfileSerializer(data={}, context={'client': request.user})
         serializer.is_valid(raise_exception=True)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     elif request.method == 'PATCH':
-        serializer = UpdateClientProfileSerializer(data=request.data, context={'client_id': request.user})
+        serializer = UpdateClientProfileSerializer(data=request.data, context={'client': request.user})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         
         return Response({"detail": "Profile info updated successfully."}, status=status.HTTP_200_OK)
     
     elif request.method == 'DELETE':
-        serializer = DeleteClientProfileSerializer(data={}, context={'client_id': request.user})
+        serializer = DeleteClientProfileSerializer(data={}, context={'client': request.user})
         serializer.is_valid(raise_exception=True)
         serializer.delete()
         
@@ -79,7 +79,7 @@ def get_client_appointments(request):
     """
     Client only: Get all appointments for the authenticated client.
     """
-    serializer = GetClientAppointmentsSerializer(data={}, context={'client_id': request.user})
+    serializer = GetClientAppointmentsSerializer(data={}, context={'client': request.user})
     serializer.is_valid(raise_exception=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -96,7 +96,8 @@ def create_client_appointment(request, barber_id):
     """
     Client only: Creates an appointmentt for the authenticated client.
     """
-    serializer = CreateClientAppointmentSerializer(data=request.data, context={'client_id': request.user, 'barber_id': barber_id})
+
+    serializer = CreateClientAppointmentSerializer(data=request.data, context={'client': request.user, 'barber_id': barber_id})
     serializer.is_valid(raise_exception=True)
     serializer.save()
 
@@ -114,7 +115,7 @@ def cancel_client_appointment(request, appointment_id):
     """
     Client only: Cancels an ONGOING appointment by setting it's status to CANCELLED, for the authenticated client.
     """
-    serializer = CancelClientAppointmentSerializer(data={}, context={'client_id': request.user, 'appointment_id': appointment_id})
+    serializer = CancelClientAppointmentSerializer(data={}, context={'client': request.user, 'appointment_id': appointment_id})
     serializer.is_valid(raise_exception=True)
     serializer.save()
 
@@ -132,7 +133,7 @@ def get_client_reviews(request):
     """
     Get all reviews posted by the authenticated client.
     """
-    serializer = GetClientReviewsSerializer(data={}, context={'client_id': request.user})
+    serializer = GetClientReviewsSerializer(data={}, context={'client': request.user})
     serializer.is_valid(raise_exception=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -149,7 +150,7 @@ def create_client_review(request, appointment_id):
     """
     Client only:  Creates a new review post for the barber associated to the authenticated client's appointment
     """
-    serializer = CreateClientReviewSerializer(data=request.data,context={'client_id': request.user, 'appointment_id': appointment_id})
+    serializer = CreateClientReviewSerializer(data=request.data,context={'client': request.user, 'appointment_id': appointment_id})
     serializer.is_valid(raise_exception=True)
     serializer.create(serializer.validated_data)
 
@@ -177,7 +178,7 @@ def manage_client_reviews(request, review_id):
     DELETE: Remove the review.
     """
     if request.method == 'PATCH':
-        serializer = UpdateClientReviewSerializer(data=request.data,context={'client_id': request.user, 'review_id': review_id})
+        serializer = UpdateClientReviewSerializer(data=request.data,context={'client': request.user, 'review_id': review_id})
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
@@ -186,7 +187,7 @@ def manage_client_reviews(request, review_id):
 
     elif request.method == 'DELETE':
         pass
-        serializer = DeleteClientReviewSerializer(data={}, context={'client_id': request.user, 'review_id': review_id})
+        serializer = DeleteClientReviewSerializer(data={}, context={'client': request.user, 'review_id': review_id})
         serializer.is_valid(raise_exception=True)
         serializer.delete()
 

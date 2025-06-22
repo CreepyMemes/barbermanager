@@ -106,10 +106,11 @@ class CreateClientAppointmentSerializer(ClientValidationMixin, BarberValidationM
     services = serializers.PrimaryKeyRelatedField(required=True, queryset=Service.objects.all(), many=True)
 
     def validate(self, attrs):
-        attrs = self.validate_barber(attrs)
         attrs = self.validate_client(attrs)
+        attrs = self.validate_barber(attrs)
         attrs = self.validate_appointment_date_and_slot(attrs)
         attrs = self.validate_services_belong_to_barber(attrs)
+        
         return attrs
 
     def create(self, validated_data):
