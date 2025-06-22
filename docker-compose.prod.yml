@@ -26,6 +26,8 @@ services:
       - redis
     ports:
       - '127.0.0.1:7001:8000'
+    volumes:
+      - /srv/barbermanager/media:/app/media
     mem_limit: 100m
 
   celery:

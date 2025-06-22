@@ -1,6 +1,7 @@
 from django.urls import reverse
 from django.core.mail import send_mail
 
+
 def send_client_verify_email(email, uid, token, domain):
     """
     Sends email confirmation link to client after registration.

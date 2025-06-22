@@ -1,41 +1,5 @@
-from django.utils.http import urlsafe_base64_decode
-from django.utils.encoding import  force_str
-from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
-from ..models import (
-    User, 
-    Client,
-    Barber,
-    Admin,
-    Appointment,
-    Availability,
-    Service,
-    Review,
-    AppointmentStatus,
-)
-
-
-def get_user_from_uid_token(uidb64, token, role=None):
-    """
-    Utility function that checks if a token previously registered to a user is valid.
-    Raises serializers.ValidationError if invalid.
-    """
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-
-        if role:
-            user = User.objects.get(pk=uid, role=role)
-        else:
-            user = User.objects.get(pk=uid)
-
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        raise serializers.ValidationError("Invalid link.")
-    
-    if not default_token_generator.check_token(user, token):
-        raise serializers.ValidationError("Invalid or expired token.")
-
-    return user
 
 
 class PasswordValidationMixin:
@@ -52,8 +16,9 @@ class EmailValidationMixin:
     Utility mixin to handle common email validation checks
     """
     def validate_email_unique(self, attrs, user_instance=None):
-        email = attrs['email']
+        from ..models import User
 
+        email = attrs['email']
         user = User.objects.filter(email=email)
 
         if user_instance:
@@ -71,8 +36,9 @@ class UsernameValidationMixin:
     Utility mixin to handle common username validation checks
     """
     def validate_username_unique(self, attrs, user_instance=None): 
-        username = attrs['username']
+        from ..models import User
 
+        username = attrs['username']
         user = User.objects.filter(username=username)
 
         if user_instance:
@@ -90,6 +56,8 @@ class UIDTokenValidationSerializer(serializers.Serializer):
     Utility serializer that handlles token checks, from which other serializers inherit
     """
     def validate_uid_token(self):
+        from .utils import get_user_from_uid_token
+
         uidb64 = self.context.get('uidb64')
         token = self.context.get('token')
 
@@ -105,53 +73,99 @@ class UIDTokenValidationSerializer(serializers.Serializer):
         return attrs
     
 
-class ClientValidationMixin:
+class ModelInstanceOrIDValidationMixin:
     """
-    Mixin to validate that a client_id from context exists and is active. Also adds 'client' to attrs.
+    Mixin to fetch and validate a user model instance from either an instance or a PK in context.
     """
-    def validate_client(self, attrs):
-        client_id = self.context.get('client_id')
-
-        try:
-            client = Client.objects.get(pk=client_id, is_active=True)
-        except Client.DoesNotExist:
-            raise serializers.ValidationError(f'Client with ID: "{client_id}" does not exist or is inactive.')
+    def validate_user_model(self, model, attrs):
+        from ..models import User
+        model_name = model.__name__
+        out_key = model_name.lower()
+        context_keys = [out_key, f"{out_key}_id"]
+        found = None
         
-        attrs['client'] = client
-        return attrs
-    
-
-class BarberValidationMixin:
-    """
-    Mixin to validate that a barber_id from context exists and is active. Also adds 'barber' to attrs.
-    """
-    def validate_barber(self, attrs):
-        barber_id = self.context.get('barber_id')
-
-        try:
-            barber = Barber.objects.get(pk=barber_id, is_active=True)
-        except Barber.DoesNotExist:
-            raise serializers.ValidationError(f'Barber with ID: "{barber_id}" does not exist or is inactive.')
+        # Get value for the first key found
+        for key in context_keys:
+            if key in self.context:
+                found = self.context[key]
+                break
         
-        attrs['barber'] = barber
-        return attrs
-    
+        if not found:
+            raise serializers.ValidationError(f"No {model_name} or ID provided in context.")
+        
+        # If it's the correct model instance, return directly
+        if isinstance(found, model):
+            if not found.is_active:
+                raise serializers.ValidationError(f"{model_name} is inactive.")
+            
+            attrs[out_key] = found
+            return attrs
+        
+        # If instance of User, get the correct related model (client/barber/admin):
+        if isinstance(found, User):
+            user_type_name = model_name.lower()
 
-class AdminValidationMixin:
+            if hasattr(found, user_type_name):
+                user_type = getattr(found, user_type_name, None)
+
+                if user_type:
+                    if not user_type.is_active:
+                        raise serializers.ValidationError(f"{model_name} is inactive.")
+                    
+                    attrs[out_key] = user_type
+                    return attrs
+                
+            raise serializers.ValidationError(f"User does not have a {user_type_name} profile.")
+
+        # If it's a valid integer pk, query for instance
+        if isinstance(found, int):
+            try:
+                user = model.objects.get(pk=found, is_active=True)
+            except model.DoesNotExist:
+                raise serializers.ValidationError(f'{model_name} with ID: "{found}" does not exist or is inactive.')
+            
+            attrs[out_key] = user
+            return attrs
+
+        # If it's neither, fallback error
+        raise serializers.ValidationError(f"{model_name} must be provided as an instance or a primary key, not '{found}'.")
+
+
+class UserValidationMixin(ModelInstanceOrIDValidationMixin):
     """
-    Mixin to validate that a admin_id from context exists and is active. Also adds 'admin' to attrs.
+    Mixin to validate that a user_id from context exists and is active. Also adds 'user' to attrs.
+    """
+    def validate_user(self, attrs):
+        from ..models import User
+        return self.validate_user_model(User, attrs)
+
+
+class AdminValidationMixin(ModelInstanceOrIDValidationMixin):
+    """
+    Mixin to validate that an Admin instance or ID from context, ensure active, adds 'admin' to attrs.
     """
     def validate_admin(self, attrs):
-        admin_id = self.context.get('admin_id')
-
-        try:
-            admin = Admin.objects.get(pk=admin_id, is_active=True)
-        except Admin.DoesNotExist:
-            raise serializers.ValidationError(f'Admin with ID: "{admin_id}" does not exist or is inactive.')
-        
-        attrs['admin'] = admin
-        return attrs
+        from ..models import Admin
+        return self.validate_user_model(Admin, attrs)
     
+
+class ClientValidationMixin(ModelInstanceOrIDValidationMixin):
+    """
+    Mixin to validate that a Client instance or ID from context, ensure active, adds 'client' to attrs.
+    """
+    def validate_client(self, attrs):
+        from ..models import Client
+        return self.validate_user_model(Client, attrs)
+
+
+class BarberValidationMixin(ModelInstanceOrIDValidationMixin):
+    """
+    Mixin to validate that a Barber instance or ID from context, ensure active, adds 'barber' to attrs.
+    """
+    def validate_barber(self, attrs):
+        from ..models import Barber
+        return self.validate_user_model(Barber, attrs)
+
 
 class AppointmentValidationMixin:
     """
@@ -173,6 +187,8 @@ class AppointmentValidationMixin:
         return attrs
 
     def validate_appointment_date_and_slot(self, attrs):
+        from ..models import Appointment, Availability, AppointmentStatus
+
         client = attrs['client']
         barber = attrs['barber']
         appointment_date = attrs['date']
@@ -200,6 +216,8 @@ class AppointmentValidationMixin:
         return attrs
     
     def validate_find_appointment(self, attrs):
+        from ..models import Appointment, AppointmentStatus
+
         client = attrs['client']
         appointment_id = self.context.get('appointment_id')
 
@@ -223,6 +241,8 @@ class AvailabilityValidationMixin:
     - Validates the existence of an availability entry for the given barber and specified ID before allowing retrieval or update operations.
     """
     def validate_availability_date(self, attrs, availability_instance=None):
+        from ..models import Availability
+
         barber = attrs['barber']
         availability_date = attrs['date']
 
@@ -237,6 +257,8 @@ class AvailabilityValidationMixin:
         return attrs
 
     def validate_find_availability(self, attrs):
+        from ..models import Availability
+        
         barber = attrs['barber']
         availability_id = self.context.get('availability_id')
 
@@ -257,6 +279,8 @@ class ServiceValidationMixin:
     - Ensures a service with the given ID exists and is owned by the specified barber before proceeding with actions that need to fetch or validate a particular service.
     """
     def validate_service_name(self, attrs, service_instance=None):
+        from ..models import Service
+
         barber = attrs['barber']
         service_name = attrs['name']
 
@@ -271,6 +295,8 @@ class ServiceValidationMixin:
         return attrs
 
     def validate_find_service(self, attrs):
+        from ..models import Service
+
         barber = attrs['barber']
         service_id = self.context.get('service_id')
 
@@ -291,6 +317,8 @@ class ReviewValidationMixin:
     - Ensures a review exists and belongs to the requesting client when retrieving or modifying a review.
     """
     def validate_appointment_for_review(self, attrs):
+        from ..models import Appointment, Review, AppointmentStatus
+
         client = attrs['client']
         appointment_id = self.context.get('appointment_id')
 
@@ -312,6 +340,8 @@ class ReviewValidationMixin:
         return attrs
     
     def validate_find_review(self, attrs):
+        from ..models import Review, AppointmentStatus
+
         client = attrs['client']
         review_id = self.context.get('review_id')
 
@@ -332,6 +362,7 @@ class GetAdminsMixin:
         """
         Returns Admin queryset in the system.
         """
+        from ..models import Admin
         return Admin.objects.all()
     
     def get_admin_private(self, admin):
@@ -358,6 +389,7 @@ class GetBarbersMixin:
         Returns Barber queryset in the system.
         If show_all is True, returns all barbers.
         """
+        from ..models import Barber
         return Barber.objects.filter(is_active=True) if not show_all else Barber.objects.all()
     
     def get_barber_public(self, barber):
@@ -399,6 +431,7 @@ class GetClientsMixin:
         Returns Client queryset in the system.
         If show_all is True, returns all clients.
         """
+        from ..models import Client
         return Client.objects.filter(is_active=True) if not show_all else Client.objects.all()
     
     def get_client_public(self, client):
@@ -438,6 +471,7 @@ class GetAvailabilitiesMixin:
         Returns Availability queryset for a specific barber.
         If show_all is True, returns all availabilities.
         """
+        from ..models import Availability
         return Availability.objects.filter(barber_id=barber_id) if not show_all else Availability.objects.all()
     
     def get_availability_public(self, availability):
@@ -462,6 +496,7 @@ class GetServicesMixin:
         Returns Service queryset for a specific barber.
         If show_all is True, returns all services.
         """
+        from ..models import Service
         return Service.objects.filter(barber_id=barber_id) if not show_all else Service.objects.all()
     
     def get_service_public(self, service):
@@ -486,6 +521,8 @@ class GetAppointmentsMixin:
         Returns Appointment queryset filtered by barber or client.
         If show_all is True, returns all appointments.
         """
+        from ..models import Appointment
+
         if show_all:
             return Appointment.objects.all()
         
@@ -523,6 +560,8 @@ class GetReviewsMixin:
         Returns Review queryset filtered by barber or client.
         If show_all is True, returns all reviews.
         """
+        from ..models import Review
+
         if show_all:
             return Review.objects.all()
         
