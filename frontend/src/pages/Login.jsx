@@ -1,29 +1,24 @@
-import CustomButton from "@components/CustomButton";
-import CustomInput from "@components/CustomInput";
+import CustomButton from '@components/CustomButton';
+import CustomInput from '@components/CustomInput';
 
-function Login({onLogin}) {
+function Login({ onLogin }) {
+  const azioneClick = () => {
+    alert('click sul bottone allert');
+    //console.log("click sul bottone");
+    onLogin();
+  };
 
-const azioneClick = () => {
-        alert("click sul bottone allert");
-        //console.log("click sul bottone");
-        onLogin();
-        
-    }
+  const onChange = (event) => {
+    console.log(event.target.value);
+  };
 
-    const onChange = (event) => {
-        console.log(event.target.value);
-    }
-
-
-
-
-    return (
-        <div>
-            <h1>Login</h1>
-            <CustomInput  type="text" onChange={onChange}></CustomInput>
-            <CustomButton onClick={azioneClick} text="cliccami"></CustomButton>
-        </div>
-    )
+  return (
+    <div>
+      <h1>Login</h1>
+      <CustomInput type="text" onChange={onChange}></CustomInput>
+      <CustomButton onClick={azioneClick} text="cliccami"></CustomButton>
+    </div>
+  );
 }
 
 export default Login;

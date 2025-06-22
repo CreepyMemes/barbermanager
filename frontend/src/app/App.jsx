@@ -1,12 +1,10 @@
 import { useState } from 'react';
-import styles from './App.module.scss';
-import Login from "../pages/Login";
+// import styles from './App.module.scss';
+import Login from '../pages/Login';
 
 function App() {
+  const [loggedIn, setLoggedIn] = useState(false);
 
-  const [loggedIn, setLoggedIn] = useState(false)
-
-  
   return (
     <div>
       {loggedIn ? (
