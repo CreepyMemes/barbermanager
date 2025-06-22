@@ -5,7 +5,7 @@ import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 
-//import prettier from 'eslint-plugin-prettier/recommended';
+import prettier from 'eslint-plugin-prettier/recommended';
 
 export default [
   {
@@ -52,5 +52,5 @@ export default [
     },
   },
 
-  //prettier,
+  prettier,
 ];

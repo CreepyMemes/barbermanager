@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import styles from './App.module.scss';
 import Login from "../pages/Login";
 
 function App() {
