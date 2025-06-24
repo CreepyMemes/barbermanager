@@ -6,13 +6,26 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework import serializers
 from ..models import User, Client
 from ..utils import (
-    get_user_from_uid_token, 
+    UserValidationMixin,
     UsernameValidationMixin,
     EmailValidationMixin, 
     PasswordValidationMixin,
     UIDTokenValidationSerializer,
+    get_user_from_uid_token, 
 )
 
+class GetCurrentUserSerializer(UserValidationMixin, serializers.Serializer):
+    """
+    Returns common information related to the profile of a given user
+    """
+    def validate(self, attrs):
+        attrs = self.validate_user(attrs)
+        return attrs
+
+    def to_representation(self, validated_data):
+        user = validated_data['user']
+        return {'me': user.to_dict()}
+    
 
 class RegisterClientSerializer(UsernameValidationMixin, EmailValidationMixin, PasswordValidationMixin, serializers.Serializer):
     """
@@ -151,12 +164,7 @@ class LoginSerializer(serializers.Serializer):
         refresh = instance['refresh']
 
         return {
-            'user': {
-                'id': user.id,
-                'email': user.email,
-                'username': user.username,
-                'role': getattr(user, 'role', None),
-            },
+            'user': user.to_dict(),
             'token': {
                 'access_token': str(refresh.access_token),
                 'refresh_token': str(refresh),

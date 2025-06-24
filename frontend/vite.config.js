@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import { Buffer } from 'buffer';
 import * as path from 'path';
 import react from '@vitejs/plugin-react';
 import eslint from 'vite-plugin-eslint';
@@ -36,6 +37,41 @@ export default defineConfig({
     host: true,
     watch: {
       usePolling: true, // For hot reloading
+    },
+    proxy: {
+      '/api': {
+        target: 'http://backend:8000',
+        changeOrigin: true,
+        secure: false,
+        ws: true,
+        configure: (proxy, _options) => {
+          proxy.on('proxyReq', (proxyReq, req, res) => {
+            let bodyData = [];
+            req.on('data', (chunk) => {
+              bodyData.push(chunk);
+            });
+            req.on('end', () => {
+              if (bodyData.length > 0) {
+                const raw = Buffer.concat(bodyData).toString();
+                console.log(`[proxyReq] ${req.method} ${req.url} -- Request Body:`, raw);
+              }
+            });
+          });
+
+          proxy.on('proxyRes', (proxyRes, req, res) => {
+            let body = [];
+            proxyRes.on('data', (chunk) => {
+              body.push(chunk);
+            });
+            proxyRes.on('end', () => {
+              if (body.length > 0) {
+                const raw = Buffer.concat(body).toString();
+                console.log(`[proxyRes] ${req.method} ${req.url} -- Response Body:`, raw);
+              }
+            });
+          });
+        },
+      },
     },
   },
 });
