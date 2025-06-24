@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 
+import HomePage from '@pages/public/Home/HomePage';
 import LoginPage from '@pages/auth/Login/LoginPage';
 
 // TODO: Import create and import ProtectedRoute component
@@ -7,7 +8,7 @@ import LoginPage from '@pages/auth/Login/LoginPage';
 export default function AppRoutes() {
   return (
     <Routes>
-      {/*<Route path="/" element={<HomePage />} />*/}
+      <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
       {/* <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} /> */}
       {/*<Route path="*" element={<NotFound />} />*/}
