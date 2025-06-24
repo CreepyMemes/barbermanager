@@ -13,6 +13,8 @@ Proposed:
 2. Frontend:
 
 Important:
+
+  - add producition routes with nginx, (as of right now only works in dev environment)
   
   - setup protected routes
   - check if authentication context works try it
