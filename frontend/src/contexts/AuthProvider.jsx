@@ -11,29 +11,34 @@ import { getClientProfile } from '../api/services/clientService';
  */
 function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(!!authApi.getAccessToken());
+  const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
   /**
    * Helper callback function to automaticaly get the user profile by trying all profile endpoints.
    */
-  const getUserProfile = useCallback(async () => {
+  const fetchUserAndProfile = useCallback(async () => {
     setLoading(true);
+
     try {
-      const profileCallers = [getAdminProfile, getBarberProfile, getClientProfile];
+      // Fetch user basic info
+      const { me } = await authApi.getCurrentUser();
+      setUser(me);
+      setIsAuthenticated(true);
 
-      for (let caller of profileCallers) {
-        try {
-          const profile = await caller();
-          setProfile(profile);
-          setIsAuthenticated(true);
-          return;
-        } catch (_) {
-          // Ignore and try the next one
-        }
+      // Fetch role-specific profile
+      let profileData = null;
+      if (me.role === 'ADMIN') {
+        profileData = await getAdminProfile();
+      } else if (me.role === 'BARBER') {
+        profileData = await getBarberProfile();
+      } else if (me.role === 'CLIENT') {
+        profileData = await getClientProfile();
       }
-
-      // All failed
+      setProfile(profileData);
+    } catch (error) {
+      setUser(null);
       setProfile(null);
       setIsAuthenticated(false);
     } finally {
@@ -41,14 +46,19 @@ function AuthProvider({ children }) {
     }
   }, []);
 
-  // Hydrates user on mount, checks if token exists in storage, then fetches profile data
+  /**
+   * Hydrates user on mount, checks if token exists in storage, then fetches profile data
+   */
   useEffect(() => {
-    if (authApi.getAccessToken()) {
-      getUserProfile();
+    if (authApi.getAccessToken() && authApi.getRefreshToken()) {
+      fetchUserAndProfile();
     } else {
+      setUser(null);
+      setProfile(null);
+      setIsAuthenticated(false);
       setLoading(false);
     }
-  }, [getUserProfile]);
+  }, [fetchUserAndProfile]);
 
   /**
    * Handles login and sets everything up in context.
@@ -58,10 +68,11 @@ function AuthProvider({ children }) {
 
     try {
       await authApi.login(credentials);
-      await getUserProfile();
-    } catch (_) {
-      setIsAuthenticated(false);
+      await fetchUserAndProfile();
+    } catch (error) {
+      setUser(null);
       setProfile(null);
+      setIsAuthenticated(false);
     } finally {
       setLoading(false);
     }
@@ -74,8 +85,9 @@ function AuthProvider({ children }) {
     setLoading(true);
     try {
       await authApi.logout();
-      setIsAuthenticated(false);
+      setUser(null);
       setProfile(null);
+      setIsAuthenticated(false);
     } finally {
       setLoading(false);
     }
@@ -85,7 +97,8 @@ function AuthProvider({ children }) {
     <AuthContext.Provider
       value={{
         isAuthenticated,
-        profile, // profile object or null
+        user, // from /auth/me/
+        profile, // from profile endpoint, might be null or richer info
         loading, // true during login/profile-fetch
         login,
         logout,

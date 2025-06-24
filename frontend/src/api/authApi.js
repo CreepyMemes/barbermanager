@@ -72,10 +72,13 @@ export async function login({ email, username, password }) {
  */
 export async function logout() {
   const refresh = getRefreshToken();
-  if (!refresh) throw new Error('No refresh token');
-
-  await axiosInstance.post(ENDPOINTS.auth.logout, { refresh_token: refresh });
-
+  try {
+    if (refresh) {
+      await axiosInstance.post(ENDPOINTS.auth.logout, { refresh_token: refresh });
+    }
+  } catch (_) {
+    // ignore API errors during logout
+  }
   removeTokens();
 }
 

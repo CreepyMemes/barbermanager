@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getAccessToken, logout, refreshToken } from './authApi';
+import { getAccessToken, getRefreshToken, refreshToken, removeTokens } from './authApi';
 
 /**
  * Axios instance configured with base API URL and default headers.
@@ -48,7 +48,15 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    // Don't process if not 401 or already retried
     if (error.response?.status !== 401 || originalRequest._retry) {
+      return Promise.reject(error);
+    }
+
+    // No refresh token - log out, stop, do not retry endlessly.
+    if (!getRefreshToken()) {
+      removeTokens();
+      window.location.href = '/login';
       return Promise.reject(error);
     }
 
@@ -58,18 +66,17 @@ axiosInstance.interceptors.response.use(
       isRefreshing = true;
       try {
         const newToken = await refreshToken();
-
         isRefreshing = false;
         notifySubscribers(newToken);
       } catch (err) {
         isRefreshing = false;
-
-        logout();
+        removeTokens();
         window.location.href = '/login';
         return Promise.reject(err);
       }
     }
 
+    // Wait for refresh, then retry
     return new Promise((resolve) => {
       subscribeToRefresh((newToken) => {
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
