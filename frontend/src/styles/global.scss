@@ -1,14 +1,5 @@
+@use './variables.module.scss' as *;
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech&display=swap');
-
-$bp-large: 78.15em; // 1250px
-$bp-medium: 61.25em; // 980px
-$bp-small: 37.5em; // 600px
-$bp-smallest: 31.25em; // 500px
-
-$light-color: #fcf9f5;
-$lighter-color: #464846;
-$dark-color: #383939;
-$darker-color: #3a3b3a;
 
 * {
   margin: 0;
@@ -37,21 +28,4 @@ body {
   line-height: 1.6;
   background-color: $dark-color;
   min-height: calc(100vh - 2 * 4vw);
-}
-
-
-button {
-  color: white;
-  background-color: black;
-  padding: 50px;
-  margin: 20px;
-  border: 5px solid aquamarine;
-  border-radius: 10px;
-}
-
-input{
-  width: 40%;
-  font-size: large;
-  border: 2px solid orange;
-  border-radius: 10px;
 }
