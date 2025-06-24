@@ -30,6 +30,9 @@ Important:
   - implement reset password button in login/register pages
   - implement reset password page
 
+  - add websitet icon back, (make it svg)
+  - fix image endpoints in profile, (check how it works in test_image_upload)
+
 Proposed:
   - implement website home page
   - style implemented pages
