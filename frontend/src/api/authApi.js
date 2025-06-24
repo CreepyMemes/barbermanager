@@ -13,7 +13,7 @@ const STORAGE_KEYS = {
  * Retrieves the access token from localStorage.
  */
 export function getAccessToken() {
-  localStorage.getItem(STORAGE_KEYS.ACCESS);
+  return localStorage.getItem(STORAGE_KEYS.ACCESS);
 }
 
 /**
@@ -40,6 +40,14 @@ export function removeTokens() {
 }
 
 /**
+ * Retrieves the current users's information.
+ */
+export async function getCurrentUser() {
+  const { data } = await axiosInstance.get(ENDPOINTS.auth.me);
+  return data;
+}
+
+/**
  * Logs in a user using email or username along with password.
  * Stores the received tokens in localStorage.
  */
@@ -49,10 +57,14 @@ export async function login({ email, username, password }) {
   if (username) payload.username = username;
 
   const { data } = await axiosInstance.post(ENDPOINTS.auth.login, payload);
-  const { access, refresh } = data;
+  const { user, token } = data;
 
-  setTokens({ access, refresh });
-  return data;
+  setTokens({
+    access: token.access_token,
+    refresh: token.refresh_token,
+  });
+
+  return user; // return the user directly!
 }
 
 /**

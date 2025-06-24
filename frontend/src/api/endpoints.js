@@ -5,6 +5,7 @@
 export const ENDPOINTS = {
   // Auth Routes
   auth: {
+    me: '/auth/me/',
     login: '/auth/login/',
     logout: '/auth/logout/',
     refresh: '/auth/refresh-token/',

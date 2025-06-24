@@ -1,5 +1,6 @@
 from django.urls import path
 from ..views import (
+    get_current_user,
     register_client,
     register_barber,
     verify_client,
@@ -17,6 +18,7 @@ urlpatterns = [
     path('verify/<uidb64>/<token>/', verify_client, name='verify_client_email'),
     
     # Operations for authenticated users
+    path('me/', get_current_user, name='get_user'),
     path('login/', login_user, name='login_user'),
     path('logout/', logout_user, name='logout_user'),
     

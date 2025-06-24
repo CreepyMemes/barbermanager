@@ -13,6 +13,7 @@ from ..utils import(
     send_password_reset_email,
 )
 from ..serializers import (
+    GetCurrentUserSerializer,
     RegisterClientSerializer,
     VerifyClientEmailSerializer,
     LoginSerializer,
@@ -22,6 +23,25 @@ from ..serializers import (
     ConfirmPasswordResetSerializer,
     RefreshTokenCustomSerializer,
 )
+
+
+
+@extend_schema(
+    methods=['GET'],
+    responses={200: GetCurrentUserSerializer},
+    description="Returns the current authenticated user's information.",
+)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+@parser_classes([JSONParser]) 
+def get_current_user(request):
+    """
+    Returns the current authenticated user's information.
+    """
+    serializer = GetCurrentUserSerializer(data={}, context={'user': request.user})
+    serializer.is_valid(raise_exception=True)
+
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @extend_schema(
