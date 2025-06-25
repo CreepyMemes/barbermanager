@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '@hooks/useAuth';
 import styles from './LoginPage.module.scss';
 
+// TODO: redo all of this, this is just AI slop for testing
 export default function LoginPage() {
   const { login, loading } = useAuth();
   const [form, setForm] = useState({ username: '', password: '' });

@@ -6,7 +6,10 @@
   border-radius: 0.375rem;
   background-color: $lighter-color; // from imported variables
   color: $light-color;
+  text-decoration: none;
+
   cursor: pointer;
+
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
