@@ -1,12 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { isEmail } from '@utils/utils';
 import styles from './LoginPage.module.scss';
-
-function isEmail(value) {
-  // Simple email heuristic
-  return /\S+@\S+\.\S+/.test(value);
-}
+import Button from '@components/common/Button/Button';
 
 export default function LoginPage() {
   const { login, loading, isAuthenticated } = useAuth();
@@ -14,13 +11,16 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  // If already logged in, redirect to dashboard
+  /**
+   * On authentication state change, redirect authenticated users away from login.
+   */
   useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/dashboard', { replace: true });
-    }
+    if (isAuthenticated) navigate('/dashboard', { replace: true });
   }, [isAuthenticated, navigate]);
 
+  /**
+   * Handles changes in the input fields by updating local state.
+   */
   const handleChange = (e) => {
     setFields((prev) => ({
       ...prev,
@@ -28,6 +28,10 @@ export default function LoginPage() {
     }));
   };
 
+  /**
+   * Handles form submission for login, Determines whether the identifier is an email or username,
+   * then attempts to log in with credentials. Displays error messages on failure.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -57,7 +61,6 @@ export default function LoginPage() {
             autoComplete="username"
             required
             disabled={loading}
-            placeholder="Enter your username or email"
           />
         </label>
 
@@ -71,13 +74,12 @@ export default function LoginPage() {
             autoComplete="current-password"
             required
             disabled={loading}
-            placeholder="Enter your password"
           />
         </label>
 
-        <button className={styles.button} type="submit" disabled={loading}>
+        <Button type="submit" disabled={loading}>
           {loading ? 'Logging in...' : 'Login'}
-        </button>
+        </Button>
 
         {error && <div className={styles.error}>{error}</div>}
       </form>
