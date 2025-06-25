@@ -12,7 +12,7 @@ export default function DashboardPage() {
     <div className={styles.dashboardWrapper}>
       <h1 className={styles.heading}>Dashboard</h1>
       {user && (
-        <div>
+        <div className={styles.top}>
           <p>
             Welcome, <strong>{user?.username || user?.email}</strong>!
           </p>
