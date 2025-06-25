@@ -1,17 +1,18 @@
 import { useAuth } from '@hooks/useAuth';
-import LoadingSpinner from '@components/common/LoadingSpinner/LoadingSpinner';
+import Spinner from '@components/common/Spinner/Spinner';
+import styles from './DashboardPage.module.scss';
 
 // TODO: This is just a proof of concept that authenticated data is retreived
 export default function DashboardPage() {
   const { user, profile, loading } = useAuth();
 
-  if (loading) return <LoadingSpinner />; // TODO: make a skeleton
+  if (loading) return <Spinner />; // TODO: make a skeleton
 
   return (
-    <div style={{ padding: 32 }}>
-      <h1>Dashboard</h1>
+    <div className={styles.dashboardWrapper}>
+      <h1 className={styles.heading}>Dashboard</h1>
       {user && (
-        <div>
+        <div className={styles.top}>
           <p>
             Welcome, <strong>{user?.username || user?.email}</strong>!
           </p>
@@ -21,13 +22,13 @@ export default function DashboardPage() {
         </div>
       )}
       {profile && (
-        <div style={{ marginTop: 24 }}>
+        <div className={styles.profileSection}>
           <h2>Your Profile</h2>
-          <pre>{JSON.stringify(profile, null, 2)}</pre>
+          <pre className={styles.profileJson}>{JSON.stringify(profile, null, 2)}</pre>
         </div>
       )}
       {!profile && (
-        <div style={{ marginTop: 24 }}>
+        <div className={styles.noProfile}>
           <em>Profile loading or unavailable.</em>
         </div>
       )}

@@ -1,14 +1,24 @@
+@use 'sass:color';
+
+// Main Colors
+$color-primary: #393937; // dark gray
+$color-secondary: #f9f7f3; // lightest background
+$color-accent: #464747; // light tan accent (for cards, highlights)
+$color-muted: #94928a; // muted text, subtle borders
+
+// Button/Text colors
+$text-button: #ffffff; // Primary text on dark backgrounds (e.g. "GET STARTED" button)
+$text-primary: #393937; // Primary text on light backgrounds
+$text-secondary: #393937;
+$text-muted: $color-muted; // Muted/secondary text (placeholder, helper text)
+
+// Borders/Shadows
+$border: #e3e0dd;
+$border-radius: 8px;
+$box-shadow: 0 2px 8px rgba(57, 57, 55, 0.03);
+
+// Screen sizes
 $bp-large: 78.15em; // 1250px
 $bp-medium: 61.25em; // 980px
 $bp-small: 37.5em; // 600px
 $bp-smallest: 31.25em; // 500px
-
-$light-color: #fcf9f5;
-$lighter-color: #464846;
-$dark-color: #383939;
-$darker-color: #3a3b3a;
-
-// $primary-color: #3057e7;
-// $color-border: #e2e2e2;
-// $radius-main: 7px;
-// $header-height: 56px;

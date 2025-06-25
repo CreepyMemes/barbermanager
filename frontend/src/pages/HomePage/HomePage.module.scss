@@ -1,21 +1,22 @@
 @use '@styles/variables.module.scss' as *;
 
-.home-container {
-  background: $light-color;
-  border-radius: 16px;
+.homeContainer {
+  background: $color-secondary;
+  border-radius: $border-radius;
   max-width: 400px;
   margin: 60px auto;
   padding: 2.5rem 2rem;
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.13);
+  box-shadow: $box-shadow;
 
   h1 {
-    color: $lighter-color;
+    color: $color-primary;
     margin-bottom: 0.5rem;
     font-size: 2rem;
   }
 
   p {
-    color: $darker-color;
+    color: $text-muted;
     font-size: 1.1rem;
+    margin-bottom: 1rem;
   }
 }
