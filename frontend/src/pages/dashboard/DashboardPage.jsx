@@ -1,11 +1,11 @@
 import { useAuth } from '@hooks/useAuth';
-import LoadingSpinner from '@components/common/LoadingSpinner/LoadingSpinner';
+import Spinner from '@components/common/Spinner/Spinner';
 
 // TODO: This is just a proof of concept that authenticated data is retreived
 export default function DashboardPage() {
   const { user, profile, loading } = useAuth();
 
-  if (loading) return <LoadingSpinner />; // TODO: make a skeleton
+  if (loading) return <Spinner />; // TODO: make a skeleton
 
   return (
     <div style={{ padding: 32 }}>
