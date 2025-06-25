@@ -1,7 +1,7 @@
 @use '@styles/variables.module.scss' as *;
 
 .home-container {
-  background: linear-gradient(120deg, $light-color 0%, $darker-color 100%);
+  background: $light-color;
   border-radius: 16px;
   max-width: 400px;
   margin: 60px auto;
