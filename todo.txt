@@ -14,10 +14,9 @@ Proposed:
 
 Important:
 
-  - split login page into reusable components
   - implement specific role based dashboards (idk how to do it yet, we only have generic dashboard)
 
-  - implement register page (one for client other for barber) 
+  - implement register page (one for client through /login), (for barber from invitation email link)
   - change email frontend url in email template and implement a route for it
 
   - verify-email send GET request to verify then redirect to login page,
