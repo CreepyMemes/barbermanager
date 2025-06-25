@@ -1,0 +1,22 @@
+@use '@styles/variables.module.scss' as *;
+
+.label {
+  display: flex;
+  flex-direction: column;
+  color: $darker-color;
+  font-size: 1.5rem;
+}
+
+.input {
+  margin-top: 0.2em;
+  padding: 0.5rem;
+  border: 1px solid $darker-color;
+  border-radius: 4px;
+  font-size: 1rem;
+  background: $light-color;
+  color: $darker-color;
+
+  &:disabled {
+    background: #f0f0f0;
+  }
+}
