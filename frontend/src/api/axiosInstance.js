@@ -1,34 +1,18 @@
 import axios from 'axios';
 import { getAccessToken, getRefreshToken, refreshToken, removeTokens } from './authApi';
 
-/**
- * Axios instance configured with base API URL and default headers.
- */
 const axiosInstance = axios.create({
   baseURL: '/api',
   headers: { 'Content-Type': 'application/json' },
 });
 
-let isRefreshing = false;
-let subscribers = [];
-
 /**
- * Notify all subscribers with the new token.
+ * Variable that tracks the current refresh promise
  */
-const notifySubscribers = (token) => {
-  subscribers.forEach((callback) => callback(token));
-  subscribers = [];
-};
+let refreshPromise = null;
 
 /**
- * Add a subscriber callback to be called once token is refreshed.
- */
-const subscribeToRefresh = (callback) => {
-  subscribers.push(callback);
-};
-
-/**
- * Attach access token to request headers.
+ * Attach access token to every request
  */
 axiosInstance.interceptors.request.use(
   (config) => {
@@ -40,49 +24,47 @@ axiosInstance.interceptors.request.use(
 );
 
 /**
- * Handles 401 errors: attempts to refresh the token or logs the user out.
+ * Handles 401 errors, attempts to refresh the token if found
  */
 axiosInstance.interceptors.response.use(
   (response) => response,
 
   async (error) => {
-    const originalRequest = error.config;
+    const original = error.config;
 
     // Don't process if not 401 or already retried
-    if (error.response?.status !== 401 || originalRequest._retry) {
+    if (error.response?.status !== 401 || original._retry) {
       return Promise.reject(error);
     }
 
-    // No refresh token - log out, stop, do not retry endlessly.
+    // Remove everything and bubble up for logout if no refresh token found
     if (!getRefreshToken()) {
       removeTokens();
-      window.location.href = '/login';
-      return Promise.reject(error);
+      return Promise.reject(error); // just throw, AuthProvider will handle redirect
     }
 
-    originalRequest._retry = true;
+    original._retry = true;
 
-    if (!isRefreshing) {
-      isRefreshing = true;
-      try {
-        const newToken = await refreshToken();
-        isRefreshing = false;
-        notifySubscribers(newToken);
-      } catch (err) {
-        isRefreshing = false;
-        removeTokens();
-        window.location.href = '/login';
-        return Promise.reject(err);
-      }
+    // Ensure only one refresh request at a time
+    if (!refreshPromise) {
+      refreshPromise = refreshToken()
+        .catch((error) => {
+          removeTokens();
+          throw error;
+        })
+        .finally(() => {
+          refreshPromise = null;
+        });
     }
 
     // Wait for refresh, then retry
-    return new Promise((resolve) => {
-      subscribeToRefresh((newToken) => {
-        originalRequest.headers.Authorization = `Bearer ${newToken}`;
-        resolve(axiosInstance(originalRequest));
-      });
-    });
+    try {
+      const newAccess = await refreshPromise;
+      original.headers.Authorization = `Bearer ${newAccess}`;
+      return axiosInstance(original);
+    } catch (error) {
+      return Promise.reject(error);
+    }
   },
 );
 
