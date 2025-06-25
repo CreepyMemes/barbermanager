@@ -1,89 +1,69 @@
 <div align="center">
-  <img src="../frontend/public/logo.png" height="100px" alt="BarberManager Logo"/>
-  <h1>BarberManager – Un software gestionale per barber shop</h1>
+  <img src="../frontend/assets/images/logo.png" height="100px" alt="BarberManager Logo"/>
+  <h3>BarberManager – Management Software for Barber Shops</h3>
 </div>
 
-# Descrizione
+# Description
 
-BarberManager è una piattaforma pensata per digitalizzare e semplificare la gestione delle attività di un barber shop, focalizzandosi su:
+**BarberManager** is a comprehensive SaaS platform designed to streamline, digitalize, and optimize everyday operations in barber shops. With tools for booking, staff, client, and schedule management, BarberManager ensures efficient workflows for admins, barbers, and clients alike.
 
-- Gestione **account**
-- Registrazione **clienti e barbieri**
-- Prenotazione **appuntamenti**
-- Gestione del **personale**
-- Area **amministrativa**
+This application includes secure registration, appointment booking and reminders, reviews, detailed management dashboards, and user profile features, all built on a Django RESTful API.
 
-## Gestione Account
+## Core Features
 
-Gli account si dividono in tre ruoli principali:
+### User & Account Management
+- **Role-based accounts:**  
+  - **Admins:** Created manually via shell for full shop management.
+  - **Clients:** Self-register via the web; must verify email.
+  - **Barbers:** Can sign up only after an admin invitation; registration is completed through a secure email link.
+- All users can:
+  - Log in with username or email (JWT authentication).
+  - Recover/reset passwords via email-secured links.
+  - Edit or permanently delete their profile and associated data.
+  - Upload or delete their profile pictures.
 
-- **Admin**: può essere creato **solo tramite shell**
-- **Clienti**: possono registrarsi tramite la **piattaforma web**
-- **Barbieri**: possono registrarsi **solo se invitati da un admin** tramite email
+### Registration & Authentication Flow
+- Admins: Created via CLI, making them inaccessible via public endpoints.
+- Clients:  
+  - Register via `/auth/register/`: must provide full personal details, a unique username, and valid email.
+  - Email confirmation required for activation (`/auth/verify/{uidb64}/{token}/`).
+- Barbers:
+  - Admins invite via `/admin/barbers/invite/` (email only).
+  - Complete registration via magical invite link (`/auth/register/{uidb64}/{token}/`) by setting username, password, and personal details.
+- Robust JWT token-based authentication (login, logout, refresh, me endpoints).
 
-Tutti gli utenti possono:
+### Booking & Scheduling
+- **Clients:**
+  - Book appointments by browsing active barbers, viewing their services and real-time availabilities.
+  - Only one active appointment at a time.
+  - Receive automatic email reminders.
+  - Cancel bookings if appointment is still pending.
+  - View past appointment history.
+- **Barbers:**
+  - Manage their service offerings (add, edit, remove).
+  - Access their schedule of ongoing and upcoming appointments.
+  - Receive client reviews and ratings.
 
-- Accedere tramite credenziali
-- Recuperare la password via email, cliccando sul link e inserendone una nuova
-- Modificare o eliminare il proprio account
+### Reviews & Ratings
+- Clients can leave one review per completed appointment for a barber, editable or removable after posting.
+- Barbers can easily access, monitor, and respond to their client feedback.
 
-## Registrazione
+### Staff & Resource Administration
+- **Admin Dashboard:**
+  - Full CRUD for barber and client management (`/admin/barbers/`, `/admin/clients/`).
+  - Manage barber availabilities: add, edit, or remove availability slots for each staff member.
+  - Invite new barbers via email; remove barbers by user ID.
+  - Monitor all salon appointments and aggregate activity statistics for informed business decisions.
 
-La registrazione varia a seconda del ruolo dell'utente:
+### Public-Facing Information
+- Anyone can:
+  - Browse a directory of barbers, their public profiles, offered services, and availability slots.
+  - View public client profiles as appropriate.
 
-- **Admin**: vengono creati **manualmente tramite shell**, inserendo:
-
-  - Username unico
-  - Password
-
-- **Clienti**: possono registrarsi autonomamente tramite l'applicazione. Per completare la registrazione, è necessario **verificare l’indirizzo email** cliccando sul link ricevuto via email. Durante la registrazione devono fornire:
-
-  - Dati personali
-  - Email valida
-  - Username unico
-  - Password
-
-- **Barbieri**: possono registrarsi **solo tramite invito da parte di un admin**. Ricevono un'email con un link d’invito e, cliccandolo, completano la registrazione inserendo:
-  - Dati personali
-  - Username unico
-  - Password
-
-## Prenotazione Appuntamenti
-
-I clienti possono avere **una sola prenotazione attiva per volta**. Il processo di prenotazione segue questi passaggi:
-
-1. Visualizzazione della lista dei **barbieri disponibili**
-2. Scelta del **barbiere preferito**
-3. Visualizzazione dei **servizi offerti** dal barbiere selezionato
-4. Selezione dell'orario desiderato tra le **disponibilità orarie** del barbiere
-5. Conferma della prenotazione
-
-Il sistema:
-
-- Salva automaticamente la prenotazione
-- Invia **promemoria via email** prima dell’orario dell’appuntamento
-- Mostra lo storico delle prenotazioni nel profilo del cliente
-
-## Gestione Prenotazioni
-
-I clienti possono:
-
-- **Annullare** una prenotazione, se **non ancora completata**
-- Lasciare una recensione **solo al barbiere con cui hanno avuto un appuntamento**, e **una sola volta per ciascun barbiere**
-- Consultare la lista dei propri **appuntamenti precedenti**
-
-## Gestione del Personale
-
-I **barbieri**, tramite la loro area riservata, possono:
-
-- Visualizzare gli **appuntamenti assegnati**
-- Aggiungere, modificare o eliminare i **servizi che offrono**
-- Visualizzare le proprie **recensioni ricevute** dai clienti
-
-## Area Amministrativa
-
-Gli **admin**, tramite pannello dedicato, possono:
-
-- **Aggiungere o rimuovere barbieri**
-- Gestire le **disponibilità dei barbieri**
-- Visualizzare **statistiche dettagliate** sulle attività del salone
+## Technical Highlights
+- **RESTful API-first design**: All operations exposed for secure, flexible integrations (`/api/`).
+- **Robust authentication:** JWT-based user session management.
+- **Email-driven flows:** For sensitive operations (registrations, invitations, password recovery).
+- **Granular permissioning:** Role-secured endpoints for admins, barbers, and clients.
+- **Modern user experience:** Email notifications, mobile-ready, profile images, and detailed dashboards.
+- **OpenAPI-compliant schema:** Complete, self-documented API.
