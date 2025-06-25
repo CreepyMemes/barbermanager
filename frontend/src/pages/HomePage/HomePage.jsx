@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@hooks/useAuth';
+import styles from './HomePage.module.scss';
 
 import Button from '@components/common/Button/Button';
-import styles from './HomePage.module.scss';
 
 export default function HomePage() {
   const { isAuthenticated, loading } = useAuth();
@@ -22,7 +22,9 @@ export default function HomePage() {
     <div className={styles.homeContainer}>
       <h1>Welcome to Barber Manager!</h1>
       <p>This page is styled using a SASS module 🎉</p>
-      <Button href="/login/">Login</Button>
+      <Button href="/login/" size="lg" width="content">
+        Login
+      </Button>
     </div>
   );
 }

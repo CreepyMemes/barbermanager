@@ -5,5 +5,22 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: $dark-color;
+  background: $color-primary;
+
+  // TODO: To style the inner card, button, inputs, etc,
+  // .formCard {
+  //   background: $color-accent;
+  //   border-radius: $border-radius;
+  //   box-shadow: $box-shadow;
+  //   padding: 2rem;
+  // }
+
+  // .loginButton {
+  //   background: $button-bg;
+  //   color: $button-text;
+  //   border-radius: $border-radius;
+  //   &:hover {
+  //     background: $button-hover-bg;
+  //   }
+  // }
 }

@@ -1,10 +1,23 @@
 import styles from './Button.module.scss';
 
-function Button({ children, onClick, disabled, type = 'button', href }) {
+import { camelizeStyle } from '@utils/utils';
+
+function Button({
+  children,
+  onClick,
+  disabled,
+  type = 'button',
+  href,
+  size = 'md',
+  color = 'primary',
+  width = 'full',
+}) {
+  const className = [styles.button, styles[size], styles[color], styles[camelizeStyle('width', width)]].join(' ');
+
   if (href) {
     return (
       <a
-        className={styles.button}
+        className={className}
         href={href}
         onClick={onClick}
         aria-disabled={disabled} // for accessibility
@@ -17,7 +30,7 @@ function Button({ children, onClick, disabled, type = 'button', href }) {
   }
 
   return (
-    <button className={styles.button} type={type} onClick={onClick} disabled={disabled}>
+    <button className={className} type={type} onClick={onClick} disabled={disabled}>
       {children}
     </button>
   );
