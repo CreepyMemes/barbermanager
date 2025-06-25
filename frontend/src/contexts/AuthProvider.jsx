@@ -1,7 +1,9 @@
 import { useEffect, useState, useCallback } from 'react';
 import AuthContext from './AuthContext';
-import LoadingSpinner from '@components/common/LoadingSpinner/LoadingSpinner';
+
 import * as authApi from '@api/authApi';
+import LoadingSpinner from '@components/common/LoadingSpinner/LoadingSpinner';
+
 import { getAdminProfile } from '../api/services/adminService';
 import { getBarberProfile } from '../api/services/barberService';
 import { getClientProfile } from '../api/services/clientService';
@@ -16,6 +18,16 @@ function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   /**
+   * Helper callback function for unified reset + redirect
+   */
+  const handleLogout = useCallback(() => {
+    authApi.removeTokens();
+    setUser(null);
+    setProfile(null);
+    setIsAuthenticated(false);
+  }, []);
+
+  /**
    * Helper callback function to automaticaly get the user profile by trying all profile endpoints.
    */
   const fetchUserAndProfile = useCallback(async () => {
@@ -27,68 +39,58 @@ function AuthProvider({ children }) {
       setUser(me);
       setIsAuthenticated(true);
 
-      // Fetch role-specific profile
+      // Fetch role specific profile
       let profileData = null;
-      if (me.role === 'ADMIN') {
-        profileData = await getAdminProfile();
-      } else if (me.role === 'BARBER') {
-        profileData = await getBarberProfile();
-      } else if (me.role === 'CLIENT') {
-        profileData = await getClientProfile();
-      }
+      if (me.role === 'ADMIN') profileData = await getAdminProfile();
+      else if (me.role === 'BARBER') profileData = await getBarberProfile();
+      else if (me.role === 'CLIENT') profileData = await getClientProfile();
+
       setProfile(profileData);
-    } catch (error) {
-      setUser(null);
-      setProfile(null);
-      setIsAuthenticated(false);
+    } catch {
+      handleLogout();
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [handleLogout]);
 
   /**
-   * Hydrates user on mount, checks if token exists in storage, then fetches profile data
+   * Hydrates user on mount if tokens exists in storage
    */
   useEffect(() => {
     if (authApi.getAccessToken() && authApi.getRefreshToken()) {
       fetchUserAndProfile();
     } else {
-      setUser(null);
-      setProfile(null);
-      setIsAuthenticated(false);
+      handleLogout();
       setLoading(false);
     }
-  }, [fetchUserAndProfile]);
+  }, [fetchUserAndProfile, handleLogout]);
 
   /**
    * Handles login and sets everything up in context.
    */
-  const login = async function (credentials) {
+  const login = async (credentials) => {
     setLoading(true);
 
     try {
       await authApi.login(credentials);
       await fetchUserAndProfile();
-    } catch (error) {
-      setUser(null);
-      setProfile(null);
-      setIsAuthenticated(false);
+    } catch {
+      handleLogout();
     } finally {
       setLoading(false);
     }
   };
 
   /**
-   * Logout logic, clears tokens and context state.
+   * Logout for manual invocation or on refresh error, clears tokens
    */
-  const logout = async function () {
+  const logout = async () => {
     setLoading(true);
+
     try {
       await authApi.logout();
-      setUser(null);
-      setProfile(null);
-      setIsAuthenticated(false);
     } finally {
+      handleLogout();
       setLoading(false);
     }
   };
