@@ -14,32 +14,27 @@ Proposed:
 
 Important:
 
-  - add producition routes with nginx, (as of right now only works in dev environment)
-  
-  - setup protected routes
-  - check if authentication context works try it
-  - implement admin dashboard page
-  - after login route to (dashboard depending on role)
+  - split login page into reusable components
+  - implement specific role based dashboards (idk how to do it yet, we only have generic dashboard)
 
-  - impement client dashboard page
-  - implelment add barber in admin user page
-
-  - implement client register page
-  - implement barber register page, and change it's url in the invitation email
+  - implement register page (one for client other for barber) 
   - change email frontend url in email template and implement a route for it
+
   - verify-email send GET request to verify then redirect to login page,
 
-  - implement reset password button in login/register pages
   - implement reset password page
+  - implement reset password button in login page
 
-  - add websitet icon back, (make it svg)
   - fix image endpoints in profile, (check how it works in test_image_upload)
 
-Proposed:
-  - implement website home page
-  - style implemented pages
-  - see what vite tests are and maybe implement some
+  - implement header and footer layouts
 
+
+Proposed:
+  - add stuff to website home page
+  - style all implemented pages, (use reusable component to keep code clean and modular)
+  - make website icon svg
+  - see how vite tests work and maybe implement some
 
 -----------------------------------------------------------------------------------------------------------------------------------------
 3. Docs:

@@ -1,7 +1,9 @@
 import { Routes, Route } from 'react-router-dom';
 
+import ProtectedRoute from '@components/common/ProtectedRoute/ProtectedRoute';
 import HomePage from '@pages/public/Home/HomePage';
 import LoginPage from '@pages/auth/Login/LoginPage';
+import DashboardPage from '@pages/dashboard/DashboardPage';
 
 // TODO: Import create and import ProtectedRoute component
 
@@ -10,7 +12,14 @@ export default function AppRoutes() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
-      {/* <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} /> */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <DashboardPage />
+          </ProtectedRoute>
+        }
+      />
       {/*<Route path="*" element={<NotFound />} />*/}
 
       {/* Catch all unmatched routes */}
