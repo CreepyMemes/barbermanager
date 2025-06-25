@@ -4,15 +4,15 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 80vh;
-  background: #f7f7f7;
+  height: 100vh;
+  background: $dark-color;
 }
 
 .form {
-  background: #fff;
+  background: $light-color;
   padding: 2rem 2.5rem;
   border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(50, 50, 93, 0.06);
+  box-shadow: 0 2px 16px rgba(30, 30, 58, 0.1);
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -21,40 +21,28 @@
   h2 {
     margin-bottom: 1rem;
     text-align: center;
-    color: #222;
+    color: $darker-color;
   }
 
   label {
     display: flex;
     flex-direction: column;
-    color: #444;
-    font-size: 0.97rem;
+    color: $darker-color;
+    font-size: 1.5rem;
+
     input {
       margin-top: 0.2em;
       padding: 0.5rem;
-      border: 1px solid #d1d5db;
+      border: 1px solid $darker-color;
       border-radius: 4px;
       font-size: 1rem;
+      background: $light-color;
+      color: $darker-color;
+
       &:disabled {
         background: #f0f0f0;
       }
     }
-  }
-}
-
-.button {
-  padding: 0.7em 0;
-  background: $darker-color;
-  color: #fff;
-  font-weight: bold;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-top: 1em;
-
-  &:disabled {
-    background: #8899ce;
-    cursor: not-allowed;
   }
 }
 
