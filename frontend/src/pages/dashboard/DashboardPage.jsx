@@ -1,8 +1,12 @@
 import { useAuth } from '@hooks/useAuth';
+import LoadingSpinner from '@components/common/LoadingSpinner/LoadingSpinner';
 
 // TODO: This is just a proof of concept that authenticated data is retreived
 export default function DashboardPage() {
-  const { user, profile } = useAuth();
+  const { user, profile, loading } = useAuth();
+
+  if (loading) return <LoadingSpinner />; // TODO: make a skeleton
+
   return (
     <div style={{ padding: 32 }}>
       <h1>Dashboard</h1>
@@ -27,7 +31,6 @@ export default function DashboardPage() {
           <em>Profile loading or unavailable.</em>
         </div>
       )}
-      {/* Add dashboard widgets or quick links here */}
     </div>
   );
 }
