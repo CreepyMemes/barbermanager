@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 
 import ProtectedRoute from '@components/common/ProtectedRoute/ProtectedRoute';
-import HomePage from '@pages/public/Home/HomePage';
+import HomePage from '@pages/HomePage/HomePage';
 import LoginPage from '@pages/auth/Login/LoginPage';
 import DashboardPage from '@pages/dashboard/DashboardPage';
 
