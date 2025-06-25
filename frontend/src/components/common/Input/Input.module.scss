@@ -1,0 +1,34 @@
+@use '@styles/variables.module.scss' as *;
+
+.label {
+  display: flex;
+  flex-direction: column;
+  color: $text-secondary;
+  font-size: 1.15rem;
+}
+
+.input {
+  margin-top: 0.2em;
+  padding: 0.5rem;
+  border: 1px solid $border;
+  border-radius: $border-radius;
+  font-size: 1rem;
+  background: $color-secondary;
+  color: $text-primary;
+  transition: border-color 0.2s;
+
+  &::placeholder {
+    color: $text-muted;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+  }
+
+  &:disabled {
+    background: #f0f0f0;
+    color: $text-muted;
+    cursor: not-allowed;
+  }
+}

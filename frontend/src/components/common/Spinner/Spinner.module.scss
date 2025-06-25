@@ -9,8 +9,8 @@
 }
 
 .spinner {
-  border: 4px solid rgba(0, 0, 0, 0.1);
-  border-top-color: $light-color;
+  border: 4px solid rgba($color-secondary, 0.1);
+  border-top-color: $color-secondary;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   width: 48px;
@@ -25,7 +25,7 @@
 }
 
 /* Visually hide for screen readers only, keep accessible */
-.sr-only {
+.srOnly {
   position: absolute;
   width: 1px;
   height: 1px;

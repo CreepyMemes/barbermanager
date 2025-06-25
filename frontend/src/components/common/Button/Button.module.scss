@@ -1,18 +1,76 @@
 @use '@styles/variables.module.scss' as *;
+@use 'sass:color';
 
 .button {
-  padding: 0.5rem 1rem;
   border: none;
-  border-radius: 6px;
+  border-radius: $border-radius;
   text-decoration: none;
-  background-color: $dark-color;
-  color: $light-color;
   font-weight: bold;
-
   cursor: pointer;
-
-  &:disabled {
+  transition: background 0.18s;
+  &:disabled,
+  &[aria-disabled='true'] {
     opacity: 0.6;
     cursor: not-allowed;
+    pointer-events: none;
   }
+}
+
+/* Size modifiers */
+.sm {
+  padding: 0.32rem 1rem;
+  font-size: 0.97rem;
+}
+.md {
+  padding: 0.52rem 1.4rem;
+  font-size: 1.06rem;
+}
+.lg {
+  padding: 0.72rem 2.1rem;
+  font-size: 1.19rem;
+}
+
+/* Color modifiers */
+.primary {
+  background-color: $color-primary;
+  color: $text-button;
+  &:hover:not(:disabled):not([aria-disabled='true']) {
+    background-color: color.adjust($color-accent, $lightness: 5%);
+  }
+}
+.secondary {
+  background-color: $color-secondary;
+  color: $text-secondary;
+  &:hover:not(:disabled):not([aria-disabled='true']) {
+    background-color: color.adjust($color-secondary, $lightness: -5%);
+  }
+}
+
+.accent {
+  background-color: $color-accent;
+  color: $text-button;
+  &:hover:not(:disabled):not([aria-disabled='true']) {
+    background-color: color.adjust($color-accent, $lightness: 5%);
+  }
+}
+
+.muted {
+  background: transparent;
+  color: $color-muted;
+  border: 1px solid $border;
+  &:hover:not(:disabled):not([aria-disabled='true']) {
+    background-color: $color-accent;
+    color: $color-primary;
+    border-color: $color-primary;
+  }
+}
+
+/* Width modifiers */
+.width-content {
+  width: max-content;
+}
+
+.width-full {
+  width: 100%;
+  display: block; // ensures it fills parent
 }
