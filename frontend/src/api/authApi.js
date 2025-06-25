@@ -90,10 +90,10 @@ export async function refreshToken() {
   if (!refresh) throw new Error('No refresh token');
 
   const { data } = await axiosInstance.post(ENDPOINTS.auth.refresh, { refresh_token: refresh });
-  const { access } = data;
 
-  localStorage.setItem(STORAGE_KEYS.ACCESS, access);
-  return access;
+  localStorage.setItem(STORAGE_KEYS.ACCESS, data.access_token);
+
+  return data;
 }
 
 /**
