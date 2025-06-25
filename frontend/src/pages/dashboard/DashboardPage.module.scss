@@ -1,0 +1,42 @@
+@use '@styles/variables.module.scss' as *;
+
+.dashboard-wrapper {
+  padding: 2rem;
+  background: $color-primary;
+  min-height: 100vh;
+  color: $text-secondary;
+}
+
+.heading {
+  margin-bottom: 1.5rem;
+  color: $color-secondary;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.profile-section {
+  margin-top: 1.5rem;
+  background: $color-secondary;
+  color: $text-primary;
+  padding: 1rem;
+  border-radius: $border-radius;
+  border: 1px solid $border;
+  box-shadow: $box-shadow;
+}
+
+.profile-json {
+  background: $color-accent;
+  border: 1px solid $border;
+  border-radius: $border-radius;
+  padding: 1rem;
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+  color: $text-button;
+  font-family: 'Fira Mono', 'Consolas', monospace;
+  overflow-x: auto;
+}
+
+.no-profile {
+  margin-top: 1.5rem;
+  color: $text-muted;
+}

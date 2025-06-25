@@ -50,7 +50,7 @@ export default function LoginPage() {
           disabled={loading}
         />
 
-        <Button type="submit" disabled={loading}>
+        <Button type="submit" size="lg" disabled={loading}>
           {loading ? 'Logging in...' : 'Login'}
         </Button>
 
