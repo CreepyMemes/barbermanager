@@ -9,8 +9,8 @@
 }
 
 .spinner {
-  border: 4px solid rgba($color-primary, 0.1);
-  border-top-color: $color-primary;
+  border: 4px solid rgba($color-secondary, 0.1);
+  border-top-color: $color-secondary;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   width: 48px;
