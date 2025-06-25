@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback } from 'react';
 import AuthContext from './AuthContext';
 
 import * as authApi from '@api/authApi';
-import LoadingSpinner from '@components/common/LoadingSpinner/LoadingSpinner';
 
 import { getAdminProfile } from '../api/services/adminService';
 import { getBarberProfile } from '../api/services/barberService';
@@ -74,8 +73,6 @@ function AuthProvider({ children }) {
     try {
       await authApi.login(credentials);
       await fetchUserAndProfile();
-    } catch {
-      handleLogout();
     } finally {
       setLoading(false);
     }
@@ -106,7 +103,7 @@ function AuthProvider({ children }) {
         logout,
       }}
     >
-      {loading ? <LoadingSpinner /> : children}
+      {children}
     </AuthContext.Provider>
   );
 }

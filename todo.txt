@@ -14,8 +14,6 @@ Proposed:
 
 Important:
 
-  - add producition routes with nginx, (as of right now only works in dev environment)
-  
   - setup protected routes
   - check if authentication context works try it
   - implement admin dashboard page
@@ -36,6 +34,7 @@ Important:
   - fix image endpoints in profile, (check how it works in test_image_upload)
 
 Proposed:
+  - implement header and footer layouts
   - implement website home page
   - style implemented pages
   - see what vite tests are and maybe implement some
