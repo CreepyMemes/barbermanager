@@ -2,8 +2,10 @@ import { Children } from 'react';
 import styles from './Hero.module.scss';
 
 function Hero({ children }) {
-  const left = Children.toArray(children).find((child) => child.type.displayName === 'HeroLeft');
-  const right = Children.toArray(children).find((child) => child.type.displayName === 'HeroRight');
+  // Extracts first HeroLeft and HeroRight children by displayName
+  const [left, right] = ['HeroLeft', 'HeroRight'].map((name) =>
+    Children.toArray(children).find((child) => child.type.displayName === name),
+  );
 
   return (
     <div className={styles.hero}>
@@ -18,16 +20,15 @@ function Hero({ children }) {
   );
 }
 
-function Left({ children }) {
-  return <>{children}</>;
-}
+// Simple Left and Right subcomponents
+const Left = ({ children }) => <>{children}</>;
+const Right = ({ children }) => <>{children}</>;
 
-function Right({ children }) {
-  return <>{children}</>;
-}
-
+// Set display names for subcomponent identification
 Left.displayName = 'HeroLeft';
 Right.displayName = 'HeroRight';
+
+// Attach to main component for namespacing (Hero.Left, Hero.Right)
 Hero.Left = Left;
 Hero.Right = Right;
 
