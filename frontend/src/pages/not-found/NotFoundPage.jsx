@@ -1,0 +1,36 @@
+import styles from './NotFoundPage.module.scss';
+import logo from '@assets/images/notfound-logo.png';
+
+import Hero from '@components/common/Hero/Hero';
+import Button from '@components/common/Button/Button';
+
+export default function NotFoundPage() {
+  return (
+    <Hero>
+      <Hero.Left>
+        <div className={styles.textContainer}>
+          <h1 className={styles.title}>
+            404
+            <br />
+            NOT FOUND
+          </h1>
+          <p className={styles.subtitle}>Oops! We can&apos;t seem to find the page you&apos;re looking for.</p>
+          <p className={styles.desc}>
+            The page may have moved, or the URL may be incorrect.
+            <br />
+            Go back to the homepage and continue browsing.
+          </p>
+          <Button href="/" color="accent" size="lg" width="content">
+            GO HOME
+          </Button>
+        </div>
+      </Hero.Left>
+
+      <Hero.Right>
+        <div className={styles.imageContainer}>
+          <img className={styles.logo} src={logo} alt="Logo" />
+        </div>
+      </Hero.Right>
+    </Hero>
+  );
+}
