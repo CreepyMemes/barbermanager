@@ -1,10 +1,10 @@
-import styles from './NotFoundPage.module.scss';
+import styles from './NotFound.module.scss';
 import logo from '@assets/images/notfound-logo.png';
 
 import Hero from '@components/common/Hero/Hero';
 import Button from '@components/common/Button/Button';
 
-export default function NotFoundPage() {
+export default function NotFound() {
   return (
     <Hero>
       <Hero.Left>

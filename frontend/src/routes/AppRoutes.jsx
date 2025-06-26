@@ -1,26 +1,26 @@
 import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
 
-import HomePage from '@pages/home/HomePage';
-import LoginPage from '@pages/login/LoginPage';
-import DashboardPage from '@pages/dashboard/DashboardPage';
-import NotFoundPage from '@pages/not-found/NotFoundPage';
+import Home from '@pages/Home/Home';
+import Login from '@pages/Login/Login';
+import Dashboard from '@pages/Dashboard/Dashboard';
+import NotFound from '@pages/NotFound/NotFound';
 
 export default function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/login" element={<LoginPage />} />
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
       <Route
         path="/dashboard"
         element={
           <ProtectedRoute>
-            <DashboardPage />
+            <Dashboard />
           </ProtectedRoute>
         }
       />
 
-      <Route path="*" element={<NotFoundPage />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
