@@ -13,8 +13,7 @@ Proposed:
 2. Frontend:
 
 Important:
-  - use sm/md/lg for both buttons and inputs, put them in classes.module.scss
-  
+
   - understatnd better how useForm works and (FormContext.Provider what it does, maybe change useForm hook to be like other one, with checks)
   - cleanup code by making FormProvider, without any styling, then another component that uses that provider and adds children and shit
 
