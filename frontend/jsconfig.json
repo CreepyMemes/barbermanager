@@ -6,11 +6,7 @@
     "checkJs": false,
     "baseUrl": ".",
     "paths": {
-      "@app/*": ["src/app/*"],
-      "@components/*": ["src/components/*"],
-      "@common/*": ["src/common/*"],
-      "@assets/*": ["src/assets/*"],
-      "@data/*": ["src/data/*"]
+      "@*": ["./src/*"]
     }
   },
   "exclude": ["node_modules"]
