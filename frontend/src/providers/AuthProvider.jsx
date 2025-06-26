@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import AuthContext from '../contexts/AuthContext';
+import AuthContext from '@contexts/AuthContext';
 
 import * as authApi from '@api/authApi';
 
@@ -56,7 +56,7 @@ function AuthProvider({ children }) {
    * Hydrates user on mount if tokens exists in storage
    */
   useEffect(() => {
-    if (authApi.getAccessToken() && authApi.getRefreshToken()) {
+    if (authApi.getRefreshToken()) {
       fetchUserAndProfile();
     } else {
       handleLogout();
