@@ -1,15 +1,16 @@
 import { useEffect } from 'react';
-import { useAuth } from '@hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@hooks/useAuth';
 import { isEmail } from '@utils/utils';
-import styles from './LoginPage.module.scss';
+import styles from './Login.module.scss';
 
+import FormProvider from '@providers/FormProvider';
 import Form from '@components/common/Form/Form';
 import Input from '@components/common/Input/Input';
 import Button from '@components/common/Button/Button';
 import Error from '@components/common/Error/Error';
 
-export default function LoginPage() {
+export default function Login() {
   const { login, loading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -31,31 +32,35 @@ export default function LoginPage() {
 
   return (
     <div className={styles.loginContainer}>
-      <Form label="login" initialFields={{ identifier: '', password: '' }} onSubmit={handleLoginSubmit}>
-        <Input
-          label="Username or Email:"
-          name="identifier"
-          type="text"
-          autoComplete="username"
-          required
-          disabled={loading}
-        />
+      <FormProvider initialFields={{ identifier: '', password: '' }} onSubmit={handleLoginSubmit}>
+        <Form label="Welcome Back">
+          <Input
+            label="Email or username"
+            name="identifier"
+            type="text"
+            autoComplete="username"
+            required
+            disabled={loading}
+            size="md"
+          />
 
-        <Input
-          label="Password:"
-          name="password"
-          type="password"
-          autoComplete="current-password"
-          required
-          disabled={loading}
-        />
+          <Input
+            label="Password"
+            name="password"
+            type="password"
+            autoComplete="current-password"
+            required
+            disabled={loading}
+            size="md"
+          />
 
-        <Button type="submit" size="lg" disabled={loading}>
-          {loading ? 'Logging in...' : 'Login'}
-        </Button>
+          <Button type="submit" size="lg" disabled={loading}>
+            {loading ? 'Logging in...' : 'Login'}
+          </Button>
 
-        <Error />
-      </Form>
+          <Error />
+        </Form>
+      </FormProvider>
     </div>
   );
 }

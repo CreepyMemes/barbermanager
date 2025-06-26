@@ -4,7 +4,7 @@
   padding: 2rem;
   background: $color-primary;
   min-height: 100vh;
-  color: $text-secondary;
+  color: $color-secondary;
 }
 
 .heading {
@@ -16,13 +16,13 @@
 
 .top {
   font-size: 1.5rem;
-  color: $text-button;
+  color: $color-secondary;
 }
 
 .profile-section {
   margin-top: 1.5rem;
   background: $color-secondary;
-  color: $text-primary;
+  color: $color-primary;
   padding: 1rem;
   border-radius: $border-radius;
   border: 1px solid $border;
@@ -36,12 +36,12 @@
   padding: 1rem;
   font-size: 0.95rem;
   margin-top: 0.5rem;
-  color: $text-button;
+  color: $color-secondary;
   font-family: 'Fira Mono', 'Consolas', monospace;
   overflow-x: auto;
 }
 
 .no-profile {
   margin-top: 1.5rem;
-  color: $text-muted;
+  color: $color-muted;
 }

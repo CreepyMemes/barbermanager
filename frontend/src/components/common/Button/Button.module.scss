@@ -1,4 +1,6 @@
 @use '@styles/variables.module.scss' as *;
+@use '@styles/classes.module.scss' as *;
+
 @use 'sass:color';
 
 .button {
@@ -8,6 +10,7 @@
   font-weight: bold;
   cursor: pointer;
   transition: background 0.18s;
+
   &:disabled,
   &[aria-disabled='true'] {
     opacity: 0.6;
@@ -16,31 +19,18 @@
   }
 }
 
-/* Size modifiers */
-.sm {
-  padding: 0.32rem 1rem;
-  font-size: 0.97rem;
-}
-.md {
-  padding: 0.52rem 1.4rem;
-  font-size: 1.06rem;
-}
-.lg {
-  padding: 0.72rem 2.1rem;
-  font-size: 1.19rem;
-}
-
 /* Color modifiers */
 .primary {
   background-color: $color-primary;
-  color: $text-button;
+  color: $color-secondary;
   &:hover:not(:disabled):not([aria-disabled='true']) {
     background-color: color.adjust($color-accent, $lightness: 5%);
   }
 }
+
 .secondary {
   background-color: $color-secondary;
-  color: $text-secondary;
+  color: $color-primary;
   &:hover:not(:disabled):not([aria-disabled='true']) {
     background-color: color.adjust($color-secondary, $lightness: -5%);
   }
@@ -48,7 +38,7 @@
 
 .accent {
   background-color: $color-accent;
-  color: $text-button;
+  color: $color-secondary;
   &:hover:not(:disabled):not([aria-disabled='true']) {
     background-color: color.adjust($color-accent, $lightness: 5%);
   }
