@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import AuthContext from './AuthContext';
+import AuthContext from '../contexts/AuthContext';
 
 import * as authApi from '@api/authApi';
 
