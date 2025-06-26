@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { useAuth } from '@hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@hooks/useAuth';
 import { isEmail } from '@utils/utils';
-import styles from './LoginPage.module.scss';
+import styles from './Login.module.scss';
 
 import FormProvider from '@providers/FormProvider';
 import Form from '@components/common/Form/Form';
@@ -10,7 +10,7 @@ import Input from '@components/common/Input/Input';
 import Button from '@components/common/Button/Button';
 import Error from '@components/common/Error/Error';
 
-export default function LoginPage() {
+export default function Login() {
   const { login, loading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
