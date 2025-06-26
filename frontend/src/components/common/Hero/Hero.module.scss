@@ -1,0 +1,19 @@
+@use '@styles/variables.module.scss' as *;
+@use '@styles/classes.module.scss' as *;
+
+.hero {
+  display: flex;
+  min-height: 100vh;
+}
+
+.left {
+  flex: 1;
+  background: $color-primary;
+  color: $text-primary;
+}
+
+.right {
+  flex: 1;
+  background: $color-secondary;
+  color: $text-secondary;
+}

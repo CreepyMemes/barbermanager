@@ -1,0 +1,37 @@
+@use '@styles/variables.module.scss' as *;
+@use '@styles/classes.module.scss' as *;
+
+.text-container {
+  // todo
+}
+
+.image-container {
+  // todo
+}
+
+.title {
+  font-size: 5rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin-bottom: 1.2rem;
+  line-height: 1;
+  color: $text-button;
+}
+
+.subtitle {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+  color: $color-secondary;
+  opacity: 0.9;
+}
+
+.desc {
+  font-size: 1.3rem;
+  color: $text-muted;
+  margin-bottom: 2rem;
+  max-width: 330px;
+}
+
+.logo {
+  width: 40rem;
+}
