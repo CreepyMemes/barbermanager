@@ -13,13 +13,11 @@ Proposed:
 2. Frontend:
 
 Important:
-  - see how to show frontend assets in production
-  - understatnd better how useForm workk and (FormContext.Provider what it does, maybe change useForm hook to be like other one, with checks)
-    - cleanup code by making FormProvider, without any styling, then another component that uses that provider and adds children and shit
-
   - implement specific role based dashboards (idk how to do it yet, we only have generic dashboard)
 
-  - implement register page (one for client through /login), (for barber from invitation email link)
+  - implement login page using Hero component
+  - implement register page for clients (through /login route), use Hero component
+  - implement register page for barbers (from invitation email link), use Hero component
   - change email frontend url in email template and implement a route for it
 
   - verify-email send GET request to verify then redirect to login page,
@@ -35,7 +33,6 @@ Important:
 Proposed:
   - add stuff to website home page
   - style all implemented pages, (use reusable component to keep code clean and modular)
-  - make website icon svg
   - see how vite tests work and maybe implement some
 
 -----------------------------------------------------------------------------------------------------------------------------------------

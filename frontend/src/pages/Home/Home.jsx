@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@hooks/useAuth';
-import styles from './HomePage.module.scss';
+import styles from './Home.module.scss';
 
 import Button from '@components/common/Button/Button';
 
-export default function HomePage() {
+export default function Home() {
   const { isAuthenticated, loading } = useAuth();
   const navigate = useNavigate();
 

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getAccessToken, getRefreshToken, refreshToken, removeTokens } from './authApi';
+import { getAccessToken, getRefreshToken, refreshToken, removeTokens } from '@api/services/auth';
 
 const axiosInstance = axios.create({
   baseURL: '/api',

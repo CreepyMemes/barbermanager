@@ -1,11 +1,11 @@
 import { useEffect, useState, useCallback } from 'react';
-import AuthContext from './AuthContext';
+import AuthContext from '@contexts/AuthContext';
 
-import * as authApi from '@api/authApi';
+import * as authApi from '@api/services/auth';
 
-import { getAdminProfile } from '../api/services/adminService';
-import { getBarberProfile } from '../api/services/barberService';
-import { getClientProfile } from '../api/services/clientService';
+import { getAdminProfile } from '../api/services/admin';
+import { getBarberProfile } from '../api/services/barber';
+import { getClientProfile } from '../api/services/client';
 
 /**
  * This provides authentication info, user, profile, login/logout logic.
@@ -56,7 +56,7 @@ function AuthProvider({ children }) {
    * Hydrates user on mount if tokens exists in storage
    */
   useEffect(() => {
-    if (authApi.getAccessToken() && authApi.getRefreshToken()) {
+    if (authApi.getRefreshToken()) {
       fetchUserAndProfile();
     } else {
       handleLogout();
