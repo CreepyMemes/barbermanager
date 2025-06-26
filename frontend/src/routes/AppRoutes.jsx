@@ -1,6 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
-
-import ProtectedRoute from '@components/common/ProtectedRoute/ProtectedRoute';
+import ProtectedRoute from './ProtectedRoute';
 
 import HomePage from '@pages/home/HomePage';
 import LoginPage from '@pages/login/LoginPage';
@@ -22,9 +21,7 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       />
-      {/*<Route path="*" element={<NotFound />} />*/}
 
-      {/* Catch all unmatched routes */}
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
