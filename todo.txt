@@ -16,7 +16,7 @@ Important:
   - use sm/md/lg for both buttons and inputs, put them in classes.module.scss
   
   - understatnd better how useForm works and (FormContext.Provider what it does, maybe change useForm hook to be like other one, with checks)
-    - cleanup code by making FormProvider, without any styling, then another component that uses that provider and adds children and shit
+  - cleanup code by making FormProvider, without any styling, then another component that uses that provider and adds children and shit
 
   - implement specific role based dashboards (idk how to do it yet, we only have generic dashboard)
 
@@ -38,7 +38,6 @@ Important:
 Proposed:
   - add stuff to website home page
   - style all implemented pages, (use reusable component to keep code clean and modular)
-  - make website icon svg
   - see how vite tests work and maybe implement some
 
 -----------------------------------------------------------------------------------------------------------------------------------------

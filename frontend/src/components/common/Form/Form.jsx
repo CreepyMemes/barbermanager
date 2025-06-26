@@ -29,6 +29,7 @@ export default function Form({ label, initialFields, onSubmit, children }) {
 
   return (
     <FormContext.Provider value={{ fields, handleChange, error, setError }}>
+      {/* remove stylilng here, must be ike AuthProvider, call it FormProvider and make another Form for usage and styling */}
       <form className={styles.form} onSubmit={handleSubmit} autoComplete="on">
         <h2 className={styles.label}>{label}</h2>
 
