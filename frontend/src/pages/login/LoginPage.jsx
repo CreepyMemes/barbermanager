@@ -31,7 +31,7 @@ export default function LoginPage() {
 
   return (
     <div className={styles.loginContainer}>
-      <Form label="login" initialFields={{ identifier: '', password: '' }} onSubmit={handleLoginSubmit}>
+      <Form label="Welcome Back" initialFields={{ identifier: '', password: '' }} onSubmit={handleLoginSubmit}>
         <Input
           label="Username or Email:"
           name="identifier"

@@ -8,6 +8,7 @@
   font-weight: bold;
   cursor: pointer;
   transition: background 0.18s;
+
   &:disabled,
   &[aria-disabled='true'] {
     opacity: 0.6;
@@ -18,29 +19,32 @@
 
 /* Size modifiers */
 .sm {
-  padding: 0.32rem 1rem;
-  font-size: 0.97rem;
+  padding: 0.5rem 1.25rem;
+  font-size: 1.05rem;
 }
+
 .md {
-  padding: 0.52rem 1.4rem;
-  font-size: 1.06rem;
+  padding: 0.72rem 1.7rem;
+  font-size: 1.18rem;
 }
+
 .lg {
-  padding: 0.72rem 2.1rem;
-  font-size: 1.19rem;
+  padding: 1rem 2.5rem;
+  font-size: 1.32rem;
 }
 
 /* Color modifiers */
 .primary {
   background-color: $color-primary;
-  color: $text-button;
+  color: $color-secondary;
   &:hover:not(:disabled):not([aria-disabled='true']) {
     background-color: color.adjust($color-accent, $lightness: 5%);
   }
 }
+
 .secondary {
   background-color: $color-secondary;
-  color: $text-secondary;
+  color: $color-primary;
   &:hover:not(:disabled):not([aria-disabled='true']) {
     background-color: color.adjust($color-secondary, $lightness: -5%);
   }
@@ -48,7 +52,7 @@
 
 .accent {
   background-color: $color-accent;
-  color: $text-button;
+  color: $color-secondary;
   &:hover:not(:disabled):not([aria-disabled='true']) {
     background-color: color.adjust($color-accent, $lightness: 5%);
   }
