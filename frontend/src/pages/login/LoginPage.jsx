@@ -33,21 +33,23 @@ export default function LoginPage() {
     <div className={styles.loginContainer}>
       <Form label="Welcome Back" initialFields={{ identifier: '', password: '' }} onSubmit={handleLoginSubmit}>
         <Input
-          label="Username or Email:"
+          label="Email or username"
           name="identifier"
           type="text"
           autoComplete="username"
           required
           disabled={loading}
+          size="md"
         />
 
         <Input
-          label="Password:"
+          label="Password"
           name="password"
           type="password"
           autoComplete="current-password"
           required
           disabled={loading}
+          size="md"
         />
 
         <Button type="submit" size="lg" disabled={loading}>

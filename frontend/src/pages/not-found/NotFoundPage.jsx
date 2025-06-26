@@ -10,15 +10,13 @@ export default function NotFoundPage() {
       <Hero.Left>
         <div className={styles.textContainer}>
           <h1 className={styles.title}>
-            404
-            <br />
-            NOT FOUND
+            <p>404</p>
+            <p>NOT FOUND</p>
           </h1>
           <p className={styles.subtitle}>Oops! We can&apos;t seem to find the page you&apos;re looking for.</p>
           <p className={styles.desc}>
-            The page may have moved, or the URL may be incorrect.
-            <br />
-            Go back to the homepage and continue browsing.
+            <p>The page may have moved, or the URL may be incorrect.</p>
+            <p>Go back to the homepage and continue browsing.</p>
           </p>
           <Button href="/" color="accent" size="lg" width="content">
             GO HOME

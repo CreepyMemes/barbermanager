@@ -12,17 +12,18 @@ function Button({
   color = 'primary',
   width = 'full',
 }) {
+  // Get all style classes into a string
   const className = [styles.button, styles[size], styles[color], styles[camelizeStyle('width', width)]].join(' ');
 
+  // If button is a link
   if (href) {
     return (
       <a
         className={className}
         href={href}
-        onClick={onClick}
-        aria-disabled={disabled} // for accessibility
-        tabIndex={disabled ? -1 : 0}
-        style={disabled ? { pointerEvents: 'none', opacity: 0.6 } : {}}
+        onClick={disabled ? (e) => e.preventDefault() : onClick}
+        aria-disabled={disabled}
+        tabIndex={disabled ? -1 : undefined}
       >
         {children}
       </a>
