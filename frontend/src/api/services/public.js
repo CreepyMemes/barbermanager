@@ -1,5 +1,5 @@
-import axiosInstance from '../axiosInstance';
-import { ENDPOINTS } from '../endpoints';
+import axiosInstance from '@api/axiosInstance';
+import { ENDPOINTS } from '@api/endpoints';
 
 /**
  * Retrieves a list of all public barbers.

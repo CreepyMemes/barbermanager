@@ -1,11 +1,11 @@
 import { useEffect, useState, useCallback } from 'react';
 import AuthContext from '@contexts/AuthContext';
 
-import * as authApi from '@api/authApi';
+import * as authApi from '@api/services/auth';
 
-import { getAdminProfile } from '../api/services/adminService';
-import { getBarberProfile } from '../api/services/barberService';
-import { getClientProfile } from '../api/services/clientService';
+import { getAdminProfile } from '../api/services/admin';
+import { getBarberProfile } from '../api/services/barber';
+import { getClientProfile } from '../api/services/client';
 
 /**
  * This provides authentication info, user, profile, login/logout logic.

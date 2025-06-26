@@ -1,5 +1,5 @@
-import axiosInstance from './axiosInstance';
-import { ENDPOINTS } from './endpoints';
+import axiosInstance from '@api/axiosInstance';
+import { ENDPOINTS } from '@api/endpoints';
 
 /**
  * Keys used for storing authentication tokens in localStorage.
