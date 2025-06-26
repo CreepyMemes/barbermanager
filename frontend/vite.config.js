@@ -16,15 +16,15 @@ export default defineConfig({
 
   resolve: {
     alias: [
-      { find: '@api', replacement: path.resolve(__dirname, './src/api') },
       { find: '@assets', replacement: path.resolve(__dirname, './assets') },
-      { find: '@styles', replacement: path.resolve(__dirname, './src/styles') },
-      { find: '@hooks', replacement: path.resolve(__dirname, './src/hooks') },
-      { find: '@contexts', replacement: path.resolve(__dirname, './src/contexts') },
-      { find: '@providers', replacement: path.resolve(__dirname, './src/providers') },
+      { find: '@api', replacement: path.resolve(__dirname, './src/api') },
       { find: '@components', replacement: path.resolve(__dirname, './src/components') },
+      { find: '@contexts', replacement: path.resolve(__dirname, './src/contexts') },
+      { find: '@hooks', replacement: path.resolve(__dirname, './src/hooks') },
       { find: '@pages', replacement: path.resolve(__dirname, './src/pages') },
+      { find: '@providers', replacement: path.resolve(__dirname, './src/providers') },
       { find: '@routes', replacement: path.resolve(__dirname, './src/routes') },
+      { find: '@styles', replacement: path.resolve(__dirname, './src/styles') },
       { find: '@utils', replacement: path.resolve(__dirname, './src/utils') },
     ],
   },
