@@ -1,4 +1,6 @@
 @use '@styles/variables.module.scss' as *;
+@use '@styles/classes.module.scss' as *;
+
 @use 'sass:color';
 
 .button {
@@ -15,22 +17,6 @@
     cursor: not-allowed;
     pointer-events: none;
   }
-}
-
-/* Size modifiers */
-.sm {
-  padding: 0.5rem 1.25rem;
-  font-size: 1.05rem;
-}
-
-.md {
-  padding: 0.72rem 1.7rem;
-  font-size: 1.18rem;
-}
-
-.lg {
-  padding: 1rem 2.5rem;
-  font-size: 1.32rem;
 }
 
 /* Color modifiers */

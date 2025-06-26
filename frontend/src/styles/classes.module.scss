@@ -12,3 +12,19 @@
   flex-direction: column;
   justify-content: center;
 }
+
+// --------------- Size modifiers ---------------
+.sm {
+  padding: 0.72rem 1rem;
+  font-size: 1.18rem;
+}
+
+.md {
+  padding: 1rem 1.3rem;
+  font-size: 1.32rem;
+}
+
+.lg {
+  padding: 1.2rem 1.8rem;
+  font-size: 1.8rem;
+}
