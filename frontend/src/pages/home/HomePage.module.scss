@@ -1,0 +1,22 @@
+@use '@styles/variables.module.scss' as *;
+
+.homeContainer {
+  background: $color-secondary;
+  border-radius: $border-radius;
+  max-width: 400px;
+  margin: 60px auto;
+  padding: 2.5rem 2rem;
+  box-shadow: $box-shadow;
+
+  h1 {
+    color: $color-primary;
+    margin-bottom: 0.5rem;
+    font-size: 2rem;
+  }
+
+  p {
+    color: $text-muted;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+}
