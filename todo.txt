@@ -13,6 +13,9 @@ Proposed:
 2. Frontend:
 
 Important:
+  - see how to show frontend assets in production
+  - understatnd better how useForm workk and (FormContext.Provider what it does, maybe change useForm hook to be like other one, with checks)
+    - cleanup code by making FormProvider, without any styling, then another component that uses that provider and adds children and shit
 
   - implement specific role based dashboards (idk how to do it yet, we only have generic dashboard)
 
@@ -26,7 +29,7 @@ Important:
 
   - fix image endpoints in profile, (check how it works in test_image_upload)
 
-  - implement header and footer layouts
+  - implement header and footer layouts (shows user when authenticated, otherwise login)
 
 
 Proposed:
