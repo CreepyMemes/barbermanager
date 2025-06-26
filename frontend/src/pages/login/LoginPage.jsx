@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { isEmail } from '@utils/utils';
 import styles from './LoginPage.module.scss';
 
+import FormProvider from '@providers/FormProvider';
 import Form from '@components/common/Form/Form';
 import Input from '@components/common/Input/Input';
 import Button from '@components/common/Button/Button';
@@ -31,33 +32,35 @@ export default function LoginPage() {
 
   return (
     <div className={styles.loginContainer}>
-      <Form label="Welcome Back" initialFields={{ identifier: '', password: '' }} onSubmit={handleLoginSubmit}>
-        <Input
-          label="Email or username"
-          name="identifier"
-          type="text"
-          autoComplete="username"
-          required
-          disabled={loading}
-          size="md"
-        />
+      <FormProvider initialFields={{ identifier: '', password: '' }} onSubmit={handleLoginSubmit}>
+        <Form label="Welcome Back">
+          <Input
+            label="Email or username"
+            name="identifier"
+            type="text"
+            autoComplete="username"
+            required
+            disabled={loading}
+            size="md"
+          />
 
-        <Input
-          label="Password"
-          name="password"
-          type="password"
-          autoComplete="current-password"
-          required
-          disabled={loading}
-          size="md"
-        />
+          <Input
+            label="Password"
+            name="password"
+            type="password"
+            autoComplete="current-password"
+            required
+            disabled={loading}
+            size="md"
+          />
 
-        <Button type="submit" size="lg" disabled={loading}>
-          {loading ? 'Logging in...' : 'Login'}
-        </Button>
+          <Button type="submit" size="lg" disabled={loading}>
+            {loading ? 'Logging in...' : 'Login'}
+          </Button>
 
-        <Error />
-      </Form>
+          <Error />
+        </Form>
+      </FormProvider>
     </div>
   );
 }

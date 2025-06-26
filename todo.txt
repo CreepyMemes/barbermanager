@@ -13,10 +13,6 @@ Proposed:
 2. Frontend:
 
 Important:
-
-  - understatnd better how useForm works and (FormContext.Provider what it does, maybe change useForm hook to be like other one, with checks)
-  - cleanup code by making FormProvider, without any styling, then another component that uses that provider and adds children and shit
-
   - implement specific role based dashboards (idk how to do it yet, we only have generic dashboard)
 
   - implement login page using Hero component
