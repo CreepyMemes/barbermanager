@@ -1,8 +1,11 @@
+@use '@styles/variables.module.scss' as *;
+@use '@styles/classes.module.scss' as *;
+
 .error {
-  color: #f44;
-  background: #fff0f0;
-  border: 1px solid #fcc;
-  border-radius: 4px;
+  color: $color-color;
+  background: $color-error-bg;
+  border: 1px solid $border-error;
+  border-radius: $border-radius;
   padding: 0.7em;
   margin-top: 0.5em;
   text-align: center;

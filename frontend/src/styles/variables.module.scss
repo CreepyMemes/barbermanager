@@ -5,9 +5,12 @@ $color-primary: #393937; // dark gray
 $color-secondary: #f9f7f3; // lightest background
 $color-accent: #464747; // light tan accent (for cards, highlights)
 $color-muted: #94928a; // muted text, subtle borders
+$color-error-bg: #fff0f0; // error background color
+$color-color: #f44;
 
 // Borders/Shadows
 $border: #e3e0dd;
+$border-error: #fcc;
 $border-radius: 8px;
 $box-shadow: 0 2px 8px rgba(57, 57, 55, 0.03);
 
