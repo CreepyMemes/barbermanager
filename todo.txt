@@ -13,8 +13,6 @@ Proposed:
 2. Frontend:
 
 Important:
-  - implement specific role based dashboards (idk how to do it yet, we only have generic dashboard)
-
   - implement login page using Hero component
   - implement register page for clients (through /login route), use Hero component
   - implement register page for barbers (from invitation email link), use Hero component
