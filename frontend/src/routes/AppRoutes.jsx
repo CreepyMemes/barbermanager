@@ -9,19 +9,15 @@ import BarberDashboard from '@pages/Dashboard/BarberDashboard/BarberDashboard';
 import ClientDashboard from '@pages/Dashboard/ClientDashboard/ClientDashboard';
 import NotFound from '@pages/NotFound/NotFound';
 
+const protectedRoute = (element) => <ProtectedRoute>{element}</ProtectedRoute>; // For cleaner code (one line)
+
 export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        }
-      >
+
+      <Route path="/dashboard" element={protectedRoute(<Dashboard />)}>
         <Route path="admin" element={<AdminDashboard />} />
         <Route path="barber" element={<BarberDashboard />} />
         <Route path="client" element={<ClientDashboard />} />
