@@ -4,7 +4,6 @@ import { useAuth } from '@hooks/useAuth';
 import { isEmail } from '@utils/utils';
 import styles from './Login.module.scss';
 
-import Spinner from '@components/common/Spinner/Spinner';
 import FormProvider from '@providers/FormProvider';
 import Form from '@components/common/Form/Form';
 import Input from '@components/common/Input/Input';
@@ -22,8 +21,8 @@ export default function Login() {
     if (!loading && isAuthenticated) navigate('/dashboard', { replace: true });
   }, [isAuthenticated, loading, navigate]);
 
-  // Don't show login if redirecting
-  if (loading || isAuthenticated) return <Spinner />;
+  // Don't show login if athenticated
+  if (isAuthenticated) return null;
 
   /**
    * Handles form submission for login, Determines whether the identifier is an email or username,
