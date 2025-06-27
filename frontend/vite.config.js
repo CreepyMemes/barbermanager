@@ -45,7 +45,7 @@ export default defineConfig({
         target: 'http://backend:8000',
         changeOrigin: true,
         secure: false,
-        ws: true,
+        ws: true, // websocket
         configure: (proxy, _options) => {
           proxy.on('proxyReq', (proxyReq, req, res) => {
             let bodyData = [];
@@ -73,6 +73,12 @@ export default defineConfig({
             });
           });
         },
+      },
+      '/media': {
+        target: 'http://backend:8000',
+        changeOrigin: true,
+        secure: false,
+        ws: false,
       },
     },
   },

@@ -1,0 +1,62 @@
+@use '@styles/variables.module.scss' as *;
+
+.admin-dashboard {
+  background: $color-secondary;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  padding: 3rem 2.5rem 2.5rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  color: $color-primary;
+
+  .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 1.8rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .profile-img {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid $border;
+    background: $color-muted;
+  }
+
+  .big-title {
+    font-size: 2.6rem;
+    font-weight: 700;
+    color: $color-primary;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.2em;
+  }
+
+  .profile-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+
+    .stat {
+      flex: 1 1 170px;
+      background: $color-secondary;
+      border: 1.5px solid $border;
+      border-radius: $border-radius;
+      padding: 1.5rem 1rem;
+      text-align: center;
+
+      .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.4rem;
+        color: $color-primary;
+      }
+      .stat-label {
+        color: $color-muted;
+        font-size: 1.25rem;
+      }
+    }
+  }
+}
