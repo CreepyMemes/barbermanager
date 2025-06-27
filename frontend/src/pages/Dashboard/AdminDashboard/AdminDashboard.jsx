@@ -7,7 +7,7 @@ export default function AdminDashboard() {
   const { profile } = useAuth();
 
   return (
-    <div className={styles.clientDashboard}>
+    <div className={styles.adminDashboard}>
       <div className={styles.profileHeader}>
         <img className={styles.profileImg} src={profile.profile_image || defaultAvatar} alt="Profile" />
         <div className={styles.bigTitle}>
