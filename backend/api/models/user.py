@@ -146,7 +146,7 @@ class Admin(User):
     def average_rating(self):
         from .appointment import Review
         avg = Review.objects.aggregate(avg=Avg('rating'))['avg']
-        return round(float(avg), 2) if avg else None
+        return round(float(avg), 2) if avg else 0.0
     
     def to_dict(self):
         base = super().to_dict()
@@ -257,7 +257,7 @@ class Barber(User):
         Returns the average rating of this barber, or None if no reviews exist.
         """
         avg = self.barber_reviews.aggregate(avg=Avg('rating'))['avg']
-        return float(avg) if avg is not None else None
+        return round(float(avg), 2) if avg else 0.0
     
     def to_dict(self):
         """

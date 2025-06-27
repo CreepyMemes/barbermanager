@@ -13,7 +13,8 @@ Proposed:
 2. Frontend:
 
 Important:
-  - implement specific role based dashboards (idk how to do it yet, we only have generic dashboard)
+  - fix layout make header and sidebar outside, and the pages go inside
+  - cleanup all new code (make maybe layout component or something, remove that shit from App)
 
   - implement login page using Hero component
   - implement register page for clients (through /login route), use Hero component

@@ -1,17 +1,16 @@
 import { useEffect, useState, useCallback } from 'react';
 import AuthContext from '@contexts/AuthContext';
 
-import * as authApi from '@api/services/auth';
-
-import { getAdminProfile } from '../api/services/admin';
-import { getBarberProfile } from '../api/services/barber';
-import { getClientProfile } from '../api/services/client';
+import * as auth from '@api/services/auth';
+import { getAdminProfile } from '@api/services/admin';
+import { getBarberProfile } from '@api/services/barber';
+import { getClientProfile } from '@api/services/client';
 
 /**
  * This provides authentication info, user, profile, login/logout logic.
  */
 function AuthProvider({ children }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(!!authApi.getAccessToken());
+  const [isAuthenticated, setIsAuthenticated] = useState(!!auth.getAccessToken());
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -20,7 +19,7 @@ function AuthProvider({ children }) {
    * Helper callback function for unified reset + redirect
    */
   const handleLogout = useCallback(() => {
-    authApi.removeTokens();
+    auth.removeTokens();
     setUser(null);
     setProfile(null);
     setIsAuthenticated(false);
@@ -34,17 +33,21 @@ function AuthProvider({ children }) {
 
     try {
       // Fetch user basic info
-      const { me } = await authApi.getCurrentUser();
+      const { me } = await auth.getCurrentUser();
       setUser(me);
       setIsAuthenticated(true);
 
       // Fetch role specific profile
-      let profileData = null;
-      if (me.role === 'ADMIN') profileData = await getAdminProfile();
-      else if (me.role === 'BARBER') profileData = await getBarberProfile();
-      else if (me.role === 'CLIENT') profileData = await getClientProfile();
-
-      setProfile(profileData);
+      if (me.role === 'ADMIN') {
+        const { profile } = await getAdminProfile();
+        setProfile(profile);
+      } else if (me.role === 'BARBER') {
+        const { profile } = await getBarberProfile();
+        setProfile(profile);
+      } else if (me.role === 'CLIENT') {
+        const { profile } = await getClientProfile();
+        setProfile(profile);
+      }
     } catch {
       handleLogout();
     } finally {
@@ -56,7 +59,7 @@ function AuthProvider({ children }) {
    * Hydrates user on mount if tokens exists in storage
    */
   useEffect(() => {
-    if (authApi.getRefreshToken()) {
+    if (auth.getRefreshToken()) {
       fetchUserAndProfile();
     } else {
       handleLogout();
@@ -71,7 +74,7 @@ function AuthProvider({ children }) {
     setLoading(true);
 
     try {
-      await authApi.login(credentials);
+      await auth.login(credentials);
       await fetchUserAndProfile();
     } finally {
       setLoading(false);
@@ -85,7 +88,7 @@ function AuthProvider({ children }) {
     setLoading(true);
 
     try {
-      await authApi.logout();
+      await auth.logout();
     } finally {
       handleLogout();
       setLoading(false);
