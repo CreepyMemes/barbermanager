@@ -1,11 +1,5 @@
-import axios from 'axios';
-import { getAccessToken, getRefreshToken, refreshToken, removeTokens } from '@api/services/auth';
-
-const axiosInstance = axios.create({
-  baseURL: '/api',
-  headers: { 'Content-Type': 'application/json' },
-});
-
+import api from '@api';
+import axiosInstance from './instance';
 /**
  * Variable that tracks the current refresh promise
  */
@@ -16,7 +10,7 @@ let refreshPromise = null;
  */
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = getAccessToken();
+    const token = api.auth.getAccessToken();
     if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
   },
@@ -38,8 +32,8 @@ axiosInstance.interceptors.response.use(
     }
 
     // Remove everything and bubble up for logout if no refresh token found
-    if (!getRefreshToken()) {
-      removeTokens();
+    if (!api.auth.getRefreshToken()) {
+      api.auth.removeTokens();
       return Promise.reject(error); // just throw, AuthProvider will handle redirect
     }
 
@@ -47,9 +41,10 @@ axiosInstance.interceptors.response.use(
 
     // Ensure only one refresh request at a time
     if (!refreshPromise) {
-      refreshPromise = refreshToken()
+      refreshPromise = api.auth
+        .refreshToken()
         .catch((error) => {
-          removeTokens();
+          api.auth.removeTokens();
           throw error;
         })
         .finally(() => {

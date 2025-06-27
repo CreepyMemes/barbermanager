@@ -6,6 +6,7 @@
     "checkJs": false,
     "baseUrl": ".",
     "paths": {
+      "@api": ["src/api/index.js"],
       "@*": ["./src/*"]
     }
   },

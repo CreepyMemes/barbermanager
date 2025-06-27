@@ -1,11 +1,11 @@
-import axiosInstance from '@api/axiosInstance';
+import api from '@api';
 import { ENDPOINTS } from '@api/endpoints';
 
 /**
  * Retrieves the admin's profile information from the server.
  */
 export async function getAdminProfile() {
-  const { data } = await axiosInstance.get(ENDPOINTS.admin.profile);
+  const { data } = await api.instance.get(ENDPOINTS.admin.profile);
   return data;
 }
 
@@ -13,7 +13,7 @@ export async function getAdminProfile() {
  * Retrieves all client accounts from the server.
  */
 export async function getAllClients() {
-  const { data } = await axiosInstance.get(ENDPOINTS.admin.clients);
+  const { data } = await api.instance.get(ENDPOINTS.admin.clients);
   return data;
 }
 
@@ -21,7 +21,7 @@ export async function getAllClients() {
  * Fetches the list of all barbers registered in the system.
  */
 export async function getAllBarbers() {
-  const { data } = await axiosInstance.get(ENDPOINTS.admin.barbers);
+  const { data } = await api.instance.get(ENDPOINTS.admin.barbers);
   return data;
 }
 
@@ -29,7 +29,7 @@ export async function getAllBarbers() {
  * Sends an invitation to a barber via email.
  */
 export async function inviteBarber(email) {
-  const { data } = await axiosInstance.post(ENDPOINTS.admin.inviteBarber, { email });
+  const { data } = await api.instance.post(ENDPOINTS.admin.inviteBarber, { email });
   return data;
 }
 
@@ -37,14 +37,14 @@ export async function inviteBarber(email) {
  * Deletes a barber account by its unique identifier.
  */
 export async function deleteBarber(barberId) {
-  await axiosInstance.delete(ENDPOINTS.admin.barber(barberId));
+  await api.instance.delete(ENDPOINTS.admin.barber(barberId));
 }
 
 /**
  * Creates a new availability entry for a specific barber.
  */
 export async function createBarberAvailability(barberId, availabilityData) {
-  const { data } = await axiosInstance.post(ENDPOINTS.admin.barberAvailabilities(barberId), availabilityData);
+  const { data } = await api.instance.post(ENDPOINTS.admin.barberAvailabilities(barberId), availabilityData);
   return data;
 }
 
@@ -52,7 +52,7 @@ export async function createBarberAvailability(barberId, availabilityData) {
  * Updates an existing availability slot for a barber.
  */
 export async function updateBarberAvailability(barberId, availabilityId, patchData) {
-  const { data } = await axiosInstance.patch(ENDPOINTS.admin.barberAvailability(barberId, availabilityId), patchData);
+  const { data } = await api.instance.patch(ENDPOINTS.admin.barberAvailability(barberId, availabilityId), patchData);
   return data;
 }
 
@@ -60,13 +60,13 @@ export async function updateBarberAvailability(barberId, availabilityId, patchDa
  * Deletes a specific availability slot for a barber.
  */
 export async function deleteBarberAvailability(barberId, availabilityId) {
-  await axiosInstance.delete(ENDPOINTS.admin.barberAvailability(barberId, availabilityId));
+  await api.instance.delete(ENDPOINTS.admin.barberAvailability(barberId, availabilityId));
 }
 
 /**
  * Fetches the complete list of appointments managed by the admin.
  */
 export async function getAllAppointments() {
-  const { data } = await axiosInstance.get(ENDPOINTS.admin.appointments);
+  const { data } = await api.instance.get(ENDPOINTS.admin.appointments);
   return data;
 }

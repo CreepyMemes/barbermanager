@@ -13,9 +13,6 @@ Proposed:
 2. Frontend:
 
 Important:
-  - fix layout make header and sidebar outside, and the pages go inside
-  - cleanup all new code (make maybe layout component or something, remove that shit from App)
-
   - implement login page using Hero component
   - implement register page for clients (through /login route), use Hero component
   - implement register page for barbers (from invitation email link), use Hero component
@@ -25,8 +22,6 @@ Important:
 
   - implement reset password page
   - implement reset password button in login page
-
-  - fix image endpoints in profile, (check how it works in test_image_upload)
 
   - implement header and footer layouts (shows user when authenticated, otherwise login)
 

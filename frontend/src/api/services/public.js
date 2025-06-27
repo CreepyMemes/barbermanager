@@ -1,11 +1,11 @@
-import axiosInstance from '@api/axiosInstance';
+import api from '@api';
 import { ENDPOINTS } from '@api/endpoints';
 
 /**
- * Retrieves a list of all public barbers.
+ * Retrieves all public barbers.
  */
 export async function getBarbersPublic() {
-  const data = await axiosInstance.get(ENDPOINTS.public.barbers);
+  const { data } = await api.instance.get(ENDPOINTS.public.barbers);
   return data;
 }
 
@@ -13,7 +13,7 @@ export async function getBarbersPublic() {
  * Retrieves the public profile of a specific client.
  */
 export async function getClientProfilePublic(clientId) {
-  const data = await axiosInstance.get(ENDPOINTS.public.clientProfile(clientId));
+  const { data } = await api.instance.get(ENDPOINTS.public.clientProfile(clientId));
   return data;
 }
 
@@ -21,7 +21,7 @@ export async function getClientProfilePublic(clientId) {
  * Retrieves the public profile of a specific barber.
  */
 export async function getBarberProfilePublic(barberId) {
-  const data = await axiosInstance.get(ENDPOINTS.public.barberProfile(barberId));
+  const { data } = await api.instance.get(ENDPOINTS.public.barberProfile(barberId));
   return data;
 }
 
@@ -29,7 +29,7 @@ export async function getBarberProfilePublic(barberId) {
  * Retrieves the public availability schedule for a specific barber.
  */
 export async function getBarberAvailabilitiesPublic(barberId) {
-  const data = await axiosInstance.get(ENDPOINTS.public.barberAvailabilities(barberId));
+  const { data } = await api.instance.get(ENDPOINTS.public.barberAvailabilities(barberId));
   return data;
 }
 
@@ -37,6 +37,6 @@ export async function getBarberAvailabilitiesPublic(barberId) {
  * Retrieves the services offered by a specific barber.
  */
 export async function getBarberServicesPublic(barberId) {
-  const data = await axiosInstance.get(ENDPOINTS.public.barberServices(barberId));
+  const { data } = await api.instance.get(ENDPOINTS.public.barberServices(barberId));
   return data;
 }
