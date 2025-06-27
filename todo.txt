@@ -26,8 +26,6 @@ Important:
   - implement reset password page
   - implement reset password button in login page
 
-  - fix image endpoints in profile, (check how it works in test_image_upload)
-
   - implement header and footer layouts (shows user when authenticated, otherwise login)
 
 
