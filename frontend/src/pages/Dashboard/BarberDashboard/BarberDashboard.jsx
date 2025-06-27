@@ -1,13 +1,15 @@
 import { useAuth } from '@hooks/useAuth';
 import styles from './BarberDashboard.module.scss';
-
 import defaultAvatar from '@assets/images/default-avatar.jpg';
 
+import Spinner from '@components/common/Spinner/Spinner';
+
 export default function BarberDashboard() {
-  const { profile } = useAuth();
+  const { profile, loading } = useAuth();
+
+  if (loading) return <Spinner />;
   if (!profile) return null;
 
-  console.log(profile);
   return (
     <div className={styles.barberDashboard}>
       <div className={styles.profileHeader}>

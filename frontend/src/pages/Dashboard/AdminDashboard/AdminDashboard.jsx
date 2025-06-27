@@ -1,10 +1,14 @@
 import { useAuth } from '@hooks/useAuth';
 import styles from './AdminDashboard.module.scss';
-
 import defaultAvatar from '@assets/images/default-avatar.jpg';
 
+import Spinner from '@components/common/Spinner/Spinner';
+
 export default function AdminDashboard() {
-  const { profile } = useAuth();
+  const { profile, loading } = useAuth();
+
+  if (loading) return <Spinner />;
+  if (!profile) return null;
 
   return (
     <div className={styles.adminDashboard}>

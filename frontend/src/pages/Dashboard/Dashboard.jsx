@@ -5,7 +5,6 @@ import styles from './Dashboard.module.scss';
 
 import Spinner from '@components/common/Spinner/Spinner';
 
-// TODO: This is just a proof of concept that authenticated data is retreived
 export default function Dashboard() {
   const { user, profile, loading } = useAuth();
   const navigate = useNavigate();

@@ -1,0 +1,70 @@
+@use '@styles/variables.module.scss' as *;
+
+.footer {
+  width: 100%;
+  background: $color-secondary;
+  color: $color-primary;
+  border-top: 1.5px solid $border;
+  font-family: 'Share Tech', sans-serif;
+  font-size: 1.25rem;
+  letter-spacing: 0.01em;
+  box-shadow: 0 -2px 8px rgba(57, 57, 55, 0.03);
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 2.2rem 2rem 1.5rem 2rem;
+  gap: 1.6rem 1.8rem;
+}
+
+.brand {
+  font-size: 1.65rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  span {
+    color: $color-muted;
+    font-weight: 400;
+  }
+}
+
+.links {
+  display: flex;
+  gap: 2.2rem;
+  list-style: none;
+
+  a {
+    color: $color-primary;
+    text-decoration: none;
+    font-size: 1.12rem;
+    transition: color 0.16s;
+    &:hover {
+      color: $color-accent;
+      text-decoration: underline;
+    }
+  }
+}
+
+.copyright {
+  font-size: 1rem;
+  color: $color-muted;
+  margin-left: auto;
+}
+
+@media (max-width: $bp-small) {
+  .container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+    padding: 1.5rem 1.2rem;
+  }
+  .copyright {
+    margin-left: 0;
+    margin-top: 0.9rem;
+    font-size: 0.95rem;
+  }
+}

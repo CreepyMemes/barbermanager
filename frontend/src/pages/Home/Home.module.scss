@@ -1,12 +1,16 @@
 @use '@styles/variables.module.scss' as *;
 
-.homeContainer {
-  background: $color-secondary;
-  border-radius: $border-radius;
-  max-width: 400px;
-  margin: 60px auto;
-  padding: 2.5rem 2rem;
-  box-shadow: $box-shadow;
+.home-container {
+  min-height: 100vh;
+
+  .text {
+    max-width: 400px;
+    padding: 2.5rem 2rem;
+    margin: 60px auto;
+    background: $color-secondary;
+    box-shadow: $box-shadow;
+    border-radius: $border-radius;
+  }
 
   h1 {
     color: $color-primary;
