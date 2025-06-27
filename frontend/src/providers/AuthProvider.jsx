@@ -1,16 +1,12 @@
 import { useEffect, useState, useCallback } from 'react';
 import AuthContext from '@contexts/AuthContext';
-
-import * as auth from '@api/services/auth';
-import { getAdminProfile } from '@api/services/admin';
-import { getBarberProfile } from '@api/services/barber';
-import { getClientProfile } from '@api/services/client';
+import api from '@api';
 
 /**
  * This provides authentication info, user, profile, login/logout logic.
  */
 function AuthProvider({ children }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(!!auth.getAccessToken());
+  const [isAuthenticated, setIsAuthenticated] = useState(!!api.auth.getAccessToken());
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -19,7 +15,7 @@ function AuthProvider({ children }) {
    * Helper callback function for unified reset + redirect
    */
   const handleLogout = useCallback(() => {
-    auth.removeTokens();
+    api.auth.removeTokens();
     setUser(null);
     setProfile(null);
     setIsAuthenticated(false);
@@ -33,19 +29,19 @@ function AuthProvider({ children }) {
 
     try {
       // Fetch user basic info
-      const { me } = await auth.getCurrentUser();
+      const { me } = await api.auth.getCurrentUser();
       setUser(me);
       setIsAuthenticated(true);
 
       // Fetch role specific profile
       if (me.role === 'ADMIN') {
-        const { profile } = await getAdminProfile();
+        const { profile } = await api.admin.getAdminProfile();
         setProfile(profile);
       } else if (me.role === 'BARBER') {
-        const { profile } = await getBarberProfile();
+        const { profile } = await api.barber.getBarberProfile();
         setProfile(profile);
       } else if (me.role === 'CLIENT') {
-        const { profile } = await getClientProfile();
+        const { profile } = await api.client.getClientProfile();
         setProfile(profile);
       }
     } catch {
@@ -59,7 +55,7 @@ function AuthProvider({ children }) {
    * Hydrates user on mount if tokens exists in storage
    */
   useEffect(() => {
-    if (auth.getRefreshToken()) {
+    if (api.auth.getRefreshToken()) {
       fetchUserAndProfile();
     } else {
       handleLogout();
@@ -74,7 +70,7 @@ function AuthProvider({ children }) {
     setLoading(true);
 
     try {
-      await auth.login(credentials);
+      await api.auth.login(credentials);
       await fetchUserAndProfile();
     } finally {
       setLoading(false);
@@ -88,7 +84,7 @@ function AuthProvider({ children }) {
     setLoading(true);
 
     try {
-      await auth.logout();
+      await api.auth.logout();
     } finally {
       handleLogout();
       setLoading(false);
