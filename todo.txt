@@ -14,8 +14,8 @@ Proposed:
 
 Important:
   - fix layout make header and sidebar outside, and the pages go inside
-  - cleanup all new code
-  
+  - cleanup all new code (make maybe layout component or something, remove that shit from App)
+
   - implement login page using Hero component
   - implement register page for clients (through /login route), use Hero component
   - implement register page for barbers (from invitation email link), use Hero component
