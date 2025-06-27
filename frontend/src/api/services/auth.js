@@ -1,4 +1,4 @@
-import axiosInstance from '@api/axiosInstance';
+import api from '@api';
 import { ENDPOINTS } from '@api/endpoints';
 
 /**
@@ -43,7 +43,7 @@ export function removeTokens() {
  * Retrieves the current users's information.
  */
 export async function getCurrentUser() {
-  const { data } = await axiosInstance.get(ENDPOINTS.auth.me);
+  const { data } = await api.instance.get(ENDPOINTS.auth.me);
   return data;
 }
 
@@ -56,7 +56,7 @@ export async function login({ email, username, password }) {
   if (email) payload.email = email;
   if (username) payload.username = username;
 
-  const { data } = await axiosInstance.post(ENDPOINTS.auth.login, payload);
+  const { data } = await api.instance.post(ENDPOINTS.auth.login, payload);
   const { user, token } = data;
 
   setTokens({
@@ -74,7 +74,7 @@ export async function logout() {
   const refresh = getRefreshToken();
   try {
     if (refresh) {
-      await axiosInstance.post(ENDPOINTS.auth.logout, { refresh_token: refresh });
+      await api.instance.post(ENDPOINTS.auth.logout, { refresh_token: refresh });
     }
   } catch (_) {
     // ignore API errors during logout
@@ -89,7 +89,7 @@ export async function refreshToken() {
   const refresh = getRefreshToken();
   if (!refresh) throw new Error('No refresh token');
 
-  const { data } = await axiosInstance.post(ENDPOINTS.auth.refresh, { refresh_token: refresh });
+  const { data } = await api.instance.post(ENDPOINTS.auth.refresh, { refresh_token: refresh });
 
   localStorage.setItem(STORAGE_KEYS.ACCESS, data.access_token);
 
@@ -100,7 +100,7 @@ export async function refreshToken() {
  * Registers a new client account.
  */
 export async function registerClient(clientData) {
-  const { data } = await axiosInstance.post(ENDPOINTS.auth.registerClient, clientData);
+  const { data } = await api.instance.post(ENDPOINTS.auth.registerClient, clientData);
   return data;
 }
 
@@ -108,7 +108,7 @@ export async function registerClient(clientData) {
  * Registers a new barber account using a verification token and UID.
  */
 export async function registerBarber(uidb64, token, barberData) {
-  const { data } = await axiosInstance.post(ENDPOINTS.auth.registerBarber(uidb64, token), barberData);
+  const { data } = await api.instance.post(ENDPOINTS.auth.registerBarber(uidb64, token), barberData);
   return data;
 }
 
@@ -116,7 +116,7 @@ export async function registerBarber(uidb64, token, barberData) {
  * Sends a password reset request to the provided email address.
  */
 export async function requestPasswordReset(email) {
-  const { data } = await axiosInstance.post(ENDPOINTS.auth.resetPassword, { email });
+  const { data } = await api.instance.post(ENDPOINTS.auth.resetPassword, { email });
   return data;
 }
 
@@ -124,7 +124,7 @@ export async function requestPasswordReset(email) {
  * Confirms and applies a new password using the reset token and UID.
  */
 export async function confirmPasswordReset(uidb64, token, password) {
-  const { data } = await axiosInstance.post(ENDPOINTS.auth.resetPasswordConfirm(uidb64, token), { password });
+  const { data } = await api.instance.post(ENDPOINTS.auth.resetPasswordConfirm(uidb64, token), { password });
   return data;
 }
 
@@ -132,6 +132,6 @@ export async function confirmPasswordReset(uidb64, token, password) {
  * Verifies the user's email using a UID and token.
  */
 export async function verifyEmail(uidb64, token) {
-  const { data } = await axiosInstance.get(ENDPOINTS.auth.verifyEmail(uidb64, token));
+  const { data } = await api.instance.get(ENDPOINTS.auth.verifyEmail(uidb64, token));
   return data;
 }
