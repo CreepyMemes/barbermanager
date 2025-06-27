@@ -13,6 +13,9 @@ Proposed:
 2. Frontend:
 
 Important:
+  - put spinner inside header component like we are doing with sidebar 
+  - show header and sidebar spinner only when isAuthenticated is changed
+  - add hide functionality to sidebar
   - implement login page using Hero component
   - implement register page for clients (through /login route), use Hero component
   - implement register page for barbers (from invitation email link), use Hero component
