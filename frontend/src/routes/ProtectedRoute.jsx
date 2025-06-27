@@ -10,10 +10,9 @@ export default function ProtectedRoute({ children, role }) {
     return <Navigate to="/login" replace />;
   }
 
-  // If role is specified, check user role
+  // If role is specified, check user role (if user is authenticated, user object should exist)
   if (role && user?.role !== role) {
-    // Optionally redirect to user's "main" page
-    const redirectPath = user ? `/${user.role.toLowerCase()}/dashboard` : '/login';
+    const redirectPath = `/${user.role.toLowerCase()}/dashboard`;
     return <Navigate to={redirectPath} replace />;
   }
 
