@@ -3,22 +3,20 @@
 .footer {
   width: 100%;
   background: $color-secondary;
+
   color: $color-primary;
-  border-top: 1.5px solid $border;
-  font-family: 'Share Tech', sans-serif;
   font-size: 1.25rem;
+
   letter-spacing: 0.01em;
-  box-shadow: 0 -2px 8px rgba(57, 57, 55, 0.03);
+  box-shadow: 0 1px 0 $border;
 }
 
 .container {
+  padding: 2.2rem 2rem 1.5rem 2rem;
+
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  max-width: 1300px;
-  margin: 0 auto;
-  padding: 2.2rem 2rem 1.5rem 2rem;
   gap: 1.6rem 1.8rem;
 }
 

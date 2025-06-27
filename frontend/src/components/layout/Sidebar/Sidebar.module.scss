@@ -4,15 +4,11 @@
   position: sticky;
 
   width: 240px;
-  background: $color-secondary;
-  color: $color-primary;
-  // min-height: 100vh;
-  border-right: 1.5px solid $border;
   box-shadow: 0 2px 16px rgba(57, 57, 55, 0.03);
-  // padding: 2.5rem 0 2rem 0;
 
   display: flex;
   flex-direction: column;
+
   top: 0;
   z-index: 20;
 }
@@ -21,17 +17,6 @@
   // padding: 0 2.2rem;
   margin-block: 2rem;
   padding-left: 2rem;
-}
-
-.logo {
-  font-size: 1.66rem;
-  font-weight: 700;
-  margin-bottom: 2.1rem;
-  span {
-    color: $color-muted;
-    font-weight: 400;
-    margin-right: 0.25rem;
-  }
 }
 
 .profile {
@@ -49,30 +34,16 @@
   }
 }
 
-.profileFallback {
-  width: 2.6rem;
-  height: 2.6rem;
-  border-radius: 50%;
-  background: $color-muted;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: $color-secondary;
-  font-size: 1.35rem;
-  font-weight: 700;
-  margin-right: 0.92rem;
-}
-
 .username {
   font-size: 1.5rem;
   font-weight: 600;
-  color: $color-primary;
+  // color: $color-primary;
 }
 
 .role {
   font-size: 0.96rem;
   font-weight: 400;
-  color: $color-primary;
+  // color: $color-primary;
 }
 
 /* Navigation */
@@ -90,14 +61,17 @@
 
 .link {
   display: block;
-  color: $color-primary;
+  color: $color-secondary;
+
   text-decoration: none;
   font-size: 1.24rem;
   padding: 1.05rem 2.2rem 1.05rem 2.2rem;
   border-left: 3px solid transparent;
-  border-radius: 0 5px 5px 0;
+  border-radius: 5px;
+
   font-weight: 600;
   letter-spacing: 0.01em;
+
   transition:
     background 0.12s,
     color 0.13s,
@@ -112,7 +86,6 @@
 .active {
   background: $color-accent;
   color: $color-secondary;
-  border-left: 3px solid $color-primary;
 }
 
 /* Responsive: Collapse sidebar on small screens */
