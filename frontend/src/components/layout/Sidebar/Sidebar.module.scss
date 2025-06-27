@@ -1,0 +1,165 @@
+@use '@styles/variables.module.scss' as *;
+
+.sidebar {
+  position: sticky;
+
+  width: 240px;
+  background: $color-secondary;
+  color: $color-primary;
+  // min-height: 100vh;
+  border-right: 1.5px solid $border;
+  box-shadow: 0 2px 16px rgba(57, 57, 55, 0.03);
+  // padding: 2.5rem 0 2rem 0;
+
+  display: flex;
+  flex-direction: column;
+  top: 0;
+  z-index: 20;
+}
+
+.top {
+  // padding: 0 2.2rem;
+  margin-block: 2rem;
+  padding-left: 2rem;
+}
+
+.logo {
+  font-size: 1.66rem;
+  font-weight: 700;
+  margin-bottom: 2.1rem;
+  span {
+    color: $color-muted;
+    font-weight: 400;
+    margin-right: 0.25rem;
+  }
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  border-radius: $border-radius;
+  // padding: 0.5rem 1rem;
+
+  img {
+    height: 4rem;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 0.92rem;
+    border: 2px solid $color-accent;
+  }
+}
+
+.profileFallback {
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  background: $color-muted;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $color-secondary;
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-right: 0.92rem;
+}
+
+.username {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: $color-primary;
+}
+
+.role {
+  font-size: 0.96rem;
+  font-weight: 400;
+  color: $color-primary;
+}
+
+/* Navigation */
+.nav {
+  flex: 1;
+  ul {
+    list-style: none;
+    margin: 0 0;
+    padding: 0 0;
+  }
+  li {
+    margin-bottom: 0.4rem;
+  }
+}
+
+.link {
+  display: block;
+  color: $color-primary;
+  text-decoration: none;
+  font-size: 1.24rem;
+  padding: 1.05rem 2.2rem 1.05rem 2.2rem;
+  border-left: 3px solid transparent;
+  border-radius: 0 5px 5px 0;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition:
+    background 0.12s,
+    color 0.13s,
+    border-left 0.14s;
+
+  &:hover {
+    background: $color-accent;
+    color: $color-secondary;
+  }
+}
+
+.active {
+  background: $color-accent;
+  color: $color-secondary;
+  border-left: 3px solid $color-primary;
+}
+
+/* Responsive: Collapse sidebar on small screens */
+@media (max-width: $bp-small) {
+  .sidebar {
+    width: 100vw;
+    min-height: auto;
+    flex-direction: row;
+    align-items: center;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    top: auto;
+    height: 5.7rem;
+    z-index: 200;
+    border-right: none;
+    border-top: 2px solid $border;
+    box-shadow: 0 -2px 16px rgba(57, 57, 55, 0.03);
+    padding: 0;
+  }
+  .top {
+    display: none;
+  }
+  .nav {
+    flex: 1;
+    ul {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      margin: 0;
+      padding: 0 1.3rem;
+    }
+    li {
+      margin-bottom: 0;
+    }
+    .link {
+      padding: 1rem 1.35rem;
+      border-radius: $border-radius;
+      font-size: 1.2rem;
+      min-width: 90px;
+      text-align: center;
+      border: none;
+    }
+    .active {
+      background: $color-accent;
+      color: $color-secondary;
+      border: none;
+    }
+  }
+}
