@@ -1,11 +1,11 @@
 @use '@styles/variables.module.scss' as *;
 
-.dashboardWrapper {
+.dashboard-wrapper {
   min-height: 90vh;
   background: $color-primary;
   padding: 3rem 0;
 }
-.noProfile {
+.no-profile {
   color: $color-error-bg;
   margin: 5rem auto;
   text-align: center;

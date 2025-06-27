@@ -1,0 +1,23 @@
+@use '@styles/variables.module.scss' as *;
+
+.layout {
+  display: flex;
+  height: 100vh;
+  background: $color-primary;
+}
+
+.main-content {
+  flex: 1;
+  padding: 3rem 2.5rem;
+  background: $color-primary;
+  min-height: 100vh;
+}
+
+@media (max-width: $bp-small) {
+  .layout {
+    flex-direction: column;
+  }
+  .main-content {
+    padding: 1.1rem 0.7rem 7rem 0.7rem; // bottom padding for sidebar at bottom
+  }
+}
