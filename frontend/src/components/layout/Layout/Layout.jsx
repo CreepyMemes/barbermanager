@@ -8,6 +8,7 @@ import Sidebar from '@components/layout/Sidebar/Sidebar';
 
 export default function Layout() {
   const { isAuthenticated } = useAuth();
+
   return (
     <div className={styles.appShell}>
       <div className={styles.headerArea}>
@@ -15,19 +16,22 @@ export default function Layout() {
       </div>
 
       <div className={styles.shellMainArea}>
-        {/* Render sidebar only if authenticated */}
         {isAuthenticated && (
           <aside className={styles.sidebarArea}>
             <Sidebar />
           </aside>
         )}
 
-        <main className={styles.mainArea}>
-          <Outlet /> {/* Renders the current route inside the layout */}
-        </main>
-      </div>
+        <div className={styles.contentArea}>
+          <main className={styles.mainArea}>
+            <Outlet />
+          </main>
 
-      <Footer />
+          <div className={styles.footerArea}>
+            <Footer />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

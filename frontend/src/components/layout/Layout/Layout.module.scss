@@ -3,7 +3,6 @@
 // Layout is "Holy Grail": header/footer fixed, sidebar fixed, main scrolls
 .app-shell {
   height: 100vh;
-  background: $color-primary;
 
   display: flex;
   flex-direction: column;
@@ -24,6 +23,7 @@
 
   height: 6rem;
   border-bottom: 1px solid $border;
+  background: $color-primary;
 
   display: flex;
   flex-direction: column;
@@ -37,19 +37,42 @@
 
   width: 27rem;
   border-right: 1px solid $border;
+  background: $color-primary;
 
   display: flex;
   justify-content: center;
 }
 
+// Content area, (main area and footer)
+.content-area {
+  width: 100%;
+  background: $color-main;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 // Content area, fills remaining space, scrolls independently
 .main-area {
-  overflow-y: auto;
+  flex: 1 1 0; // FLEX-GROW AND SHRINK
+  min-height: 0; // Prevents flexbox overflow bug in Chrome
+  overflow-y: auto; // Allows scrolling if needed
+  display: flex; // Let a full-height child expand!
+  flex-direction: column;
+}
 
-  width: 100%;
+// Header, fixed height, 100% width
+.footer-area {
+  flex-shrink: 0; // Prevent sidebar from changing height
 
-  // display: flex;
-  // justify-content: center;
+  height: 6rem;
+  border-top: 1px solid $border;
+  background: $color-primary;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 // TODO

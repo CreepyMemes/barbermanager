@@ -31,27 +31,26 @@
 }
 
 /* Color modifiers */
+
 .primary {
-  background-color: $color-primary;
+  background: $color-primary;
   color: $color-secondary;
+  border: 1px solid $border;
+
   &:hover:not(:disabled):not([aria-disabled='true']) {
-    background-color: color.adjust($color-accent, $lightness: 5%);
+    background-color: $color-accent;
+    color: $color-secondary;
+    border-color: $color-primary;
   }
 }
 
 .secondary {
   background-color: $color-secondary;
   color: $color-primary;
-  &:hover:not(:disabled):not([aria-disabled='true']) {
-    background-color: color.adjust($color-secondary, $lightness: -5%);
-  }
-}
 
-.accent {
-  background-color: $color-accent;
-  color: $color-secondary;
   &:hover:not(:disabled):not([aria-disabled='true']) {
-    background-color: color.adjust($color-accent, $lightness: 5%);
+    background-color: $color-accent;
+    color: $color-secondary;
   }
 }
 
@@ -59,11 +58,8 @@
   background: transparent;
   color: $color-muted;
   border: 1px solid $border;
-  &:hover:not(:disabled):not([aria-disabled='true']) {
-    background-color: $color-accent;
-    color: $color-primary;
-    border-color: $color-primary;
-  }
+
+  pointer-events: none;
 }
 
 /* Width modifiers */

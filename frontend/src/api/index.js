@@ -6,7 +6,7 @@ import * as client from './services/client';
 import * as pub from './services/public';
 import * as image from './services/image';
 
-export const api = {
+const api = {
   instance: axiosInstance,
   auth,
   admin,
