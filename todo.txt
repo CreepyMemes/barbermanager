@@ -14,10 +14,7 @@ Proposed:
 
 Important:
   
-  - enhange Button to return NavLink based on 'link' prop
   - use Button instead of Link in Footer
-  - use Button instead of NavLink in Sidebar
-  
 
   - create reusable Dashboard component to use for each role
   - readd loading spinner to main page
