@@ -1,82 +1,26 @@
 @use '@styles/variables.module.scss' as *;
 
-// Layout is "Holy Grail": header/footer fixed, sidebar fixed, main scrolls
-.app-shell {
+.app {
   height: 100vh;
 
   display: flex;
   flex-direction: column;
+
+  .content {
+    overflow: hidden;
+
+    flex-grow: 1;
+
+    display: flex;
+    flex-direction: row;
+
+    .main {
+      width: 100%;
+      background: $color-main;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+  }
 }
-
-// App main area (sidebar + content)
-.shell-main-area {
-  overflow: hidden;
-  flex-grow: 1;
-
-  display: flex;
-  flex-direction: row;
-}
-
-// Header, fixed height, 100% width
-.header-area {
-  flex-shrink: 0; // Prevent sidebar from changing height
-
-  height: 6rem;
-  border-bottom: 1px solid $border;
-  background: $color-primary;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-// Content area, (main area and footer)
-.content-area {
-  width: 100%;
-  background: $color-main;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-// Content area, fills remaining space, scrolls independently
-.main-area {
-  flex: 1 1 0; // FLEX-GROW AND SHRINK
-  min-height: 0; // Prevents flexbox overflow bug in Chrome
-  overflow-y: auto; // Allows scrolling if needed
-  display: flex; // Let a full-height child expand!
-  flex-direction: column;
-}
-
-// Header, fixed height, 100% width
-.footer-area {
-  flex-shrink: 0; // Prevent sidebar from changing height
-
-  height: 6rem;
-  border-top: 1px solid $border;
-  background: $color-primary;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-// TODO
-// @media (max-width: $bp-small) {
-//   .shell-main-area {
-//     flex-direction: column;
-//   }
-//   .sidebar-area {
-//     width: 100%;
-//     min-width: 0;
-//     max-width: none;
-//     min-height: 10rem; // You might want to collapse or hide sidebar on mobile
-//     border-right: none;
-//     border-bottom: 1px solid $border;
-//     order: 0; // show sidebar above content if you want
-//   }
-//   .main-area {
-//     // padding: 1.1rem 0.7rem 7rem 0.7rem;
-//   }
-// }

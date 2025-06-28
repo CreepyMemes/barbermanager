@@ -11,42 +11,46 @@ export default function Header() {
   const { isAuthenticated, user, profile, logout, loading } = useAuth();
   const navigate = useNavigate();
 
-  if (loading) return <Spinner />;
-
   const handleLogout = () => {
     logout();
     navigate('/');
   };
 
   return (
-    <header className={styles.header}>
-      <Logo size="lg" />
+    <header className={styles.headerArea}>
+      {loading ? (
+        <Spinner />
+      ) : (
+        <div className={styles.header}>
+          <Logo size="lg" />
 
-      <div className={styles.actions}>
-        {isAuthenticated && user && (
-          <>
-            <Button onClick={handleLogout} color="primary">
-              Logout
-            </Button>
+          <div className={styles.actions}>
+            {isAuthenticated && user && (
+              <>
+                <Button onClick={handleLogout} color="primary">
+                  Logout
+                </Button>
 
-            <div className={styles.profile}>
-              <img src={profile.profile_image || defaultAvatar} alt="Profile" />
-            </div>
-          </>
-        )}
+                <div className={styles.profile}>
+                  <img src={profile.profile_image || defaultAvatar} alt="Profile" />
+                </div>
+              </>
+            )}
 
-        {!isAuthenticated && (
-          <>
-            <Button href="/login" color="primary">
-              Login
-            </Button>
+            {!isAuthenticated && (
+              <>
+                <Button href="/login" color="primary">
+                  Login
+                </Button>
 
-            <Button href="/register" color="secondary">
-              Register
-            </Button>
-          </>
-        )}
-      </div>
+                <Button href="/register" color="secondary">
+                  Register
+                </Button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </header>
   );
 }

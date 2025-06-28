@@ -33,8 +33,6 @@ export default function Sidebar() {
   const { isAuthenticated, user, profile, loading } = useAuth();
   const [open, setOpen] = useState(true); // <--- Sidebar open/collapsed state
 
-  if (loading) return <Spinner />;
-
   // Get role specific nav items
   let navItems;
   if (!loading && user) {
@@ -44,46 +42,48 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className={styles.sidebarArea}>
-      <div className={`${styles.sidebar} ${open ? styles.open : styles.closed}`} aria-label="Sidebar navigation">
-        {/* Sidebar content */}
-        <div className={styles.inner}>
-          <div className={styles.top}>
-            {isAuthenticated && user && (
-              <div className={styles.profile}>
-                <img src={profile.profile_image || defaultAvatar} alt="Profile" />
+    <aside className={`${styles.sidebar} ${open ? styles.open : styles.close}`}>
+      {loading ? (
+        <Spinner />
+      ) : (
+        <div className={`${styles.sidebarContent} ${open ? styles.show : styles.hide}`}>
+          <div className={styles.inner}>
+            <div className={styles.top}>
+              {isAuthenticated && user && (
+                <div className={styles.profile}>
+                  <img src={profile.profile_image || defaultAvatar} alt="Profile" />
 
-                <div>
-                  <div className={styles.username}>{user.username || user.email}</div>
-                  <div className={styles.role}>{user.role?.toLowerCase() || ''}</div>
+                  <div>
+                    <div className={styles.username}>{user.username || user.email}</div>
+                    <div className={styles.role}>{user.role?.toLowerCase() || ''}</div>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-          <nav className={styles.nav} aria-label="Main navigation">
-            <ul>
-              {navItems.map((item) => (
-                <li key={item.to}>
-                  <Button nav href={item.to} size="md" activeClassName={styles.active} color="borderless">
-                    <span className={styles.line}>
-                      <Icon name={item.icon} size={'md'} />
-                      {item.label}
-                    </span>
-                  </Button>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </div>
-      </div>
+              )}
+            </div>
 
-      {/* Toggle button */}
+            <nav className={styles.nav}>
+              <ul>
+                {navItems.map((item) => (
+                  <li key={item.to}>
+                    <Button nav href={item.to} size="md" activeClassName={styles.active} color="borderless">
+                      <span className={styles.line}>
+                        <Icon name={item.icon} size={'md'} />
+                        {item.label}
+                      </span>
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+        </div>
+      )}
+
       <Button
         className={styles.toggleBtn}
         onClick={() => setOpen((v) => !v)}
         size="sm"
         color="primary"
-        aria-label={open ? 'Collapse sidebar' : 'Expand sidebar'}
         type="button"
         width="content"
       >

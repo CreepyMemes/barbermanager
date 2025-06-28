@@ -1,109 +1,42 @@
 @use '@styles/variables.module.scss' as *;
 
-.header {
-  width: 100%;
-  padding-inline: 2.5rem;
+.header-area {
+  flex-shrink: 0; // Prevent header from changing height
+
+  height: 6rem;
+  border-bottom: 1px solid $border;
+  background: $color-primary;
 
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.actions {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-/* Profile Box */
-.profile {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-
-  img {
-    height: 3.2rem;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 0.65rem;
-    border: 2px solid $color-accent;
-  }
-}
-
-.profileFallback {
-  width: 2.4rem;
-  height: 2.4rem;
-  border-radius: 50%;
-  background: $color-muted;
-  display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
-  color: $color-secondary;
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin-right: 0.65rem;
-}
 
-.username {
-  color: $color-primary;
-  font-size: 1.12rem;
-  font-weight: 600;
-  max-width: 120px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+  .header {
+    width: 100%;
+    padding-inline: 2.5rem;
 
-/* Buttons / Auth Actions */
-.logoutBtn,
-.authBtn,
-.authBtnAlt {
-  font-family: 'Share Tech', sans-serif;
-  font-size: 1.13rem;
-  padding: 0.72rem 1.6rem;
-  border-radius: $border-radius;
-  border: none;
-  transition: background 0.15s;
-  font-weight: 700;
-  text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-  cursor: pointer;
-}
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
 
-.logoutBtn {
-  background: $color-accent;
-  color: $color-secondary;
-  &:hover {
-    background: $color-muted;
+      .profile {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+
+        img {
+          height: 3.2rem;
+          border-radius: 50%;
+          object-fit: cover;
+          margin-right: 0.65rem;
+          border: 2px solid $color-accent;
+        }
+      }
+    }
   }
 }
-.authBtn {
-  background: transparent;
-  color: $color-secondary;
-  border: 1.5px solid $border;
-  font-weight: 600;
-  &:hover {
-    background: $color-secondary;
-    color: $color-primary;
-  }
-}
-.authBtnAlt {
-  background: $color-secondary;
-  color: $color-primary;
-  margin-left: 0.6rem;
-  font-weight: 600;
-  &:hover {
-    background: $color-muted;
-    color: $color-secondary;
-  }
-}
-
-// @media (max-width: $bp-small) {
-//   .container {
-//     flex-direction: column;
-//     gap: 1.2rem;
-//   }
-//   .navLinks {
-//     margin-right: 0;
-//     gap: 1.2rem;
-//   }
-// }
