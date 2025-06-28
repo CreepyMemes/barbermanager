@@ -1,12 +1,18 @@
 @use '@styles/variables.module.scss' as *;
 
 .admin-dashboard {
+  margin-top: 5rem;
+  padding: 3rem;
+
   background: $color-secondary;
   border-radius: $border-radius;
   box-shadow: $box-shadow;
-  padding: 3rem 2.5rem 2.5rem;
-  max-width: 600px;
-  margin: 3rem auto;
+
+  align-self: start;
+  // max-width: 600px;
+
+  // margin: 3rem auto;
+
   color: $color-primary;
 
   .profile-header {

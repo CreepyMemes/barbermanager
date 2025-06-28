@@ -13,7 +13,7 @@ Proposed:
 2. Frontend:
 
 Important:
-  - fix scroll in sidebar
+  - create reusable Dashboard component to use for each role
   - put spinner inside header component like we are doing with sidebar 
   - show header and sidebar spinner only when isAuthenticated is changed
   - add hide functionality to sidebar
