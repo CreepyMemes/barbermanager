@@ -4,11 +4,22 @@
 @use 'sass:color';
 
 .button {
+  display: inline-block;
+  box-sizing: border-box;
+
+  font-family: inherit; // keep if you want to inherit font family
+  line-height: normal;
+
   border: none;
+  outline: none;
   border-radius: $border-radius;
   text-decoration: none;
-  font-weight: bold;
+  color: inherit;
+  appearance: none;
+  user-select: none;
+
   cursor: pointer;
+
   transition: background 0.18s;
 
   &:disabled,
@@ -20,27 +31,36 @@
 }
 
 /* Color modifiers */
+
 .primary {
-  background-color: $color-primary;
+  background: $color-primary;
   color: $color-secondary;
+  border: 1px solid $border;
+
   &:hover:not(:disabled):not([aria-disabled='true']) {
-    background-color: color.adjust($color-accent, $lightness: 5%);
+    background-color: $color-lighter;
+    color: $color-secondary;
+    border-color: $color-primary;
+  }
+}
+
+.borderless {
+  background: $color-primary;
+  color: $color-secondary;
+
+  &:hover:not(:disabled):not([aria-disabled='true']) {
+    background-color: $color-lighter;
+    color: $color-secondary;
   }
 }
 
 .secondary {
   background-color: $color-secondary;
   color: $color-primary;
-  &:hover:not(:disabled):not([aria-disabled='true']) {
-    background-color: color.adjust($color-secondary, $lightness: -5%);
-  }
-}
 
-.accent {
-  background-color: $color-accent;
-  color: $color-secondary;
   &:hover:not(:disabled):not([aria-disabled='true']) {
-    background-color: color.adjust($color-accent, $lightness: 5%);
+    background-color: $color-accent;
+    color: $color-secondary;
   }
 }
 
@@ -48,11 +68,8 @@
   background: transparent;
   color: $color-muted;
   border: 1px solid $border;
-  &:hover:not(:disabled):not([aria-disabled='true']) {
-    background-color: $color-accent;
-    color: $color-primary;
-    border-color: $color-primary;
-  }
+
+  pointer-events: none;
 }
 
 /* Width modifiers */

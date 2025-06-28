@@ -1,160 +1,42 @@
 @use '@styles/variables.module.scss' as *;
 
-.header {
-  position: sticky;
-  top: 0;
-  width: 100%;
+.header-area {
+  flex-shrink: 0; // Prevent header from changing height
+
+  height: 6rem;
+  border-bottom: 1px solid $border;
   background: $color-primary;
-  color: $color-secondary;
-  z-index: 100;
-  box-shadow: 0 1px 0 $border;
-}
 
-.container {
-  padding: 0 2.5rem;
   display: flex;
-  align-items: center;
-  min-height: 6.2rem;
-  justify-content: space-between;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
 
-  font-size: 2.35rem;
-  font-weight: 700;
-  color: $color-secondary;
-  letter-spacing: 1px;
-  text-decoration: none;
-  text-align: center;
+  .header {
+    width: 100%;
+    padding-inline: 2.5rem;
 
-  .logoIcon {
-    margin-right: 1rem;
-    width: 28px;
-    height: 28px;
-    display: block;
-  }
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-  span {
-    color: $color-muted;
-    font-weight: 400;
-  }
-}
-.navLinks {
-  list-style: none;
-  display: flex;
-  gap: 2.2rem;
-  align-items: center;
-  margin-right: 2rem;
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
 
-  a {
-    text-decoration: none;
-    font-size: 1.42rem;
-    color: $color-secondary;
-    transition: color 0.18s;
-    &:hover {
-      color: $color-accent;
+      .profile {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+
+        img {
+          height: 3.2rem;
+          border-radius: 50%;
+          object-fit: cover;
+          margin-right: 0.65rem;
+          border: 2px solid $color-accent;
+        }
+      }
     }
-  }
-}
-
-.actions {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-/* Profile Box */
-.profile {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-
-  img {
-    height: 3.2rem;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 0.65rem;
-    border: 2px solid $color-accent;
-  }
-}
-
-.profileFallback {
-  width: 2.4rem;
-  height: 2.4rem;
-  border-radius: 50%;
-  background: $color-muted;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: $color-secondary;
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin-right: 0.65rem;
-}
-
-.username {
-  color: $color-primary;
-  font-size: 1.12rem;
-  font-weight: 600;
-  max-width: 120px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Buttons / Auth Actions */
-.logoutBtn,
-.authBtn,
-.authBtnAlt {
-  font-family: 'Share Tech', sans-serif;
-  font-size: 1.13rem;
-  padding: 0.72rem 1.6rem;
-  border-radius: $border-radius;
-  border: none;
-  transition: background 0.15s;
-  font-weight: 700;
-  text-decoration: none;
-
-  cursor: pointer;
-}
-
-.logoutBtn {
-  background: $color-accent;
-  color: $color-secondary;
-  &:hover {
-    background: $color-muted;
-  }
-}
-.authBtn {
-  background: transparent;
-  color: $color-secondary;
-  border: 1.5px solid $border;
-  font-weight: 600;
-  &:hover {
-    background: $color-secondary;
-    color: $color-primary;
-  }
-}
-.authBtnAlt {
-  background: $color-secondary;
-  color: $color-primary;
-  margin-left: 0.6rem;
-  font-weight: 600;
-  &:hover {
-    background: $color-muted;
-    color: $color-secondary;
-  }
-}
-
-@media (max-width: $bp-small) {
-  .container {
-    flex-direction: column;
-    gap: 1.2rem;
-  }
-  .navLinks {
-    margin-right: 0;
-    gap: 1.2rem;
   }
 }

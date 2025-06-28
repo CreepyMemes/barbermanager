@@ -1,6 +1,6 @@
-import styles from './Button.module.scss';
-
+import { Link, NavLink } from 'react-router-dom';
 import { camelizeStyle } from '@utils/utils';
+import styles from './Button.module.scss';
 
 function Button({
   children,
@@ -8,22 +8,64 @@ function Button({
   disabled,
   type = 'button',
   href,
+  nav = 'false',
+  activeClassName,
   size = 'md',
-  color = 'primary',
+  color,
   width = 'full',
+  className,
 }) {
   // Get all style classes into a string
-  const className = [styles.button, styles[size], styles[color], styles[camelizeStyle('width', width)]].join(' ');
+  const computedClassName = [
+    className,
+    styles.button,
+    styles[size],
+    styles[color],
+    styles[camelizeStyle('width', width)],
+  ].join(' ');
 
-  // If button is a link
   if (href) {
+    // Check if link is internal with a crude check (works for now)
+    if (href.startsWith('/')) {
+      // If 'nav' prop is true, render NavLink for active awareness
+      if (nav) {
+        return (
+          <NavLink
+            to={href}
+            className={({ isActive }) => [computedClassName, isActive ? activeClassName : ''].filter(Boolean).join(' ')}
+            tabIndex={disabled ? -1 : undefined}
+            aria-disabled={disabled}
+            onClick={disabled ? (e) => e.preventDefault() : onClick}
+          >
+            {children}
+          </NavLink>
+        );
+      }
+
+      // Otherwise render Link component
+      return (
+        <Link
+          className={computedClassName}
+          to={href}
+          tabIndex={disabled ? -1 : undefined}
+          aria-disabled={disabled}
+          onClick={disabled ? (e) => e.preventDefault() : onClick}
+        >
+          {children}
+        </Link>
+      );
+    }
+
+    // If it's an external link, renders default anchor
     return (
       <a
-        className={className}
+        className={computedClassName}
         href={href}
-        onClick={disabled ? (e) => e.preventDefault() : onClick}
         aria-disabled={disabled}
         tabIndex={disabled ? -1 : undefined}
+        onClick={disabled ? (e) => e.preventDefault() : onClick}
+        target="_blank" // maybe for external?
+        rel="noopener noreferrer"
       >
         {children}
       </a>
@@ -31,7 +73,7 @@ function Button({
   }
 
   return (
-    <button className={className} type={type} onClick={onClick} disabled={disabled}>
+    <button className={computedClassName} type={type} onClick={onClick} disabled={disabled}>
       {children}
     </button>
   );

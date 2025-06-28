@@ -1,68 +1,45 @@
 @use '@styles/variables.module.scss' as *;
 
-.footer {
-  width: 100%;
-  background: $color-secondary;
+.footer-area {
+  flex-shrink: 0; // Prevent sidebar from changing height
 
-  color: $color-primary;
-  font-size: 1.25rem;
-
-  letter-spacing: 0.01em;
-  box-shadow: 0 1px 0 $border;
-}
-
-.container {
-  padding: 2.2rem 2rem 1.5rem 2rem;
+  height: 6rem;
+  border-top: 1px solid $border;
+  background: $color-primary;
 
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.6rem 1.8rem;
-}
+  flex-direction: column;
+  justify-content: center;
 
-.brand {
-  font-size: 1.65rem;
-  font-weight: 700;
-  letter-spacing: 1px;
-  span {
-    color: $color-muted;
-    font-weight: 400;
-  }
-}
+  .footer {
+    width: 100%;
+    padding-inline: 2.5rem;
 
-.links {
-  display: flex;
-  gap: 2.2rem;
-  list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-  a {
-    color: $color-primary;
-    text-decoration: none;
-    font-size: 1.12rem;
-    transition: color 0.16s;
-    &:hover {
-      color: $color-accent;
-      text-decoration: underline;
+    .links {
+      display: flex;
+      gap: 2.2rem;
+      list-style: none;
+
+      a {
+        color: $color-muted;
+        text-decoration: none;
+        font-size: 1.12rem;
+        transition: color 0.16s;
+
+        &:hover {
+          color: $color-muted;
+          text-decoration: underline;
+        }
+      }
     }
-  }
-}
 
-.copyright {
-  font-size: 1rem;
-  color: $color-muted;
-  margin-left: auto;
-}
-
-@media (max-width: $bp-small) {
-  .container {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.8rem;
-    padding: 1.5rem 1.2rem;
-  }
-  .copyright {
-    margin-left: 0;
-    margin-top: 0.9rem;
-    font-size: 0.95rem;
+    .copyright {
+      font-size: 1rem;
+      color: $color-muted;
+    }
   }
 }
