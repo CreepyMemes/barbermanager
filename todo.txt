@@ -39,6 +39,7 @@ Important:
 
 Proposed:
   - add stuff to website home page
+  - add media queries for screen sizes
   - style all implemented pages, (use reusable component to keep code clean and modular)
   - see how vite tests work and maybe implement some
 
