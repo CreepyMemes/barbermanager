@@ -1,18 +1,6 @@
 .icon {
-  display: block;
-}
-
-.sm {
-  width: 20px;
-  height: 20px;
-}
-
-.md {
-  width: 28px;
-  height: 28px;
-}
-
-.lg {
-  width: 33px;
-  height: 33px;
+  display: inline-block;
+  vertical-align: middle;
+  color: inherit;
+  /* Optionally, add transition, hover styles, etc. */
 }

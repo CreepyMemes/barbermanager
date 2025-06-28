@@ -1,13 +1,12 @@
-import barbermanager from './barbermanager.svg';
-import github from './github.svg';
-import dashboard from './dashboard.svg';
-import appointment from './appointment.svg';
+import BarbermanagerIcon from './barbermanager.svg?react';
+import GithubIcon from './github.svg?react';
+import DashboardIcon from './dashboard.svg?react';
+import AppointmentIcon from './appointment.svg?react';
 
 const icons = {
-  barbermanager,
-  github,
-  dashboard,
-  appointment,
+  github: GithubIcon,
+  dashboard: DashboardIcon,
+  barbermanager: BarbermanagerIcon,
+  appointment: AppointmentIcon,
 };
-
 export default icons;
