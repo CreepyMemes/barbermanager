@@ -15,17 +15,17 @@ const adminNav = [
   { to: '/admin/settings', label: 'Settings', icon: 'dashboard' },
 ];
 const barberNav = [
-  { to: '/barber/dashboard', label: 'Dashboard' },
-  { to: '/barber/services', label: 'Services' },
-  { to: '/barber/appointments', label: 'Appointments' },
-  { to: '/barber/reviews', label: 'Reviews' },
-  { to: '/barber/settings', label: 'Settings' },
+  { to: '/barber/dashboard', label: 'Dashboard', icon: 'dashboard' },
+  { to: '/barber/services', label: 'Services', icon: 'dashboard' },
+  { to: '/barber/appointments', label: 'Appointments', icon: 'dashboard' },
+  { to: '/barber/reviews', label: 'Reviews', icon: 'dashboard' },
+  { to: '/barber/settings', label: 'Settings', icon: 'dashboard' },
 ];
 const clientNav = [
-  { to: '/client/dashboard', label: 'Dashboard' },
-  { to: '/client/appointments', label: 'Appointments' },
-  { to: '/client/reviews', label: 'Reviews' },
-  { to: '/client/settings', label: 'Settings' },
+  { to: '/client/dashboard', label: 'Dashboard', icon: 'dashboard' },
+  { to: '/client/appointments', label: 'Appointments', icon: 'dashboard' },
+  { to: '/client/reviews', label: 'Reviews', icon: 'dashboard' },
+  { to: '/client/settings', label: 'Settings', icon: 'dashboard' },
 ];
 
 export default function Sidebar() {
@@ -63,9 +63,7 @@ export default function Sidebar() {
                 nav
                 href={item.to}
                 size="md"
-                // className={styles.link}
                 activeClassName={styles.active}
-                // width="content"    // Optional, removes block fill if you want it
                 color="borderless" // Or as you like
               >
                 <span className={styles.line}>
