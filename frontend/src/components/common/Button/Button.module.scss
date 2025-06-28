@@ -44,6 +44,16 @@
   }
 }
 
+.borderless {
+  background: $color-primary;
+  color: $color-secondary;
+
+  &:hover:not(:disabled):not([aria-disabled='true']) {
+    background-color: $color-accent;
+    color: $color-secondary;
+  }
+}
+
 .secondary {
   background-color: $color-secondary;
   color: $color-primary;
