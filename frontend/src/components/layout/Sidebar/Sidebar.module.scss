@@ -1,118 +1,143 @@
 @use '@styles/variables.module.scss' as *;
 
-.sidebar {
-  width: 100%;
-  padding-inline: 2rem;
-}
+$sidebar-open-width: 27rem;
+$sidebar-closed-width: 3.5rem;
 
-.top {
-  padding-block: 2rem;
-  margin-bottom: 1rem;
-  padding-left: 2rem;
-  border-bottom: 1px solid $color-lighter;
-}
+// Sidebar, fixed width, 100% of height, independent scroll
+.sidebar-area {
+  position: relative;
+  overflow-x: visible;
 
-.profile {
-  color: $color-secondary;
+  width: $sidebar-open-width;
+  min-width: $sidebar-closed-width;
+  max-width: $sidebar-open-width;
+
+  height: 100%;
+  flex-shrink: 0; // Prevent sidebar from changing width
+
+  width: 27rem;
+  border-right: 1px solid $border;
+  background: $color-primary;
 
   display: flex;
-  align-items: center;
-  border-radius: $border-radius;
+  justify-content: center;
 
-  img {
-    height: 4rem;
+  // Toggle button at end of sidebar
+  .toggle-btn {
+    position: absolute;
+    top: 3rem;
+
+    width: 3.4rem;
+    height: 3.4rem;
+
+    right: -1.7rem;
+
+    // Responsive: center if collapsed
+    transition: right 0.2s;
+    z-index: 2;
+
     border-radius: 50%;
-    object-fit: cover;
-    margin-right: 0.92rem;
-    border: 2px solid $color-accent;
+    padding: 0.85rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sidebar {
+    overflow-y: auto;
+
+    display: flex;
+    flex-direction: column;
+
+    transition: width 0.25s cubic-bezier(0.4, 0.05, 0.2, 1);
+    will-change: width;
+
+    &.closed {
+      width: $sidebar-closed-width;
+      min-width: $sidebar-closed-width;
+    }
+
+    &.open {
+      width: $sidebar-open-width;
+      min-width: $sidebar-open-width;
+    }
+
+    .inner {
+      flex: 1 1 auto;
+      padding-inline: 1.5rem;
+
+      display: flex;
+      flex-direction: column;
+
+      transition: opacity 0.18s;
+
+      .top {
+        padding-block: 2rem;
+        padding-left: 2rem;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid $color-lighter;
+
+        .profile {
+          display: flex;
+          align-items: center;
+          border-radius: $border-radius;
+          color: $color-secondary;
+
+          img {
+            height: 4rem;
+            width: 4rem;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 0.92rem;
+            border: 2px solid $color-accent;
+          }
+
+          div {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+
+            .username {
+              font-size: 1.5rem;
+              font-weight: 600;
+            }
+            .role {
+              font-size: 0.96rem;
+              font-weight: 400;
+              text-transform: capitalize;
+            }
+          }
+        }
+      }
+
+      .nav {
+        flex: 1 1 auto;
+
+        ul {
+          list-style: none;
+          margin: 0;
+          padding: 0;
+
+          li {
+            margin-bottom: 0.4rem;
+
+            .line {
+              display: flex;
+              align-items: center;
+              gap: 1rem;
+            }
+          }
+        }
+      }
+    }
   }
 }
 
-.username {
-  font-size: 1.5rem;
-  font-weight: 600;
-}
-
-.role {
-  font-size: 0.96rem;
-  font-weight: 400;
-}
-
-// Navigation
-.nav {
-  flex: 1;
-
-  ul {
-    list-style: none;
-    margin: 0 0;
-    padding: 0 0;
-  }
-  li {
-    margin-bottom: 0.4rem;
-  }
-}
-
+// Active nav button styling
 .active {
-  background: $color-accent;
-  color: $color-secondary;
-
-  // Disable hover effect when active
-  &:hover {
-    background: $color-accent;
-    color: $color-secondary;
-  }
+  background: $color-accent !important;
+  color: $color-secondary !important;
+  border-radius: $border-radius;
+  pointer-events: none;
 }
-
-.line {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-// /* Responsive: Collapse sidebar on small screens */
-// @media (max-width: $bp-small) {
-//   .sidebar {
-//     width: 100vw;
-//     min-height: auto;
-//     flex-direction: row;
-//     align-items: center;
-//     position: fixed;
-//     left: 0;
-//     bottom: 0;
-//     top: auto;
-//     height: 5.7rem;
-//     z-index: 200;
-//     border-right: none;
-//     border-top: 2px solid $border;
-//     box-shadow: 0 -2px 16px rgba(57, 57, 55, 0.03);
-//     padding: 0;
-//   }
-//   .top {
-//     display: none;
-//   }
-//   .nav {
-//     flex: 1;
-//     ul {
-//       display: flex;
-//       align-items: center;
-//       height: 100%;
-//       margin: 0;
-//       padding: 0 1.3rem;
-//     }
-//     li {
-//       margin-bottom: 0;
-//     }
-//     .link {
-//       padding: 1rem 1.35rem;
-//       border-radius: $border-radius;
-//       font-size: 1.2rem;
-//       min-width: 90px;
-//       text-align: center;
-//       border: none;
-//     }
-//     .active {
-//       background: $color-accent;
-//       color: $color-secondary;
-//       border: none;
-//     }
-//   }
-// }

@@ -16,11 +16,7 @@ export default function Layout() {
       </div>
 
       <div className={styles.shellMainArea}>
-        {isAuthenticated && (
-          <aside className={styles.sidebarArea}>
-            <Sidebar />
-          </aside>
-        )}
+        {isAuthenticated && <Sidebar />}
 
         <div className={styles.contentArea}>
           <main className={styles.mainArea}>

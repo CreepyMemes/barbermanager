@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useAuth } from '@hooks/useAuth';
 import defaultAvatar from '@assets/images/default-avatar.jpg';
 import styles from './Sidebar.module.scss';
@@ -30,6 +31,7 @@ const clientNav = [
 
 export default function Sidebar() {
   const { isAuthenticated, user, profile, loading } = useAuth();
+  const [open, setOpen] = useState(true); // <--- Sidebar open/collapsed state
 
   if (loading) return <Spinner />;
 
@@ -42,39 +44,51 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className={styles.sidebar} aria-label="Sidebar navigation">
-      <div className={styles.top}>
-        {isAuthenticated && user && (
-          <div className={styles.profile}>
-            <img src={profile.profile_image || defaultAvatar} alt="Profile" />
+    <aside className={styles.sidebarArea}>
+      <div className={`${styles.sidebar} ${open ? styles.open : styles.closed}`} aria-label="Sidebar navigation">
+        {/* Sidebar content */}
+        <div className={styles.inner}>
+          <div className={styles.top}>
+            {isAuthenticated && user && (
+              <div className={styles.profile}>
+                <img src={profile.profile_image || defaultAvatar} alt="Profile" />
 
-            <div>
-              <div className={styles.username}>{user.username || user.email}</div>
-              <div className={styles.role}>{user.role?.toLowerCase() || ''}</div>
-            </div>
+                <div>
+                  <div className={styles.username}>{user.username || user.email}</div>
+                  <div className={styles.role}>{user.role?.toLowerCase() || ''}</div>
+                </div>
+              </div>
+            )}
           </div>
-        )}
+          <nav className={styles.nav} aria-label="Main navigation">
+            <ul>
+              {navItems.map((item) => (
+                <li key={item.to}>
+                  <Button nav href={item.to} size="md" activeClassName={styles.active} color="borderless">
+                    <span className={styles.line}>
+                      <Icon name={item.icon} size={'md'} />
+                      {item.label}
+                    </span>
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
       </div>
-      <nav className={styles.nav} aria-label="Main navigation">
-        <ul>
-          {navItems.map((item) => (
-            <li key={item.to}>
-              <Button
-                nav
-                href={item.to}
-                size="md"
-                activeClassName={styles.active}
-                color="borderless" // Or as you like
-              >
-                <span className={styles.line}>
-                  <Icon name={item.icon} size={'md'} />
-                  {item.label}
-                </span>
-              </Button>
-            </li>
-          ))}
-        </ul>
-      </nav>
+
+      {/* Toggle button */}
+      <Button
+        className={styles.toggleBtn}
+        onClick={() => setOpen((v) => !v)}
+        size="sm"
+        color="primary"
+        aria-label={open ? 'Collapse sidebar' : 'Expand sidebar'}
+        type="button"
+        width="content"
+      >
+        <Icon name="menu" size="md" />
+      </Button>
     </aside>
   );
 }
