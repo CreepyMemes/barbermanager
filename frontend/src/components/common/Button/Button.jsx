@@ -16,8 +16,13 @@ function Button({
   className,
 }) {
   // Get all style classes into a string
-  const computedClassName =
-    className || [styles.button, styles[size], styles[color], styles[camelizeStyle('width', width)]].join(' ');
+  const computedClassName = [
+    className,
+    styles.button,
+    styles[size],
+    styles[color],
+    styles[camelizeStyle('width', width)],
+  ].join(' ');
 
   if (href) {
     // Check if link is internal with a crude check (works for now)
