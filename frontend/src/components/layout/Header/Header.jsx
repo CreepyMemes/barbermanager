@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import defaultAvatar from '@assets/images/default-avatar.jpg';
 import styles from './Header.module.scss';
 
-import BarberManagerLogo from '@components/common/BarberManagerLogo/BarberManagerLogo';
+import Logo from '@components/common/Logo/Logo';
 import Spinner from '@components/common/Spinner/Spinner';
 import Button from '@components/common/Button/Button';
 
@@ -20,7 +20,7 @@ export default function Header() {
 
   return (
     <header className={styles.header}>
-      <BarberManagerLogo size="lg" />
+      <Logo size="lg" />
 
       <div className={styles.actions}>
         {isAuthenticated && user && (

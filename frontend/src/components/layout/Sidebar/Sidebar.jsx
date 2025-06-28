@@ -1,17 +1,18 @@
-import { NavLink } from 'react-router-dom';
 import { useAuth } from '@hooks/useAuth';
 import defaultAvatar from '@assets/images/default-avatar.jpg';
 import styles from './Sidebar.module.scss';
 
 import Spinner from '@components/common/Spinner/Spinner';
+import Button from '@components/common/Button/Button';
+import Icon from '@components/common/Icon/Icon';
 
 // Define role-based navigation
 const adminNav = [
-  { to: '/admin/dashboard', label: 'Dashboard' },
-  { to: '/admin/appointments', label: 'Appointments' },
-  { to: '/admin/barbers', label: 'Barbers' },
-  { to: '/admin/clients', label: 'Clients' },
-  { to: '/admin/settings', label: 'Settings' },
+  { to: '/admin/dashboard', label: 'Dashboard', icon: 'dashboard' },
+  { to: '/admin/appointments', label: 'Appointments', icon: 'appointment' },
+  { to: '/admin/barbers', label: 'Barbers', icon: 'dashboard' },
+  { to: '/admin/clients', label: 'Clients', icon: 'dashboard' },
+  { to: '/admin/settings', label: 'Settings', icon: 'dashboard' },
 ];
 const barberNav = [
   { to: '/barber/dashboard', label: 'Dashboard' },
@@ -58,13 +59,20 @@ export default function Sidebar() {
         <ul>
           {navItems.map((item) => (
             <li key={item.to}>
-              <NavLink
-                to={item.to}
-                className={({ isActive }) => [styles.link, isActive && styles.active].filter(Boolean).join(' ')}
-                end
+              <Button
+                nav
+                href={item.to}
+                size="md"
+                // className={styles.link}
+                activeClassName={styles.active}
+                // width="content"    // Optional, removes block fill if you want it
+                color="borderless" // Or as you like
               >
-                {item.label}
-              </NavLink>
+                <span className={styles.line}>
+                  <Icon name={item.icon} size={'md'} />
+                  {item.label}
+                </span>
+              </Button>
             </li>
           ))}
         </ul>

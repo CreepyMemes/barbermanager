@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom';
 import styles from './Footer.module.scss';
 
-import BarberManagerLogo from '@components/common/BarberManagerLogo/BarberManagerLogo';
+import Logo from '@components/common/Logo/Logo';
 
 export default function Footer() {
   return (
     <footer className={styles.footer}>
-      <BarberManagerLogo size="sm" />
+      <Logo size="sm" />
 
       <ul className={styles.links}>
         <li>
