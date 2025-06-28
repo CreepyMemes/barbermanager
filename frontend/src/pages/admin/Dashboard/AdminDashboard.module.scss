@@ -1,17 +1,14 @@
 @use '@styles/variables.module.scss' as *;
 
 .admin-dashboard {
-  margin-top: 5rem;
+  margin: 5rem auto;
+
   padding: 3rem;
+  width: 70rem;
 
   background: $color-secondary;
   border-radius: $border-radius;
   box-shadow: $box-shadow;
-
-  align-self: start;
-  // max-width: 600px;
-
-  // margin: 3rem auto;
 
   color: $color-primary;
 

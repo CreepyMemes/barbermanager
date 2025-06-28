@@ -1,30 +1,21 @@
 @use '@styles/variables.module.scss' as *;
 
 .sidebar {
-  // position: sticky;
-
   width: 100%;
   padding-inline: 1rem 2rem;
-  // box-shadow: 0 2px 16px rgba(57, 57, 55, 0.03);
-
-  // display: flex;
-  // flex-direction: column;
-
-  // top: 0;
-  // z-index: 20;
 }
 
 .top {
-  // padding: 0 2.2rem;
   margin-block: 2rem;
   padding-left: 2rem;
 }
 
 .profile {
+  color: $color-secondary;
+
   display: flex;
   align-items: center;
   border-radius: $border-radius;
-  // padding: 0.5rem 1rem;
 
   img {
     height: 4rem;
@@ -38,16 +29,14 @@
 .username {
   font-size: 1.5rem;
   font-weight: 600;
-  // color: $color-primary;
 }
 
 .role {
   font-size: 0.96rem;
   font-weight: 400;
-  // color: $color-primary;
 }
 
-/* Navigation */
+// Navigation
 .nav {
   flex: 1;
   ul {

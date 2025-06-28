@@ -1,20 +1,11 @@
 @use '@styles/variables.module.scss' as *;
 
 .header {
-  position: sticky;
-  top: 0;
   width: 100%;
-  background: $color-primary;
-  color: $color-secondary;
-  z-index: 100;
-  box-shadow: 0 1px 0 $border;
-}
+  padding-inline: 2.5rem;
 
-.container {
-  padding: 0 2.5rem;
   display: flex;
   align-items: center;
-  min-height: 6.2rem;
   justify-content: space-between;
 }
 
@@ -40,23 +31,6 @@
   span {
     color: $color-muted;
     font-weight: 400;
-  }
-}
-.navLinks {
-  list-style: none;
-  display: flex;
-  gap: 2.2rem;
-  align-items: center;
-  margin-right: 2rem;
-
-  a {
-    text-decoration: none;
-    font-size: 1.42rem;
-    color: $color-secondary;
-    transition: color 0.18s;
-    &:hover {
-      color: $color-accent;
-    }
   }
 }
 
@@ -148,13 +122,13 @@
   }
 }
 
-@media (max-width: $bp-small) {
-  .container {
-    flex-direction: column;
-    gap: 1.2rem;
-  }
-  .navLinks {
-    margin-right: 0;
-    gap: 1.2rem;
-  }
-}
+// @media (max-width: $bp-small) {
+//   .container {
+//     flex-direction: column;
+//     gap: 1.2rem;
+//   }
+//   .navLinks {
+//     margin-right: 0;
+//     gap: 1.2rem;
+//   }
+// }

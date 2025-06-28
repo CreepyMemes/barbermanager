@@ -4,11 +4,22 @@
 @use 'sass:color';
 
 .button {
+  display: inline-block;
+  box-sizing: border-box;
+
+  font-family: inherit; // keep if you want to inherit font family
+  line-height: normal;
+
   border: none;
+  outline: none;
   border-radius: $border-radius;
   text-decoration: none;
-  font-weight: bold;
+  color: inherit;
+  appearance: none;
+  user-select: none;
+
   cursor: pointer;
+
   transition: background 0.18s;
 
   &:disabled,

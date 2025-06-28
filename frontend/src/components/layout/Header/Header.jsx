@@ -1,5 +1,5 @@
 import { useAuth } from '@hooks/useAuth';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import defaultAvatar from '@assets/images/default-avatar.jpg';
 import logo from '@assets/icons/barbermanager.svg';
 import styles from './Header.module.scss';
@@ -20,48 +20,32 @@ export default function Header() {
 
   return (
     <header className={styles.header}>
-      <nav className={styles.container}>
-        <Link className={styles.logo} to="/">
-          <img className={styles.logoIcon} src={logo} alt="BarberManager Logo" />
-          Barber<span>Manager</span>
-        </Link>
-
-        {/* <ul className={styles.navLinks}>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-
-          {isAuthenticated && (
-            <li>
-              <Link to="/dashboard">Dashboard</Link>
-            </li>
-          )}
-        </ul> */}
-
-        <div className={styles.actions}>
-          {isAuthenticated && user && (
-            <>
-              <Button onClick={handleLogout} color="accent">
-                Logout
-              </Button>
-
-              <div className={styles.profile}>
-                <img src={profile.profile_image || defaultAvatar} alt="Profile" />
-              </div>
-            </>
-          )}
-          {!isAuthenticated && (
-            <>
-              <Link to="/login" className={styles.authBtn}>
-                Login
-              </Link>
-              <Link to="/register" className={styles.authBtnAlt}>
-                Register
-              </Link>
-            </>
-          )}
-        </div>
-      </nav>
+      <Button href="/" className={styles.logo}>
+        <img className={styles.logoIcon} src={logo} alt="BarberManager Logo" />
+        Barber<span>Manager</span>
+      </Button>
+      <div className={styles.actions}>
+        {isAuthenticated && user && (
+          <>
+            <Button onClick={handleLogout} color="accent">
+              Logout
+            </Button>
+            <div className={styles.profile}>
+              <img src={profile.profile_image || defaultAvatar} alt="Profile" />
+            </div>
+          </>
+        )}
+        {!isAuthenticated && (
+          <>
+            <Button href="/login" color="primary">
+              Login
+            </Button>
+            <Button href="/register" color="accent">
+              Register
+            </Button>
+          </>
+        )}
+      </div>
     </header>
   );
 }
