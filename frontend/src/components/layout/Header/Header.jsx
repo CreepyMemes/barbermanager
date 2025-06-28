@@ -1,9 +1,9 @@
 import { useAuth } from '@hooks/useAuth';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import defaultAvatar from '@assets/images/default-avatar.jpg';
-import logo from '@assets/icons/barbermanager.svg';
 import styles from './Header.module.scss';
 
+import Logo from '@components/common/Logo/Logo';
 import Spinner from '@components/common/Spinner/Spinner';
 import Button from '@components/common/Button/Button';
 
@@ -11,57 +11,46 @@ export default function Header() {
   const { isAuthenticated, user, profile, logout, loading } = useAuth();
   const navigate = useNavigate();
 
-  if (loading) return <Spinner />;
-
   const handleLogout = () => {
     logout();
     navigate('/');
   };
 
   return (
-    <header className={styles.header}>
-      <nav className={styles.container}>
-        <Link className={styles.logo} to="/">
-          <img className={styles.logoIcon} src={logo} alt="BarberManager Logo" />
-          Barber<span>Manager</span>
-        </Link>
+    <header className={styles.headerArea}>
+      {loading ? (
+        <Spinner />
+      ) : (
+        <div className={styles.header}>
+          <Logo size="lg" />
 
-        {/* <ul className={styles.navLinks}>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
+          <div className={styles.actions}>
+            {isAuthenticated && user && (
+              <>
+                <Button onClick={handleLogout} color="primary">
+                  Logout
+                </Button>
 
-          {isAuthenticated && (
-            <li>
-              <Link to="/dashboard">Dashboard</Link>
-            </li>
-          )}
-        </ul> */}
+                <div className={styles.profile}>
+                  <img src={profile.profile_image || defaultAvatar} alt="Profile" />
+                </div>
+              </>
+            )}
 
-        <div className={styles.actions}>
-          {isAuthenticated && user && (
-            <>
-              <Button onClick={handleLogout} color="accent">
-                Logout
-              </Button>
+            {!isAuthenticated && (
+              <>
+                <Button href="/login" color="primary">
+                  Login
+                </Button>
 
-              <div className={styles.profile}>
-                <img src={profile.profile_image || defaultAvatar} alt="Profile" />
-              </div>
-            </>
-          )}
-          {!isAuthenticated && (
-            <>
-              <Link to="/login" className={styles.authBtn}>
-                Login
-              </Link>
-              <Link to="/register" className={styles.authBtnAlt}>
-                Register
-              </Link>
-            </>
-          )}
+                <Button href="/register" color="secondary">
+                  Register
+                </Button>
+              </>
+            )}
+          </div>
         </div>
-      </nav>
+      )}
     </header>
   );
 }

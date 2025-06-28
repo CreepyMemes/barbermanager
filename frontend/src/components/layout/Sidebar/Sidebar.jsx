@@ -1,36 +1,37 @@
-import { NavLink } from 'react-router-dom';
+import { useState } from 'react';
 import { useAuth } from '@hooks/useAuth';
 import defaultAvatar from '@assets/images/default-avatar.jpg';
 import styles from './Sidebar.module.scss';
 
 import Spinner from '@components/common/Spinner/Spinner';
+import Button from '@components/common/Button/Button';
+import Icon from '@components/common/Icon/Icon';
 
 // Define role-based navigation
 const adminNav = [
-  { to: '/admin/dashboard', label: 'Dashboard' },
-  { to: '/admin/appointments', label: 'Appointments' },
-  { to: '/admin/barbers', label: 'Barbers' },
-  { to: '/admin/clients', label: 'Clients' },
-  { to: '/admin/settings', label: 'Settings' },
+  { to: '/admin/dashboard', label: 'Dashboard', icon: 'dashboard' },
+  { to: '/admin/appointments', label: 'Appointments', icon: 'appointment' },
+  { to: '/admin/barbers', label: 'Barbers', icon: 'barber' },
+  { to: '/admin/clients', label: 'Clients', icon: 'client' },
+  { to: '/admin/settings', label: 'Settings', icon: 'settings' },
 ];
 const barberNav = [
-  { to: '/barber/dashboard', label: 'Dashboard' },
-  { to: '/barber/services', label: 'Services' },
-  { to: '/barber/appointments', label: 'Appointments' },
-  { to: '/barber/reviews', label: 'Reviews' },
-  { to: '/barber/settings', label: 'Settings' },
+  { to: '/barber/dashboard', label: 'Dashboard', icon: 'dashboard' },
+  { to: '/barber/services', label: 'Services', icon: 'service' },
+  { to: '/barber/appointments', label: 'Appointments', icon: 'appointment' },
+  { to: '/barber/reviews', label: 'Reviews', icon: 'review' },
+  { to: '/barber/settings', label: 'Settings', icon: 'settings' },
 ];
 const clientNav = [
-  { to: '/client/dashboard', label: 'Dashboard' },
-  { to: '/client/appointments', label: 'Appointments' },
-  { to: '/client/reviews', label: 'Reviews' },
-  { to: '/client/settings', label: 'Settings' },
+  { to: '/client/dashboard', label: 'Dashboard', icon: 'dashboard' },
+  { to: '/client/appointments', label: 'Appointments', icon: 'appointment' },
+  { to: '/client/reviews', label: 'Reviews', icon: 'review' },
+  { to: '/client/settings', label: 'Settings', icon: 'settings' },
 ];
 
 export default function Sidebar() {
   const { isAuthenticated, user, profile, loading } = useAuth();
-
-  if (loading) return <Spinner />;
+  const [open, setOpen] = useState(true); // <--- Sidebar open/collapsed state
 
   // Get role specific nav items
   let navItems;
@@ -41,34 +42,53 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className={styles.sidebar} aria-label="Sidebar navigation">
-      <div className={styles.top}>
-        {isAuthenticated && user && (
-          <div className={styles.profile}>
-            <img src={profile.profile_image || defaultAvatar} alt="Profile" />
+    <aside className={`${styles.sidebar} ${open ? styles.open : styles.close}`}>
+      {loading ? (
+        <Spinner />
+      ) : (
+        <div className={`${styles.sidebarContent} ${open ? styles.show : styles.hide}`}>
+          <div className={styles.inner}>
+            <div className={styles.top}>
+              {isAuthenticated && user && (
+                <div className={styles.profile}>
+                  <img src={profile.profile_image || defaultAvatar} alt="Profile" />
 
-            <div>
-              <div className={styles.username}>{user.username || user.email}</div>
-              <div className={styles.role}>{user.role?.toLowerCase() || ''}</div>
+                  <div>
+                    <div className={styles.username}>{user.username || user.email}</div>
+                    <div className={styles.role}>{user.role?.toLowerCase() || ''}</div>
+                  </div>
+                </div>
+              )}
             </div>
+
+            <nav className={styles.nav}>
+              <ul>
+                {navItems.map((item) => (
+                  <li key={item.to}>
+                    <Button nav href={item.to} size="md" activeClassName={styles.active} color="borderless">
+                      <span className={styles.line}>
+                        <Icon name={item.icon} size={'md'} />
+                        {item.label}
+                      </span>
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           </div>
-        )}
-      </div>
-      <nav className={styles.nav} aria-label="Main navigation">
-        <ul>
-          {navItems.map((item) => (
-            <li key={item.to}>
-              <NavLink
-                to={item.to}
-                className={({ isActive }) => [styles.link, isActive && styles.active].filter(Boolean).join(' ')}
-                end
-              >
-                {item.label}
-              </NavLink>
-            </li>
-          ))}
-        </ul>
-      </nav>
+        </div>
+      )}
+
+      <Button
+        className={styles.toggleBtn}
+        onClick={() => setOpen((v) => !v)}
+        size="sm"
+        color="primary"
+        type="button"
+        width="content"
+      >
+        <Icon name="menu" size="md" />
+      </Button>
     </aside>
   );
 }

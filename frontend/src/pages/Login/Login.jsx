@@ -57,7 +57,7 @@ export default function Login() {
             size="md"
           />
 
-          <Button type="submit" size="lg" disabled={loading}>
+          <Button type="submit" size="lg" disabled={loading} color="primary">
             {loading ? 'Logging in...' : 'Login'}
           </Button>
 

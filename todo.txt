@@ -13,11 +13,14 @@ Proposed:
 2. Frontend:
 
 Important:
-  - fix scroll in sidebar
-  - put spinner inside header component like we are doing with sidebar 
-  - show header and sidebar spinner only when isAuthenticated is changed
-  - add hide functionality to sidebar
   
+  - use Button instead of Link in Footer (add new Button color)
+
+  - create reusable Dashboard component to use for each role
+  - re-add loading spinner to main page
+
+  - add skeleton loading for page components
+
   - implement login page using Hero component
   - implement register page for clients (through /login route), use Hero component
   - implement register page for barbers (from invitation email link), use Hero component
@@ -33,6 +36,7 @@ Important:
 
 Proposed:
   - add stuff to website home page
+  - add media queries for screen sizes
   - style all implemented pages, (use reusable component to keep code clean and modular)
   - see how vite tests work and maybe implement some
 

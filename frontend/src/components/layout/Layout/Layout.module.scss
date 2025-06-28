@@ -1,73 +1,26 @@
 @use '@styles/variables.module.scss' as *;
 
-// Layout is "Holy Grail": header/footer fixed, sidebar fixed, main scrolls
-.app-shell {
+.app {
   height: 100vh;
-  min-height: 0;
+
   display: flex;
   flex-direction: column;
-  background: $color-primary;
-}
 
-// Header/footer always visible
-.app-shell > :first-child {
-  flex: 0 0 auto;
-}
-.app-shell > :last-child {
-  flex: 0 0 auto;
-}
+  .content {
+    overflow: hidden;
 
-// -main area (sidebar + content)
-.shell-main-area {
-  flex: 1 1 auto;
-  min-height: 0;
-  display: flex;
-  flex-direction: row;
-  // background: $color-secondary;
-  overflow: hidden;
-}
+    flex-grow: 1;
 
-// Sidebar: fixed width, 100% of height, independent scroll
-.sidebar-area {
-  width: 25rem;
-  min-width: 18rem;
-  max-width: 30rem;
-  height: 100%;
-  background: $color-primary;
-  border-right: 1px solid $border;
-  overflow-y: auto;
+    display: flex;
+    flex-direction: row;
 
-  display: flex;
-  justify-content: center;
-}
+    .main {
+      width: 100%;
+      background: $color-main;
 
-// -main area: fills remaining space, scrolls independently
-.main-area {
-  flex: 1 1 0%;
-  min-width: 0;
-  min-height: 0;
-  // background: $color-secondary;
-  // padding: 3rem 2.5rem;
-  overflow-y: auto;
-  color: $color-primary;
-  display: flex;
-  flex-direction: column;
-}
-
-@media (max-width: $bp-small) {
-  .shell-main-area {
-    flex-direction: column;
-  }
-  .sidebar-area {
-    width: 100%;
-    min-width: 0;
-    max-width: none;
-    min-height: 10rem; // You might want to collapse or hide sidebar on mobile
-    border-right: none;
-    border-bottom: 1px solid $border;
-    order: 0; // show sidebar above content if you want
-  }
-  .main-area {
-    // padding: 1.1rem 0.7rem 7rem 0.7rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
   }
 }

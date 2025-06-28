@@ -7,8 +7,7 @@ import Spinner from '@components/common/Spinner/Spinner';
 export default function BarberDashboard() {
   const { profile, loading } = useAuth();
 
-  if (loading) return <Spinner />;
-  if (!profile) return null;
+  if (loading | !profile) return <Spinner />;
 
   return (
     <div className={styles.barberDashboard}>
