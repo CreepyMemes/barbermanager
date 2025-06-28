@@ -18,8 +18,8 @@ export default function NotFound() {
             <p>The page may have moved, or the URL may be incorrect.</p>
             <p>Go back to the homepage and continue browsing.</p>
           </p>
-          <Button href="/" color="accent" size="lg" width="content">
-            GO HOME
+          <Button href="/" color="primary" size="md" width="content">
+            Go back to home
           </Button>
         </div>
       </Hero.Left>

@@ -6,8 +6,10 @@
 }
 
 .top {
-  margin-block: 2rem;
+  padding-block: 2rem;
+  margin-bottom: 1rem;
   padding-left: 2rem;
+  border-bottom: 1px solid $color-lighter;
 }
 
 .profile {

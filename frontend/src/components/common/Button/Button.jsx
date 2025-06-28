@@ -2,17 +2,7 @@ import { Link } from 'react-router-dom';
 import { camelizeStyle } from '@utils/utils';
 import styles from './Button.module.scss';
 
-function Button({
-  children,
-  onClick,
-  disabled,
-  type = 'button',
-  href,
-  size = 'md',
-  color = 'primary',
-  width = 'full',
-  className,
-}) {
+function Button({ children, onClick, disabled, type = 'button', href, size = 'md', color, width = 'full', className }) {
   // Get all style classes into a string
   const computedClassName =
     className || [styles.button, styles[size], styles[color], styles[camelizeStyle('width', width)]].join(' ');

@@ -13,11 +13,20 @@ Proposed:
 2. Frontend:
 
 Important:
-  - create reusable Dashboard component to use for each role
-  - put spinner inside header component like we are doing with sidebar 
-  - show header and sidebar spinner only when isAuthenticated is changed
-  - add hide functionality to sidebar
   
+  - enhange Button to return NavLink based on 'link' prop
+  - use Button instead of Link in Footer
+  - use Button instead of NavLink in Sidebar
+  
+
+  - create reusable Dashboard component to use for each role
+  - readd loading spinner to main page
+
+  - add skeleton loading for page components
+
+  - add hide functionality to sidebar
+  - change footer to be consistent code-wise to the other layout components
+
   - implement login page using Hero component
   - implement register page for clients (through /login route), use Hero component
   - implement register page for barbers (from invitation email link), use Hero component
