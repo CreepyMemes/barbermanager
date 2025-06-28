@@ -30,19 +30,6 @@
   justify-content: center;
 }
 
-// Sidebar, fixed width, 100% of height, independent scroll
-.sidebar-area {
-  overflow-y: auto;
-  flex-shrink: 0; // Prevent sidebar from changing width
-
-  width: 27rem;
-  border-right: 1px solid $border;
-  background: $color-primary;
-
-  display: flex;
-  justify-content: center;
-}
-
 // Content area, (main area and footer)
 .content-area {
   width: 100%;

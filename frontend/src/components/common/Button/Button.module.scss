@@ -38,7 +38,7 @@
   border: 1px solid $border;
 
   &:hover:not(:disabled):not([aria-disabled='true']) {
-    background-color: $color-accent;
+    background-color: $color-lighter;
     color: $color-secondary;
     border-color: $color-primary;
   }
@@ -49,7 +49,7 @@
   color: $color-secondary;
 
   &:hover:not(:disabled):not([aria-disabled='true']) {
-    background-color: $color-accent;
+    background-color: $color-lighter;
     color: $color-secondary;
   }
 }
