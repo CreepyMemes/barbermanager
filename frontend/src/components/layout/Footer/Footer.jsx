@@ -5,26 +5,28 @@ import Logo from '@components/common/Logo/Logo';
 
 export default function Footer() {
   return (
-    <footer className={styles.footer}>
-      <Logo size="sm" />
+    <footer className={styles.footerArea}>
+      <div className={styles.footer}>
+        <Logo size="sm" />
 
-      <ul className={styles.links}>
-        <li>
-          <Link to="/">Home</Link>
-        </li>
+        <ul className={styles.links}>
+          <li>
+            <Link to="/">Home</Link>
+          </li>
 
-        <li>
-          <Link to="/dashboard">Dashboard</Link>
-        </li>
+          <li>
+            <Link to="/dashboard">Dashboard</Link>
+          </li>
 
-        <li>
-          <a href="https://github.com/CreepyMemes/barbermanager" target="_blank" rel="noopener noreferrer">
-            Github
-          </a>
-        </li>
-      </ul>
+          <li>
+            <a href="https://github.com/CreepyMemes/barbermanager" target="_blank" rel="noopener noreferrer">
+              Github
+            </a>
+          </li>
+        </ul>
 
-      <div className={styles.copyright}>&copy; {new Date().getFullYear()} CreepyMemes. All rights reserved.</div>
+        <div className={styles.copyright}>&copy; {new Date().getFullYear()} CreepyMemes. All rights reserved.</div>
+      </div>
     </footer>
   );
 }

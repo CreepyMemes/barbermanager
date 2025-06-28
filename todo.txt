@@ -14,15 +14,12 @@ Proposed:
 
 Important:
   
-  - use Button instead of Link in Footer
+  - use Button instead of Link in Footer (add new Button color)
 
   - create reusable Dashboard component to use for each role
-  - readd loading spinner to main page
+  - re-add loading spinner to main page
 
   - add skeleton loading for page components
-
-  - add hide functionality to sidebar
-  - change footer to be consistent code-wise to the other layout components
 
   - implement login page using Hero component
   - implement register page for clients (through /login route), use Hero component

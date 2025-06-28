@@ -1,48 +1,45 @@
 @use '@styles/variables.module.scss' as *;
 
-.footer {
-  width: 100%;
-  padding-inline: 2.5rem;
+.footer-area {
+  flex-shrink: 0; // Prevent sidebar from changing height
+
+  height: 6rem;
+  border-top: 1px solid $border;
+  background: $color-primary;
 
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
+  flex-direction: column;
+  justify-content: center;
 
-.links {
-  display: flex;
-  gap: 2.2rem;
-  list-style: none;
+  .footer {
+    width: 100%;
+    padding-inline: 2.5rem;
 
-  a {
-    color: $color-muted;
-    text-decoration: none;
-    font-size: 1.12rem;
-    transition: color 0.16s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-    &:hover {
+    .links {
+      display: flex;
+      gap: 2.2rem;
+      list-style: none;
+
+      a {
+        color: $color-muted;
+        text-decoration: none;
+        font-size: 1.12rem;
+        transition: color 0.16s;
+
+        &:hover {
+          color: $color-muted;
+          text-decoration: underline;
+        }
+      }
+    }
+
+    .copyright {
+      font-size: 1rem;
       color: $color-muted;
-      text-decoration: underline;
     }
   }
 }
-
-.copyright {
-  font-size: 1rem;
-  color: $color-muted;
-  // margin-left: auto;
-}
-
-// @media (max-width: $bp-small) {
-//   .container {
-//     flex-direction: column;
-//     align-items: flex-start;
-//     gap: 0.8rem;
-//     padding: 1.5rem 1.2rem;
-//   }
-//   .copyright {
-//     margin-left: 0;
-//     margin-top: 0.9rem;
-//     font-size: 0.95rem;
-//   }
-// }

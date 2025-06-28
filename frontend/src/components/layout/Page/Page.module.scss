@@ -1,0 +1,9 @@
+.page {
+  overflow-y: auto; // Allows scrolling if needed
+
+  flex: 1 1 0; // FLEX-GROW AND SHRINK
+  min-height: 0; // Prevents flexbox overflow bug in Chrome
+
+  display: flex; // Let a full-height child expand!
+  flex-direction: column;
+}
