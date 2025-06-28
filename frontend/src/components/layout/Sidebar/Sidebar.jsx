@@ -10,22 +10,22 @@ import Icon from '@components/common/Icon/Icon';
 const adminNav = [
   { to: '/admin/dashboard', label: 'Dashboard', icon: 'dashboard' },
   { to: '/admin/appointments', label: 'Appointments', icon: 'appointment' },
-  { to: '/admin/barbers', label: 'Barbers', icon: 'dashboard' },
-  { to: '/admin/clients', label: 'Clients', icon: 'dashboard' },
-  { to: '/admin/settings', label: 'Settings', icon: 'dashboard' },
+  { to: '/admin/barbers', label: 'Barbers', icon: 'barber' },
+  { to: '/admin/clients', label: 'Clients', icon: 'client' },
+  { to: '/admin/settings', label: 'Settings', icon: 'settings' },
 ];
 const barberNav = [
   { to: '/barber/dashboard', label: 'Dashboard', icon: 'dashboard' },
-  { to: '/barber/services', label: 'Services', icon: 'dashboard' },
-  { to: '/barber/appointments', label: 'Appointments', icon: 'dashboard' },
-  { to: '/barber/reviews', label: 'Reviews', icon: 'dashboard' },
-  { to: '/barber/settings', label: 'Settings', icon: 'dashboard' },
+  { to: '/barber/services', label: 'Services', icon: 'service' },
+  { to: '/barber/appointments', label: 'Appointments', icon: 'appointment' },
+  { to: '/barber/reviews', label: 'Reviews', icon: 'review' },
+  { to: '/barber/settings', label: 'Settings', icon: 'settings' },
 ];
 const clientNav = [
   { to: '/client/dashboard', label: 'Dashboard', icon: 'dashboard' },
-  { to: '/client/appointments', label: 'Appointments', icon: 'dashboard' },
-  { to: '/client/reviews', label: 'Reviews', icon: 'dashboard' },
-  { to: '/client/settings', label: 'Settings', icon: 'dashboard' },
+  { to: '/client/appointments', label: 'Appointments', icon: 'appointment' },
+  { to: '/client/reviews', label: 'Reviews', icon: 'review' },
+  { to: '/client/settings', label: 'Settings', icon: 'settings' },
 ];
 
 export default function Sidebar() {
