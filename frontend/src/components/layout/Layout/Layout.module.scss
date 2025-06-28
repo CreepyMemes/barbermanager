@@ -3,72 +3,70 @@
 // Layout is "Holy Grail": header/footer fixed, sidebar fixed, main scrolls
 .app-shell {
   height: 100vh;
-  min-height: 0;
+  background: $color-primary;
+
   display: flex;
   flex-direction: column;
-  background: $color-primary;
 }
 
-// // Header/footer always visible
-// .app-shell > :first-child {
-//   flex: 0 0 auto;
-// }
-// .app-shell > :last-child {
-//   flex: 0 0 auto;
-// }
-
-// -main area (sidebar + content)
+// App main area (sidebar + content)
 .shell-main-area {
-  flex: 1 1 auto;
-  min-height: 0;
+  overflow: hidden;
+  flex-grow: 1;
+
   display: flex;
   flex-direction: row;
-  // background: $color-secondary;
-  overflow: hidden;
 }
 
-// Sidebar: fixed width, 100% of height, independent scroll
+// Header, fixed height, 100% width
+.header-area {
+  flex-shrink: 0; // Prevent sidebar from changing height
+
+  height: 6rem;
+  border-bottom: 1px solid $border;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+// Sidebar, fixed width, 100% of height, independent scroll
 .sidebar-area {
+  overflow-y: auto;
+  flex-shrink: 0; // Prevent sidebar from changing width
+
   width: 27rem;
-  // height: 100%;
   border-right: 1px solid $border;
 
-  // background: $color-primary;
-  overflow-y: auto;
-
   display: flex;
   justify-content: center;
 }
 
-// -main area: fills remaining space, scrolls independently
+// Content area, fills remaining space, scrolls independently
 .main-area {
-  flex: 1 1 0%;
-
-  // background: $color-secondary;
-  // padding: 3rem 2.5rem;
   overflow-y: auto;
-  // color: $color-primary;
 
-  display: flex;
-  justify-content: center;
-  // flex-direction: column;
+  width: 100%;
+
+  // display: flex;
+  // justify-content: center;
 }
 
-// todo better
-@media (max-width: $bp-small) {
-  .shell-main-area {
-    flex-direction: column;
-  }
-  .sidebar-area {
-    width: 100%;
-    min-width: 0;
-    max-width: none;
-    min-height: 10rem; // You might want to collapse or hide sidebar on mobile
-    border-right: none;
-    border-bottom: 1px solid $border;
-    order: 0; // show sidebar above content if you want
-  }
-  .main-area {
-    // padding: 1.1rem 0.7rem 7rem 0.7rem;
-  }
-}
+// TODO
+// @media (max-width: $bp-small) {
+//   .shell-main-area {
+//     flex-direction: column;
+//   }
+//   .sidebar-area {
+//     width: 100%;
+//     min-width: 0;
+//     max-width: none;
+//     min-height: 10rem; // You might want to collapse or hide sidebar on mobile
+//     border-right: none;
+//     border-bottom: 1px solid $border;
+//     order: 0; // show sidebar above content if you want
+//   }
+//   .main-area {
+//     // padding: 1.1rem 0.7rem 7rem 0.7rem;
+//   }
+// }

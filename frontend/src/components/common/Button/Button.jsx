@@ -1,6 +1,6 @@
-import styles from './Button.module.scss';
-
+import { Link } from 'react-router-dom';
 import { camelizeStyle } from '@utils/utils';
+import styles from './Button.module.scss';
 
 function Button({
   children,
@@ -11,19 +11,37 @@ function Button({
   size = 'md',
   color = 'primary',
   width = 'full',
+  className,
 }) {
   // Get all style classes into a string
-  const className = [styles.button, styles[size], styles[color], styles[camelizeStyle('width', width)]].join(' ');
+  const computedClassName =
+    className || [styles.button, styles[size], styles[color], styles[camelizeStyle('width', width)]].join(' ');
 
-  // If button is a link
   if (href) {
+    // Use <Link> for internal links, <a> for external
+    const isInternal = href.startsWith('/'); // crude check, improve as needed
+    if (isInternal) {
+      return (
+        <Link
+          className={computedClassName}
+          to={href}
+          // Extra props: aria-disabled etc. as needed
+          tabIndex={disabled ? -1 : undefined}
+          onClick={disabled ? (e) => e.preventDefault() : onClick}
+        >
+          {children}
+        </Link>
+      );
+    }
     return (
       <a
-        className={className}
+        className={computedClassName}
         href={href}
-        onClick={disabled ? (e) => e.preventDefault() : onClick}
         aria-disabled={disabled}
         tabIndex={disabled ? -1 : undefined}
+        onClick={disabled ? (e) => e.preventDefault() : onClick}
+        target="_blank" // maybe for external?
+        rel="noopener noreferrer"
       >
         {children}
       </a>
@@ -31,7 +49,7 @@ function Button({
   }
 
   return (
-    <button className={className} type={type} onClick={onClick} disabled={disabled}>
+    <button className={computedClassName} type={type} onClick={onClick} disabled={disabled}>
       {children}
     </button>
   );

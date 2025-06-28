@@ -10,17 +10,23 @@ export default function Layout() {
   const { isAuthenticated } = useAuth();
   return (
     <div className={styles.appShell}>
-      <Header />
+      <div className={styles.headerArea}>
+        <Header />
+      </div>
+
       <div className={styles.shellMainArea}>
+        {/* Render sidebar only if authenticated */}
         {isAuthenticated && (
           <aside className={styles.sidebarArea}>
             <Sidebar />
           </aside>
         )}
+
         <main className={styles.mainArea}>
-          <Outlet /> {/* <-- This renders the current route/page inside the layout */}
+          <Outlet /> {/* Renders the current route inside the layout */}
         </main>
       </div>
+
       <Footer />
     </div>
   );
