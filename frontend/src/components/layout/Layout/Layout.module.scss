@@ -9,13 +9,13 @@
   background: $color-primary;
 }
 
-// Header/footer always visible
-.app-shell > :first-child {
-  flex: 0 0 auto;
-}
-.app-shell > :last-child {
-  flex: 0 0 auto;
-}
+// // Header/footer always visible
+// .app-shell > :first-child {
+//   flex: 0 0 auto;
+// }
+// .app-shell > :last-child {
+//   flex: 0 0 auto;
+// }
 
 // -main area (sidebar + content)
 .shell-main-area {
@@ -29,12 +29,11 @@
 
 // Sidebar: fixed width, 100% of height, independent scroll
 .sidebar-area {
-  width: 25rem;
-  min-width: 18rem;
-  max-width: 30rem;
-  height: 100%;
-  background: $color-primary;
+  width: 27rem;
+  // height: 100%;
   border-right: 1px solid $border;
+
+  // background: $color-primary;
   overflow-y: auto;
 
   display: flex;
@@ -44,16 +43,18 @@
 // -main area: fills remaining space, scrolls independently
 .main-area {
   flex: 1 1 0%;
-  min-width: 0;
-  min-height: 0;
+
   // background: $color-secondary;
   // padding: 3rem 2.5rem;
   overflow-y: auto;
-  color: $color-primary;
+  // color: $color-primary;
+
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  // flex-direction: column;
 }
 
+// todo better
 @media (max-width: $bp-small) {
   .shell-main-area {
     flex-direction: column;

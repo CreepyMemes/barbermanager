@@ -1,11 +1,12 @@
 import { useAuth } from '@hooks/useAuth';
-import { Outlet } from 'react-router-dom'; // <-- You need this!
+import { Outlet } from 'react-router-dom';
 import styles from './Layout.module.scss';
+
 import Header from '@components/layout/Header/Header';
 import Footer from '@components/layout/Footer/Footer';
 import Sidebar from '@components/layout/Sidebar/Sidebar';
 
-export default function Layout({ children }) {
+export default function Layout() {
   const { isAuthenticated } = useAuth();
   return (
     <div className={styles.appShell}>
