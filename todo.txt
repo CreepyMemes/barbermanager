@@ -13,8 +13,6 @@ Proposed:
 2. Frontend:
 
 Important:  
-  - use Button instead of Link in Footer (add new Button color)
-
   - create reusable Dashboard component to use for each role
   - create Card component to use in login/logout and dashboard panels
 

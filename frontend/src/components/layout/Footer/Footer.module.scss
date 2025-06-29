@@ -21,24 +21,11 @@
 
     .links {
       display: flex;
-      gap: 2.2rem;
-      list-style: none;
-
-      a {
-        color: $color-muted;
-        text-decoration: none;
-        font-size: 1.12rem;
-        transition: color 0.16s;
-
-        &:hover {
-          color: $color-muted;
-          text-decoration: underline;
-        }
-      }
+      gap: 3rem;
     }
 
     .copyright {
-      font-size: 1rem;
+      font-size: 1.3rem;
       color: $color-muted;
     }
   }
