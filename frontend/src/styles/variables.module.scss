@@ -1,20 +1,24 @@
 // Main Colors
-$color-primary: #2b2b2a; // dark gray
-$color-secondary: #f9f7f3; // lightest background
-$color-accent: #585858; // light tan accent (for cards, highlights)
-$color-muted: #94928a; // muted text, subtle borders
+$color-primary: #2b2b2a;
+$color-secondary: #e3e1dd;
+$color-light: #f9f7f3;
+$color-accent: #585858;
+$color-muted: #a5a39a;
+
 $color-error-bg: #fae1e1; // error background color
-$color-color: #f44;
+$color-error: #f44;
 $color-lighter: #454545;
 $color-main: #343432;
+$color-card: #f4f2ee;
 
 // Borders/Shadows
 $border: #696968;
-$border-error: #fcc;
+$border-light: #bab8b8;
+$border-error: #fba4a4;
 $border-radius: 8px;
-$box-shadow: 0 2px 8px rgba(57, 57, 55, 0.03);
 
 // Screen sizes
+$bp-huge: 126.87em; //2030px
 $bp-large: 78.15em; // 1250px
 $bp-medium: 61.25em; // 980px
 $bp-small: 37.5em; // 600px

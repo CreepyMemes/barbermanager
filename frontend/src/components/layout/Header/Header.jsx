@@ -7,7 +7,7 @@ import Logo from '@components/common/Logo/Logo';
 import Spinner from '@components/common/Spinner/Spinner';
 import Button from '@components/common/Button/Button';
 
-export default function Header() {
+function Header() {
   const { isAuthenticated, user, profile, logout, loading } = useAuth();
   const navigate = useNavigate();
 
@@ -22,12 +22,12 @@ export default function Header() {
         <Spinner />
       ) : (
         <div className={styles.header}>
-          <Logo size="lg" />
+          <Logo size="lg" button />
 
           <div className={styles.actions}>
             {isAuthenticated && user && (
               <>
-                <Button onClick={handleLogout} color="primary">
+                <Button onClick={handleLogout} size="md" color="primary">
                   Logout
                 </Button>
 
@@ -39,11 +39,11 @@ export default function Header() {
 
             {!isAuthenticated && (
               <>
-                <Button href="/login" color="primary">
+                <Button href="/login" size="md" color="primary">
                   Login
                 </Button>
 
-                <Button href="/register" color="secondary">
+                <Button href="/register" size="md" color="secondary">
                   Register
                 </Button>
               </>
@@ -54,3 +54,5 @@ export default function Header() {
     </header>
   );
 }
+
+export default Header;

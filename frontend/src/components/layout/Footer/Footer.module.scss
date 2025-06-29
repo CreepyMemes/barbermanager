@@ -20,25 +20,17 @@
     justify-content: space-between;
 
     .links {
+      list-style-type: none;
       display: flex;
-      gap: 2.2rem;
-      list-style: none;
+      gap: 1.5rem;
 
-      a {
-        color: $color-muted;
-        text-decoration: none;
-        font-size: 1.12rem;
-        transition: color 0.16s;
-
-        &:hover {
-          color: $color-muted;
-          text-decoration: underline;
-        }
+      .button {
+        padding: 1rem;
       }
     }
 
     .copyright {
-      font-size: 1rem;
+      font-size: 1.3rem;
       color: $color-muted;
     }
   }

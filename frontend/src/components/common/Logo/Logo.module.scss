@@ -6,26 +6,47 @@
   justify-content: center;
 
   &.sm {
-    font-size: 1.1rem;
-    gap: 0.5rem;
-  }
-  &.md {
     font-size: 1.5rem;
     gap: 0.8rem;
   }
+
+  &.md {
+    font-size: 2rem;
+    gap: 1rem;
+  }
+
   &.lg {
     font-size: 2rem;
     gap: 1rem;
   }
 
+  &.hg {
+    font-size: 2.3rem;
+    gap: 2rem;
+  }
+
+  &.split {
+    gap: 1rem;
+    display: flex;
+    flex-direction: column;
+  }
+
   .text {
-    color: $color-secondary;
-    font-weight: 700;
     letter-spacing: 1px;
 
-    span {
+    display: flex;
+
+    .dark {
       color: $color-muted;
       font-weight: 400;
+
+      display: block;
+      align-items: center;
+    }
+
+    .light {
+      color: $color-light;
+      font-weight: 700;
     }
   }
 }

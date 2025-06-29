@@ -1,7 +1,7 @@
 import styles from './Error.module.scss';
 import { useForm } from '@hooks/useForm';
 
-export default function Error({ size = 'md' }) {
+function Error({ size = 'md' }) {
   const { error } = useForm();
   if (!error) return null;
 
@@ -10,3 +10,5 @@ export default function Error({ size = 'md' }) {
 
   return <div className={className}>{error}</div>;
 }
+
+export default Error;

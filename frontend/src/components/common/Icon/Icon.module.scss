@@ -1,15 +1,17 @@
 .wrapper {
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  // Default (md)
-  width: 21px;
-  height: 21px;
+  &.ty {
+    width: 14px;
+    height: 14px;
+  }
 
   &.sm {
-    width: 15px;
-    height: 15px;
+    width: 18px;
+    height: 18px;
   }
 
   &.md {
@@ -20,6 +22,11 @@
   &.lg {
     width: 30px;
     height: 30px;
+  }
+
+  &.hg {
+    width: 100px;
+    height: 100px;
   }
 }
 
