@@ -29,7 +29,7 @@ const clientNav = [
   { to: '/client/settings', label: 'Settings', icon: 'settings' },
 ];
 
-export default function Sidebar() {
+function Sidebar() {
   const { isAuthenticated, user, profile, loading } = useAuth();
   const [open, setOpen] = useState(true); // <--- Sidebar open/collapsed state
 
@@ -46,8 +46,8 @@ export default function Sidebar() {
       {loading ? (
         <Spinner />
       ) : (
-        <div className={`${styles.sidebarContent} ${open ? styles.show : styles.hide}`}>
-          <div className={styles.inner}>
+        <div className={styles.sidebarContent}>
+          <div className={`${styles.inner} ${open ? styles.show : styles.hide}`}>
             <div className={styles.top}>
               {isAuthenticated && user && (
                 <div className={styles.profile}>
@@ -65,7 +65,15 @@ export default function Sidebar() {
               <ul>
                 {navItems.map((item) => (
                   <li key={item.to}>
-                    <Button nav href={item.to} size="md" activeClassName={styles.active} color="borderless">
+                    <Button
+                      className={styles.navBtn}
+                      nav
+                      href={item.to}
+                      size="md"
+                      activeClassName={styles.active}
+                      color="borderless"
+                      wide
+                    >
                       <span className={styles.line}>
                         <Icon name={item.icon} size={'md'} />
                         {item.label}
@@ -76,19 +84,21 @@ export default function Sidebar() {
               </ul>
             </nav>
           </div>
+
+          <Button
+            className={styles.toggleBtn}
+            onClick={() => setOpen((v) => !v)}
+            size="sm"
+            color="primary"
+            type="button"
+            width="content"
+          >
+            <Icon name="menu" size="ty" />
+          </Button>
         </div>
       )}
-
-      <Button
-        className={styles.toggleBtn}
-        onClick={() => setOpen((v) => !v)}
-        size="sm"
-        color="primary"
-        type="button"
-        width="content"
-      >
-        <Icon name="menu" size="md" />
-      </Button>
     </aside>
   );
 }
+
+export default Sidebar;

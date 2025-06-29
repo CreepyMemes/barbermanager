@@ -9,17 +9,16 @@
 }
 
 .input {
-  margin-bottom: 0.5em;
-
-  border: 1px solid $border;
   border-radius: $border-radius;
-  background: $color-secondary;
+  border: 1px solid $border-light;
+
   color: $color-primary;
+  font-size: 1.4rem;
 
   transition: border-color 0.2s;
 
   &::placeholder {
-    color: $color-muted;
+    color: $color-accent;
   }
 
   &:focus {
@@ -28,8 +27,8 @@
   }
 
   &:disabled {
-    background: #f0f0f0;
-    color: $color-muted;
+    background: $color-muted;
+    color: $color-primary;
     cursor: not-allowed;
   }
 }

@@ -1,9 +1,10 @@
-import { Link } from 'react-router-dom';
 import styles from './Footer.module.scss';
 
 import Logo from '@components/common/Logo/Logo';
+import Button from '@components/common/Button/Button';
+import Icon from '@components/common/Icon/Icon';
 
-export default function Footer() {
+function Footer() {
   return (
     <footer className={styles.footerArea}>
       <div className={styles.footer}>
@@ -11,17 +12,36 @@ export default function Footer() {
 
         <ul className={styles.links}>
           <li>
-            <Link to="/">Home</Link>
+            <Button
+              className={styles.button}
+              href="https://github.com/CreepyMemes/barbermanager"
+              size="md"
+              color="animated"
+            >
+              <Icon name="github" size={'md'} />
+            </Button>
           </li>
 
           <li>
-            <Link to="/dashboard">Dashboard</Link>
+            <Button
+              className={styles.button}
+              href="https://github.com/CreepyMemes/barbermanager/tree/master/docs"
+              size="md"
+              color="animated"
+            >
+              <Icon name="docs" size={'md'} />
+            </Button>
           </li>
 
           <li>
-            <a href="https://github.com/CreepyMemes/barbermanager" target="_blank" rel="noopener noreferrer">
-              Github
-            </a>
+            <Button
+              className={styles.button}
+              href="https://github.com/CreepyMemes/barbermanager/issues/new"
+              size="md"
+              color="animated"
+            >
+              <Icon name="bug" size={'md'} />
+            </Button>
           </li>
         </ul>
 
@@ -30,3 +50,5 @@ export default function Footer() {
     </footer>
   );
 }
+
+export default Footer;

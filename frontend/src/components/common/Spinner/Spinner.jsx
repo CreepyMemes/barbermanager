@@ -1,10 +1,14 @@
 import styles from './Spinner.module.scss';
 
-export default function Spinner({ size = 48, label = 'Loading...' }) {
+function Spinner({ size = 'lg' }) {
+  // Get all style classes into a string
+  const className = [styles.spinner, styles[size]].join(' ');
+
   return (
-    <div className={styles.spinnerWrapper} role="status">
-      <div className={styles.spinner} style={{ width: size, height: size }} />
-      <span className={styles.srOnly}>{label}</span>
+    <div className={styles.spinnerWrapper}>
+      <div className={className} />
     </div>
   );
 }
+
+export default Spinner;

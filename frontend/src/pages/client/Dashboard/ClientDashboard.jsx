@@ -4,7 +4,7 @@ import defaultAvatar from '@assets/images/default-avatar.jpg';
 
 import Spinner from '@components/common/Spinner/Spinner';
 
-export default function ClientDashboard() {
+function ClientDashboard() {
   const { profile, loading } = useAuth();
 
   if (loading | !profile) return <Spinner />;
@@ -53,3 +53,5 @@ export default function ClientDashboard() {
     </div>
   );
 }
+
+export default ClientDashboard;

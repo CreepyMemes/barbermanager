@@ -4,7 +4,7 @@
 @use 'sass:color';
 
 .button {
-  display: inline-block;
+  width: fit-content;
   box-sizing: border-box;
 
   font-family: inherit; // keep if you want to inherit font family
@@ -20,7 +20,13 @@
 
   cursor: pointer;
 
-  transition: background 0.18s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition:
+    background 0.18s,
+    transform 0.18s cubic-bezier(0.4, 0.05, 0.2, 1);
 
   &:disabled,
   &[aria-disabled='true'] {
@@ -30,37 +36,56 @@
   }
 }
 
-/* Color modifiers */
+// Style modifiers
 
 .primary {
   background: $color-primary;
-  color: $color-secondary;
+  color: $color-light;
   border: 1px solid $border;
 
   &:hover:not(:disabled):not([aria-disabled='true']) {
     background-color: $color-lighter;
-    color: $color-secondary;
+    color: $color-light;
     border-color: $color-primary;
+  }
+}
+
+.secondary {
+  background-color: $color-light;
+  color: $color-primary;
+
+  &:hover:not(:disabled):not([aria-disabled='true']) {
+    background-color: $color-accent;
+    color: $color-light;
   }
 }
 
 .borderless {
   background: $color-primary;
-  color: $color-secondary;
+  color: $color-light;
 
   &:hover:not(:disabled):not([aria-disabled='true']) {
     background-color: $color-lighter;
-    color: $color-secondary;
+    color: $color-light;
   }
 }
 
-.secondary {
-  background-color: $color-secondary;
+.link {
+  // background: $color-primary;
   color: $color-primary;
 
   &:hover:not(:disabled):not([aria-disabled='true']) {
-    background-color: $color-accent;
-    color: $color-secondary;
+    // background-color: $color-lighter;
+    // color: $color-light;
+    text-decoration: underline;
+  }
+}
+
+.animated {
+  padding: 0;
+
+  &:hover:not(:disabled):not([aria-disabled='true']) {
+    transform: scale(1.07); // scales up by 7%
   }
 }
 
@@ -72,12 +97,7 @@
   pointer-events: none;
 }
 
-/* Width modifiers */
-.width-content {
-  width: max-content;
-}
-
-.width-full {
+// Size modifier
+.wide {
   width: 100%;
-  display: block; // ensures it fills parent
 }

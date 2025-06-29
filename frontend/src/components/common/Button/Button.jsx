@@ -1,5 +1,4 @@
 import { Link, NavLink } from 'react-router-dom';
-import { camelizeStyle } from '@utils/utils';
 import styles from './Button.module.scss';
 
 function Button({
@@ -10,19 +9,13 @@ function Button({
   href,
   nav = 'false',
   activeClassName,
-  size = 'md',
+  size,
+  wide,
   color,
-  width = 'full',
   className,
 }) {
   // Get all style classes into a string
-  const computedClassName = [
-    className,
-    styles.button,
-    styles[size],
-    styles[color],
-    styles[camelizeStyle('width', width)],
-  ].join(' ');
+  const computedClassName = [className, styles.button, styles[size], styles[color], wide ? styles.wide : ''].join(' ');
 
   if (href) {
     // Check if link is internal with a crude check (works for now)

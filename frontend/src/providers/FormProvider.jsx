@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import FormContext from '@contexts/FormContext';
 
-export default function FormProvider({ initialFields, onSubmit, children }) {
+function FormProvider({ initialFields, onSubmit, children }) {
   const [fields, setFields] = useState(initialFields);
   const [error, setError] = useState('');
 
@@ -9,10 +9,8 @@ export default function FormProvider({ initialFields, onSubmit, children }) {
    * Handles input changes by updating field state.
    */
   const handleChange = useCallback((event) => {
-    setFields((prev) => ({
-      ...prev,
-      [event.target.name]: event.target.value,
-    }));
+    const { name, value } = event.target;
+    setFields((prev) => ({ ...prev, [name]: value }));
   }, []);
 
   /**
@@ -22,7 +20,8 @@ export default function FormProvider({ initialFields, onSubmit, children }) {
     async (event) => {
       event.preventDefault();
       try {
-        await onSubmit(fields);
+        setError(null);
+        await onSubmit({ ...fields }); // Copy to avoid stale closure
       } catch (error) {
         setError(error?.response?.data?.detail || error?.message || 'Something went wrong');
       }
@@ -44,3 +43,5 @@ export default function FormProvider({ initialFields, onSubmit, children }) {
     </FormContext.Provider>
   );
 }
+
+export default FormProvider;
