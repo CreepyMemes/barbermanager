@@ -40,7 +40,7 @@ function Login() {
   return (
     <Hero>
       <Hero.Left>
-        <section className={styles.left}>
+        <section className={styles.textContainer}>
           <Logo size="hg" split />
 
           <div className={styles.text}>
@@ -100,7 +100,7 @@ function Login() {
               </span>
             </Button>
 
-            <Button className={styles.forgot} href="/reset-password" size="sm" color="link">
+            <Button className={styles.forgotBtn} href="/reset-password" size="sm" color="link">
               Forgot password?
             </Button>
 

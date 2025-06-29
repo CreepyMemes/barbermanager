@@ -10,9 +10,17 @@
 html {
   font-size: 62.5%; // 10px / 16px = 0.625 = 62.5% (Percentage of user's font-size setting), 1 rem = font-size px
 
-  @media only screen and (max-width: $bp-medium) {
+  @media only screen and (max-width: $bp-large) {
     font-size: 50%;
   }
+
+  @media only screen and (max-width: $bp-smallest) {
+    font-size: 62.5%;
+  }
+
+  // @media only screen and (max-width: $bp-small) {
+  //   font-size: 40%;
+  // }
 }
 
 body {
