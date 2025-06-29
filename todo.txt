@@ -13,8 +13,8 @@ Proposed:
 2. Frontend:
 
 Important:  
-  - create reusable Dashboard component to use for each role
   - create Card component to use in login/logout and dashboard panels
+  - create reusable Dashboard component to use for each role
 
   - fix loading spinner to main page, only showing when loading first time
 
@@ -33,8 +33,10 @@ Important:
 
 
 Proposed:
-  - add stuff to website home page
-  - add media queries for screen sizes on each layout component
+  - add media queries for screen sizes on each layout component 
+  - make mobile sidebar button on header
+  
+  - add stuff to website home page (call to action)
   - see how vite tests work and maybe implement some
 
 -----------------------------------------------------------------------------------------------------------------------------------------
