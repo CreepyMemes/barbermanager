@@ -71,7 +71,7 @@
 }
 
 .animated {
-  padding: 0;
+  padding-inline: 1rem;
 
   &:hover:not(:disabled):not([aria-disabled='true']) {
     transform: scale(1.07); // scales up by 7%
