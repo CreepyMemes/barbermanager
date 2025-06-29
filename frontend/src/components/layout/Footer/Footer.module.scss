@@ -20,8 +20,13 @@
     justify-content: space-between;
 
     .links {
+      list-style-type: none;
       display: flex;
       gap: 1.5rem;
+
+      .button {
+        padding: 1rem;
+      }
     }
 
     .copyright {

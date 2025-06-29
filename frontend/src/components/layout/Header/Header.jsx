@@ -22,7 +22,7 @@ function Header() {
         <Spinner />
       ) : (
         <div className={styles.header}>
-          <Logo size="lg" />
+          <Logo size="lg" button />
 
           <div className={styles.actions}>
             {isAuthenticated && user && (

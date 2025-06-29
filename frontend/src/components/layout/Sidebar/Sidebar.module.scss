@@ -141,8 +141,7 @@ $sidebar-closed-width: 3.5rem;
 
 // Active nav button styling
 .active {
-  background: $color-accent !important;
-  color: $color-secondary !important;
+  background: $color-accent;
   border-radius: $border-radius;
   pointer-events: none;
 }

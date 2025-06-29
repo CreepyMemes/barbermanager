@@ -93,7 +93,7 @@ function Sidebar() {
             type="button"
             width="content"
           >
-            <Icon name="menu" size="sm" />
+            <Icon name="menu" size="ty" />
           </Button>
         </div>
       )}
