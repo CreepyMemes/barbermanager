@@ -13,20 +13,16 @@ Proposed:
 2. Frontend:
 
 Important:  
-  - create Card component to use in login/logout and dashboard panels
+
   - create reusable Dashboard component to use for each role
 
   - fix loading spinner to main page, only showing when loading first time
-
   - add skeleton loading for page components
-
-  - implement login page using Hero component
 
   - implement register page for clients (through /login route), use Hero component
   - implement register page for barbers (from invitation email link), use Hero component
-  - change email frontend url in email template and implement a route for it
-
   - verify-email send GET request to verify then redirect to login page,
+  - change email frontend url in email template and implement a route for it
 
   - implement reset password page
   - implement forgot password? in Login page
