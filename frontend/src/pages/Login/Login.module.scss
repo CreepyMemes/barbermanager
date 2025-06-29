@@ -1,26 +1,15 @@
 @use '@styles/variables.module.scss' as *;
 
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.login {
   height: 100vh;
   background: $color-primary;
 
-  // TODO: To style the inner card, button, inputs, etc,
-  // .formCard {
-  //   background: $color-accent;
-  //   border-radius: $border-radius;
-  //   box-shadow: $box-shadow;
-  //   padding: 2rem;
-  // }
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-  // .loginButton {
-  //   background: $button-bg;
-  //   color: $button-text;
-  //   border-radius: $border-radius;
-  //   &:hover {
-  //     background: $button-hover-bg;
-  //   }
-  // }
+  .line {
+    display: flex;
+    gap: 1rem;
+  }
 }

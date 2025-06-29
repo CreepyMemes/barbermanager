@@ -44,8 +44,8 @@ $sidebar-closed-width: 3.5rem;
       right: -1.7rem;
       z-index: 20;
 
-      width: 3.4rem;
-      height: 3.4rem;
+      width: 3.5rem;
+      height: 3.5rem;
 
       border-radius: 50%;
     }
@@ -121,6 +121,11 @@ $sidebar-closed-width: 3.5rem;
 
           li {
             margin-bottom: 0.4rem;
+
+            .nav-btn {
+              justify-content: left;
+              height: 4.1rem;
+            }
 
             .line {
               display: flex;

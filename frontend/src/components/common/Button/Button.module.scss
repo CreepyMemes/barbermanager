@@ -4,7 +4,7 @@
 @use 'sass:color';
 
 .button {
-  display: inline-block;
+  width: fit-content;
   box-sizing: border-box;
 
   font-family: inherit; // keep if you want to inherit font family
@@ -76,12 +76,6 @@
   pointer-events: none;
 }
 
-/* Width modifiers */
-.width-content {
-  width: max-content;
-}
-
-.width-full {
+.wide {
   width: 100%;
-  display: block; // ensures it fills parent
 }

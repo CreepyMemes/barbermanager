@@ -27,7 +27,7 @@ export default function Header() {
           <div className={styles.actions}>
             {isAuthenticated && user && (
               <>
-                <Button onClick={handleLogout} color="primary">
+                <Button onClick={handleLogout} size="md" color="primary">
                   Logout
                 </Button>
 
@@ -39,11 +39,11 @@ export default function Header() {
 
             {!isAuthenticated && (
               <>
-                <Button href="/login" color="primary">
+                <Button href="/login" size="md" color="primary">
                   Login
                 </Button>
 
-                <Button href="/register" color="secondary">
+                <Button href="/register" size="md" color="secondary">
                   Register
                 </Button>
               </>

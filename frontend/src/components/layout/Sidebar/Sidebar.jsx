@@ -65,7 +65,15 @@ export default function Sidebar() {
               <ul>
                 {navItems.map((item) => (
                   <li key={item.to}>
-                    <Button nav href={item.to} size="md" activeClassName={styles.active} color="borderless">
+                    <Button
+                      className={styles.navBtn}
+                      nav
+                      href={item.to}
+                      size="md"
+                      activeClassName={styles.active}
+                      color="borderless"
+                      wide
+                    >
                       <span className={styles.line}>
                         <Icon name={item.icon} size={'md'} />
                         {item.label}
