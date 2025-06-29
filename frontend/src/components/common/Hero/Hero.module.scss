@@ -3,6 +3,7 @@
 
 .hero {
   overflow-x: hidden;
+  // height: 100vh;
   flex: 1 1 0;
   min-height: 0; // Allows flexbox to let it shrink in overflow
   display: flex;
@@ -27,4 +28,10 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+@media (max-width: $bp-small) {
+  .hero {
+    flex-direction: column;
+  }
 }
