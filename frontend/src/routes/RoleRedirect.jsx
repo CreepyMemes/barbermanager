@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@hooks/useAuth';
 
-export default function RoleRedirect() {
+function RoleRedirect() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -23,3 +23,5 @@ export default function RoleRedirect() {
 
   return null;
 }
+
+export default RoleRedirect;

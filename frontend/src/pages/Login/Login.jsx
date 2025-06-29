@@ -11,7 +11,7 @@ import Button from '@components/common/Button/Button';
 import Error from '@components/common/Error/Error';
 import Spinner from '@components/common/Spinner/Spinner';
 
-export default function Login() {
+function Login() {
   const { login, loading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -75,3 +75,5 @@ export default function Login() {
     </div>
   );
 }
+
+export default Login;

@@ -1,7 +1,7 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@hooks/useAuth';
 
-export default function ProtectedRoute({ children, role }) {
+function ProtectedRoute({ children, role }) {
   const { isAuthenticated, user, loading } = useAuth();
 
   if (loading) return null;
@@ -18,3 +18,5 @@ export default function ProtectedRoute({ children, role }) {
 
   return children;
 }
+
+export default ProtectedRoute;
