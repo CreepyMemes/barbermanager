@@ -6,7 +6,7 @@ import Footer from '@components/layout/Footer/Footer';
 import Sidebar from '@components/layout/Sidebar/Sidebar';
 import Page from '@components/layout/Page/Page';
 
-export default function Layout() {
+function Layout() {
   const { isAuthenticated } = useAuth();
 
   return (
@@ -24,3 +24,5 @@ export default function Layout() {
     </div>
   );
 }
+
+export default Layout;

@@ -4,7 +4,7 @@ import Logo from '@components/common/Logo/Logo';
 import Button from '@components/common/Button/Button';
 import Icon from '@components/common/Icon/Icon';
 
-export default function Footer() {
+function Footer() {
   return (
     <footer className={styles.footerArea}>
       <div className={styles.footer}>
@@ -35,3 +35,5 @@ export default function Footer() {
     </footer>
   );
 }
+
+export default Footer;

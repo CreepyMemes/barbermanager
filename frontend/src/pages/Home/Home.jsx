@@ -6,7 +6,7 @@ import styles from './Home.module.scss';
 import Spinner from '@components/common/Spinner/Spinner';
 import Button from '@components/common/Button/Button';
 
-export default function Home() {
+function Home() {
   const { isAuthenticated, loading } = useAuth();
   const navigate = useNavigate();
 
@@ -34,3 +34,5 @@ export default function Home() {
     </div>
   );
 }
+
+export default Home;

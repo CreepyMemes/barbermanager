@@ -4,7 +4,7 @@ import defaultAvatar from '@assets/images/default-avatar.jpg';
 
 import Spinner from '@components/common/Spinner/Spinner';
 
-export default function BarberDashboard() {
+function BarberDashboard() {
   const { profile, loading } = useAuth();
 
   if (loading | !profile) return <Spinner />;
@@ -61,3 +61,5 @@ export default function BarberDashboard() {
     </div>
   );
 }
+
+export default BarberDashboard;

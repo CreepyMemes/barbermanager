@@ -1,6 +1,6 @@
 import styles from './Spinner.module.scss';
 
-export default function Spinner({ size = 'lg' }) {
+function Spinner({ size = 'lg' }) {
   // Get all style classes into a string
   const className = [styles.spinner, styles[size]].join(' ');
 
@@ -10,3 +10,5 @@ export default function Spinner({ size = 'lg' }) {
     </div>
   );
 }
+
+export default Spinner;

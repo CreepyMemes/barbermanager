@@ -4,7 +4,7 @@ import logo from '@assets/images/notfound-logo.png';
 import Hero from '@components/common/Hero/Hero';
 import Button from '@components/common/Button/Button';
 
-export default function NotFound() {
+function NotFound() {
   return (
     <Hero>
       <Hero.Left>
@@ -32,3 +32,5 @@ export default function NotFound() {
     </Hero>
   );
 }
+
+export default NotFound;

@@ -3,7 +3,7 @@ import Button from '@components/common/Button/Button';
 
 import Icon from '@components/common/Icon/Icon';
 
-export default function Logo({ size = 'md' }) {
+function Logo({ size = 'md' }) {
   return (
     <Button href="/" size={size} width="content" color="animated">
       <span className={`${styles.logo} ${styles[size] || ''}`}>
@@ -16,3 +16,5 @@ export default function Logo({ size = 'md' }) {
     </Button>
   );
 }
+
+export default Logo;

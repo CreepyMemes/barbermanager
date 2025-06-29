@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import FormContext from '@contexts/FormContext';
 
-export default function FormProvider({ initialFields, onSubmit, children }) {
+function FormProvider({ initialFields, onSubmit, children }) {
   const [fields, setFields] = useState(initialFields);
   const [error, setError] = useState('');
 
@@ -44,3 +44,5 @@ export default function FormProvider({ initialFields, onSubmit, children }) {
     </FormContext.Provider>
   );
 }
+
+export default FormProvider;

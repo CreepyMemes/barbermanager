@@ -15,7 +15,7 @@ import ClientDashboard from '@pages/client/Dashboard/ClientDashboard';
 // Helper for cleaner protected route declaration
 const protectedRoute = (element, role) => <ProtectedRoute role={role}>{element}</ProtectedRoute>;
 
-export default function AppRoutes() {
+function AppRoutes() {
   return (
     <Routes>
       <Route element={<Layout />}>
@@ -49,3 +49,5 @@ export default function AppRoutes() {
     </Routes>
   );
 }
+
+export default AppRoutes;

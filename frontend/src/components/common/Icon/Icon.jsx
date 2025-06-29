@@ -1,7 +1,7 @@
 import icons from '@assets/icons';
 import styles from './Icon.module.scss';
 
-export default function Icon({ name, size = 'md', color }) {
+function Icon({ name, size = 'md', color }) {
   const SvgIcon = icons[name];
   if (!SvgIcon) return null;
 
@@ -12,3 +12,5 @@ export default function Icon({ name, size = 'md', color }) {
     </span>
   );
 }
+
+export default Icon;

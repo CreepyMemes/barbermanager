@@ -7,7 +7,7 @@ import Logo from '@components/common/Logo/Logo';
 import Spinner from '@components/common/Spinner/Spinner';
 import Button from '@components/common/Button/Button';
 
-export default function Header() {
+function Header() {
   const { isAuthenticated, user, profile, logout, loading } = useAuth();
   const navigate = useNavigate();
 
@@ -54,3 +54,5 @@ export default function Header() {
     </header>
   );
 }
+
+export default Header;

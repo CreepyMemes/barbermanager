@@ -29,7 +29,7 @@ const clientNav = [
   { to: '/client/settings', label: 'Settings', icon: 'settings' },
 ];
 
-export default function Sidebar() {
+function Sidebar() {
   const { isAuthenticated, user, profile, loading } = useAuth();
   const [open, setOpen] = useState(true); // <--- Sidebar open/collapsed state
 
@@ -100,3 +100,5 @@ export default function Sidebar() {
     </aside>
   );
 }
+
+export default Sidebar;

@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import styles from './Form.module.scss';
 import FormContext from '@contexts/FormContext';
 
-export default function Form({ label, children }) {
+function Form({ label, children }) {
   const { handleSubmit } = useContext(FormContext);
 
   return (
@@ -12,3 +12,5 @@ export default function Form({ label, children }) {
     </form>
   );
 }
+
+export default Form;
