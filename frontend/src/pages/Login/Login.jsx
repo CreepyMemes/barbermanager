@@ -40,7 +40,7 @@ function Login() {
   return (
     <Hero>
       <Hero.Left>
-        <section className={styles.textContainer}>
+        <section className={styles.left}>
           <Logo size="hg" split />
 
           <div className={styles.text}>
@@ -52,10 +52,10 @@ function Login() {
                 </p>
 
                 <div className={styles.cta}>
-                  <p className={styles.ctaText}>Don&apos;t already have an account?</p>
-                  <Button href="/register" color="primary" size="md" width="content">
+                  <Button href="/register" color="primary" size="lg" width="content">
                     Sign up!
                   </Button>
+                  <p className={styles.ctaText}>Don&apos;t already have an account?</p>
                 </div>
               </div>
             </div>

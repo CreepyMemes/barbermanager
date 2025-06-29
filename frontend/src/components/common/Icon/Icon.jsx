@@ -1,14 +1,16 @@
 import icons from '@assets/icons';
 import styles from './Icon.module.scss';
 
-function Icon({ name, size = 'md', color }) {
+function Icon({ name, size = 'md' }) {
   const SvgIcon = icons[name];
   if (!SvgIcon) return null;
 
-  // Pass `size` as modifier class to wrapper
+  // Get all style classes into a string
+  const computedClassName = [styles.wrapper, styles[size], styles[size]].join(' ');
+
   return (
-    <span className={`${styles.wrapper} ${styles[size]}`}>
-      <SvgIcon width="100%" height="100%" className={styles.icon} style={color ? { color } : undefined} />
+    <span className={computedClassName}>
+      <SvgIcon width="100%" height="100%" className={styles.icon} />
     </span>
   );
 }
