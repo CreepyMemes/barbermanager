@@ -40,38 +40,49 @@
 
 .primary {
   background: $color-primary;
-  color: $color-secondary;
+  color: $color-light;
   border: 1px solid $border;
 
   &:hover:not(:disabled):not([aria-disabled='true']) {
     background-color: $color-lighter;
-    color: $color-secondary;
+    color: $color-light;
     border-color: $color-primary;
   }
 }
 
 .secondary {
-  background-color: $color-secondary;
+  background-color: $color-light;
   color: $color-primary;
 
   &:hover:not(:disabled):not([aria-disabled='true']) {
     background-color: $color-accent;
-    color: $color-secondary;
+    color: $color-light;
   }
 }
 
 .borderless {
   background: $color-primary;
-  color: $color-secondary;
+  color: $color-light;
 
   &:hover:not(:disabled):not([aria-disabled='true']) {
     background-color: $color-lighter;
-    color: $color-secondary;
+    color: $color-light;
+  }
+}
+
+.link {
+  // background: $color-primary;
+  color: $color-primary;
+
+  &:hover:not(:disabled):not([aria-disabled='true']) {
+    // background-color: $color-lighter;
+    // color: $color-light;
+    text-decoration: underline;
   }
 }
 
 .animated {
-  padding-inline: 1rem;
+  padding: 0;
 
   &:hover:not(:disabled):not([aria-disabled='true']) {
     transform: scale(1.07); // scales up by 7%

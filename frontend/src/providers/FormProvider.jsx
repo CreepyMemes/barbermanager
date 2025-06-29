@@ -9,10 +9,8 @@ function FormProvider({ initialFields, onSubmit, children }) {
    * Handles input changes by updating field state.
    */
   const handleChange = useCallback((event) => {
-    setFields((prev) => ({
-      ...prev,
-      [event.target.name]: event.target.value,
-    }));
+    const { name, value } = event.target;
+    setFields((prev) => ({ ...prev, [name]: value }));
   }, []);
 
   /**
@@ -22,7 +20,8 @@ function FormProvider({ initialFields, onSubmit, children }) {
     async (event) => {
       event.preventDefault();
       try {
-        await onSubmit(fields);
+        setError(null);
+        await onSubmit({ ...fields }); // Copy to avoid stale closure
       } catch (error) {
         setError(error?.response?.data?.detail || error?.message || 'Something went wrong');
       }
