@@ -8,6 +8,8 @@ import SettingsIcon from './settings.svg?react';
 import ReviewIcon from './review.svg?react';
 import ServiceIcon from './service.svg?react';
 import MenuIcon from './menu.svg?react';
+import DocsIcon from './docs.svg?react';
+import BugIcon from './bug.svg?react';
 
 const icons = {
   github: GithubIcon,
@@ -20,6 +22,8 @@ const icons = {
   review: ReviewIcon,
   service: ServiceIcon,
   menu: MenuIcon,
+  docs: DocsIcon,
+  bug: BugIcon,
 };
 
 export default icons;
