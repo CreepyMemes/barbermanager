@@ -9,6 +9,7 @@ import Form from '@components/common/Form/Form';
 import Input from '@components/common/Input/Input';
 import Button from '@components/common/Button/Button';
 import Error from '@components/common/Error/Error';
+import Spinner from '@components/common/Spinner/Spinner';
 
 export default function Login() {
   const { login, loading, isAuthenticated } = useAuth();
@@ -34,9 +35,9 @@ export default function Login() {
   };
 
   return (
-    <div className={styles.loginContainer}>
+    <div className={styles.login}>
       <FormProvider initialFields={{ identifier: '', password: '' }} onSubmit={handleLoginSubmit}>
-        <Form label="Welcome Back">
+        <Form label="Login">
           <Input
             label="Email or username"
             name="identifier"
@@ -57,10 +58,17 @@ export default function Login() {
             size="md"
           />
 
-          <Button type="submit" size="lg" disabled={loading} color="primary">
-            {loading ? 'Logging in...' : 'Login'}
+          <Button className={styles.loginBtn} type="submit" size="md" disabled={loading} wide color="primary">
+            <span className={styles.line}>
+              {loading ? (
+                <>
+                  <Spinner size={'sm'} /> Logging in...
+                </>
+              ) : (
+                'Login'
+              )}
+            </span>
           </Button>
-
           <Error />
         </Form>
       </FormProvider>

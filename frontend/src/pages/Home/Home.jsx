@@ -27,7 +27,7 @@ export default function Home() {
       <div className={styles.text}>
         <h1>Welcome to Barber Manager!</h1>
         <p>A barber shop management software!</p>
-        <Button href="/login/" size="md" width="content" color="primary">
+        <Button href="/login/" size="md" color="primary">
           Get Started!
         </Button>
       </div>

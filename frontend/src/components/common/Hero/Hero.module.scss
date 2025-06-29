@@ -11,10 +11,20 @@
 .left {
   flex: 1;
   color: $color-primary;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .right {
   flex: 1;
   background: $color-secondary;
   color: $color-secondary;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }

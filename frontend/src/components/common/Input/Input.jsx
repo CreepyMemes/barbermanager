@@ -1,7 +1,7 @@
 import styles from './Input.module.scss';
 import { useForm } from '@hooks/useForm';
 
-export default function Input({ label, type, name, required, autoComplete, disabled, size = 'md' }) {
+export default function Input({ label, type, name, required, autoComplete, disabled, size }) {
   const { fields, handleChange } = useForm();
 
   // Get all style classes into a string

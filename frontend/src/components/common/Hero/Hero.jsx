@@ -9,13 +9,9 @@ function Hero({ children }) {
 
   return (
     <div className={styles.hero}>
-      <div className={`${styles.left} ${styles.centerVertical}`}>
-        <div className={styles.centerHorizontal}>{left}</div>
-      </div>
+      <div className={styles.left}>{left}</div>
 
-      <div className={`${styles.right} ${styles.centerVertical}`}>
-        <div className={styles.centerHorizontal}>{right}</div>
-      </div>
+      <div className={styles.right}>{right}</div>
     </div>
   );
 }
