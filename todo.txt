@@ -12,9 +12,7 @@ Proposed:
 -----------------------------------------------------------------------------------------------------------------------------------------
 2. Frontend:
 
-Important:
-  
-  - try to fix scroll bar showoing on bottom (404 page) when toggling sidebar (maybe overflow-x: hidden will fix it?)
+Important:  
   - use Button instead of Link in Footer (add new Button color)
 
   - create reusable Dashboard component to use for each role
