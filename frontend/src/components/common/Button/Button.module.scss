@@ -20,6 +20,10 @@
 
   cursor: pointer;
 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   transition: background 0.18s;
 
   &:disabled,
