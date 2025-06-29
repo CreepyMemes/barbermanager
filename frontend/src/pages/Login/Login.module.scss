@@ -1,6 +1,6 @@
 @use '@styles/variables.module.scss' as *;
 
-.text-container {
+.left {
   display: flex;
   gap: 4rem;
 
@@ -69,5 +69,12 @@
       display: flex;
       gap: 1rem;
     }
+  }
+}
+
+@media (max-width: $bp-medium) {
+  .left {
+    flex-direction: column;
+    gap: 1rem;
   }
 }
