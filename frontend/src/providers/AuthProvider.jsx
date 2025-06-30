@@ -7,9 +7,13 @@ import api from '@api';
  */
 function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(!!api.auth.getAccessToken());
+
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
+
+  const [isFetchingProfile, setIsFetchingProfile] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   /**
    * Helper callback function for unified reset + redirect
@@ -24,8 +28,8 @@ function AuthProvider({ children }) {
   /**
    * Helper callback function to automaticaly get the user profile by trying all profile endpoints.
    */
-  const fetchUserAndProfile = useCallback(async () => {
-    setLoading(true);
+  const fetchProfile = useCallback(async () => {
+    setIsFetchingProfile(true);
 
     try {
       // Fetch user basic info
@@ -44,10 +48,11 @@ function AuthProvider({ children }) {
         const { profile } = await api.client.getClientProfile();
         setProfile(profile);
       }
-    } catch {
+    } catch (error) {
+      console.error('Failed to fetch profile', error);
       handleLogout();
     } finally {
-      setLoading(false);
+      setIsFetchingProfile(false);
     }
   }, [handleLogout]);
 
@@ -56,24 +61,23 @@ function AuthProvider({ children }) {
    */
   useEffect(() => {
     if (api.auth.getRefreshToken()) {
-      fetchUserAndProfile();
+      fetchProfile();
     } else {
       handleLogout();
-      setLoading(false);
     }
-  }, [fetchUserAndProfile, handleLogout]);
+  }, [fetchProfile, handleLogout]);
 
   /**
    * Handles login and sets everything up in context.
    */
   const login = async (credentials) => {
-    setLoading(true);
+    setIsLoggingIn(true);
 
     try {
-      await api.auth.login(credentials);
-      await fetchUserAndProfile();
+      await api.auth.login(credentials); // Any exceptions get catched in the login Form
+      await fetchProfile();
     } finally {
-      setLoading(false);
+      setIsLoggingIn(false);
     }
   };
 
@@ -81,23 +85,27 @@ function AuthProvider({ children }) {
    * Logout for manual invocation or on refresh error, clears tokens
    */
   const logout = async () => {
-    setLoading(true);
+    setIsLoggingOut(true);
 
     try {
       await api.auth.logout();
     } finally {
       handleLogout();
-      setLoading(false);
+      setIsLoggingOut(false);
     }
   };
 
   return (
     <AuthContext.Provider
       value={{
-        isAuthenticated,
-        user, // from /auth/me/
-        profile, // from profile endpoint, might be null or richer info
-        loading, // true during login/profile-fetch
+        isAuthenticated, // True onlly when user is authenticated
+
+        user, // basic user information (form api/auth/me)
+        profile, // role based profie information (from /api/<role>/profile)
+
+        isFetchingProfile, // only true during fetchProfile()
+        isLoggingIn, // only true during login()
+        isLoggingOut, // only true during logout()
         login,
         logout,
       }}

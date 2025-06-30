@@ -16,18 +16,18 @@ import Hero from '@components/common/Hero/Hero';
 import Icon from '@components/common/Icon/Icon';
 
 function Login() {
-  const { login, loading, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, isLoggingIn } = useAuth();
   const navigate = useNavigate();
 
   /**
    * On authentication state change, redirect authenticated users away from login.
    */
   useEffect(() => {
-    if (!loading && isAuthenticated) navigate('/dashboard', { replace: true });
-  }, [isAuthenticated, loading, navigate]);
+    if (!isLoggingIn && isAuthenticated) navigate('/dashboard', { replace: true });
+  }, [isLoggingIn, isAuthenticated, navigate]);
 
   // Don't show login if redirecting
-  if (isAuthenticated && loading) return <Spinner />;
+  if (isAuthenticated) return null;
 
   /**
    * Handles form submission for login, Determines whether the identifier is an email or username,
@@ -87,7 +87,7 @@ function Login() {
               type="text"
               autoComplete="username"
               required
-              disabled={loading}
+              disabled={isLoggingIn}
               size="md"
             />
 
@@ -97,13 +97,13 @@ function Login() {
               type="password"
               autoComplete="current-password"
               required
-              disabled={loading}
+              disabled={isLoggingIn}
               size="md"
             />
 
-            <Button className={styles.loginBtn} type="submit" size="md" disabled={loading} wide color="primary">
+            <Button className={styles.loginBtn} type="submit" size="md" disabled={isLoggingIn} wide color="primary">
               <span className={styles.line}>
-                {loading ? (
+                {isLoggingIn ? (
                   <>
                     <Spinner size={'sm'} /> Logging in...
                   </>

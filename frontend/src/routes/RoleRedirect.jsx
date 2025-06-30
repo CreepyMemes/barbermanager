@@ -3,12 +3,13 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@hooks/useAuth';
 
 function RoleRedirect() {
-  const { user, loading } = useAuth();
-  const navigate = useNavigate();
+  const { isAuthenticated, isFetchingProfile, user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (loading || !user) return;
+    // Don't do anything if user is not authenticattd or still fetching user data
+    if (!isAuthenticated || isFetchingProfile || !user) return;
 
     // Remove leading "/" if present
     const path = location.pathname.replace(/^\//, '');
@@ -19,7 +20,7 @@ function RoleRedirect() {
     } else {
       navigate('/', { replace: true });
     }
-  }, [user, loading, navigate, location]);
+  }, [isAuthenticated, isFetchingProfile, user, location, navigate]);
 
   return null;
 }
