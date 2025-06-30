@@ -1,0 +1,59 @@
+@use '@styles/variables.module.scss' as *;
+
+.client-dashboard {
+  background: $color-secondary;
+  border-radius: $border-radius;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  padding: 3rem 2.5rem 2.5rem;
+  max-width: 700px;
+  margin: 3rem auto;
+  color: $color-primary;
+
+  .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 1.8rem;
+    margin-bottom: 2rem;
+  }
+
+  .profile-img {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid $border;
+    background: $color-muted;
+  }
+
+  .big-title {
+    font-size: 2.3rem;
+    font-weight: 700;
+    color: $color-primary;
+    letter-spacing: 0.01em;
+    margin-bottom: 0.5em;
+  }
+
+  .section-title {
+    font-size: 1.18rem;
+    margin-bottom: 0.4em;
+    color: $color-primary;
+    font-weight: 600;
+  }
+
+  .appoint-list,
+  .review-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2.1rem 0;
+
+    li {
+      border-bottom: 1px solid $border;
+      padding: 0.75rem 0 0.75rem 0;
+      font-size: 1.13rem;
+      color: $color-primary;
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+}
