@@ -43,7 +43,7 @@ function Sidebar() {
 
   return (
     <aside className={`${styles.sidebar} ${open ? styles.open : styles.close}`}>
-      {loading ? (
+      {isAuthenticated && loading ? (
         <Spinner />
       ) : (
         <div className={styles.sidebarContent}>
