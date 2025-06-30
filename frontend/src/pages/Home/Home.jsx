@@ -11,20 +11,18 @@ import Logo from '@components/common/Logo/Logo';
 import Icon from '@components/common/Icon/Icon';
 
 function Home() {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, isLoggingOut } = useAuth();
   const navigate = useNavigate();
 
   /**
    * On authentication state change, redirect authenticated users away from home.
    */
   useEffect(() => {
-    if (!loading && isAuthenticated) {
-      navigate('/dashboard', { replace: true });
-    }
-  }, [isAuthenticated, loading, navigate]);
+    if (!isLoggingOut && isAuthenticated) navigate('/dashboard', { replace: true });
+  }, [isAuthenticated, isLoggingOut, navigate]);
 
   // Don't show landing if redirecting
-  if (loading || isAuthenticated) return <Spinner />;
+  if (isLoggingOut || isAuthenticated) return <Spinner />;
 
   return (
     <Hero>
@@ -34,6 +32,7 @@ function Home() {
 
           <div className={styles.container}>
             <Logo size="hg" split />
+
             <ul className={styles.features}>
               <li>
                 <span className={styles.featureTitle}>
@@ -65,14 +64,14 @@ function Home() {
               Get started
             </Button>
 
-            <p className={styles.footerNote}>No credit card required. Cancel anytime.</p>
+            <p className={styles.note}>No credit card required. Cancel anytime.</p>
           </div>
         </section>
       </Hero.Left>
 
       <Hero.Right>
         <section className={styles.visual}>
-          <img src={splash} alt="BarberManager dashboard preview" className={styles.visualImg} />
+          <img className={styles.image} src={splash} alt="BarberManager dashboard" />
         </section>
       </Hero.Right>
     </Hero>

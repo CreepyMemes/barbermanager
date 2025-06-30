@@ -7,10 +7,7 @@ import Layout from '@components/layout/Layout/Layout';
 import Home from '@pages/Home/Home';
 import Login from '@pages/Login/Login';
 import NotFound from '@pages/NotFound/NotFound';
-
-import AdminDashboard from '@pages/admin/Dashboard/AdminDashboard';
-import BarberDashboard from '@pages/barber/Dashboard/BarberDashboard';
-import ClientDashboard from '@pages/client/Dashboard/ClientDashboard';
+import Dashboard from '@pages/Dashboard/Dashboard';
 
 // Helper for cleaner protected route declaration
 const protectedRoute = (element, role) => <ProtectedRoute role={role}>{element}</ProtectedRoute>;
@@ -19,31 +16,22 @@ function AppRoutes() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        {/* Public pages */}
+        {/* Public pages (no need to be authenticated) */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        {/* <Route path="/register" element={<Register />} /> */}
 
-        {/* Shortcut redirects for dashboard, settings, profile */}
+        {/* Shortcut redirects (from /:page to  /:role/:page) */}
         <Route path="dashboard" element={protectedRoute(<RoleRedirect />)} />
-        {/* <Route path="profile" element={protectedRoute(<RoleRedirect />)} /> */}
+        {/* <Route path="settings" element={protectedRoute(<RoleRedirect />)} /> */}
 
-        {/* Admin pages */}
-        <Route path="admin">
-          <Route path="dashboard" element={protectedRoute(<AdminDashboard />, 'ADMIN')} />
-          {/* <Route path="profile" element={protectedRoute(<AdminProfile />, 'ADMIN')} /> */}
-        </Route>
+        {/* Role based pages */}
+        <Route path=":role/dashboard" element={protectedRoute(<Dashboard />)} />
+        {/* <Route path=":role/settings" element={protectedRoute(<Settings />)} /> */}
 
-        {/* Barber pages */}
-        <Route path="barber">
-          <Route path="dashboard" element={protectedRoute(<BarberDashboard />, 'BARBER')} />
-        </Route>
+        {/* Unique role protected pages */}
+        {/* <Route path="admin/barbers" element={protectedRoute(<div>hello</div>, 'ADMIN')} /> */}
 
-        {/* Client pages */}
-        <Route path="client">
-          <Route path="dashboard" element={protectedRoute(<ClientDashboard />, 'CLIENT')} />
-        </Route>
-
+        {/* 404 page (this must be last) */}
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

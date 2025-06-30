@@ -10,6 +10,9 @@ import ServiceIcon from './service.svg?react';
 import MenuIcon from './menu.svg?react';
 import DocsIcon from './docs.svg?react';
 import BugIcon from './bug.svg?react';
+import RevenueIcon from './revenue.svg?react';
+import AvailabilityIcon from './availability.svg?react';
+import CalendarIcon from './calendar.svg?react';
 
 const icons = {
   github: GithubIcon,
@@ -24,6 +27,9 @@ const icons = {
   menu: MenuIcon,
   docs: DocsIcon,
   bug: BugIcon,
+  revenue: RevenueIcon,
+  availability: AvailabilityIcon,
+  calendar: CalendarIcon,
 };
 
 export default icons;

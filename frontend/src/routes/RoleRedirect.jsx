@@ -1,27 +1,21 @@
-import { useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation, Navigate } from 'react-router-dom';
 import { useAuth } from '@hooks/useAuth';
 
+/**
+ * Redirects only for shortcuts, from `/:page` to `/:role/:page`
+ */
 function RoleRedirect() {
-  const { user, loading } = useAuth();
-  const navigate = useNavigate();
+  const { isAuthenticated, isFetchingProfile, profile } = useAuth();
   const location = useLocation();
 
-  useEffect(() => {
-    if (loading || !user) return;
+  // Don't do anything if user is not authenticattd or still fetching user data
+  if (!isAuthenticated || isFetchingProfile || !profile) return null;
 
-    // Remove leading "/" if present
-    const path = location.pathname.replace(/^\//, '');
+  // Always in a known path (dashboard/settings/profile) at this point.
+  const page = location.pathname.replace(/^\//, '');
 
-    // Redirects `/<page>` to `/<role>/<page>`
-    if (user.role && path) {
-      navigate(`/${user.role.toLowerCase()}/${path}`, { replace: true });
-    } else {
-      navigate('/', { replace: true });
-    }
-  }, [user, loading, navigate, location]);
-
-  return null;
+  // Redirect `/:page` to `/:role/:page`
+  return <Navigate to={`/${profile.role.toLowerCase()}/${page}`} replace />;
 }
 
 export default RoleRedirect;

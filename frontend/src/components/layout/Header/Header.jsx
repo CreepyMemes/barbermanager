@@ -8,7 +8,7 @@ import Spinner from '@components/common/Spinner/Spinner';
 import Button from '@components/common/Button/Button';
 
 function Header() {
-  const { isAuthenticated, user, profile, logout, loading } = useAuth();
+  const { isAuthenticated, profile, logout, isFetchingProfile } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -18,14 +18,14 @@ function Header() {
 
   return (
     <header className={styles.headerArea}>
-      {loading ? (
+      {isFetchingProfile ? (
         <Spinner />
       ) : (
         <div className={styles.header}>
           <Logo size="lg" button />
 
           <div className={styles.actions}>
-            {isAuthenticated && user && (
+            {isAuthenticated && profile && (
               <>
                 <Button onClick={handleLogout} size="md" color="primary">
                   Logout
