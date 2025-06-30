@@ -11,18 +11,18 @@ import Logo from '@components/common/Logo/Logo';
 import Icon from '@components/common/Icon/Icon';
 
 function Home() {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, isLoggingOut } = useAuth();
   const navigate = useNavigate();
 
   /**
    * On authentication state change, redirect authenticated users away from home.
    */
   useEffect(() => {
-    if (!loading && isAuthenticated) navigate('/dashboard', { replace: true });
-  }, [isAuthenticated, loading, navigate]);
+    if (!isLoggingOut && isAuthenticated) navigate('/dashboard', { replace: true });
+  }, [isAuthenticated, isLoggingOut, navigate]);
 
   // Don't show landing if redirecting
-  if (loading || isAuthenticated) return <Spinner />;
+  if (isLoggingOut || isAuthenticated) return <Spinner />;
 
   return (
     <Hero>
