@@ -1,0 +1,66 @@
+@use '@styles/variables.module.scss' as *;
+
+.card {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+  grid-column: span 2;
+
+  .icon {
+    border-radius: 50%;
+    background-color: $color-icon;
+    height: 4.5rem;
+    width: 4.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0.25rem;
+    box-shadow: 0 0.5rem 1.5rem rgba($color-accent, 0.05);
+  }
+
+  .content {
+    flex: 1;
+
+    .label {
+      color: $color-main;
+      font-weight: 700;
+      font-size: 1.22rem;
+      letter-spacing: 0.03em;
+      margin-bottom: 0.8rem;
+      line-height: 1.2;
+    }
+
+    .value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: $color-primary;
+      margin-bottom: 0.1rem;
+    }
+  }
+}
+
+// Special Card for Rating Chart
+.card-rating {
+  @extend .card;
+  min-height: 18rem;
+  justify-content: center;
+  align-items: center;
+
+  grid-row: span 2;
+
+  .chart {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.6rem;
+
+    .label {
+      font-size: 1.17rem;
+      font-weight: 700;
+      color: $color-main;
+      margin-bottom: 1.2rem;
+      text-align: center;
+    }
+  }
+}

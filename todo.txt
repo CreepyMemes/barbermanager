@@ -13,9 +13,8 @@ Proposed:
 2. Frontend:
 
 Important:  
-  - cleanup Login and Home page, make them consistent
-
   - create reusable Dashboard component to use for each role
+  - make the spinner/skeleton thing like it's in Header
 
   - fix loading spinner to main page, only showing when loading first time
   - add skeleton loading for page components
@@ -32,6 +31,9 @@ Important:
 Proposed:
   - add media queries for screen sizes on each layout component 
   - make mobile sidebar button on header
+  
+  - see if it's worth it to fix loading spinner not showing when accessing dashboard from a route 
+    this happens because to redirect you need to be authenticated to get role
   
   - see how vite tests work and maybe implement some
 
