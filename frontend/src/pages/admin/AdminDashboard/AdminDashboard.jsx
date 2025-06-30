@@ -7,7 +7,6 @@ import Spinner from '@components/common/Spinner/Spinner';
 function AdminDashboard() {
   const { profile } = useAuth();
 
-  console.log(profile);
   if (!profile) return <Spinner />;
 
   return (
