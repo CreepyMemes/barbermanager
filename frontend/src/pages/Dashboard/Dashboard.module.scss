@@ -1,0 +1,10 @@
+@use '@styles/variables.module.scss' as *;
+
+.dashboard {
+  max-width: 100rem;
+  margin: 5rem auto;
+
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 5rem;
+}

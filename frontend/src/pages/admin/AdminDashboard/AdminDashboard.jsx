@@ -1,51 +1,77 @@
 import { useAuth } from '@hooks/useAuth';
 import styles from './AdminDashboard.module.scss';
-import defaultAvatar from '@assets/images/default-avatar.jpg';
-
-import Spinner from '@components/common/Spinner/Spinner';
+import Card from '@components/common/Card/Card';
+import Icon from '@components/common/Icon/Icon';
+import CakeChart from '@components/common/CakeChart/CakeChart';
 
 function AdminDashboard() {
   const { profile } = useAuth();
 
-  if (!profile) return <Spinner />;
-
   return (
-    <div className={styles.adminDashboard}>
-      <div className={styles.profileHeader}>
-        <img className={styles.profileImg} src={profile.profile_image || defaultAvatar} alt="Profile" />
-        <div className={styles.bigTitle}>
-          Welcome back {profile.name} {profile.surname}
-          <p>{profile.username}</p>
+    <>
+      {/* Clients */}
+      <Card className={styles.card}>
+        <div className={styles.icon}>
+          <Icon name="client" size="sm" black />
         </div>
-      </div>
+        <div className={styles.content}>
+          <div className={styles.label}>Total Clients</div>
+          <div className={styles.value}>{profile?.total_clients ?? 0}</div>
+        </div>
+      </Card>
 
-      <div className={styles.profileStats}>
-        <div className={styles.stat}>
-          <div className={styles.statValue}>{profile.total_clients}</div>
-          <div className={styles.statLabel}>Clients</div>
+      {/* Barbers */}
+      <Card className={styles.card}>
+        <div className={styles.icon}>
+          <Icon name="barber" size="sm" black />
         </div>
-        <div className={styles.stat}>
-          <div className={styles.statValue}>{profile.total_barbers}</div>
-          <div className={styles.statLabel}>Barbers</div>
+        <div className={styles.content}>
+          <div className={styles.label}>Total Barbers</div>
+          <div className={styles.value}>{profile?.total_barbers ?? 0}</div>
         </div>
-        <div className={styles.stat}>
-          <div className={styles.statValue}>{profile.total_appointments}</div>
-          <div className={styles.statLabel}>Appointments</div>
+      </Card>
+
+      {/* Appointments */}
+      <Card className={styles.card}>
+        <div className={styles.icon}>
+          <Icon name="appointment" size="sm" black />
         </div>
-        <div className={styles.stat}>
-          <div className={styles.statValue}>${profile.total_revenue}</div>
-          <div className={styles.statLabel}>Revenue</div>
+        <div className={styles.content}>
+          <div className={styles.label}>Total Appointments</div>
+          <div className={styles.value}>{profile?.total_appointments ?? 0}</div>
         </div>
-        <div className={styles.stat}>
-          <div className={styles.statValue}>{profile.total_reviews}</div>
-          <div className={styles.statLabel}>Reviews</div>
+      </Card>
+
+      {/* Revenue */}
+      <Card className={styles.card}>
+        <div className={styles.icon}>
+          <Icon name="revenue" size="sm" black />
         </div>
-        <div className={styles.stat}>
-          <div className={styles.statValue}>{profile.average_rating}</div>
-          <div className={styles.statLabel}>Avg Rating</div>
+        <div className={styles.content}>
+          <div className={styles.label}>Total Revenue</div>
+          <div className={styles.value}>${profile?.total_revenue ?? 0}</div>
         </div>
-      </div>
-    </div>
+      </Card>
+
+      {/* Reviews */}
+      <Card className={styles.card}>
+        <div className={styles.icon}>
+          <Icon name="review" size="sm" black />
+        </div>
+        <div className={styles.content}>
+          <div className={styles.label}>Total Reviews</div>
+          <div className={styles.value}>{profile?.total_reviews ?? 0}</div>
+        </div>
+      </Card>
+
+      {/* Average Rating */}
+      <Card className={styles.cardRating}>
+        <div className={styles.chart}>
+          <div className={styles.label}>Average Rating</div>
+          <CakeChart value={profile?.average_rating ?? 0} max={5} />
+        </div>
+      </Card>
+    </>
   );
 }
 

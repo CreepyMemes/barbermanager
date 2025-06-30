@@ -1,61 +1,139 @@
 @use '@styles/variables.module.scss' as *;
 
-.barber-dashboard {
-  background: $color-secondary;
-  border-radius: $border-radius;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
-  padding: 3rem 2.5rem 2.5rem;
-  max-width: 700px;
-  margin: 3rem auto;
-  color: $color-primary;
+.card {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
 
-  .profile-header {
-    display: flex;
-    align-items: center;
-    gap: 1.8rem;
-    margin-bottom: 2rem;
-  }
+  grid-column: span 2;
 
-  .profile-img {
-    width: 55px;
-    height: 55px;
+  .icon {
     border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid $border;
-    background: $color-muted;
+    background-color: $color-icon;
+    height: 4.5rem;
+    width: 4.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0.25rem;
+    box-shadow: 0 0.5rem 1.5rem rgba($color-accent, 0.05);
   }
 
-  .big-title {
-    font-size: 2.3rem;
-    font-weight: 700;
-    color: $color-primary;
-    letter-spacing: 0.01em;
-    margin-bottom: 0.5em;
-  }
+  .content {
+    flex: 1;
 
-  .section-title {
-    font-size: 1.25rem;
-    margin-top: 1.5rem;
-    margin-bottom: 0.7rem;
-    color: $color-primary;
-    font-weight: 600;
-  }
+    .label {
+      color: $color-main;
+      font-weight: 700;
+      font-size: 1.22rem;
+      letter-spacing: 0.03em;
+      margin-bottom: 0.8rem;
+      line-height: 1.2;
+    }
 
-  .service-list,
-  .avail-list,
-  .review-list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 2.1rem 0;
+    .list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
 
-    li {
-      border-bottom: 1px solid $border;
-      padding: 0.75rem 0 0.75rem 0;
-      font-size: 1.13rem;
-      color: $color-primary;
-      &:last-child {
-        border-bottom: none;
+      .list-item {
+        display: flex;
+        align-items: baseline;
+        gap: 0.75rem;
+        font-size: 1.09rem;
+        line-height: 1.5;
+        margin-bottom: 0.4rem;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        // Services styles
+        .service-name {
+          font-weight: 700;
+          color: $color-primary;
+          flex: 0 1 auto;
+          font-size: 1.15rem;
+        }
+        .price {
+          color: $color-muted;
+          font-weight: 600;
+          margin-left: auto;
+          font-size: 1.07rem;
+        }
+
+        // Availabilities styles
+        .availability-date {
+          font-weight: 700;
+          color: $color-accent;
+          padding-right: 0.5rem;
+          font-size: 1.04rem;
+        }
+        .availability-slots {
+          color: $color-main;
+          font-size: 1.05rem;
+          opacity: 0.88;
+        }
+
+        // Reviews styles
+        .stars {
+          color: #fabb3d;
+          font-size: 1.09rem;
+          letter-spacing: 0.1em;
+          font-family: inherit;
+          font-weight: 700;
+        }
+        .review-comment {
+          color: $color-lighter;
+          margin-left: 0.7rem;
+          font-size: 1.02rem;
+          max-width: 14rem;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .review-date {
+          color: $color-muted;
+          margin-left: 0.9rem;
+          font-size: 0.96rem;
+          font-style: italic;
+        }
       }
+
+      .empty {
+        color: $color-muted;
+        font-style: italic;
+        font-size: 1.04rem;
+        padding-top: 0.6rem;
+        letter-spacing: 0.01em;
+      }
+    }
+  }
+}
+
+// Special Card for Rating Chart
+.card-rating {
+  @extend .card;
+  min-height: 18rem;
+  justify-content: center;
+  align-items: center;
+
+  grid-row: span 2;
+  grid-column: span 1;
+
+  .chart {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.6rem;
+
+    .label {
+      font-size: 1.17rem;
+      font-weight: 700;
+      color: $color-main;
+      margin-bottom: 1.2rem;
+      text-align: center;
     }
   }
 }
