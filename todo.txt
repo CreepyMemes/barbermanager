@@ -13,12 +13,6 @@ Proposed:
 2. Frontend:
 
 Important:  
-  - create reusable Dashboard component to use for each role
-  - make the spinner/skeleton thing like it's in Header
-
-  - fix loading spinner to main page, only showing when loading first time
-  - add skeleton loading for page components
-
   - implement register page for clients (through /login route), use Hero component
   - implement register page for barbers (from invitation email link), use Hero component
   - verify-email send GET request to verify then redirect to login page,
@@ -30,7 +24,9 @@ Important:
 
 Proposed:
   - add media queries for screen sizes on each layout component 
-  - make mobile sidebar button on header
+    make mobile sidebar button on header
+
+  - add skeleton loading for page components
   
   - see if it's worth it to fix loading spinner not showing when accessing dashboard from a route 
     this happens because to redirect you need to be authenticated to get role
