@@ -13,9 +13,9 @@ Proposed:
 2. Frontend:
 
 Important:  
-  - cleanup Login and Home page, make them consistent
-
+  - in auth provider, implement isLoggingOut differentiation in loading
   - create reusable Dashboard component to use for each role
+  - make the spinner/skeleton thing like it's in Header
 
   - fix loading spinner to main page, only showing when loading first time
   - add skeleton loading for page components

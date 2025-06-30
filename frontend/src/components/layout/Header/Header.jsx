@@ -18,7 +18,7 @@ function Header() {
 
   return (
     <header className={styles.headerArea}>
-      {loading ? (
+      {isAuthenticated && loading ? (
         <Spinner />
       ) : (
         <div className={styles.header}>

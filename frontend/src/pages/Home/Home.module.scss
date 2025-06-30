@@ -1,42 +1,39 @@
 @use '@styles/variables.module.scss' as *;
 
 .left {
-  padding: 4rem 2.5rem 3rem 0;
+  // padding: 4rem 2.5rem 3rem 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
   // max-width: 50%;
 
   .heading {
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid $border;
+
+    text-align: center;
     font-size: 3.2rem;
     font-weight: 700;
     color: $color-light;
-    margin-bottom: 0.6rem;
     letter-spacing: 0.02em;
   }
 
-  .subheading {
-    font-size: 1.7rem;
-    color: $color-muted;
-    margin-bottom: 2.4rem;
-    font-weight: 400;
-    line-height: 1.4;
-  }
-
   .container {
+    margin-block: 3rem;
     display: flex;
     gap: 3rem;
-
-    margin-block: 3rem;
 
     .features {
       list-style: none;
       padding: 0;
 
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+
       li {
         display: flex;
         flex-direction: column;
-        margin-bottom: 1.2rem;
 
         .feature-title {
           display: flex;
@@ -57,37 +54,33 @@
   }
 
   .actions {
+    padding-top: 1.5rem;
+    border-top: 1px solid $border;
+
     display: flex;
     align-items: center;
-
+    justify-content: center;
     gap: 2rem;
-  }
-  .footerNote {
-    text-align: left;
-    color: $color-muted;
-    font-size: 1rem;
-    margin-top: 0.4rem;
-    opacity: 0.7;
+
+    .note {
+      text-align: left;
+      color: $color-muted;
+      font-size: 1.5rem;
+    }
   }
 }
 
 .visual {
-  // background: $color-card;
-  min-height: 320px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: $border-radius;
+  position: relative;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
 
-  .visualImg {
-    max-width: 380px;
-
+  .image {
     width: 100%;
-    height: auto;
-    box-shadow: 0 4px 32px rgba(54, 54, 52, 0.12);
-    /* Use filter: grayscale(0.2) for muted style if needed */
+    height: 100%;
+    object-fit: cover; // THIS is the key!
+    display: block;
   }
 }
 
