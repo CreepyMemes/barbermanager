@@ -13,7 +13,7 @@ Proposed:
 2. Frontend:
 
 Important:  
-  - in auth provider, implement isLoggingOut differentiation in loading
+  - fix loading spinner not showing when accessing dashboard from a route
   - create reusable Dashboard component to use for each role
   - make the spinner/skeleton thing like it's in Header
 

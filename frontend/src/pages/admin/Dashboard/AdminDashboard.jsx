@@ -5,9 +5,10 @@ import defaultAvatar from '@assets/images/default-avatar.jpg';
 import Spinner from '@components/common/Spinner/Spinner';
 
 function AdminDashboard() {
-  const { profile, loading } = useAuth();
+  const { profile } = useAuth();
 
-  if (loading | !profile) return <Spinner />;
+  console.log(profile);
+  if (!profile) return <Spinner />;
 
   return (
     <div className={styles.adminDashboard}>

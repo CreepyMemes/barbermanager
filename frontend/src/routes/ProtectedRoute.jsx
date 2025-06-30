@@ -2,16 +2,13 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '@hooks/useAuth';
 
 function ProtectedRoute({ children, role }) {
-  const { isAuthenticated, user, loading } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
-  if (loading) return null;
+  // Redirect to login if not authenticated
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  // If role is specified, check user role (if user is authenticated, user object should exist)
-  if (role && user?.role !== role) {
+  // If a role is needed and the user has the wrong role, redirect to their own dashboard
+  if (role && user && user.role !== role) {
     const redirectPath = `/${user.role.toLowerCase()}/dashboard`;
     return <Navigate to={redirectPath} replace />;
   }

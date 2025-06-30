@@ -30,32 +30,32 @@ const clientNav = [
 ];
 
 function Sidebar() {
-  const { isAuthenticated, user, profile, loading } = useAuth();
-  const [open, setOpen] = useState(true); // <--- Sidebar open/collapsed state
+  const { isAuthenticated, profile, isFetchingProfile } = useAuth();
+  const [open, setOpen] = useState(true); // Sidebar open/collapsed state
 
   // Get role specific nav items
-  let navItems;
-  if (!loading && user) {
-    if (user.role === 'ADMIN') navItems = adminNav;
-    else if (user.role === 'BARBER') navItems = barberNav;
-    else if (user.role === 'CLIENT') navItems = clientNav;
+  let navItems = [];
+  if (!isFetchingProfile && profile) {
+    if (profile.role === 'ADMIN') navItems = adminNav;
+    else if (profile.role === 'BARBER') navItems = barberNav;
+    else if (profile.role === 'CLIENT') navItems = clientNav;
   }
 
   return (
     <aside className={`${styles.sidebar} ${open ? styles.open : styles.close}`}>
-      {isAuthenticated && loading ? (
+      {isFetchingProfile ? (
         <Spinner />
       ) : (
         <div className={styles.sidebarContent}>
           <div className={`${styles.inner} ${open ? styles.show : styles.hide}`}>
             <div className={styles.top}>
-              {isAuthenticated && user && (
+              {isAuthenticated && profile && (
                 <div className={styles.profile}>
                   <img src={profile.profile_image || defaultAvatar} alt="Profile" />
 
                   <div>
-                    <div className={styles.username}>{user.username || user.email}</div>
-                    <div className={styles.role}>{user.role?.toLowerCase() || ''}</div>
+                    <div className={styles.username}>{profile.username || profile.email}</div>
+                    <div className={styles.role}>{profile.role?.toLowerCase() || ''}</div>
                   </div>
                 </div>
               )}
