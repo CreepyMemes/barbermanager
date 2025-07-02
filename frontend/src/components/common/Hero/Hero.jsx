@@ -9,16 +9,22 @@ function Hero({ children }) {
 
   return (
     <div className={styles.hero}>
-      <div className={styles.left}>{left}</div>
-
-      <div className={styles.right}>{right}</div>
+      {left}
+      {right}
     </div>
   );
 }
 
 // Simple Left and Right subcomponents
-const Left = ({ children }) => <>{children}</>;
-const Right = ({ children }) => <>{children}</>;
+const Left = ({ children, className }) => {
+  const computedClassName = [styles.left, className].join(' ');
+  return <aside className={computedClassName}>{children}</aside>;
+};
+
+const Right = ({ children, className }) => {
+  const computedClassName = [styles.right, className].join(' ');
+  return <main className={computedClassName}>{children}</main>;
+};
 
 // Set display names for subcomponent identification
 Left.displayName = 'HeroLeft';

@@ -6,7 +6,7 @@ function Icon({ name, size = 'md', black = false }) {
   if (!SvgIcon) return null;
 
   // Get all style classes into a string
-  const computedClassName = [styles.wrapper, styles[size], styles[size]].join(' ');
+  const computedClassName = [styles.wrapper, styles[size]].join(' ');
 
   return (
     <span className={computedClassName}>
