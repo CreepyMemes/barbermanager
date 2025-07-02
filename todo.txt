@@ -13,16 +13,11 @@ Proposed:
 2. Frontend:
 
 Important:  
-  - fix username can have spaces in it, disallow in Backend
-
-  - create verify-email Page (sends GET request to verify then redirects to login page)
+  - implement register page for barbers (from invitation email link), use Hero component
   - change email frontend url in email template and implement a route for it
 
-  - implement register page for barbers (from invitation email link), use Hero component
-
   - implement reset password page
-  - implement forgot password? in Login page
-
+  - change email frontend url in email template and implement a route for it
 
 Proposed:
   - cleanup Form code, make it work automagically (Form.Button, auto fields, Form.Input, etc)

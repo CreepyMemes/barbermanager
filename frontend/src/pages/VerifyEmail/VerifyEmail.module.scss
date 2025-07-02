@@ -1,0 +1,55 @@
+@use '@styles/variables.module.scss' as *;
+
+.page {
+  max-width: 100% !important;
+  min-width: 30rem;
+
+  .verify {
+    width: 50%;
+
+    .center {
+      padding-block: 2rem;
+      color: $color-primary;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+
+      h2 {
+        font-size: 2.3rem;
+        text-align: center;
+      }
+
+      .message {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+      }
+    }
+  }
+}
+
+@media (max-width: $bp-small) {
+  .page {
+    min-width: none;
+
+    .verify {
+      .center {
+        h2 {
+          font-size: 1.5rem;
+        }
+
+        .message {
+          font-size: 1rem;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: $bp-small) {
+  .login {
+    margin: 3rem;
+  }
+}

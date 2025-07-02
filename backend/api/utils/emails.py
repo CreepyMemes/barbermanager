@@ -6,8 +6,7 @@ def send_client_verify_email(email, uid, token, domain):
     """
     Sends email confirmation link to client after registration.
     """
-    path = reverse('verify_client_email', kwargs={'uidb64': uid, 'token': token})
-    link = f'{domain}{path}'
+    link = f'{domain}/verify/{uid}/{token}'
 
     subject = '[BarberManager] Verify your email to register as a client'
     message = (

@@ -10,6 +10,7 @@ from ..utils import (
     UsernameValidationMixin,
     EmailValidationMixin, 
     PasswordValidationMixin,
+    PhoneNumberValidationMixin,
     UIDTokenValidationSerializer,
     get_user_from_uid_token, 
 )
@@ -27,7 +28,7 @@ class GetCurrentUserSerializer(UserValidationMixin, serializers.Serializer):
         return {'me': user.to_dict()}
     
 
-class RegisterClientSerializer(UsernameValidationMixin, EmailValidationMixin, PasswordValidationMixin, serializers.Serializer):
+class RegisterClientSerializer(UsernameValidationMixin, EmailValidationMixin, PasswordValidationMixin, PhoneNumberValidationMixin, serializers.Serializer):
     """
     Register a client. Sends a confirmation email.
     Client must provide valid username and password
@@ -40,8 +41,11 @@ class RegisterClientSerializer(UsernameValidationMixin, EmailValidationMixin, Pa
     phone_number = serializers.CharField(required=False)
 
     def validate(self, attrs):
+        attrs = self.validate_username_format(attrs)
         attrs = self.validate_username_unique(attrs)
         attrs = self.validate_email_unique(attrs)
+        attrs = self.validate_phone_number_format(attrs)
+        
         return attrs
     
     def create(self, validated_data):
@@ -52,6 +56,7 @@ class RegisterClientSerializer(UsernameValidationMixin, EmailValidationMixin, Pa
             surname=validated_data['surname'],
             is_active=False
         )
+
         if 'phone_number' in validated_data:
             client.phone_number = validated_data['phone_number']
 

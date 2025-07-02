@@ -31,7 +31,7 @@ SITE_ID = 1
 
 # Custom authentication backend for logging with either email/pass or usrname/pass
 AUTHENTICATION_BACKENDS = [
-    'api.utils.UsernameOrEmailBackend', 
+    'api.backends.auth.UsernameOrEmailBackend', 
     'django.contrib.auth.backends.ModelBackend',
 ]
 
@@ -46,7 +46,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
-    'EXCEPTION_HANDLER': 'api.utils.customExceptionHandler',
+    'EXCEPTION_HANDLER': 'api.backends.exceptions.customExceptionHandler',
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
