@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./frontend/assets/images/logo.png" height="100px" alt="BarberManager Logo"/>
+  <img src="./frontend/assets/images/logo.webp" height="100px" alt="BarberManager Logo"/>
   <h1>BarberManager</h1>
 
 [![Deploy to Production](https://github.com/CreepyMemes/barbermanager/actions/workflows/deploy.yml/badge.svg?branch=master)](https://github.com/CreepyMemes/barbermanager/actions/workflows/deploy.yml)
