@@ -1,25 +1,5 @@
 @use '@styles/variables.module.scss' as *;
 
-.registered {
-  position: absolute;
-  z-index: 1000;
-  top: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-
-  min-width: 30rem;
-
-  display: flex;
-  align-items: center;
-  font-size: 1.1rem;
-  gap: 1rem;
-
-  strong {
-    font-size: 1.2em;
-    color: inherit;
-  }
-}
-
 // Left Side
 .description {
   display: flex;
@@ -56,13 +36,13 @@
 }
 
 // Right Side
-.login {
-  width: 35rem;
+.register {
+  width: 47rem;
 
-  .login-form {
+  .register-form {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 2rem;
 
     .label {
       margin-bottom: 1rem;
@@ -72,8 +52,13 @@
       color: $color-primary;
     }
 
-    .login-btn {
-      margin-top: 2rem;
+    .input-group {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .register-btn {
+      margin-top: 1rem;
     }
 
     .forgot-btn {
@@ -88,20 +73,29 @@
   }
 }
 
+@media (max-width: $bp-medium) {
+  .register {
+    width: 40rem;
+  }
+}
+
 @media (max-width: $bp-medium-small) {
-  .login {
+  .register {
     width: fit-content;
 
-    .login-form {
-      display: flex;
-      flex-direction: column;
+    .register-form {
       gap: 0.5rem;
+
+      .input-group {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
     }
   }
 }
 
 @media (max-width: $bp-small) {
-  .login {
+  .register {
     margin: 3rem;
   }
 }

@@ -3,14 +3,7 @@ import uuid
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import  force_str
 from django.contrib.auth.tokens import default_token_generator
-from django.core.validators import RegexValidator
 from rest_framework import serializers
-
-
-phone_number_validator = RegexValidator(
-    regex=r'^\+?[1-9]\d{1,14}$', 
-    message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed (E.164 format)."
-)
 
 
 def get_profile_image_path(instance, filename):

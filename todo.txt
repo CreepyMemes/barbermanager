@@ -13,16 +13,15 @@ Proposed:
 2. Frontend:
 
 Important:  
-  - implement register page for clients (through /login route), use Hero component
   - implement register page for barbers (from invitation email link), use Hero component
-  - verify-email send GET request to verify then redirect to login page,
   - change email frontend url in email template and implement a route for it
 
   - implement reset password page
-  - implement forgot password? in Login page
-
+  - change email frontend url in email template and implement a route for it
 
 Proposed:
+  - cleanup Form code, make it work automagically (Form.Button, auto fields, Form.Input, etc)
+  
   - add media queries for screen sizes on each layout component 
     make mobile sidebar button on header
 

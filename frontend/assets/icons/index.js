@@ -13,6 +13,7 @@ import BugIcon from './bug.svg?react';
 import RevenueIcon from './revenue.svg?react';
 import AvailabilityIcon from './availability.svg?react';
 import CalendarIcon from './calendar.svg?react';
+import EmailIcon from './email.svg?react';
 
 const icons = {
   github: GithubIcon,
@@ -30,6 +31,7 @@ const icons = {
   revenue: RevenueIcon,
   availability: AvailabilityIcon,
   calendar: CalendarIcon,
+  email: EmailIcon,
 };
 
 export default icons;

@@ -55,7 +55,8 @@
           flex: 0 1 auto;
           font-size: 1.15rem;
         }
-        .price {
+
+        .service-price {
           color: $color-muted;
           font-weight: 600;
           margin-left: auto;
@@ -83,6 +84,7 @@
           font-family: inherit;
           font-weight: 700;
         }
+
         .review-comment {
           color: $color-lighter;
           margin-left: 0.7rem;
@@ -92,9 +94,10 @@
           overflow: hidden;
           text-overflow: ellipsis;
         }
+
         .review-date {
           color: $color-muted;
-          margin-left: 0.9rem;
+          margin-left: auto;
           font-size: 0.96rem;
           font-style: italic;
         }
@@ -118,8 +121,8 @@
   justify-content: center;
   align-items: center;
 
-  grid-row: span 2;
-  grid-column: span 1;
+  // grid-row: span 2;
+  // grid-column: 4 / 5;
 
   .chart {
     width: 100%;

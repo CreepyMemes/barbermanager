@@ -3,11 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@hooks/useAuth';
 import styles from './Home.module.scss';
 
-import splash from '@assets/images/splash.webp';
 import Spinner from '@components/common/Spinner/Spinner';
 import Button from '@components/common/Button/Button';
 import Hero from '@components/common/Hero/Hero';
-import Logo from '@components/common/Logo/Logo';
+import SidePanel from '@components/common/SidePanel/SidePanel';
 import Icon from '@components/common/Icon/Icon';
 
 function Home() {
@@ -27,12 +26,8 @@ function Home() {
   return (
     <Hero>
       <Hero.Left>
-        <section className={styles.left}>
-          <h1 className={styles.heading}>Barbershop management platform</h1>
-
-          <div className={styles.container}>
-            <Logo size="hg" split />
-
+        <SidePanel heading="Barbershop management platform">
+          <SidePanel.Inner>
             <ul className={styles.features}>
               <li>
                 <span className={styles.featureTitle}>
@@ -45,7 +40,7 @@ function Home() {
               <li>
                 <span className={styles.featureTitle}>
                   <Icon name="client" size="sm" />
-                  <p>Customer Relationship</p>{' '}
+                  <p>Customer Relationship</p>
                 </span>
                 <span>Track client history, notes, and preferences for unbeatable service.</span>
               </li>
@@ -57,23 +52,19 @@ function Home() {
                 <span>Collect feedback, drive loyalty and get insights to grow your business.</span>
               </li>
             </ul>
-          </div>
+          </SidePanel.Inner>
 
-          <div className={styles.actions}>
+          <SidePanel.Actions>
             <Button href="/register" size="lg" color="secondary">
               Get started
             </Button>
 
             <p className={styles.note}>No credit card required. Cancel anytime.</p>
-          </div>
-        </section>
+          </SidePanel.Actions>
+        </SidePanel>
       </Hero.Left>
 
-      <Hero.Right>
-        <section className={styles.visual}>
-          <img className={styles.image} src={splash} alt="BarberManager dashboard" />
-        </section>
-      </Hero.Right>
+      <Hero.Right background={'splash'}></Hero.Right>
     </Hero>
   );
 }
