@@ -37,7 +37,7 @@
 
 // Right Side
 .register {
-  // width: 30rem;
+  width: 47rem;
 
   .register-form {
     display: flex;
@@ -70,5 +70,32 @@
       display: flex;
       gap: 1rem;
     }
+  }
+}
+
+@media (max-width: $bp-medium) {
+  .register {
+    width: 40rem;
+  }
+}
+
+@media (max-width: $bp-medium-small) {
+  .register {
+    width: fit-content;
+
+    .register-form {
+      gap: 0.5rem;
+
+      .input-group {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    }
+  }
+}
+
+@media (max-width: $bp-small) {
+  .register {
+    margin: 3rem;
   }
 }

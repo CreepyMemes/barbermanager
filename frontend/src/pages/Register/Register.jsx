@@ -48,18 +48,18 @@ function Register() {
     return undefined;
   };
 
-  // On submit: create account, then redirect to login (typical scenario)
-  const handleRegister = async ({ name, surname, username, email, password, passwordConfirm }) => {
+  /**
+   * Handles form submission for registering a new account to the api
+   * If successfull redirect to login page, otherwise displays error messages on failure.
+   */
+  const handleRegister = async ({ name, surname, username, email, password }) => {
     setLoading(true);
 
     try {
-      if (password !== passwordConfirm) throw new Error('Passwords do not match');
-      // You can call your backend and handle edge case errors here (FormProvider catches)
       await api.auth.registerClient({ name, surname, username, email, password });
       navigate('/login?registered=1', { replace: true });
-    } catch (error) {
+    } finally {
       setLoading(false);
-      throw error;
     }
   };
 
@@ -108,59 +108,18 @@ function Register() {
             <h2 className={styles.label}>Sign up</h2>
 
             <div className={styles.inputGroup}>
-              <Input
-                label="Name"
-                name="name"
-                type="text"
-                required
-                size="md" //
-              />
-
-              <Input
-                label="Surname"
-                name="surname"
-                type="text"
-                required
-                size="md" //
-              />
+              <Input label="Name" name="name" type="text" required size="md" />
+              <Input label="Surname" name="surname" type="text" required size="md" />
             </div>
 
             <div className={styles.inputGroup}>
-              <Input
-                label="Username"
-                name="username"
-                type="text"
-                required
-                size="md" //
-              />
-
-              <Input
-                label="Email"
-                name="email"
-                type="email"
-                required
-                size="md" //
-              />
+              <Input label="Username" name="username" type="text" required size="md" />
+              <Input label="Email" name="email" type="email" required size="md" />
             </div>
 
             <div className={styles.inputGroup}>
-              <Input
-                label="Password"
-                name="password"
-                type="password"
-                required
-                minLength={8}
-                size="md" //
-              />
-
-              <Input
-                label="Confirm password"
-                name="passwordConfirm"
-                type="password"
-                required
-                minLength={8}
-                size="md" //
-              />
+              <Input label="Password" name="password" type="password" required size="md" />
+              <Input label="Confirm password" name="passwordConfirm" type="password" required size="md" />
             </div>
 
             <Button className={styles.registerBtn} type="submit" size="md" disabled={loading} wide color="primary">
