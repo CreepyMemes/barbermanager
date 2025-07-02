@@ -4,15 +4,14 @@ import { useAuth } from '@hooks/useAuth';
 import { isEmail } from '@utils/utils';
 import styles from './Login.module.scss';
 
+import Spinner from '@components/common/Spinner/Spinner';
 import Card from '@components/common/Card/Card';
-import Logo from '@components/common/Logo/Logo';
-
 import Form from '@components/common/Form/Form';
 import Input from '@components/common/Input/Input';
 import Button from '@components/common/Button/Button';
 import Error from '@components/common/Error/Error';
-import Spinner from '@components/common/Spinner/Spinner';
 import Hero from '@components/common/Hero/Hero';
+import SidePanel from '@components/common/SidePanel/SidePanel';
 import Icon from '@components/common/Icon/Icon';
 
 function Login() {
@@ -41,39 +40,35 @@ function Login() {
   return (
     <Hero>
       <Hero.Left>
-        <section className={styles.left}>
-          <h1 className={styles.heading}>Welcome back</h1>
-
-          <div className={styles.container}>
-            <Logo size="hg" split />
-
+        <SidePanel heading="Welcome back" subheading="Manage your barbershop with ease">
+          <SidePanel.Inner>
             <div className={styles.description}>
-              <h2>Manage your barbershop with ease</h2>
-
+              <h2>All your barbershop needs in one place</h2>
               <ul className={styles.features}>
                 <li>
-                  <Icon name="barber" size="sm" />
-                  <p>Run your barbershop smoothly.</p>
-                </li>
-                <li>
                   <Icon name="appointment" size="sm" />
-                  <p>Book. Manage. Grow.</p>
+                  <p>Book and manage appointments easily.</p>
                 </li>
                 <li>
-                  <Icon name="client" size="sm" />
-                  <p>Appointments, clients, reviews. All in one place.</p>
+                  <Icon name="service" size="sm" />
+                  <p>Personalized experience for barbers and clients.</p>
+                </li>
+                <li>
+                  <Icon name="review" size="sm" />
+                  <p>View and share reviews.</p>
                 </li>
               </ul>
             </div>
-          </div>
+          </SidePanel.Inner>
 
-          <div className={styles.actions}>
-            <p className={styles.note}>Don&apos;t already have an account?</p>
+          <SidePanel.Actions>
+            <p className={styles.note}>Don&apos;t have an account?</p>
+
             <Button href="/register" color="secondary" size="md" width="content">
               Sign up!
             </Button>
-          </div>
-        </section>
+          </SidePanel.Actions>
+        </SidePanel>
       </Hero.Left>
 
       <Hero.Right background={'background'}>
