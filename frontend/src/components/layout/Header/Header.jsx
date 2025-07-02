@@ -44,7 +44,7 @@ function Header() {
                 </Button>
 
                 <Button href="/register" size="md" color="secondary">
-                  Register
+                  Sign up
                 </Button>
               </>
             )}

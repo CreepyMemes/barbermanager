@@ -37,14 +37,12 @@
 
 // Right Side
 .login {
-  position: relative;
-  z-index: 1;
-  width: 30rem;
+  width: 35rem;
 
   .login-form {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1rem;
 
     .label {
       margin-bottom: 1rem;
@@ -55,7 +53,7 @@
     }
 
     .login-btn {
-      margin-top: 1.7rem;
+      margin-top: 2rem;
     }
 
     .forgot-btn {
