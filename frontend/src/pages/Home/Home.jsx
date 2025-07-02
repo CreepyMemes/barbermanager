@@ -6,9 +6,8 @@ import styles from './Home.module.scss';
 import Spinner from '@components/common/Spinner/Spinner';
 import Button from '@components/common/Button/Button';
 import Hero from '@components/common/Hero/Hero';
-import Logo from '@components/common/Logo/Logo';
+import SidePanel from '@components/common/SidePanel/SidePanel';
 import Icon from '@components/common/Icon/Icon';
-import Image from '@components/common/Image/Image';
 
 function Home() {
   const { isAuthenticated, isLoggingOut } = useAuth();
@@ -27,12 +26,8 @@ function Home() {
   return (
     <Hero>
       <Hero.Left>
-        <section className={styles.left}>
-          <h1 className={styles.heading}>Barbershop management platform</h1>
-
-          <div className={styles.container}>
-            <Logo size="hg" split />
-
+        <SidePanel heading="Barbershop management platform">
+          <SidePanel.Inner>
             <ul className={styles.features}>
               <li>
                 <span className={styles.featureTitle}>
@@ -57,16 +52,16 @@ function Home() {
                 <span>Collect feedback, drive loyalty and get insights to grow your business.</span>
               </li>
             </ul>
-          </div>
+          </SidePanel.Inner>
 
-          <div className={styles.actions}>
+          <SidePanel.Actions>
             <Button href="/register" size="lg" color="secondary">
               Get started
             </Button>
 
             <p className={styles.note}>No credit card required. Cancel anytime.</p>
-          </div>
-        </section>
+          </SidePanel.Actions>
+        </SidePanel>
       </Hero.Left>
 
       <Hero.Right background={'splash'}></Hero.Right>

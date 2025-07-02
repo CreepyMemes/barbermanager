@@ -1,5 +1,4 @@
 import images from '@assets/images';
-import styles from './Image.module.scss';
 
 function Image({ src, name, className, alt }) {
   const isValidSrc = typeof src === 'string' && src.trim() !== '';

@@ -1,72 +1,41 @@
 @use '@styles/variables.module.scss' as *;
 
-.left {
+// Left Side
+.description {
   display: flex;
   flex-direction: column;
-  justify-content: center;
 
-  .heading {
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid $border;
-
-    text-align: center;
-    font-size: 3.2rem;
-    font-weight: 700;
-    color: $color-light;
-    letter-spacing: 0.02em;
+  h2 {
+    color: $color-secondary;
+    font-size: 2rem;
   }
 
-  .container {
-    margin-block: 3rem;
-    display: flex;
-    gap: 3rem;
+  .features {
+    list-style: none;
+    height: 100%;
 
-    .description {
-      display: flex;
-      flex-direction: column;
-
-      h2 {
-        color: $color-secondary;
-        font-size: 2rem;
-      }
-
-      .features {
-        list-style: none;
-        height: 100%;
-
-        font-size: 1.5rem;
-        color: $color-muted;
-
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        gap: 1rem;
-
-        li {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-        }
-      }
-    }
-  }
-
-  .actions {
-    padding-top: 1.5rem;
-    border-top: 1px solid $border;
+    font-size: 1.5rem;
+    color: $color-muted;
 
     display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: center;
-    gap: 2rem;
+    gap: 1rem;
 
-    .note {
-      color: $color-secondary;
-      font-size: 1.5rem;
+    li {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
     }
   }
 }
 
+.note {
+  color: $color-secondary;
+  font-size: 1.5rem;
+}
+
+// Right Side
 .login {
   position: relative;
   z-index: 1;
@@ -98,12 +67,5 @@
       display: flex;
       gap: 1rem;
     }
-  }
-}
-
-@media (max-width: $bp-medium) {
-  .left {
-    flex-direction: column;
-    gap: 1rem;
   }
 }

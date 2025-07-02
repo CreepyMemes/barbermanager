@@ -41,7 +41,7 @@ const Right = ({ children, className, background }) => {
 Left.displayName = 'HeroLeft';
 Right.displayName = 'HeroRight';
 
-// Attach to main component for namespacing (Hero.Left, Hero.Right)
+// Attach to main component for namespacing
 Hero.Left = Left;
 Hero.Right = Right;
 
