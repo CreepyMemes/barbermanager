@@ -1,8 +1,8 @@
 import styles from './NotFound.module.scss';
-import logo from '@assets/images/notfound-logo.png';
 
 import Hero from '@components/common/Hero/Hero';
 import Button from '@components/common/Button/Button';
+import Image from '@components/common/Image/Image';
 
 function NotFound() {
   return (
@@ -26,7 +26,7 @@ function NotFound() {
 
       <Hero.Right>
         <section>
-          <img className={styles.logo} src={logo} alt="Logo" />
+          <Image className={styles.logo} name="notfound" />
         </section>
       </Hero.Right>
     </Hero>

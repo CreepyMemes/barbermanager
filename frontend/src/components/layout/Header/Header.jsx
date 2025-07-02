@@ -1,11 +1,11 @@
 import { useAuth } from '@hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import defaultAvatar from '@assets/images/default-avatar.jpg';
 import styles from './Header.module.scss';
 
 import Logo from '@components/common/Logo/Logo';
 import Spinner from '@components/common/Spinner/Spinner';
 import Button from '@components/common/Button/Button';
+import Image from '@components/common/Image/Image';
 
 function Header() {
   const { isAuthenticated, profile, logout, isFetchingProfile } = useAuth();
@@ -32,7 +32,7 @@ function Header() {
                 </Button>
 
                 <div className={styles.profile}>
-                  <img src={profile.profile_image || defaultAvatar} alt="Profile" />
+                  <Image src={profile.profile_image} name="avatar" alt="Profile" />
                 </div>
               </>
             )}

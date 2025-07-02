@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@hooks/useAuth';
 import styles from './Home.module.scss';
 
-import splash from '@assets/images/splash.webp';
 import Spinner from '@components/common/Spinner/Spinner';
 import Button from '@components/common/Button/Button';
 import Hero from '@components/common/Hero/Hero';
 import Logo from '@components/common/Logo/Logo';
 import Icon from '@components/common/Icon/Icon';
+import Image from '@components/common/Image/Image';
 
 function Home() {
   const { isAuthenticated, isLoggingOut } = useAuth();
@@ -45,7 +45,7 @@ function Home() {
               <li>
                 <span className={styles.featureTitle}>
                   <Icon name="client" size="sm" />
-                  <p>Customer Relationship</p>{' '}
+                  <p>Customer Relationship</p>
                 </span>
                 <span>Track client history, notes, and preferences for unbeatable service.</span>
               </li>
@@ -71,7 +71,7 @@ function Home() {
 
       <Hero.Right>
         <section className={styles.visual}>
-          <img className={styles.image} src={splash} alt="BarberManager dashboard" />
+          <Image className={styles.image} name={'splash'} alt="BarberManager dashboard" />
         </section>
       </Hero.Right>
     </Hero>
