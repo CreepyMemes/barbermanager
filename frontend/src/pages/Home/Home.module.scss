@@ -70,20 +70,6 @@
   }
 }
 
-.visual {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-
-  .image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; // THIS is the key!
-    display: block;
-  }
-}
-
 @media (max-width: $bp-medium) {
   .left {
     padding: 3rem 1.5rem;

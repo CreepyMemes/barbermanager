@@ -1,6 +1,8 @@
 import { Children } from 'react';
 import styles from './Hero.module.scss';
 
+import Image from '@components/common/Image/Image';
+
 function Hero({ children }) {
   // Extracts first HeroLeft and HeroRight children by displayName
   const [left, right] = ['HeroLeft', 'HeroRight'].map((name) =>
@@ -21,9 +23,18 @@ const Left = ({ children, className }) => {
   return <aside className={computedClassName}>{children}</aside>;
 };
 
-const Right = ({ children, className }) => {
+/**
+ * Accepts background prop for right side. If set, renders it as absolutely positioned background.
+ */
+const Right = ({ children, className, background }) => {
   const computedClassName = [styles.right, className].join(' ');
-  return <main className={computedClassName}>{children}</main>;
+
+  return (
+    <main className={computedClassName}>
+      {background && <Image className={styles.background} name={background} />}
+      {children}
+    </main>
+  );
 };
 
 // Set display names for subcomponent identification

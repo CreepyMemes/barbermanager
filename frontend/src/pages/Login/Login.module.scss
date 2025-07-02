@@ -68,6 +68,8 @@
 }
 
 .login {
+  position: relative;
+  z-index: 1;
   width: 30rem;
 
   .login-form {

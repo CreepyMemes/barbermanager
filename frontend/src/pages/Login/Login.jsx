@@ -76,7 +76,7 @@ function Login() {
         </section>
       </Hero.Left>
 
-      <Hero.Right>
+      <Hero.Right background={'background'}>
         <Card className={styles.login}>
           <Form className={styles.loginForm} initialFields={{ identifier: '', password: '' }} onSubmit={handleLogin}>
             <h2 className={styles.label}>Login</h2>
