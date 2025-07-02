@@ -13,10 +13,7 @@ Proposed:
 2. Frontend:
 
 Important:  
-  - Create reusable component for Hero left crap, to cleanup code
-
-  - fix username having can have spaces in it, disallow 
-  - finalize register page, style it better and make Name and Surname fields same line
+  - fix username can have spaces in it, disallow in Backend
 
   - create verify-email Page (sends GET request to verify then redirects to login page)
   - change email frontend url in email template and implement a route for it

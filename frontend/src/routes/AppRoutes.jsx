@@ -6,6 +6,7 @@ import Layout from '@components/layout/Layout/Layout';
 
 import Home from '@pages/Home/Home';
 import Login from '@pages/Login/Login';
+import Register from '@pages/Register/Register';
 import NotFound from '@pages/NotFound/NotFound';
 import Dashboard from '@pages/Dashboard/Dashboard';
 
@@ -19,6 +20,7 @@ function AppRoutes() {
         {/* Public pages (no need to be authenticated) */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
         {/* Shortcut redirects (from /:page to  /:role/:page) */}
         <Route path="dashboard" element={protectedRoute(<RoleRedirect />)} />
