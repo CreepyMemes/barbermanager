@@ -1,8 +1,8 @@
 @use '@styles/variables.module.scss' as *;
 
 .dashboard {
-  max-width: 100rem;
-  margin: 5rem auto;
+  // margin: 5rem auto;
+  padding: 5rem;
 
   display: grid;
   grid-template-columns: repeat(4, 1fr);
