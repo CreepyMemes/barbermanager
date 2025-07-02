@@ -19,6 +19,8 @@
   }
 
   .right {
+    position: relative;
+
     flex: 1;
     background: $color-secondary;
     color: $color-secondary;
@@ -28,6 +30,21 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    .background {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      pointer-events: none;
+    }
+    > *:not(.background) {
+      // Cards/Form content
+      position: relative;
+      z-index: 1;
+    }
   }
 }
 

@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useAuth } from '@hooks/useAuth';
-import defaultAvatar from '@assets/images/default-avatar.jpg';
 import styles from './Sidebar.module.scss';
 
 import Spinner from '@components/common/Spinner/Spinner';
 import Button from '@components/common/Button/Button';
 import Icon from '@components/common/Icon/Icon';
+import Image from '@components/common/Image/Image';
 
 // Define role-based navigation
 const adminNav = [
@@ -51,7 +51,7 @@ function Sidebar() {
             <div className={styles.top}>
               {isAuthenticated && profile && (
                 <div className={styles.profile}>
-                  <img src={profile.profile_image || defaultAvatar} alt="Profile" />
+                  <Image src={profile.profile_image} name="avatar" alt="Profile" />
 
                   <div>
                     <div className={styles.username}>{profile.username || profile.email}</div>

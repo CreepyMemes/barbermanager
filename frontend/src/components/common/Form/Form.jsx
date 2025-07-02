@@ -1,7 +1,7 @@
 import { useForm } from '@hooks/useForm';
 import FormProvider from '@providers/FormProvider';
 
-function Form({ className, initialFields, onSubmit, children }) {
+function Form({ className, initialFields, onSubmit, validate, children }) {
   function InnerForm() {
     const { handleSubmit } = useForm();
 
@@ -13,7 +13,7 @@ function Form({ className, initialFields, onSubmit, children }) {
   }
 
   return (
-    <FormProvider initialFields={initialFields} onSubmit={onSubmit}>
+    <FormProvider initialFields={initialFields} onSubmit={onSubmit} validate={validate}>
       <InnerForm />
     </FormProvider>
   );

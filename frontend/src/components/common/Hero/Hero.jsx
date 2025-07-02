@@ -1,30 +1,50 @@
 import { Children } from 'react';
 import styles from './Hero.module.scss';
 
-function Hero({ children }) {
+import Image from '@components/common/Image/Image';
+
+function Hero({ children, className }) {
   // Extracts first HeroLeft and HeroRight children by displayName
   const [left, right] = ['HeroLeft', 'HeroRight'].map((name) =>
     Children.toArray(children).find((child) => child.type.displayName === name),
   );
 
-  return (
-    <div className={styles.hero}>
-      <div className={styles.left}>{left}</div>
+  // Get all classes
+  const computedClassName = [styles.hero, className].join(' ');
 
-      <div className={styles.right}>{right}</div>
+  return (
+    <div className={computedClassName}>
+      {left}
+      {right}
     </div>
   );
 }
 
 // Simple Left and Right subcomponents
-const Left = ({ children }) => <>{children}</>;
-const Right = ({ children }) => <>{children}</>;
+const Left = ({ children, className }) => {
+  const computedClassName = [styles.left, className].join(' ');
+  return <div className={computedClassName}>{children}</div>;
+};
+
+/**
+ * Accepts background prop for right side. If set, renders it as absolutely positioned background.
+ */
+const Right = ({ children, className, background }) => {
+  const computedClassName = [styles.right, className].join(' ');
+
+  return (
+    <div className={computedClassName}>
+      {background && <Image className={styles.background} name={background} />}
+      {children}
+    </div>
+  );
+};
 
 // Set display names for subcomponent identification
 Left.displayName = 'HeroLeft';
 Right.displayName = 'HeroRight';
 
-// Attach to main component for namespacing (Hero.Left, Hero.Right)
+// Attach to main component for namespacing
 Hero.Left = Left;
 Hero.Right = Right;
 

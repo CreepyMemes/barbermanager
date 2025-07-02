@@ -2,12 +2,13 @@
 @use '@styles/classes.module.scss' as *;
 
 .error {
-  color: $color-error;
+  padding: 0.7em;
   background: $color-error-bg;
   border: 1px solid $border-error;
   border-radius: $border-radius;
 
-  padding: 0.7em;
+  color: $color-error;
+  font-size: 1.2rem;
 
   display: flex;
   justify-content: center;

@@ -50,6 +50,36 @@ class UsernameValidationMixin:
         attrs['username'] = username
         return attrs
 
+    def validate_username_format(self, attrs):
+        from ..utils import username_validator
+
+        username = attrs['username']
+
+        try:
+            username_validator(username)
+        except:
+            raise serializers.ValidationError("Username can only contain ASCII letters, digits, and underscores")
+        
+        return attrs
+
+
+class PhoneNumberValidationMixin:
+    """
+    Utility mixin to handle phone number validation checks
+    """
+    def validate_phone_number_format(self, attrs):
+        from ..utils import phone_number_validator
+
+        phone_number = attrs.get("phone_number")
+
+        if phone_number:
+            try:
+                phone_number_validator(phone_number)
+            except:
+                raise serializers.ValidationError("Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed (E.164 format).")
+        
+        return attrs
+    
 
 class UIDTokenValidationSerializer(serializers.Serializer):
     """

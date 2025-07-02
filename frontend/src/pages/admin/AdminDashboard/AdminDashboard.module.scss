@@ -4,7 +4,7 @@
   display: flex;
   align-items: flex-start;
   gap: 2rem;
-  grid-column: span 2;
+  // grid-column: span 2;
 
   .icon {
     border-radius: 50%;
@@ -47,6 +47,7 @@
   align-items: center;
 
   grid-row: span 2;
+  grid-column: 3 / 5;
 
   .chart {
     width: 100%;

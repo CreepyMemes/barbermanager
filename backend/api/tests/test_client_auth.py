@@ -3,6 +3,7 @@ from rest_framework import status
 from unittest.mock import patch
 from django.urls import reverse
 from django.core import mail
+from django.conf import settings
 import re
 from api.models import User, Client
 
@@ -48,14 +49,8 @@ class ClientAuthFlowTest(APITestCase):
         user = User.objects.get(email=email)
         self.assertFalse(user.is_active)
 
-        # Dynamically get the URL prefix without uid/token
-        url_prefix = reverse(self.verify_url, kwargs={'uidb64': 'UIDPLACEHOLDER', 'token': 'TOKENPLACEHOLDER'})
-
-        # Build regex by replacing the placeholders with regex groups
-        regex_pattern = url_prefix.replace('UIDPLACEHOLDER', r'(?P<uidb64>[^/]+)').replace('TOKENPLACEHOLDER', r'(?P<token>[^/]+)')
-
-        # Search in the email body
-        match = re.search(regex_pattern, mail.outbox[0].body)
+        # Look for a link of the form: FRONTEND_URL/verify/UID/TOKEN
+        match = re.search(re.escape(settings.FRONTEND_URL) + r'/verify/(?P<uidb64>[^/]+)/(?P<token>[^/\s]+)', mail.outbox[0].body)
         self.assertIsNotNone(match, "Verification link not found in email body")
 
         return user, match.group('uidb64'), match.group('token')
@@ -69,7 +64,9 @@ class ClientAuthFlowTest(APITestCase):
 
         # Verify email
         verify_url = reverse(self.verify_url, kwargs={'uidb64': uidb64, 'token': token})
+
         verify_response = self.client.get(verify_url)
+
         self.assertEqual(verify_response.status_code, status.HTTP_200_OK)
         self.assertIn('detail', verify_response.data)
         self.assertEqual(verify_response.data.get('detail'), 'Email verified successfully.')
@@ -182,3 +179,26 @@ class ClientAuthFlowTest(APITestCase):
         response = self.client.post(self.logout_url, {'refresh_token': 'invalid-token'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data.get('refresh_token')[0], 'Invalid or expired refresh token.')
+
+
+    def test_registration_fails_with_invalid_username(self, mock_send_mail):
+        """
+        Registration should fail if username contains illegal characters (e.g., spaces).
+        """
+        data = { 'email': 'badusername@example.com', 'password': 'StrongPassw0rd!', 'username': 'invalid user', 'name': 'Name', 'surname': 'Surname'}
+
+        response = self.client.post(self.register_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertTrue("Username can only contain ASCII letters, digits, and underscores", response.data['detail'])
+
+    
+    def test_registration_fails_with_invalid_phone_number(self, mock_send_mail):
+        """
+        Registration should fail if phone number is not in E.164 format.
+        """
+        data = { 'email': 'badphone@example.com', 'password': 'StrongPassw0rd!', 'username': 'badphoneuser', 'name': 'Name', 'surname': 'Surname', 'phone_number': '1234-notaphone'}
+        
+        response = self.client.post(self.register_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('detail', response.data)
+        self.assertEqual("Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed (E.164 format).", response.data['detail'])

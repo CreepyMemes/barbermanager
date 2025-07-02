@@ -21,7 +21,7 @@ function BarberDashboard() {
               profile.services.map((service) => (
                 <li className={styles.listItem} key={service.id}>
                   <span className={styles.serviceName}>{service.name}</span>
-                  <span className={styles.price}>${service.price}</span>
+                  <span className={styles.servicePrice}>${service.price}</span>
                 </li>
               ))
             ) : (
@@ -59,7 +59,7 @@ function BarberDashboard() {
           <Icon name="review" size="sm" black />
         </div>
         <div className={styles.content}>
-          <div className={styles.label}>Recent Reviews</div>
+          <div className={styles.label}>Received Reviews</div>
           <ul className={styles.list}>
             {profile?.reviews?.length > 0 ? (
               profile.reviews.slice(0, 3).map((review) => (
@@ -69,7 +69,7 @@ function BarberDashboard() {
                     {'☆'.repeat(5 - review.rating)}
                   </span>
                   <span className={styles.reviewComment}>
-                    {review.comment?.length > 22 ? review.comment.slice(0, 22) + '…' : review.comment}
+                    {review.comment?.length > 30 ? review.comment.slice(0, 30) + '…' : review.comment}
                   </span>
                   <span className={styles.reviewDate}>{review.created_at}</span>
                 </li>
