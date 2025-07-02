@@ -69,11 +69,7 @@ function Home() {
         </section>
       </Hero.Left>
 
-      <Hero.Right>
-        <section className={styles.visual}>
-          <Image className={styles.image} name={'splash'} alt="BarberManager dashboard" />
-        </section>
-      </Hero.Right>
+      <Hero.Right background={'splash'}></Hero.Right>
     </Hero>
   );
 }
