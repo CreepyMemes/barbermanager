@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./frontend/assets/images/logo.png" height="100px" alt="ManageBarber Logo"/>
+  <img src="./frontend/assets/images/logo.webp" height="100px" alt="ManageBarber Logo"/>
   <h1>ManageBarber</h1>
 
 [![Deploy to Production](https://github.com/s1lentCommit/manageBarber/actions/workflows/deploy.yml/badge.svg?branch=master)](https://github.com/s1lentCommit/manageBarber/actions/workflows/deploy.yml)
