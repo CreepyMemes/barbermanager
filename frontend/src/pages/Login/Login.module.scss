@@ -1,5 +1,25 @@
 @use '@styles/variables.module.scss' as *;
 
+.registered {
+  position: absolute;
+  z-index: 1000;
+  top: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+
+  min-width: 30rem;
+
+  display: flex;
+  align-items: center;
+  font-size: 1.1rem;
+  gap: 1rem;
+
+  strong {
+    font-size: 1.2em;
+    color: inherit;
+  }
+}
+
 // Left Side
 .description {
   display: flex;
@@ -65,5 +85,29 @@
       display: flex;
       gap: 1rem;
     }
+  }
+}
+
+// @media (max-width: $bp-medium) {
+//   .login {
+//     width: 40rem;
+//   }
+// }
+
+@media (max-width: $bp-medium-small) {
+  .login {
+    width: fit-content;
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }
+}
+
+@media (max-width: $bp-small) {
+  .login {
+    margin: 3rem;
   }
 }
