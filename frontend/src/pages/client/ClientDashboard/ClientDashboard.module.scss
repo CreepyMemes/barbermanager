@@ -34,6 +34,9 @@
       font-weight: 800;
       color: $color-primary;
       margin-bottom: 0.1rem;
+
+      display: flex;
+      gap: 2rem;
     }
 
     .empty {
@@ -44,50 +47,44 @@
       letter-spacing: 0.01em;
     }
 
-    .next-appointment,
-    .last-appointment {
+    .list-item {
       display: flex;
-      gap: 1.2rem;
+      gap: 2rem;
       align-items: baseline;
 
-      .next-appointment-date,
-      .last-appointment-date {
+      .appointment-date {
         font-weight: 700;
         color: $color-accent;
         font-size: 1.03rem;
       }
 
-      .next-appointment-slot,
-      .last-appointment-slot {
+      .appointment-slot {
         color: $color-main;
         font-size: 1.02rem;
       }
 
-      .last-appointment-status {
+      .appointment-status {
         color: $color-lighter;
         font-weight: 700;
         font-size: 1.01rem;
         margin-left: auto;
         text-transform: capitalize;
       }
-    }
-    .last-review {
-      display: flex;
-      align-items: baseline;
-      gap: 0.7rem;
 
+      // Reviews styles
       .stars {
         color: #fabb3d;
         font-size: 1.09rem;
+        letter-spacing: 0.1em;
         font-family: inherit;
         font-weight: 700;
-        letter-spacing: 0.08em;
       }
 
       .review-comment {
         color: $color-lighter;
-        font-size: 0.97rem;
-        max-width: 15rem;
+        margin-left: 0.7rem;
+        font-size: 1.02rem;
+        max-width: 14rem;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -95,36 +92,10 @@
 
       .review-date {
         color: $color-muted;
+        margin-left: auto;
         font-size: 0.96rem;
         font-style: italic;
-        margin-left: 0.7rem;
       }
-    }
-  }
-}
-// Special Card for Rating Chart
-.card-rating {
-  @extend .card;
-  min-height: 18rem;
-  justify-content: center;
-  align-items: center;
-
-  grid-row: span 2;
-  grid-column: span 1;
-
-  .chart {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.6rem;
-
-    .label {
-      font-size: 1.17rem;
-      font-weight: 700;
-      color: $color-main;
-      margin-bottom: 1.2rem;
-      text-align: center;
     }
   }
 }
