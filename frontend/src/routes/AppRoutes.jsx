@@ -8,6 +8,7 @@ import Home from '@pages/Home/Home';
 import Login from '@pages/Login/Login';
 import Register from '@pages/Register/Register';
 import NotFound from '@pages/NotFound/NotFound';
+import VerifyEmail from '@pages/VerifyEmail/VerifyEmail';
 import Dashboard from '@pages/Dashboard/Dashboard';
 
 // Helper for cleaner protected route declaration
@@ -21,6 +22,7 @@ function AppRoutes() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/verify/:uidb64/:token" element={<VerifyEmail />} />
 
         {/* Shortcut redirects (from /:page to  /:role/:page) */}
         <Route path="dashboard" element={protectedRoute(<RoleRedirect />)} />
