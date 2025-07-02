@@ -1,0 +1,74 @@
+@use '@styles/variables.module.scss' as *;
+
+// Left Side
+.description {
+  display: flex;
+  flex-direction: column;
+
+  h2 {
+    color: $color-secondary;
+    font-size: 2rem;
+  }
+
+  .features {
+    list-style: none;
+    height: 100%;
+
+    font-size: 1.5rem;
+    color: $color-muted;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+  }
+}
+
+.note {
+  color: $color-secondary;
+  font-size: 1.5rem;
+}
+
+// Right Side
+.register {
+  // width: 30rem;
+
+  .register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+
+    .label {
+      margin-bottom: 1rem;
+
+      font-size: 2rem;
+      text-align: center;
+      color: $color-primary;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .register-btn {
+      margin-top: 1rem;
+    }
+
+    .forgot-btn {
+      padding: 0;
+      align-self: center;
+    }
+
+    .line {
+      display: flex;
+      gap: 1rem;
+    }
+  }
+}
