@@ -15,7 +15,7 @@ Proposed:
 
 Important:  
   - implement reset password page
-  - change email frontend url in email template and implement a route for it
+  - change password reset email url in the email template to the frontend one after you implement it
 
 Proposed:
   - cleanup Form code, make it work automagically (Form.Button, auto fields, Form.Input, etc)
