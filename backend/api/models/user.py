@@ -123,24 +123,60 @@ class Admin(User):
 
     @property
     def total_clients(self):
+        """
+        Returns the sum of all the registered clients in the platform
+        """
         from .user import Client
         return Client.objects.filter(is_active=True).count()
     
     @property
     def total_barbers(self):
+        """
+        Returns the sum of all the registered barbers in the platform
+        """
         from .user import Barber
         return Barber.objects.filter(is_active=True).count()
     
     @property
     def total_appointments(self):
+        """
+        Returns the sum of all the booked appointments in the platform
+        """
         from .appointment import Appointment
         return Appointment.objects.count()
+
+    @property
+    def completed_appointments(self):
+        """
+        Returns the sum of all the completed appointments in the platform
+        """
+        from .appointment import Appointment, AppointmentStatus
+        return Appointment.objects.filter(status=AppointmentStatus.COMPLETED.value).count()
+    
+    @property
+    def cancelled_appointments(self):
+        """
+        Returns the sum of all the cancelled appointments in the platform
+        """
+        from .appointment import Appointment, AppointmentStatus
+        return Appointment.objects.filter(status=AppointmentStatus.CANCELLED.value).count()
+    
+    @property
+    def ongoing_appointments(self):
+        """
+        Returns the sum of all the ongoing appointments in the platform
+        """
+        from .appointment import Appointment, AppointmentStatus
+        return Appointment.objects.filter(status=AppointmentStatus.ONGOING.value).count()
     
     @property
     def total_revenue(self):
-        from .appointment import Appointment
+        """
+        Returns the sum of the services in all completed appointments, for total platform revenue
+        """
+        from .appointment import Appointment, AppointmentStatus
         revenue = (
-            Appointment.objects.filter(status="COMPLETED")
+            Appointment.objects.filter(status=AppointmentStatus.COMPLETED.value)
             .annotate(price_sum=Sum('services__price'))
             .aggregate(total=Sum('price_sum'))['total']
         )
@@ -148,11 +184,17 @@ class Admin(User):
 
     @property
     def total_reviews(self):
+        """
+        Returns the sum of all reviews posted in the platform
+        """
         from .appointment import Review
         return Review.objects.count()
     
     @property
     def average_rating(self):
+        """
+        Returns the average rating of all reviewes posted in the platrofm
+        """
         from .appointment import Review
         avg = Review.objects.aggregate(avg=Avg('rating'))['avg']
         return round(float(avg), 2) if avg else 0.0
@@ -163,6 +205,9 @@ class Admin(User):
             'total_clients': self.total_clients,
             'total_barbers': self.total_barbers,
             'total_appointments': self.total_appointments,
+            'completed_appointments': self.completed_appointments,
+            'cancelled_appointments': self.cancelled_appointments,
+            'ongoing_appointments': self.ongoing_appointments,
             'total_revenue': self.total_revenue,
             'total_reviews': self.total_reviews,
             'average_rating': self.average_rating,
@@ -203,6 +248,23 @@ class Client(User):
         return [appointment.to_dict() for appointment in self.appointments_created.all()]
 
     @property
+    def completed_appointments(self):
+        """
+        Returns the sum of all the completed appointments for this cllient.
+        """
+        from .appointment import AppointmentStatus
+        return self.appointments_created.filter(status=AppointmentStatus.COMPLETED.value).count()
+    
+
+    @property
+    def next_appointment(self):
+        """
+        Returns the single ongoing Appointment instance for this client, or None.
+        """
+        from .appointment import AppointmentStatus
+        return self.appointments_created.filter(status=AppointmentStatus.ONGOING.value).first().to_dict()
+
+    @property
     def reviews(self):
         """
         Returns a list of dicts representing all reviews made by this client.
@@ -216,6 +278,8 @@ class Client(User):
             'surname': self.surname,
             'phone_number': self.phone_number,
             'appointments': self.appointments,
+            'completed_appointments': self.completed_appointments,
+            'next_appointment': self.next_appointment,
             'reviews': self.reviews,
         })
         return base
@@ -254,6 +318,35 @@ class Barber(User):
         return [availability.to_dict() for availability in self.availabilities_assigned.all()]
     
     @property
+    def completed_appointments(self):
+        """
+        Returns the sum of all the completed appointments for this barber.
+        """
+        from .appointment import AppointmentStatus
+        return self.appointments_received.filter(status=AppointmentStatus.COMPLETED.value).count()
+    
+    @property
+    def ongoing_appointments(self):
+        """
+        Returns a list of all the ongoing appointments for this barber.
+        """
+        from .appointment import AppointmentStatus
+        return [appointment.to_dict() for appointment in self.appointments_received.filter(status=AppointmentStatus.ONGOING.value)]
+
+    @property
+    def total_revenue(self):
+        from .appointment import AppointmentStatus
+        """
+        Returns the sum of the services in all completed appointments for this barber.
+        """
+        revenue = (
+            self.appointments_received.filter(status=AppointmentStatus.COMPLETED.value)
+            .annotate(price_sum=Sum('services__price'))
+            .aggregate(total=Sum('price_sum'))['total']
+        )
+        return float(revenue) if revenue else 0.0
+    
+    @property
     def reviews(self):
         """
         Returns a list of dicts representing this barber's reviews.
@@ -279,6 +372,9 @@ class Barber(User):
             'description': self.description,
             'services': self.services,
             'availabilities': self.availabilities,
+            'ongoing_appointments': self.ongoing_appointments,
+            'completed_appointments': self.completed_appointments,
+            'total_revenue': self.total_revenue,
             'reviews': self.reviews,
             'average_rating': self.average_rating,
         })

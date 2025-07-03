@@ -4,7 +4,15 @@
   padding: 2rem 2.5rem;
   background: $color-card;
   border-radius: $border-radius;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
 
-  border: 1px solid $border-light;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  border: 2px solid $border-light;
+
+  transition: border-color 0.2s ease;
+
+  &:hover,
+  &:has(:focus-visible),
+  &:has(:focus) {
+    border-color: $border-hover;
+  }
 }

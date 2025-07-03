@@ -2,20 +2,42 @@ import { useAuth } from '@hooks/useAuth';
 import styles from './BarberDashboard.module.scss';
 import Card from '@components/common/Card/Card';
 import Icon from '@components/common/Icon/Icon';
-import CakeChart from '@components/common/CakeChart/CakeChart';
+import RadialChart from '@components/common/RadialChart/RadialChart';
 
 function BarberDashboard() {
   const { profile } = useAuth();
 
   return (
     <>
+      {/* Revenue */}
+      <Card className={styles.card}>
+        <div className={styles.icon}>
+          <Icon name="revenue" size="sm" black />
+        </div>
+        <div className={styles.content}>
+          <div className={styles.label}>Total Revenue</div>
+          <div className={styles.value}>${profile.total_revenue}</div>
+        </div>
+      </Card>
+
+      {/* Completed Appointments */}
+      <Card className={styles.card}>
+        <div className={styles.icon}>
+          <Icon name="completed" size="sm" black />
+        </div>
+        <div className={styles.content}>
+          <div className={styles.label}>Completed Appointments</div>
+          <div className={styles.value}>{profile.completed_appointments}</div>
+        </div>
+      </Card>
+
       {/* Services */}
       <Card className={styles.card}>
         <div className={styles.icon}>
           <Icon name="service" size="sm" black />
         </div>
         <div className={styles.content}>
-          <div className={styles.label}>Offered Services</div>
+          <div className={styles.label}>Services</div>
           <ul className={styles.list}>
             {profile?.services?.length > 0 ? (
               profile.services.map((service) => (
@@ -53,6 +75,28 @@ function BarberDashboard() {
         </div>
       </Card>
 
+      {/* Ongoing Appointments */}
+      <Card className={styles.card}>
+        <div className={styles.icon}>
+          <Icon name="calendar" size="sm" black />
+        </div>
+        <div className={styles.content}>
+          <div className={styles.label}>Ongoing Appointments</div>
+          <ul className={styles.list}>
+            {profile.ongoing_appointments?.length > 0 ? (
+              profile.ongoing_appointments.map((appointment) => (
+                <li className={styles.listItem} key={appointment.id}>
+                  <span className={styles.appointmentDate}>{appointment.date}</span>
+                  <span className={styles.appointmentSlot}>{appointment.slot}</span>
+                </li>
+              ))
+            ) : (
+              <div className={styles.empty}>No appointments</div>
+            )}
+          </ul>
+        </div>
+      </Card>
+
       {/* Reviews */}
       <Card className={styles.card}>
         <div className={styles.icon}>
@@ -82,10 +126,13 @@ function BarberDashboard() {
       </Card>
 
       {/* Average Rating */}
-      <Card className={styles.cardRating}>
-        <div className={styles.chart}>
+      <Card className={styles.card}>
+        <div className={styles.icon}>
+          <Icon name="rating" size="sm" black />
+        </div>
+        <div className={styles.content}>
           <div className={styles.label}>Average Rating</div>
-          <CakeChart value={profile?.average_rating ?? 0} max={5} />
+          <RadialChart value={profile.average_rating} max={5} size="70" />
         </div>
       </Card>
     </>
