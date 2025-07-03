@@ -1,7 +1,7 @@
 import styles from './Input.module.scss';
 import { useForm } from '@hooks/useForm';
 
-function Input({ label, type = 'text', name, required, autoComplete, disabled, size = 'md' }) {
+function Input({ label, type = 'text', name, required, autoComplete, disabled, size = 'md', placeholder }) {
   const { fields, handleChange } = useForm();
 
   // Get all style classes into a string
@@ -19,6 +19,7 @@ function Input({ label, type = 'text', name, required, autoComplete, disabled, s
         autoComplete={autoComplete}
         required={required}
         disabled={disabled}
+        placeholder={placeholder}
       />
     </label>
   );
