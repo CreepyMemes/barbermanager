@@ -3,6 +3,7 @@ from ..views import (
     get_current_user,
     register_client,
     register_barber,
+    get_email_from_token,
     verify_client,
     login_user,
     logout_user,
@@ -15,6 +16,7 @@ urlpatterns = [
     # Client registration management
     path('register/', register_client, name='register_client'),
     path('register/<uidb64>/<token>/', register_barber, name='register_barber'),
+    path('email/<uidb64>/<token>/', get_email_from_token, name='get_email_from_token'),
     path('verify/<uidb64>/<token>/', verify_client, name='verify_client_email'),
     
     # Operations for authenticated users

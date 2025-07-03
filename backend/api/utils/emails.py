@@ -22,8 +22,7 @@ def send_barber_invite_email(email, uid, token, domain):
     """
     Sends barber invitation email with registration link.
     """
-    path = reverse('register_barber', kwargs={'uidb64': uid, 'token': token})
-    link = f'{domain}{path}'
+    link = f'{domain}/register/{uid}/{token}'
 
     subject = '[BarberManager] You have been invited to register as a barber'
     message = (

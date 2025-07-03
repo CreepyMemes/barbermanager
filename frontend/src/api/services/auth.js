@@ -76,7 +76,7 @@ export async function logout() {
     if (refresh) {
       await api.instance.post(ENDPOINTS.auth.logout, { refresh_token: refresh });
     }
-  } catch (_) {
+  } catch {
     // ignore API errors during logout
   }
   removeTokens();
@@ -109,6 +109,14 @@ export async function registerClient(clientData) {
  */
 export async function registerBarber(uidb64, token, barberData) {
   const { data } = await api.instance.post(ENDPOINTS.auth.registerBarber(uidb64, token), barberData);
+  return data;
+}
+
+/**
+ *  Gets the email associated to the user from the given uid64 and token, if valid
+ */
+export async function getEmailFromToken(uidb64, token) {
+  const { data } = await api.instance.get(ENDPOINTS.auth.emailFromToken(uidb64, token));
   return data;
 }
 

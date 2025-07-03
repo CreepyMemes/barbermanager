@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@hooks/useAuth';
-import styles from './Register.module.scss';
+import styles from './RegisterClient.module.scss';
 import api from '@api';
 
 import Spinner from '@components/common/Spinner/Spinner';
@@ -14,7 +14,7 @@ import Hero from '@components/common/Hero/Hero';
 import SidePanel from '@components/common/SidePanel/SidePanel';
 import Icon from '@components/common/Icon/Icon';
 
-function Register() {
+function RegisterClient() {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -142,4 +142,4 @@ function Register() {
   );
 }
 
-export default Register;
+export default RegisterClient;

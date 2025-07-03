@@ -85,7 +85,7 @@ class UIDTokenValidationSerializer(serializers.Serializer):
     """
     Utility serializer that handlles token checks, from which other serializers inherit
     """
-    def validate_uid_token(self):
+    def validate_uid_token(self, attrs):
         from .utils import get_user_from_uid_token
 
         uidb64 = self.context.get('uidb64')
@@ -95,13 +95,10 @@ class UIDTokenValidationSerializer(serializers.Serializer):
             raise serializers.ValidationError("Missing uid or token.")
 
         user = get_user_from_uid_token(uidb64, token)
-        return user
 
-    def validate(self, attrs):
-        user = self.validate_uid_token()
         attrs['user'] = user
         return attrs
-    
+
 
 class ModelInstanceOrIDValidationMixin:
     """

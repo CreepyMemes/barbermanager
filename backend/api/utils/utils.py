@@ -25,11 +25,7 @@ def get_user_from_uid_token(uidb64, token, role=None):
 
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
-
-        if role:
-            user = User.objects.get(pk=uid, role=role)
-        else:
-            user = User.objects.get(pk=uid)
+        user = User.objects.get(pk=uid)
 
     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         raise serializers.ValidationError("Invalid link.")

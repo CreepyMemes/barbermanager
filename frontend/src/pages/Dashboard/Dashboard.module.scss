@@ -1,10 +1,9 @@
 @use '@styles/variables.module.scss' as *;
 
 .dashboard {
-  // margin: 5rem auto;
   padding: 5rem;
 
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   grid-gap: 5rem;
 }
