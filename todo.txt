@@ -14,9 +14,6 @@ Proposed:
 2. Frontend:
 
 Important:  
-  - implement register page for barbers (from invitation email link), use Hero component
-  - change email frontend url in email template and implement a route for it
-
   - implement reset password page
   - change email frontend url in email template and implement a route for it
 
