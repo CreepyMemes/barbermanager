@@ -1,9 +1,14 @@
 @use '@styles/variables.module.scss' as *;
+
+.card:nth-child(4),
+.card:nth-child(5) {
+  grid-column: span 2;
+}
+
 .card {
   display: flex;
   align-items: flex-start;
   gap: 2rem;
-  grid-column: span 2;
 
   .icon {
     border-radius: 50%;
@@ -21,11 +26,14 @@
     flex: 1;
 
     .label {
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid $border-light;
+
       color: $color-main;
       font-weight: 700;
       font-size: 1.22rem;
       letter-spacing: 0.03em;
-      margin-bottom: 0.8rem;
       line-height: 1.2;
     }
 
@@ -35,8 +43,10 @@
       color: $color-primary;
       margin-bottom: 0.1rem;
 
-      display: flex;
-      gap: 2rem;
+      span {
+        display: flex;
+        flex-wrap: wrap;
+      }
     }
 
     .empty {

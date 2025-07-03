@@ -6,15 +6,30 @@ import Icon from '@components/common/Icon/Icon';
 function ClientDashboard() {
   const { profile } = useAuth();
 
-  // Upcoming appointment
-  const nextAppointment = profile?.appointments.find((a) => a.status === 'ONGOING');
-
   return (
     <>
-      {/* Appointment Count */}
+      {/* Next Appointment */}
       <Card className={styles.card}>
         <div className={styles.icon}>
-          <Icon name="appointment" size="sm" black />
+          <Icon name="availability" size="sm" black />
+        </div>
+        <div className={styles.content}>
+          <div className={styles.label}>Next Appointment</div>
+          {profile.next_appointment ? (
+            <div className={styles.value}>
+              <span>{profile.next_appointment.date.replaceAll('-', ' / ')}</span>
+              <span>{profile.next_appointment.slot}</span>
+            </div>
+          ) : (
+            <div className={styles.empty}>No future appointment</div>
+          )}
+        </div>
+      </Card>
+
+      {/* Total Appointment */}
+      <Card className={styles.card}>
+        <div className={styles.icon}>
+          <Icon name="calendar" size="sm" black />
         </div>
         <div className={styles.content}>
           <div className={styles.label}>Total Appointments</div>
@@ -22,21 +37,37 @@ function ClientDashboard() {
         </div>
       </Card>
 
-      {/* Next Appointment */}
+      {/* Completed Appointments */}
       <Card className={styles.card}>
         <div className={styles.icon}>
-          <Icon name="calendar" size="sm" black />
+          <Icon name="completed" size="sm" black />
         </div>
         <div className={styles.content}>
-          <div className={styles.label}>Next Appointment</div>
-          {nextAppointment ? (
-            <div className={styles.value}>
-              <span>{nextAppointment.date}</span>
-              <span>{nextAppointment.slot}</span>
-            </div>
-          ) : (
-            <div className={styles.empty}>No future appointment</div>
-          )}
+          <div className={styles.label}>Completed Appointments</div>
+          <div className={styles.value}>{profile.completed_appointments}</div>
+        </div>
+      </Card>
+
+      {/* Booked Appointments */}
+      <Card className={styles.card}>
+        <div className={styles.icon}>
+          <Icon name="appointment" size="sm" black />
+        </div>
+        <div className={styles.content}>
+          <div className={styles.label}>Booked Appointments</div>
+          <ul className={styles.list}>
+            {profile?.appointments?.length > 0 ? (
+              profile.appointments.map((appointment) => (
+                <li className={styles.listItem} key={appointment.id}>
+                  <span className={styles.appointmentDate}>{appointment.date}</span>
+                  <span className={styles.appointmentSlot}>{appointment.slot}</span>
+                  <span className={styles.appointmentStatus}>{appointment.status}</span>
+                </li>
+              ))
+            ) : (
+              <div className={styles.empty}>No appointments</div>
+            )}
+          </ul>
         </div>
       </Card>
 
@@ -63,29 +94,6 @@ function ClientDashboard() {
               ))
             ) : (
               <li className={styles.empty}>No reviews yet</li>
-            )}
-          </ul>
-        </div>
-      </Card>
-
-      {/* Appointments */}
-      <Card className={styles.card}>
-        <div className={styles.icon}>
-          <Icon name="availability" size="sm" black />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.label}>Booked Appointments</div>
-          <ul className={styles.list}>
-            {profile?.appointments?.length > 0 ? (
-              profile.appointments.map((appointment) => (
-                <li className={styles.listItem} key={appointment.id}>
-                  <span className={styles.appointmentDate}>{appointment.date}</span>
-                  <span className={styles.appointmentSlot}>{appointment.slot}</span>
-                  <span className={styles.appointmentStatus}>{appointment.status}</span>
-                </li>
-              ))
-            ) : (
-              <div className={styles.empty}>No appointments</div>
             )}
           </ul>
         </div>

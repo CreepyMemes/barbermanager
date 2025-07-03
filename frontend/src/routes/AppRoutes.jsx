@@ -6,7 +6,8 @@ import Layout from '@components/layout/Layout/Layout';
 
 import Home from '@pages/Home/Home';
 import Login from '@pages/Login/Login';
-import Register from '@pages/Register/Register';
+import RegisterClient from '@pages/RegisterClient/RegisterClient';
+import RegisterBarber from '@pages/RegisterBarber/RegisterBarber';
 import NotFound from '@pages/NotFound/NotFound';
 import VerifyEmail from '@pages/VerifyEmail/VerifyEmail';
 import Dashboard from '@pages/Dashboard/Dashboard';
@@ -21,7 +22,8 @@ function AppRoutes() {
         {/* Public pages (no need to be authenticated) */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/register/" element={<RegisterClient />} />
+        <Route path="/register/:uidb64/:token" element={<RegisterBarber />} />
         <Route path="/verify/:uidb64/:token" element={<VerifyEmail />} />
 
         {/* Shortcut redirects (from /:page to  /:role/:page) */}

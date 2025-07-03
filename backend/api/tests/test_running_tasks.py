@@ -1,5 +1,6 @@
 import datetime
 from unittest.mock import patch
+from django.db.models import Q
 from django.test import TestCase
 from django.utils import timezone
 from api.tasks import complete_ongoing_appointments, send_appointment_reminders
@@ -40,8 +41,8 @@ class RunningTasksTestCase(TestCase):
         self.tomorrow = self.today + datetime.timedelta(days=1)
         self.now = timezone.localtime(timezone.now()).replace(microsecond=0, second=0)
         self.now_time = self.now.time()
-        self.past_time = (self.now - datetime.timedelta(hours=2)).time()
-        self.future_time = (self.now + datetime.timedelta(hours=2)).time()
+        self.past_time = (self.now - datetime.timedelta(hours=1)).time()
+        self.future_time = (self.now + datetime.timedelta(hours=1)).time()
 
         # Service for appointments
         self.service = Service.objects.create(
@@ -90,7 +91,7 @@ class RunningTasksTestCase(TestCase):
 
         # Use fresh clients & slots to avoid clash on (barber, date, slot)
         other_client1 = self._fresh_client("1")
-        appt_today_future = self.create_appointment(client=other_client1, date=self.today, slot=self.future_time)  # should NOT complete
+        appt_today_future = self.create_appointment(client=other_client1, date=self.today, slot=self.future_time)  # should NOT complete (this will complete if tested at 23:00 because it would become same day but at 00:00 which is before)
         other_client2 = self._fresh_client("2")
         appt_tomorrow = self.create_appointment(client=other_client2, date=self.tomorrow, slot=self.past_time)  # should NOT complete
 
@@ -101,11 +102,11 @@ class RunningTasksTestCase(TestCase):
         slot_cancelled = (datetime.datetime.combine(datetime.date.today(), self.past_time) + datetime.timedelta(minutes=2)).time()
         other_client4 = self._fresh_client("4")
         appt_cancelled = self.create_appointment(client=other_client4, date=self.today, slot=slot_cancelled, status=AppointmentStatus.CANCELLED.value)
+        
+        # runs the task and returns how many updated
+        count = complete_ongoing_appointments() 
 
-        count = complete_ongoing_appointments()  # returns how many updated
-
-        self.assertEqual(count, 2)  # yest and today_past
-
+        
         # Refresh
         appt_yest.refresh_from_db()
         appt_today_past.refresh_from_db()
@@ -113,13 +114,32 @@ class RunningTasksTestCase(TestCase):
         appt_tomorrow.refresh_from_db()
         appt_completed.refresh_from_db()
         appt_cancelled.refresh_from_db()
+
+        # time part of your mocked "now"
+        fake_now_time = fake_now.time() 
+
+        if fake_now_time >= datetime.time(23, 0):
+            self.assertEqual(count, 3) # Since time wraps at 00:00, < 00:00 is always False except exactly at 00:00
+            self.assertEqual(appt_today_past.status, AppointmentStatus.COMPLETED.value)
+            self.assertEqual(appt_today_future.status, AppointmentStatus.COMPLETED.value)
+
+        elif fake_now_time <= datetime.time(1, 0):
+            self.assertEqual(count, 1) # Same shit with previous hour, wraps to 23:00 of same day...
+            self.assertEqual(appt_today_past.status, AppointmentStatus.ONGOING.value)
+            self.assertEqual(appt_today_future.status, AppointmentStatus.ONGOING.value)
+
+        else:
+            self.assertEqual(count, 2)  # yest and today_past
+            self.assertEqual(appt_today_past.status, AppointmentStatus.COMPLETED.value)
+            self.assertEqual(appt_today_future.status, AppointmentStatus.ONGOING.value)
+
+
         self.assertEqual(appt_yest.status, AppointmentStatus.COMPLETED.value)
-        self.assertEqual(appt_today_past.status, AppointmentStatus.COMPLETED.value)
-        self.assertEqual(appt_today_future.status, AppointmentStatus.ONGOING.value)
         self.assertEqual(appt_tomorrow.status, AppointmentStatus.ONGOING.value)
         self.assertEqual(appt_completed.status, AppointmentStatus.COMPLETED.value)
         self.assertEqual(appt_cancelled.status, AppointmentStatus.CANCELLED.value)
 
+    
     @patch("api.tasks.timezone")
     def test_send_appointment_reminders_only_targets_window(self, mocked_tz, mock_send_mail):
         """

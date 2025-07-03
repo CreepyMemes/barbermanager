@@ -4,6 +4,7 @@
 export function isEmail(value) {
   return /\S+@\S+\.\S+/.test(value);
 }
+
 /**
  * Remove dashes/underscores and capitalize next letter in styels
  */

@@ -3,6 +3,7 @@ from rest_framework import status
 from unittest.mock import patch
 from django.urls import reverse
 from django.core import mail
+from django.conf import settings
 import re
 from api.models import User, Roles
 
@@ -49,15 +50,9 @@ class BarberAuthFlowTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data.get('detail'), 'Barber invited successfully.')
-    
-        # Dynamically get the URL prefix without uid/token
-        url_prefix = reverse(self.register_url, kwargs={'uidb64': 'UIDPLACEHOLDER', 'token': 'TOKENPLACEHOLDER'})
 
-        # Build regex by replacing the placeholders with regex groups
-        regex_pattern = url_prefix.replace('UIDPLACEHOLDER', r'(?P<uidb64>[^/]+)').replace('TOKENPLACEHOLDER', r'(?P<token>[^/]+)')
-
-        # Search in the email body
-        match = re.search(regex_pattern, mail.outbox[0].body)
+        # Look for a link of the form: FRONTEND_URL/register/UID/TOKEN
+        match = re.search(re.escape(settings.FRONTEND_URL) + r'/register/(?P<uidb64>[^/]+)/(?P<token>[^/\s]+)', mail.outbox[0].body)
         self.assertIsNotNone(match, "Verification link not found in email body")
     
         return response, match.group('uidb64'), match.group('token')

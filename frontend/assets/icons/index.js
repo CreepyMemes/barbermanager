@@ -14,6 +14,9 @@ import RevenueIcon from './revenue.svg?react';
 import AvailabilityIcon from './availability.svg?react';
 import CalendarIcon from './calendar.svg?react';
 import EmailIcon from './email.svg?react';
+import CancelledIcon from './cancelled.svg?react';
+import CompletedIcon from './completed.svg?react';
+import RatingIcon from './rating.svg?react';
 
 const icons = {
   github: GithubIcon,
@@ -32,6 +35,9 @@ const icons = {
   availability: AvailabilityIcon,
   calendar: CalendarIcon,
   email: EmailIcon,
+  cancelled: CancelledIcon,
+  completed: CompletedIcon,
+  rating: RatingIcon,
 };
 
 export default icons;
