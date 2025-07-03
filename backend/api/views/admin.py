@@ -37,6 +37,7 @@ def get_admin_profile(request):
     """
     serializer = GetAdminProfileSerializer(data={}, context={'admin': request.user})
     serializer.is_valid(raise_exception=True)
+    
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -53,6 +54,7 @@ def get_all_barbers(request):
     """
     serializer = GetAllBarbersSerializer(data={}, instance={}) 
     serializer.is_valid(raise_exception=True)
+    
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -69,6 +71,7 @@ def get_all_clients(request):
     """
     serializer = GetAllClientsSerializer(data={}, instance={}) 
     serializer.is_valid(raise_exception=True)
+    
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -85,6 +88,7 @@ def get_all_appointments(request):
     """
     serializer = GetAllAppointmentsSerializer(data={}, instance={})
     serializer.is_valid(raise_exception=True)
+    
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
