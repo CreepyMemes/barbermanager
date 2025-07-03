@@ -262,7 +262,8 @@ class Client(User):
         Returns the single ongoing Appointment instance for this client, or None.
         """
         from .appointment import AppointmentStatus
-        return self.appointments_created.filter(status=AppointmentStatus.ONGOING.value).first().to_dict()
+        appointment = self.appointments_created.filter(status=AppointmentStatus.ONGOING.value).first()
+        return appointment.to_dict() if appointment else None
 
     @property
     def reviews(self):
