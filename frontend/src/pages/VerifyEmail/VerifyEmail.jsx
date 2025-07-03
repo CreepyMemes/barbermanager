@@ -58,10 +58,11 @@ function VerifyEmail() {
           {/* If email confirmation is successfull */}
           {status === 'success' && (
             <div className={styles.center}>
-              <Icon name="check-circle" size="xl" color="success" />
+              <Icon name="completed" size="md" black />
               <h2>Email Verified!</h2>
               <div className={styles.message}>{message}</div>
-              <Button color="primary" size="md" onClick={() => navigate('/login')}>
+
+              <Button href="/login" color="primary" size="md">
                 Go to Login
               </Button>
             </div>
@@ -70,11 +71,12 @@ function VerifyEmail() {
           {/* If email confirmation failed */}
           {status === 'error' && (
             <div className={styles.center}>
-              <Icon name="alert-circle" size="xl" color="danger" />
+              <Icon name="cancelled" size="md" black />
               <h2>Verification Failed</h2>
               <div className={styles.message}>{message}</div>
-              <Button color="primary" size="md" onClick={() => navigate('/login')}>
-                Back to Login
+
+              <Button href="/login" color="primary" size="md">
+                Go to Login
               </Button>
             </div>
           )}
