@@ -19,7 +19,9 @@ function Login() {
   const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
-  const registered = searchParams.get('registered') === '1';
+  const registered = searchParams.get('registered');
+
+  console.log(registered);
 
   /**
    * On authentication state change, redirect authenticated users away from login.
@@ -47,7 +49,8 @@ function Login() {
           <Icon name="email" size="md" color="success" black />
           <div>
             <strong>Account created!</strong>
-            <div>Please check your email to verify your account before logging in.</div>
+            {registered === '1' && <div>Please check your email to verify your account before logging in.</div>}
+            {registered === '2' && <div>You can now log in to your account.</div>}
           </div>
         </Card>
       )}

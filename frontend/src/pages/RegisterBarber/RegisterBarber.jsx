@@ -4,7 +4,6 @@ import { useAuth } from '@hooks/useAuth';
 import styles from './RegisterBarber.module.scss';
 import api from '@api';
 
-import { decodeUid64 } from '@utils/utils';
 import Spinner from '@components/common/Spinner/Spinner';
 import Card from '@components/common/Card/Card';
 import Form from '@components/common/Form/Form';
@@ -107,7 +106,7 @@ function RegisterBarber() {
 
     try {
       await api.auth.registerBarber(uidb64, token, { name, surname, username, password });
-      navigate('/login?registered=1', { replace: true });
+      navigate('/login?registered=2', { replace: true });
     } finally {
       setLoading(false);
     }
