@@ -12,6 +12,7 @@ export const ENDPOINTS = {
     resetPassword: '/auth/reset-password/',
     registerClient: '/auth/register/',
     registerBarber: (uidb64, token) => `/auth/register/${uidb64}/${token}/`,
+    emailFromToken: (uidb64, token) => `/auth/email/${uidb64}/${token}/`,
     resetPasswordConfirm: (uidb64, token) => `/auth/reset-password/${uidb64}/${token}/`,
     verifyEmail: (uidb64, token) => `/auth/verify/${uidb64}/${token}/`,
   },
