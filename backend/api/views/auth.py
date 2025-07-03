@@ -15,6 +15,7 @@ from ..utils import(
 from ..serializers import (
     GetCurrentUserSerializer,
     RegisterClientSerializer,
+    GetEmailFromTokenSerializer,
     VerifyClientEmailSerializer,
     LoginSerializer,
     RegisterBarberSerializer,
@@ -23,7 +24,6 @@ from ..serializers import (
     ConfirmPasswordResetSerializer,
     RefreshTokenCustomSerializer,
 )
-
 
 
 @extend_schema(
@@ -95,6 +95,25 @@ def register_barber(request, uidb64, token):
 
     return Response({'detail': 'Barber registered and account activated.'}, status=status.HTTP_201_CREATED)
     
+
+@extend_schema(
+    methods=['GET'],
+    responses={200: GetEmailFromTokenSerializer},
+    description="Returns the email associated to the user from a valid given uid64 and token.",
+)
+@api_view(['GET'])
+@permission_classes([AllowAny])
+@authentication_classes([])
+@parser_classes([JSONParser])
+def get_email_from_token(request, uidb64, token):
+    """
+    Returns the email associated to the user from a valid given uid64 and token
+    """
+    serializer = GetEmailFromTokenSerializer(data={}, context={'uidb64': uidb64, 'token': token})
+    serializer.is_valid(raise_exception=True) 
+    
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 @extend_schema(
     methods=['GET'],

@@ -12,7 +12,6 @@ from ..utils import (
     PasswordValidationMixin,
     PhoneNumberValidationMixin,
     UIDTokenValidationSerializer,
-    get_user_from_uid_token, 
 )
 
 class GetCurrentUserSerializer(UserValidationMixin, serializers.Serializer):
@@ -66,7 +65,7 @@ class RegisterClientSerializer(UsernameValidationMixin, EmailValidationMixin, Pa
         return client
 
 
-class RegisterBarberSerializer(UsernameValidationMixin, PasswordValidationMixin, serializers.Serializer):
+class RegisterBarberSerializer(UIDTokenValidationSerializer, UsernameValidationMixin, PasswordValidationMixin, serializers.Serializer):
     """
     Barber completes registration via invite link. Only sets username and password.
     """
@@ -77,24 +76,16 @@ class RegisterBarberSerializer(UsernameValidationMixin, PasswordValidationMixin,
     description = serializers.CharField(required=False)
 
     def validate(self, attrs):
+        attrs = self.validate_uid_token(attrs)
         attrs = self.validate_username_unique(attrs)
 
-        uidb64 = self.context.get('uidb64')
-        token = self.context.get('token')
-
-        if not uidb64 or not token:
-            raise serializers.ValidationError("Missing uid or token.")
-        
-        barber = get_user_from_uid_token(uidb64, token).barber
-        attrs['barber'] = barber
-
-        if barber.is_active:
+        if attrs['user'].is_active:
             raise serializers.ValidationError('Account already registered.')
 
         return attrs
     
     def create(self, validated_data):
-        barber = validated_data['barber']
+        barber = validated_data['user']
         barber.username = validated_data['username']
         barber.name = validated_data['name']
         barber.surname = validated_data['surname']
@@ -109,15 +100,27 @@ class RegisterBarberSerializer(UsernameValidationMixin, PasswordValidationMixin,
         return barber
 
 
+class GetEmailFromTokenSerializer(UIDTokenValidationSerializer, serializers.Serializer):
+    """
+    Returns the email associated to the user from a valid given uid64 and token
+    """
+    def validate(self, attrs):
+        attrs = self.validate_uid_token(attrs)
+        return attrs
+    
+    def to_representation(self, validated_data):
+        user = validated_data['user']
+        return {'email': user.email}
+
+
 class VerifyClientEmailSerializer(UIDTokenValidationSerializer):
     """
     Handles token validations when a client attempts to verify their account
     """
     def validate(self, attrs):
-        attrs = super().validate(attrs)
-        client = attrs.get('user')
+        attrs = self.validate_uid_token(attrs)
 
-        if client.is_active:
+        if attrs['user'].is_active:
             raise serializers.ValidationError('Account already verified.')
 
         return attrs
@@ -223,6 +226,10 @@ class ConfirmPasswordResetSerializer(PasswordValidationMixin, UIDTokenValidation
     """
     password = serializers.CharField(required=True, write_only=True)
 
+    def validate(self, attrs):
+        attrs = self.validate_uid_token(attrs)
+        return attrs
+    
     def save(self, **kwargs):
         user = self.validated_data['user']
         password = self.validated_data['password']
