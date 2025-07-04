@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useAuth } from '@hooks/useAuth';
-import styles from './RegisterBarber.module.scss';
+import { useParams } from 'react-router-dom';
+import styles from './ConfirmPasswordReset.module.scss';
 import api from '@api';
 
 import Spinner from '@components/common/Spinner/Spinner';
@@ -11,18 +10,12 @@ import Input from '@components/common/Input/Input';
 import Button from '@components/common/Button/Button';
 import Error from '@components/common/Error/Error';
 import Hero from '@components/common/Hero/Hero';
-import SidePanel from '@components/common/SidePanel/SidePanel';
 import Icon from '@components/common/Icon/Icon';
 
-function RegisterBarber() {
+function ConfirmPasswordReset() {
   const { uidb64, token } = useParams();
-  const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
-
-  const [email, setEmail] = useState(null);
   const [status, setStatus] = useState('pending');
   const [message, setMessage] = useState('');
-
   const [loading, setLoading] = useState(false);
 
   /**
@@ -33,21 +26,13 @@ function RegisterBarber() {
     setStatus('pending');
 
     try {
-      const resp = await api.auth.getEmailFromToken(uidb64, token);
+      await api.auth.getEmailFromToken(uidb64, token);
       setStatus('success');
-      setEmail(resp?.email);
     } catch (error) {
       setStatus('error');
-      setMessage(error?.response?.data?.detail || 'The regisitration link is invalid or expired.');
+      setMessage(error?.response?.data?.detail || 'The password reset link is invalid or expired.');
     }
   }, [uidb64, token]);
-
-  /**
-   * On authentication state change, redirect authenticated users away from register.
-   */
-  useEffect(() => {
-    if (isAuthenticated) navigate('/dashboard', { replace: true });
-  }, [isAuthenticated, navigate]);
 
   /**
    * Handles fetching the email on mount or when params change, to check the uid64 and token validity
@@ -66,9 +51,6 @@ function RegisterBarber() {
    * Fields declaration for this form
    */
   const initialFields = {
-    name: '',
-    surname: '',
-    username: '',
     password: '',
     passwordConfirm: '',
   };
@@ -86,83 +68,42 @@ function RegisterBarber() {
    * Handles form submission for registering a new account to the api
    * If successfull redirect to login page, otherwise displays error messages on failure.
    */
-  const handleRegister = async ({ name, surname, username, password }) => {
+  const handleConfirmPasswordReset = async ({ password }) => {
     setLoading(true);
 
     try {
-      await api.auth.registerBarber(uidb64, token, { name, surname, username, password });
-      navigate('/login?registered=2', { replace: true });
+      await api.auth.confirmPasswordReset(uidb64, token, password);
+      setStatus('success');
     } finally {
       setLoading(false);
+      setStatus('done');
     }
   };
 
   return (
     <Hero>
       {status === 'success' && (
-        <Hero.Left>
-          <SidePanel heading="Barber Invitation" subheading="Complete your barber account setup">
-            <SidePanel.Inner>
-              <div className={styles.description}>
-                <h2>Finish your registration as a barber</h2>
-                <ul className={styles.features}>
-                  <li>
-                    <Icon name="barber" size="sm" />
-                    <p>Manage your profile, clients, and appointments.</p>
-                  </li>
-                  <li>
-                    <Icon name="service" size="sm" />
-                    <p>View your availability and set your offered services.</p>
-                  </li>
-                </ul>
-              </div>
-            </SidePanel.Inner>
-
-            <SidePanel.Actions>
-              <p className={styles.note}>Already have an account?</p>
-
-              <Button href="/login" color="secondary" size="md" width="content">
-                Login!
-              </Button>
-            </SidePanel.Actions>
-          </SidePanel>
-        </Hero.Left>
-      )}
-
-      {status === 'success' && (
-        <Hero.Right background={'background'}>
+        <Hero.Right className={styles.page} background={'background'}>
           <Card className={styles.register}>
             <Form
               className={styles.registerForm}
               initialFields={initialFields}
-              onSubmit={handleRegister}
+              onSubmit={handleConfirmPasswordReset}
               validate={validate}
             >
-              <h2 className={styles.label}>Sign up</h2>
+              <h2 className={styles.label}>Choose a new password</h2>
 
-              <div className={styles.inputGroup}>
-                <Input label="Name" name="name" type="text" required size="md" />
-                <Input label="Surname" name="surname" type="text" required size="md" />
-              </div>
-
-              <div className={styles.inputGroup}>
-                <Input label="Username" name="username" type="text" required size="md" />
-                <Input label="Email" name="email" type="email" size="md" placeholder={email} disabled />
-              </div>
-
-              <div className={styles.inputGroup}>
-                <Input label="Password" name="password" type="password" required size="md" />
-                <Input label="Confirm password" name="passwordConfirm" type="password" required size="md" />
-              </div>
+              <Input label="Password" name="password" type="password" required size="md" />
+              <Input label="Confirm password" name="passwordConfirm" type="password" required size="md" />
 
               <Button className={styles.registerBtn} type="submit" size="md" disabled={loading} wide color="primary">
                 <span className={styles.line}>
                   {loading ? (
                     <>
-                      <Spinner size={'sm'} /> Signing up...
+                      <Spinner size={'sm'} /> Saving password...
                     </>
                   ) : (
-                    'Create Account'
+                    'Save password'
                   )}
                 </span>
               </Button>
@@ -178,7 +119,7 @@ function RegisterBarber() {
           <Card className={styles.error}>
             <div className={styles.center}>
               <Spinner size="lg" />
-              <h2>Retreiving your email...</h2>
+              <h2>Verifying password reset link...</h2>
             </div>
           </Card>
         </Hero.Right>
@@ -189,8 +130,24 @@ function RegisterBarber() {
           <Card className={styles.error}>
             <div className={styles.center}>
               <Icon name="cancelled" size="md" black />
-              <h2>Invitation Error</h2>
+              <h2>Password Reset Error</h2>
               <div className={styles.message}>{message}</div>
+
+              <Button href="/login" color="primary" size="md">
+                Back to Login
+              </Button>
+            </div>
+          </Card>
+        </Hero.Right>
+      )}
+
+      {status === 'done' && (
+        <Hero.Right className={styles.page} background={'background'}>
+          <Card className={styles.error}>
+            <div className={styles.center}>
+              <Icon name="calendar" size="md" black />
+              <h2>Password has been reset successfully</h2>
+              <div className={styles.message}>Please login with your new password</div>
 
               <Button href="/login" color="primary" size="md">
                 Back to Login
@@ -203,4 +160,4 @@ function RegisterBarber() {
   );
 }
 
-export default RegisterBarber;
+export default ConfirmPasswordReset;

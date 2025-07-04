@@ -2,7 +2,7 @@ import styles from './RadialChart.module.scss';
 
 const RADIUS = 100 / (Math.PI * 2);
 
-export default function RadialChart({ value, max = 5, color = '#fec84b', size = 80 }) {
+export default function RadialChart({ value, max = 5, color = '#fed54f', size = 80 }) {
   return (
     <svg
       viewBox="0 0 36 36"
@@ -21,7 +21,7 @@ export default function RadialChart({ value, max = 5, color = '#fec84b', size = 
       <path
         className={styles.circle}
         style={{ stroke: color }}
-        strokeDasharray="50, 100"
+        strokeDasharray={`${(value / max) * 100}, 100`}
         d={`
               M18 2.0845
               a ${RADIUS} ${RADIUS} 0 0 1 0 ${2 * RADIUS}

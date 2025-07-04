@@ -77,6 +77,7 @@ class RegisterBarberSerializer(UIDTokenValidationSerializer, UsernameValidationM
 
     def validate(self, attrs):
         attrs = self.validate_uid_token(attrs)
+        attrs = self.validate_username_format(attrs)
         attrs = self.validate_username_unique(attrs)
 
         if attrs['user'].is_active:
