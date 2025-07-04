@@ -21,8 +21,6 @@ function Login() {
   const [searchParams] = useSearchParams();
   const registered = searchParams.get('registered');
 
-  console.log(registered);
-
   /**
    * On authentication state change, redirect authenticated users away from login.
    */

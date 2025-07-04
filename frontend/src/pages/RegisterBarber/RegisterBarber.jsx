@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '@hooks/useAuth';
 import styles from './RegisterBarber.module.scss';
@@ -20,7 +20,27 @@ function RegisterBarber() {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState(null);
+  const [status, setStatus] = useState('pending');
+  const [message, setMessage] = useState('');
+
   const [loading, setLoading] = useState(false);
+
+  /**
+   * Calls backend API to get email with provided uidb64 and token.
+   * Updates component status and message based on response.
+   */
+  const getEmail = useCallback(async () => {
+    setStatus('pending');
+
+    try {
+      const resp = await api.auth.getEmailFromToken(uidb64, token);
+      setStatus('success');
+      setEmail(resp?.email);
+    } catch (error) {
+      setStatus('error');
+      setMessage(error?.response?.data?.detail || 'The regisitration link is invalid or expired.');
+    }
+  }, [uidb64, token]);
 
   /**
    * On authentication state change, redirect authenticated users away from register.
@@ -30,52 +50,17 @@ function RegisterBarber() {
   }, [isAuthenticated, navigate]);
 
   /**
-   * Fetch the email asynchronously, to check the uid64 and token validity
+   * Handles fetching the email on mount or when params change, to check the uid64 and token validity
    */
   useEffect(() => {
     if (!uidb64 || !token) {
-      setLoading(false);
+      setStatus('error');
+      setMessage('No uidb46 or token were provided.');
       return;
     }
 
-    setLoading(true);
-    (async () => {
-      try {
-        const resp = await api.auth.getEmailFromToken(uidb64, token);
-        setEmail(resp?.email);
-      } catch {
-        // Ignore
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [uidb64, token]);
-
-  // Return spinner while loading the async getting email
-  if (loading) return <Spinner />;
-
-  /**
-   *  Quick link guard, checks if there's uid and token in the url
-   */
-  if (!email) {
-    return (
-      <Hero>
-        <Hero.Right className={styles.page} background={'background'}>
-          <Card className={styles.error}>
-            <div className={styles.center}>
-              <Icon name="cancelled" size="md" black />
-              <h2>Invalid invitation link.</h2>
-              <div className={styles.message}>Please check your invitation email or contact your admin.</div>
-
-              <Button href="/login" color="primary" size="md">
-                Back to Login
-              </Button>
-            </div>
-          </Card>
-        </Hero.Right>
-      </Hero>
-    );
-  }
+    getEmail();
+  }, [uidb64, token, getEmail]);
 
   /**
    * Fields declaration for this form
@@ -114,75 +99,106 @@ function RegisterBarber() {
 
   return (
     <Hero>
-      <Hero.Left>
-        <SidePanel heading="Barber Invitation" subheading="Complete your barber account setup">
-          <SidePanel.Inner>
-            <div className={styles.description}>
-              <h2>Finish your registration as a barber</h2>
-              <ul className={styles.features}>
-                <li>
-                  <Icon name="barber" size="sm" />
-                  <p>Manage your profile, clients, and appointments.</p>
-                </li>
-                <li>
-                  <Icon name="service" size="sm" />
-                  <p>View your availability and set your offered services.</p>
-                </li>
-              </ul>
+      {status === 'success' && (
+        <Hero.Left>
+          <SidePanel heading="Barber Invitation" subheading="Complete your barber account setup">
+            <SidePanel.Inner>
+              <div className={styles.description}>
+                <h2>Finish your registration as a barber</h2>
+                <ul className={styles.features}>
+                  <li>
+                    <Icon name="barber" size="sm" />
+                    <p>Manage your profile, clients, and appointments.</p>
+                  </li>
+                  <li>
+                    <Icon name="service" size="sm" />
+                    <p>View your availability and set your offered services.</p>
+                  </li>
+                </ul>
+              </div>
+            </SidePanel.Inner>
+
+            <SidePanel.Actions>
+              <p className={styles.note}>Already have an account?</p>
+
+              <Button href="/login" color="secondary" size="md" width="content">
+                Login!
+              </Button>
+            </SidePanel.Actions>
+          </SidePanel>
+        </Hero.Left>
+      )}
+
+      {status === 'success' && (
+        <Hero.Right background={'background'}>
+          <Card className={styles.register}>
+            <Form
+              className={styles.registerForm}
+              initialFields={initialFields}
+              onSubmit={handleRegister}
+              validate={validate}
+            >
+              <h2 className={styles.label}>Sign up</h2>
+
+              <div className={styles.inputGroup}>
+                <Input label="Name" name="name" type="text" required size="md" />
+                <Input label="Surname" name="surname" type="text" required size="md" />
+              </div>
+
+              <div className={styles.inputGroup}>
+                <Input label="Username" name="username" type="text" required size="md" />
+                <Input label="Email" name="email" type="email" size="md" placeholder={email} disabled />
+              </div>
+
+              <div className={styles.inputGroup}>
+                <Input label="Password" name="password" type="password" required size="md" />
+                <Input label="Confirm password" name="passwordConfirm" type="password" required size="md" />
+              </div>
+
+              <Button className={styles.registerBtn} type="submit" size="md" disabled={loading} wide color="primary">
+                <span className={styles.line}>
+                  {loading ? (
+                    <>
+                      <Spinner size={'sm'} /> Signing up...
+                    </>
+                  ) : (
+                    'Create Account'
+                  )}
+                </span>
+              </Button>
+
+              <Error />
+            </Form>
+          </Card>
+        </Hero.Right>
+      )}
+
+      {status === 'pending' && (
+        <Hero.Right className={styles.page} background={'background'}>
+          <Card className={styles.error}>
+            <div className={styles.center}>
+              <Spinner size="lg" />
+              <h2>Retreiving your email...</h2>
             </div>
-          </SidePanel.Inner>
+          </Card>
+        </Hero.Right>
+      )}
 
-          <SidePanel.Actions>
-            <p className={styles.note}>Already have an account?</p>
+      {status === 'error' && (
+        <Hero.Right className={styles.page} background={'background'}>
+          <Card className={styles.error}>
+            <div className={styles.center}>
+              <Icon name="cancelled" size="md" black />
+              <h2>Invitation Error</h2>
+              <div className={styles.message}>{message}</div>
 
-            <Button href="/login" color="secondary" size="md" width="content">
-              Login!
-            </Button>
-          </SidePanel.Actions>
-        </SidePanel>
-      </Hero.Left>
-
-      <Hero.Right background={'background'}>
-        <Card className={styles.register}>
-          <Form
-            className={styles.registerForm}
-            initialFields={initialFields}
-            onSubmit={handleRegister}
-            validate={validate}
-          >
-            <h2 className={styles.label}>Sign up</h2>
-
-            <div className={styles.inputGroup}>
-              <Input label="Name" name="name" type="text" required size="md" />
-              <Input label="Surname" name="surname" type="text" required size="md" />
+              <Button href="/login" color="primary" size="md">
+                Back to Login
+              </Button>
             </div>
-
-            <div className={styles.inputGroup}>
-              <Input label="Username" name="username" type="text" required size="md" />
-              <Input label="Email" name="email" type="email" size="md" placeholder={email} disabled />
-            </div>
-
-            <div className={styles.inputGroup}>
-              <Input label="Password" name="password" type="password" required size="md" />
-              <Input label="Confirm password" name="passwordConfirm" type="password" required size="md" />
-            </div>
-
-            <Button className={styles.registerBtn} type="submit" size="md" disabled={loading} wide color="primary">
-              <span className={styles.line}>
-                {loading ? (
-                  <>
-                    <Spinner size={'sm'} /> Signing up...
-                  </>
-                ) : (
-                  'Create Account'
-                )}
-              </span>
-            </Button>
-
-            <Error />
-          </Form>
-        </Card>
-      </Hero.Right>
+          </Card>
+        </Hero.Right>
+      )}
     </Hero>
   );
 }
