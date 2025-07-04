@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@hooks/useAuth';
 import styles from './RequestPasswordReset.module.scss';
 
 import api from '@api';
@@ -12,7 +14,19 @@ import Error from '@components/common/Error/Error';
 import Hero from '@components/common/Hero/Hero';
 
 function RequestPasswordReset() {
-  const [status, setStatus] = useState(null);
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  const [status, setStatus] = useState('waiting');
+  const [loading, setLoading] = useState(false);
+
+  /**
+   * On authentication state change, redirect authenticated users to their settings.
+   */
+  useEffect(() => {
+    if (isAuthenticated) navigate('/settings', { replace: true });
+  }, [isAuthenticated, navigate]);
+
   /**
    * Fields declaration for this form
    */
@@ -25,19 +39,20 @@ function RequestPasswordReset() {
    * then attempts to log in with credentials. Displays error messages on failure.
    */
   const handleRequestPasswordReset = async ({ email }) => {
-    setStatus('pending');
+    setLoading(true);
 
     try {
       await api.auth.requestPasswordReset(email);
     } finally {
-      setStatus('success');
+      setLoading(false);
+      setStatus('sent');
     }
   };
 
   return (
     <Hero>
       <Hero.Right className={styles.page} background="background">
-        {status !== 'success' && (
+        {status === 'waiting' && (
           <Card className={styles.login}>
             <Form className={styles.loginForm} initialFields={initialFields} onSubmit={handleRequestPasswordReset}>
               <h2 className={styles.label}>Reset your password</h2>
@@ -49,20 +64,13 @@ function RequestPasswordReset() {
                 autoComplete="email"
                 placeholder="your@email.com"
                 required
-                disabled={status === 'pending'}
+                disabled={loading}
                 size="md"
               />
 
-              <Button
-                className={styles.loginBtn}
-                type="submit"
-                size="md"
-                disabled={status === 'pending'}
-                wide
-                color="primary"
-              >
+              <Button className={styles.loginBtn} type="submit" size="md" disabled={loading} wide color="primary">
                 <span className={styles.line}>
-                  {status === 'pending' ? (
+                  {loading ? (
                     <>
                       <Spinner size={'sm'} /> Sending email...
                     </>
@@ -77,7 +85,7 @@ function RequestPasswordReset() {
           </Card>
         )}
 
-        {status === 'success' && (
+        {status === 'sent' && (
           <Card className={styles.success}>
             <div className={styles.center}>
               <Icon name="completed" size="md" black />
