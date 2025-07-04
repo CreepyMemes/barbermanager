@@ -14,12 +14,15 @@ Proposed:
 2. Frontend:
 
 Important:  
-  - implement reset password page
-  - change password reset email url in the email template to the frontend one after you implement it
+  - set request reset password page to redirect to user settings, if authenticated
+  - change confirm password reset to not redirect to login, but show that it succeded, similar to verify email page
+
+  - add admin barbers page, to view all barbers, invite new and delete existing
+
+  - add settings page for admin, client and barber
+
 
 Proposed:
-  - cleanup Form code, make it work automagically (Form.Button, auto fields, Form.Input, etc)
-  
   - add media queries for screen sizes on each layout component 
     make mobile sidebar button on header
 
@@ -28,6 +31,7 @@ Proposed:
   - see if it's worth it to fix loading spinner not showing when accessing dashboard from a route 
     this happens because to redirect you need to be authenticated to get role
   
+  - cleanup Form code, make it work automagically (Form.Button, auto fields, Form.Input, etc)
   - see how vite tests work and maybe implement some
 
 -----------------------------------------------------------------------------------------------------------------------------------------
