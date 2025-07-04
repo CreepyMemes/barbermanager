@@ -14,8 +14,6 @@ Proposed:
 2. Frontend:
 
 Important:  
-  - enhance Input component to add button to show password
-  
   - add admin barbers page, to view all barbers, invite new and delete existing
   - add reusable pagination component, to use in all lists
 
