@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useAuth } from '@hooks/useAuth';
+import { useParams } from 'react-router-dom';
 import styles from './ConfirmPasswordReset.module.scss';
 import api from '@api';
 
@@ -11,18 +10,12 @@ import Input from '@components/common/Input/Input';
 import Button from '@components/common/Button/Button';
 import Error from '@components/common/Error/Error';
 import Hero from '@components/common/Hero/Hero';
-import SidePanel from '@components/common/SidePanel/SidePanel';
 import Icon from '@components/common/Icon/Icon';
 
 function ConfirmPasswordReset() {
   const { uidb64, token } = useParams();
-  const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
-
-  const [email, setEmail] = useState(null);
   const [status, setStatus] = useState('pending');
   const [message, setMessage] = useState('');
-
   const [loading, setLoading] = useState(false);
 
   /**
@@ -33,9 +26,8 @@ function ConfirmPasswordReset() {
     setStatus('pending');
 
     try {
-      const resp = await api.auth.getEmailFromToken(uidb64, token);
+      await api.auth.getEmailFromToken(uidb64, token);
       setStatus('success');
-      setEmail(resp?.email);
     } catch (error) {
       setStatus('error');
       setMessage(error?.response?.data?.detail || 'The password reset link is invalid or expired.');
@@ -81,9 +73,10 @@ function ConfirmPasswordReset() {
 
     try {
       await api.auth.confirmPasswordReset(uidb64, token, password);
-      navigate('/login?registered=3', { replace: true }); // todo change
+      setStatus('success');
     } finally {
       setLoading(false);
+      setStatus('done');
     }
   };
 
@@ -126,7 +119,7 @@ function ConfirmPasswordReset() {
           <Card className={styles.error}>
             <div className={styles.center}>
               <Spinner size="lg" />
-              <h2>Retreiving your email...</h2>
+              <h2>Verifying password reset link...</h2>
             </div>
           </Card>
         </Hero.Right>
@@ -137,8 +130,24 @@ function ConfirmPasswordReset() {
           <Card className={styles.error}>
             <div className={styles.center}>
               <Icon name="cancelled" size="md" black />
-              <h2>Invitation Error</h2>
+              <h2>Password Reset Error</h2>
               <div className={styles.message}>{message}</div>
+
+              <Button href="/login" color="primary" size="md">
+                Back to Login
+              </Button>
+            </div>
+          </Card>
+        </Hero.Right>
+      )}
+
+      {status === 'done' && (
+        <Hero.Right className={styles.page} background={'background'}>
+          <Card className={styles.error}>
+            <div className={styles.center}>
+              <Icon name="calendar" size="md" black />
+              <h2>Password has been reset successfully</h2>
+              <div className={styles.message}>Please login with your new password</div>
 
               <Button href="/login" color="primary" size="md">
                 Back to Login

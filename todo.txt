@@ -14,15 +14,20 @@ Proposed:
 2. Frontend:
 
 Important:  
-  - set request reset password page to redirect to user settings, if authenticated
-  - change confirm password reset to not redirect to login, but show that it succeded, similar to verify email page
-
+  - enhance Input component to add button to show password
+  
   - add admin barbers page, to view all barbers, invite new and delete existing
+  - add reusable pagination component, to use in all lists
 
   - add settings page for admin, client and barber
 
 
 Proposed:
+  - change structure of project:
+    - you can register as barbershop owner, then invite your own barbers
+    - or you can register as client and view barbershops
+    - admim can view evrything about the platform
+    
   - add media queries for screen sizes on each layout component 
     make mobile sidebar button on header
 
