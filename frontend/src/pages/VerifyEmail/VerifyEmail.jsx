@@ -1,6 +1,7 @@
-import { useParams } from 'react-router-dom';
 import { useEffect, useState, useCallback } from 'react';
+import { useParams } from 'react-router-dom';
 import styles from './VerifyEmail.module.scss';
+
 import api from '@api';
 import Spinner from '@components/common/Spinner/Spinner';
 import Card from '@components/common/Card/Card';
@@ -19,13 +20,14 @@ function VerifyEmail() {
    */
   const verify = useCallback(async () => {
     setStatus('pending');
+
     try {
       await api.auth.verifyEmail(uidb64, token);
       setStatus('success');
       setMessage('Email verified successfully! You can now log in.');
-    } catch (err) {
+    } catch (error) {
       setStatus('error');
-      setMessage(err?.response?.data?.detail || 'The verification link is invalid or expired.');
+      setMessage(error?.response?.data?.detail || 'The verification link is invalid or expired.');
     }
   }, [uidb64, token]);
 
@@ -62,7 +64,7 @@ function VerifyEmail() {
               <div className={styles.message}>{message}</div>
 
               <Button href="/login" color="primary" size="md">
-                Go to Login
+                Back to Login
               </Button>
             </div>
           )}
@@ -75,7 +77,7 @@ function VerifyEmail() {
               <div className={styles.message}>{message}</div>
 
               <Button href="/login" color="primary" size="md">
-                Go to Login
+                Back to Login
               </Button>
             </div>
           )}
