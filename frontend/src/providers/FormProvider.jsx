@@ -35,7 +35,17 @@ function FormProvider({ initialFields, onSubmit, validate, children }) {
 
         await onSubmit({ ...fields }); // Copy to avoid stale closure
       } catch (error) {
-        setError(error?.response?.data?.detail || error?.message || 'Something went wrong');
+        const data = error?.response?.data;
+        let message = error?.message || 'Something went wrong';
+
+        if (data && typeof data === 'object') {
+          const firstKey = Object.keys(data)[0];
+          if (firstKey) {
+            const val = data[firstKey];
+            message = Array.isArray(val) ? val[0] : String(val); // If it's an array, grab first element, else use as string
+          }
+        }
+        setError(message);
       }
     },
     [fields, onSubmit, validate],

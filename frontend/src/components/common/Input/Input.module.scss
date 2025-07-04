@@ -6,31 +6,46 @@
   flex-direction: column;
   color: $color-primary;
   font-size: 1.3rem;
-}
 
-.input {
-  width: 100%;
+  .input-wrapper {
+    // Needed to overlay the button INSIDE input
+    position: relative;
+    display: flex;
+    align-items: center;
 
-  border-radius: $border-radius;
-  border: 1px solid $border-light;
+    .input {
+      width: 100%;
+      padding-right: 2.5rem; // Make space for the eye button
 
-  color: $color-primary;
-  font-size: 1.4rem;
+      border-radius: $border-radius;
+      border: 1px solid $border-light;
 
-  transition: border-color 0.2s;
+      color: $color-primary;
+      font-size: 1.4rem;
 
-  &::placeholder {
-    color: $color-accent;
-  }
+      transition: border-color 0.2s;
 
-  &:focus {
-    outline: none;
-    border-color: $color-primary;
-  }
+      &::placeholder {
+        color: $color-accent;
+      }
 
-  &:disabled {
-    background: $color-muted;
-    color: $color-primary;
-    cursor: not-allowed;
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+      }
+
+      &:disabled {
+        background: $color-muted;
+        color: $color-primary;
+        cursor: not-allowed;
+      }
+    }
+
+    .eye-btn {
+      position: absolute;
+      right: 1.5rem;
+      top: 0.5rem;
+      background: none;
+    }
   }
 }

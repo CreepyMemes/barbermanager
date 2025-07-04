@@ -38,8 +38,7 @@ def send_password_reset_email(email, uid, token, domain):
     """
     Sends password reset email with reset link.
     """
-    path = reverse('confirm_password_reset', kwargs={'uidb64': uid, 'token': token})
-    link = f'{domain}{path}'
+    link = f'{domain}/reset-password/{uid}/{token}'
 
     subject = '[BarberManager] You have requested to reset your password'
     message = (

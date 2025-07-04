@@ -21,8 +21,6 @@ function Login() {
   const [searchParams] = useSearchParams();
   const registered = searchParams.get('registered');
 
-  console.log(registered);
-
   /**
    * On authentication state change, redirect authenticated users away from login.
    */
@@ -32,6 +30,14 @@ function Login() {
 
   // Don't show login if redirecting
   if (isAuthenticated) return null;
+
+  /**
+   * Fields declaration for this form
+   */
+  const initialFields = {
+    identtifier: '',
+    password: '',
+  };
 
   /**
    * Handles form submission for login, Determines whether the identifier is an email or username,
@@ -90,7 +96,7 @@ function Login() {
 
         <Hero.Right background={'background'}>
           <Card className={styles.login}>
-            <Form className={styles.loginForm} initialFields={{ identifier: '', password: '' }} onSubmit={handleLogin}>
+            <Form className={styles.loginForm} initialFields={initialFields} onSubmit={handleLogin}>
               <h2 className={styles.label}>Login</h2>
 
               <Input

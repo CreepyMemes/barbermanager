@@ -1,4 +1,4 @@
-from django.db.models import Sum, Avg
+import uuid
 from rest_framework import serializers
 from ..utils import (
     AdminValidationMixin,
@@ -64,7 +64,11 @@ class InviteBarberSerializer(EmailValidationMixin, serializers.Serializer):
         return attrs
 
     def create(self, validated_data):
-        barber = Barber(email=validated_data['email'],is_active=False)
+        barber = Barber(
+            email=validated_data['email'],
+            username= f'barber_{uuid.uuid4()}', # Generate random username placeholder
+            is_active=False
+        )
         barber.set_unusable_password()
         barber.save()
 

@@ -76,7 +76,7 @@ class User(AbstractUser):
         from ..utils import username_validator
         return username_validator
     
-    username = models.CharField(validators=[_username_validator()], max_length=150)
+    username = models.CharField(validators=[_username_validator()], max_length=150, unique=True)
     email = models.EmailField(null=True, blank=True)
     role = models.CharField(max_length=10, choices=Roles.choices(), default=Roles.CLIENT.value)
     profile_image = models.ImageField(upload_to=_get_profile_image_path, null=True, blank=True)
