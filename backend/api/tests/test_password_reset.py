@@ -1,10 +1,11 @@
+from rest_framework.test import APITestCase
+from rest_framework import status
+from django.urls import reverse
 from django.core import mail
-from django.utils.http import urlsafe_base64_encode
+from django.conf import settings
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
-from rest_framework import status
-from rest_framework.test import APITestCase
-from django.urls import reverse
+from django.utils.http import urlsafe_base64_encode
 import re
 from api.models import User
 
@@ -39,14 +40,8 @@ class PasswordResetTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('detail', response.data)
 
-        # Dynamically get the URL prefix without uid/token
-        url_prefix = reverse(self.reset_confirm_url_name, kwargs={'uidb64': 'UIDPLACEHOLDER', 'token': 'TOKENPLACEHOLDER'})
-
-        # Build regex by replacing the placeholders with regex groups
-        regex_pattern = url_prefix.replace('UIDPLACEHOLDER', r'(?P<uidb64>[^/]+)').replace('TOKENPLACEHOLDER', r'(?P<token>[^/]+)')
-
-        # Search in the email body
-        match = re.search(regex_pattern, mail.outbox[0].body)
+        # Look for a link of the form: FRONTEND_URL/reset-password/UID/TOKEN
+        match = re.search(re.escape(settings.FRONTEND_URL) + r'/reset-password/(?P<uidb64>[^/]+)/(?P<token>[^/\s]+)', mail.outbox[0].body)
         self.assertIsNotNone(match, "Registration link not found in email body")
 
 
