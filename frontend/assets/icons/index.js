@@ -17,6 +17,8 @@ import EmailIcon from './email.svg?react';
 import CancelledIcon from './cancelled.svg?react';
 import CompletedIcon from './completed.svg?react';
 import RatingIcon from './rating.svg?react';
+import EyeOpenIcon from './eye_open.svg?react';
+import EyeClosedIcon from './eye_closed.svg?react';
 
 const icons = {
   github: GithubIcon,
@@ -38,6 +40,8 @@ const icons = {
   cancelled: CancelledIcon,
   completed: CompletedIcon,
   rating: RatingIcon,
+  eye_open: EyeOpenIcon,
+  eye_closed: EyeClosedIcon,
 };
 
 export default icons;
