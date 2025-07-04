@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useEffect, useState, useCallback } from 'react';
 import styles from './VerifyEmail.module.scss';
 import api from '@api';
@@ -12,7 +12,6 @@ function VerifyEmail() {
   const { uidb64, token } = useParams();
   const [status, setStatus] = useState('pending');
   const [message, setMessage] = useState('');
-  const navigate = useNavigate();
 
   /**
    * Calls backend API to verify email with provided uidb64 and token.
