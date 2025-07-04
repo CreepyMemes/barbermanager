@@ -32,6 +32,14 @@ function Login() {
   if (isAuthenticated) return null;
 
   /**
+   * Fields declaration for this form
+   */
+  const initialFields = {
+    identtifier: '',
+    password: '',
+  };
+
+  /**
    * Handles form submission for login, Determines whether the identifier is an email or username,
    * then attempts to log in with credentials. Displays error messages on failure.
    */
@@ -88,7 +96,7 @@ function Login() {
 
         <Hero.Right background={'background'}>
           <Card className={styles.login}>
-            <Form className={styles.loginForm} initialFields={{ identifier: '', password: '' }} onSubmit={handleLogin}>
+            <Form className={styles.loginForm} initialFields={initialFields} onSubmit={handleLogin}>
               <h2 className={styles.label}>Login</h2>
 
               <Input
