@@ -8,9 +8,10 @@ import Home from '@pages/Home/Home';
 import Login from '@pages/Login/Login';
 import RegisterClient from '@pages/RegisterClient/RegisterClient';
 import RegisterBarber from '@pages/RegisterBarber/RegisterBarber';
-import NotFound from '@pages/NotFound/NotFound';
 import VerifyEmail from '@pages/VerifyEmail/VerifyEmail';
+import RequestPasswordReset from '@pages/RequestPasswordReset/RequestPasswordReset';
 import Dashboard from '@pages/Dashboard/Dashboard';
+import NotFound from '@pages/NotFound/NotFound';
 
 // Helper for cleaner protected route declaration
 const protectedRoute = (element, role) => <ProtectedRoute role={role}>{element}</ProtectedRoute>;
@@ -25,6 +26,7 @@ function AppRoutes() {
         <Route path="/register/" element={<RegisterClient />} />
         <Route path="/register/:uidb64/:token" element={<RegisterBarber />} />
         <Route path="/verify/:uidb64/:token" element={<VerifyEmail />} />
+        <Route path="/reset-password" element={<RequestPasswordReset />} />
 
         {/* Shortcut redirects (from /:page to  /:role/:page) */}
         <Route path="dashboard" element={protectedRoute(<RoleRedirect />)} />
