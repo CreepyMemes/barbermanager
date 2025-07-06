@@ -1,5 +1,4 @@
 import { useAuth } from '@hooks/useAuth';
-import styles from './Dashboard.module.scss';
 
 import Spinner from '@components/common/Spinner/Spinner';
 import RoleSwitch from '@components/common/RoleSwitch/RoleSwitch';
@@ -15,12 +14,10 @@ export default function Dashboard() {
   if (isFetchingProfile || !profile) return <Spinner />;
 
   return (
-    <div className={styles.dashboard}>
-      <RoleSwitch
-        admin={<AdminDashboard />} // Role based page switch
-        barber={<BarberDashboard />}
-        client={<ClientDashboard />}
-      />
-    </div>
+    <RoleSwitch
+      admin={<AdminDashboard />} // Role based page switch
+      barber={<BarberDashboard />}
+      client={<ClientDashboard />}
+    />
   );
 }
