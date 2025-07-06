@@ -14,19 +14,26 @@
 
   .nextAppointment-value {
     display: flex;
-    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
     gap: 0.8rem;
 
-    span {
-      display: inline-block;
-      font-size: 1.16rem;
-      font-weight: 700;
+    .nextAppointment-date {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: $color-primary;
+    }
+
+    .nextAppointment-slot {
+      font-size: 2rem;
+      font-weight: 600;
       color: $color-primary;
     }
   }
 
   .appointment-row {
     display: flex;
+    gap: 2rem;
     justify-content: space-between;
 
     .appointment-date {
@@ -52,6 +59,7 @@
   .review-row {
     display: flex;
     justify-content: space-between;
+    gap: 2rem;
 
     .stars {
       color: #fabb3d;

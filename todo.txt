@@ -14,8 +14,11 @@ Proposed:
 2. Frontend:
 
 Important:  
+  - on backend return availabilities, appointments sorted based on date (newer to older)
+  
+  - add responsivity to sidebar, show toggle button on header, width 100% for (small screens)
+  
   - add admin barbers page, to view all barbers, invite new and delete existing
-  - add reusable pagination component, to use in all lists
 
   - add settings page for admin, client and barber
 
