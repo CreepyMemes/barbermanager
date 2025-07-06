@@ -19,6 +19,8 @@ import CompletedIcon from './completed.svg?react';
 import RatingIcon from './rating.svg?react';
 import EyeOpenIcon from './eye_open.svg?react';
 import EyeClosedIcon from './eye_closed.svg?react';
+import Left from './left.svg?react';
+import Right from './right.svg?react';
 
 const icons = {
   github: GithubIcon,
@@ -42,6 +44,8 @@ const icons = {
   rating: RatingIcon,
   eye_open: EyeOpenIcon,
   eye_closed: EyeClosedIcon,
+  left: Left,
+  right: Right,
 };
 
 export default icons;
