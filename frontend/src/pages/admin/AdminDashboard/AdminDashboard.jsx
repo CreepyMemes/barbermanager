@@ -1,5 +1,5 @@
 import { useAuth } from '@hooks/useAuth';
-// import styles from './AdminDashboard.module.scss';
+import styles from './AdminDashboard.module.scss';
 
 import StatCard from '@components/common/StatCard/StatCard';
 import RadialChart from '@components/common/RadialChart/RadialChart';
@@ -8,7 +8,7 @@ function AdminDashboard() {
   const { profile } = useAuth();
 
   return (
-    <>
+    <div className={styles.adminDashboard}>
       {/* Revenue */}
       <StatCard icon="revenue" label="Total Revenue" value={`$${profile.total_revenue}`} />
 
@@ -37,7 +37,7 @@ function AdminDashboard() {
       <StatCard icon="rating" label="Average Rating">
         <RadialChart value={profile.average_rating} max={5} size="70" />
       </StatCard>
-    </>
+    </div>
   );
 }
 

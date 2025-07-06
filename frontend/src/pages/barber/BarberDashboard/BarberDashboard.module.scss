@@ -1,128 +1,96 @@
 @use '@styles/variables.module.scss' as *;
 
-.card:nth-child(4),
-.card:nth-child(6) {
-  grid-column: span 2;
-}
+.barber-dashboard {
+  padding: 5rem;
 
-.card {
-  display: flex;
-  align-items: flex-start;
-  gap: 2rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 5rem;
 
-  .icon {
-    border-radius: 50%;
-    background-color: $color-icon;
-    height: 4.5rem;
-    width: 4.5rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 0.25rem;
-    box-shadow: 0 0.5rem 1.5rem rgba($color-accent, 0.05);
+  :nth-child(4),
+  :nth-child(6) {
+    grid-column: span 2;
   }
 
-  .content {
-    flex: 1;
+  .service-row {
+    display: flex;
+    justify-content: space-between;
 
-    .label {
-      padding-bottom: 0.5rem;
-      margin-bottom: 1rem;
-      border-bottom: 1px solid $border-light;
-
-      color: $color-main;
+    .service-name {
       font-weight: 700;
-      font-size: 1.22rem;
-      letter-spacing: 0.03em;
-      line-height: 1.2;
-    }
-
-    .value {
-      font-size: 2rem;
-      font-weight: 800;
       color: $color-primary;
-      margin-bottom: 0.1rem;
+      flex: 0 1 auto;
+      font-size: 1.15rem;
     }
 
-    .list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
+    .service-price {
+      color: $color-muted;
+      font-weight: 600;
+      margin-left: auto;
+      font-size: 1.07rem;
+    }
+  }
 
-      .list-item {
-        display: flex;
-        align-items: baseline;
-        gap: 0.75rem;
-        font-size: 1.09rem;
-        line-height: 1.5;
-        margin-bottom: 0.4rem;
+  .availability-row {
+    display: flex;
+    justify-content: space-between;
 
-        &:last-child {
-          margin-bottom: 0;
-        }
+    .availability-date {
+      font-weight: 700;
+      color: $color-accent;
+      padding-right: 0.5rem;
+      font-size: 1.04rem;
+    }
 
-        // Services styles
-        .service-name {
-          font-weight: 700;
-          color: $color-primary;
-          flex: 0 1 auto;
-          font-size: 1.15rem;
-        }
+    .availability-slots {
+      color: $color-main;
+      font-size: 1.05rem;
+      opacity: 0.88;
+    }
+  }
 
-        .service-price {
-          color: $color-muted;
-          font-weight: 600;
-          margin-left: auto;
-          font-size: 1.07rem;
-        }
+  .appointment-row {
+    display: flex;
+    justify-content: space-between;
 
-        // Availabilities styles
-        .availability-date {
-          font-weight: 700;
-          color: $color-accent;
-          padding-right: 0.5rem;
-          font-size: 1.04rem;
-        }
-        .availability-slots {
-          color: $color-main;
-          font-size: 1.05rem;
-          opacity: 0.88;
-        }
+    .appointment-date {
+      font-weight: 700;
+      color: $color-accent;
+      margin-right: 0.5rem;
+      font-size: 1.08rem;
+    }
+    .appointment-slot {
+      color: $color-main;
+      font-size: 1.04rem;
+      opacity: 0.86;
+    }
+  }
 
-        // Reviews styles
-        .stars {
-          color: #fabb3d;
-          font-size: 1.09rem;
-          letter-spacing: 0.1em;
-          font-family: inherit;
-          font-weight: 700;
-        }
+  .review-row {
+    display: flex;
+    justify-content: space-between;
 
-        .review-comment {
-          color: $color-lighter;
-          margin-left: 0.7rem;
-          font-size: 1.02rem;
-          max-width: 14rem;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-
-        .review-date {
-          color: $color-muted;
-          margin-left: auto;
-          font-size: 0.96rem;
-          font-style: italic;
-        }
-      }
-
-      .empty {
-        color: $color-muted;
-        font-style: italic;
-        font-size: 1.04rem;
-        padding-top: 0.6rem;
-        letter-spacing: 0.01em;
-      }
+    .stars {
+      color: #fabb3d;
+      font-size: 1.09rem;
+      letter-spacing: 0.1em;
+      font-family: inherit;
+      font-weight: 700;
+    }
+    .review-comment {
+      color: $color-lighter;
+      margin-left: 0.7rem;
+      font-size: 1.02rem;
+      max-width: 14rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .review-date {
+      color: $color-muted;
+      margin-left: auto;
+      font-size: 0.96rem;
+      font-style: italic;
     }
   }
 }
