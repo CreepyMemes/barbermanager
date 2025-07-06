@@ -1,105 +1,55 @@
 import { useAuth } from '@hooks/useAuth';
 import styles from './ClientDashboard.module.scss';
-import Card from '@components/common/Card/Card';
-import Icon from '@components/common/Icon/Icon';
+
+import StatCard from '@components/common/StatCard/StatCard';
+import Pagination from '@components/common/Pagination/Pagination';
 
 function ClientDashboard() {
   const { profile } = useAuth();
 
   return (
-    <>
+    <div className={styles.clientDashboard}>
       {/* Next Appointment */}
-      <Card className={styles.card}>
-        <div className={styles.icon}>
-          <Icon name="availability" size="sm" black />
+      <Pagination icon="availability" label="Next Appointment" emptyMessage="No future appointment">
+        <div className={styles.nextAppointmentValue}>
+          <span>{profile.next_appointment.date.replaceAll('-', ' / ')}</span>
+          <span>{profile.next_appointment.slot}</span>
         </div>
-        <div className={styles.content}>
-          <div className={styles.label}>Next Appointment</div>
-          {profile.next_appointment ? (
-            <div className={styles.value}>
-              <span>{profile.next_appointment.date.replaceAll('-', ' / ')}</span>
-              <span>{profile.next_appointment.slot}</span>
-            </div>
-          ) : (
-            <div className={styles.empty}>No future appointment</div>
-          )}
-        </div>
-      </Card>
+      </Pagination>
 
-      {/* Total Appointment */}
-      <Card className={styles.card}>
-        <div className={styles.icon}>
-          <Icon name="calendar" size="sm" black />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.label}>Total Appointments</div>
-          <div className={styles.value}>{profile?.appointments?.length}</div>
-        </div>
-      </Card>
+      {/* Total Appointments */}
+      <StatCard icon="calendar" label="Total Appointments" value={profile?.appointments?.length} />
 
       {/* Completed Appointments */}
-      <Card className={styles.card}>
-        <div className={styles.icon}>
-          <Icon name="completed" size="sm" black />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.label}>Completed Appointments</div>
-          <div className={styles.value}>{profile.completed_appointments}</div>
-        </div>
-      </Card>
+      <StatCard icon="completed" label="Completed Appointments" value={profile.completed_appointments} />
 
       {/* Booked Appointments */}
-      <Card className={styles.card}>
-        <div className={styles.icon}>
-          <Icon name="appointment" size="sm" black />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.label}>Booked Appointments</div>
-          <ul className={styles.list}>
-            {profile?.appointments?.length > 0 ? (
-              profile.appointments.map((appointment) => (
-                <li className={styles.listItem} key={appointment.id}>
-                  <span className={styles.appointmentDate}>{appointment.date}</span>
-                  <span className={styles.appointmentSlot}>{appointment.slot}</span>
-                  <span className={styles.appointmentStatus}>{appointment.status}</span>
-                </li>
-              ))
-            ) : (
-              <div className={styles.empty}>No appointments</div>
-            )}
-          </ul>
-        </div>
-      </Card>
+      <Pagination icon="appointment" label="Booked Appointments" emptyMessage="No appointments">
+        {profile?.appointments?.map((appointment) => (
+          <div key={appointment.id} className={styles.appointmentRow}>
+            <span className={styles.appointmentDate}>{appointment.date}</span>
+            <span className={styles.appointmentSlot}>{appointment.slot}</span>
+            <span className={styles.appointmentStatus}>{appointment.status}</span>
+          </div>
+        ))}
+      </Pagination>
 
-      {/* Reviews */}
-      <Card className={styles.card}>
-        <div className={styles.icon}>
-          <Icon name="review" size="sm" black />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.label}>Posted Reviews</div>
-          <ul className={styles.list}>
-            {profile?.reviews?.length > 0 ? (
-              profile.reviews.slice(0, 3).map((review) => (
-                <li className={styles.listItem} key={review.id}>
-                  <span className={styles.stars}>
-                    {'★'.repeat(review.rating)}
-                    {'☆'.repeat(5 - review.rating)}
-                  </span>
-                  <span className={styles.reviewComment}>
-                    {review.comment?.length > 30 ? review.comment.slice(0, 30) + '…' : review.comment}
-                  </span>
-                  <span className={styles.reviewDate}>{review.created_at}</span>
-                </li>
-              ))
-            ) : (
-              <li className={styles.empty}>No reviews yet</li>
-            )}
-          </ul>
-        </div>
-      </Card>
-    </>
+      {/* Posted Reviews */}
+      <Pagination icon="review" label="Posted Reviews" emptyMessage="No reviews yet">
+        {profile?.reviews?.map((review) => (
+          <div key={review.id} className={styles.reviewRow}>
+            <span className={styles.stars}>
+              {'★'.repeat(review.rating)}
+              {'☆'.repeat(5 - review.rating)}
+            </span>
+            <span className={styles.reviewComment}>
+              {review.comment?.length > 30 ? review.comment.slice(0, 30) + '…' : review.comment}
+            </span>
+            <span className={styles.reviewDate}>{review.created_at}</span>
+          </div>
+        ))}
+      </Pagination>
+    </div>
   );
 }
-
 export default ClientDashboard;
