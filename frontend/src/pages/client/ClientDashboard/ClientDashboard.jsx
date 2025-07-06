@@ -12,8 +12,8 @@ function ClientDashboard() {
       {/* Next Appointment */}
       <Pagination icon="availability" label="Next Appointment" emptyMessage="No future appointment">
         <div className={styles.nextAppointmentValue}>
-          <span>{profile.next_appointment.date.replaceAll('-', ' / ')}</span>
-          <span>{profile.next_appointment.slot}</span>
+          <span className={styles.nextAppointmentSlot}>{profile.next_appointment.slot}</span>
+          <span className={styles.nextAppointmentDate}>{profile.next_appointment.date.replaceAll('-', ' / ')}</span>
         </div>
       </Pagination>
 
