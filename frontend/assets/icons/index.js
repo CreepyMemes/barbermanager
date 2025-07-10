@@ -21,6 +21,7 @@ import EyeOpenIcon from './eye_open.svg?react';
 import EyeClosedIcon from './eye_closed.svg?react';
 import Left from './left.svg?react';
 import Right from './right.svg?react';
+import User from './user.svg?react';
 
 const icons = {
   github: GithubIcon,
@@ -46,6 +47,7 @@ const icons = {
   eye_closed: EyeClosedIcon,
   left: Left,
   right: Right,
+  user: User,
 };
 
 export default icons;
