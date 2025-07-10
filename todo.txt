@@ -14,8 +14,7 @@ Proposed:
 2. Frontend:
 
 Important:  
-  - make Pagination support table format, so it's reusable for user accounts
-
+ 
   - add invite barber option in admin barbers page
   - add all admin pages and implement all admin endpoints from backend to the frontend
   - add admin barbers page, to view all barbers, invite new and delete existing

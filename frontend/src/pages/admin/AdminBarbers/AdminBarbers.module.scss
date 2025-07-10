@@ -1,104 +1,101 @@
 @use '@styles/variables.module.scss' as *;
 
-.admin-dashboard {
+.admin-barbers {
   padding: 5rem;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-gap: 5rem;
 
-  // Responsive: single column on mobile
-  @media (max-width: $bp-medium) {
-    grid-template-columns: 1fr;
-    grid-gap: 2rem;
-    padding: 2rem;
+  .action {
+    padding: 1rem;
   }
 
-  .spinner-row {
-    min-height: 3rem;
+  .table-title {
     display: flex;
     align-items: center;
-    justify-content: center;
-  }
+    gap: 0.5rem;
 
-  .barber-row {
-    display: flex;
-    flex-direction: column;
-    background: $color-card;
-    border-radius: $border-radius;
-    padding: 1.1rem 1.6rem;
-    box-shadow: 0 0.2rem 0.2rem rgba(44, 44, 44, 10.06);
-    margin-bottom: 1rem;
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      margin-bottom: 0.3rem;
-    }
-    .barber-name {
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: $color-primary;
-      letter-spacing: 0.01em;
-      .inactive {
-        color: $color-muted;
-        font-size: 1.05rem;
-        margin-left: 0.12em;
-        font-style: italic;
-      }
-    }
-    .barber-rating {
-      color: #fabb3d;
-      font-size: 1.05rem;
-      font-family: inherit;
-      .rating-value {
-        color: $color-muted;
-        font-size: 0.96rem;
-      }
-    }
-
-    .details {
-      display: flex;
-      gap: 2.5rem;
-      margin-bottom: 0.3rem;
-      flex-wrap: wrap;
-      .email {
-        color: $color-accent;
-        font-size: 1.04rem;
-        font-weight: 600;
-      }
-      .revenue {
-        color: $color-lighter;
-        font-size: 1.02rem;
-        .revenue-value {
-          color: $color-primary;
-          font-weight: 700;
-        }
-      }
-      .completed {
-        color: $color-muted;
-        font-size: 0.98rem;
-        font-style: italic;
-      }
-    }
-
-    .services {
-      display: flex;
-      gap: 0.7rem;
-      .services-label {
-        color: $color-main;
-        font-size: 1.02rem;
-        font-weight: 600;
-      }
-      .services-list {
-        color: $color-primary;
-        font-size: 1.02rem;
-      }
-      .services-none {
-        color: $color-muted;
-        font-style: italic;
-        font-size: 1.02rem;
-      }
+    .table-title-name {
+      display: block;
+      height: 1.5rem;
     }
   }
+  // .barber-row {
+  //   display: flex;
+  //   flex-direction: column;
+  //   background: $color-card;
+  //   border-radius: $border-radius;
+  //   padding: 1.1rem 1.6rem;
+  //   box-shadow: 0 0.2rem 0.2rem rgba(44, 44, 44, 10.06);
+  //   margin-bottom: 1rem;
+
+  //   .header {
+  //     display: flex;
+  //     justify-content: space-between;
+  //     align-items: flex-end;
+  //     margin-bottom: 0.3rem;
+  //   }
+  //   .barber-name {
+  //     font-size: 1.3rem;
+  //     font-weight: 700;
+  //     color: $color-primary;
+  //     letter-spacing: 0.01em;
+  //     .inactive {
+  //       color: $color-muted;
+  //       font-size: 1.05rem;
+  //       margin-left: 0.12em;
+  //       font-style: italic;
+  //     }
+  //   }
+  //   .barber-rating {
+  //     color: #fabb3d;
+  //     font-size: 1.05rem;
+  //     font-family: inherit;
+  //     .rating-value {
+  //       color: $color-muted;
+  //       font-size: 0.96rem;
+  //     }
+  //   }
+
+  //   .details {
+  //     display: flex;
+  //     gap: 2.5rem;
+  //     margin-bottom: 0.3rem;
+  //     flex-wrap: wrap;
+  //     .email {
+  //       color: $color-accent;
+  //       font-size: 1.04rem;
+  //       font-weight: 600;
+  //     }
+  //     .revenue {
+  //       color: $color-lighter;
+  //       font-size: 1.02rem;
+  //       .revenue-value {
+  //         color: $color-primary;
+  //         font-weight: 700;
+  //       }
+  //     }
+  //     .completed {
+  //       color: $color-muted;
+  //       font-size: 0.98rem;
+  //       font-style: italic;
+  //     }
+  //   }
+
+  //   .services {
+  //     display: flex;
+  //     gap: 0.7rem;
+  //     .services-label {
+  //       color: $color-main;
+  //       font-size: 1.02rem;
+  //       font-weight: 600;
+  //     }
+  //     .services-list {
+  //       color: $color-primary;
+  //       font-size: 1.02rem;
+  //     }
+  //     .services-none {
+  //       color: $color-muted;
+  //       font-style: italic;
+  //       font-size: 1.02rem;
+  //     }
+  //   }
+  // }
 }

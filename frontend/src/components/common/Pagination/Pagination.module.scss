@@ -1,49 +1,76 @@
 @use '@styles/variables.module.scss' as *;
 
-.pagination-card {
-  .list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    min-height: 1rem;
+.table-wrapper {
+  width: 100%;
+  // margin-top: 2rem;
 
-    .list-item {
-      font-size: 1.09rem;
-      line-height: 1.5;
-      margin-bottom: 0.4rem;
+  border: 1px solid $border;
+  border-radius: $border-radius;
+  overflow: hidden;
 
-      &:last-child {
-        margin-bottom: 0;
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+
+    .table-head {
+      background-color: $color-card-dark;
+
+      .table-head-row {
+        padding: 0.25rem 1rem;
+
+        font-size: 1rem;
+        font-weight: 500;
+        border-bottom: 1px solid $border-light;
+
+        text-align: left;
       }
     }
 
-    .empty {
-      color: $color-muted;
-      font-style: italic;
-      font-size: 1.04rem;
-      padding-top: 0.6rem;
-      letter-spacing: 0.01rem;
+    .table-body {
+      > tr:nth-of-type(even) {
+        background-color: $color-card-darker;
+      }
+
+      .table-body-row {
+        padding: 1rem 1rem;
+        border-bottom: 1px solid $border-light;
+      }
+
+      tr:last-child .table-body-row {
+        border-bottom: none;
+      }
     }
   }
+}
 
-  .pagination-nav {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 0.7rem;
-    margin-top: 1rem;
+// Empty content
+.empty {
+  color: $color-muted;
+  font-style: italic;
+  text-align: center;
+  font-size: 1.04rem;
+  padding-top: 0.6rem;
+}
 
-    .page-button {
-      padding: 0.13rem 0.8rem;
-      font-size: 1.2rem;
-      min-width: 2.2rem;
-      min-height: 2.2rem;
-    }
+// Pagination Nav
+.pagination-nav {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 1rem;
 
-    .page-status {
-      color: $color-main;
-      font-size: 1rem;
-      font-weight: 600;
-    }
+  .page-button {
+    padding: 0.13rem 0.8rem;
+    font-size: 1.2rem;
+    min-width: 2.2rem;
+    min-height: 2.2rem;
+  }
+
+  .page-status {
+    color: $color-main;
+    font-size: 1rem;
+    font-weight: 600;
   }
 }
