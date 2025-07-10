@@ -5,7 +5,7 @@ import Image from '@components/common/Image/Image';
 
 function Hero({ children, className }) {
   // Extracts first HeroLeft and HeroRight children by displayName
-  const [left, right] = ['HeroLeft', 'HeroRight'].map((name) =>
+  const [left, right] = [Left.displayName, Right.displayName].map((name) =>
     Children.toArray(children).find((child) => child.type.displayName === name),
   );
 
