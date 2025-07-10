@@ -4,6 +4,11 @@
   align-items: center;
   justify-content: center;
 
+  &.mn {
+    width: 10px;
+    height: 10px;
+  }
+
   &.ty {
     width: 14px;
     height: 14px;
