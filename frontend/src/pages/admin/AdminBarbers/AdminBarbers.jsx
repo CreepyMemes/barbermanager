@@ -5,6 +5,7 @@ import styles from './AdminBarbers.module.scss';
 import api from '@api';
 import Pagination from '@components/common/Pagination/Pagination';
 import Spinner from '@components/common/Spinner/Spinner';
+import Icon from '@components/common/Icon/Icon';
 
 function AdminBarbers() {
   const { profile } = useAuth();
@@ -36,9 +37,10 @@ function AdminBarbers() {
   // Only render UI for admins; otherwise, render nothing
   if (!profile || profile?.role !== 'ADMIN') return null;
 
+  // console.log(barbers[0]);
   return (
     <div className={styles.adminBarbers}>
-      <Pagination icon="barber" label="Registered Barbers" emptyMessage="No barbers found.">
+      {/* <Pagination icon="barber" label="Registered Barbers" emptyMessage="No barbers found.">
         {isLoading ? (
           <Spinner />
         ) : (
@@ -77,6 +79,41 @@ function AdminBarbers() {
             </div>
           ))
         )}
+      </Pagination> */}
+
+      <Pagination icon="barber" label="Barbers" itemsPerPage="5" emptyMessage="No barbers found.">
+        <Pagination.Action>
+          <div className={styles.action}>put invite new barber here</div>
+        </Pagination.Action>
+
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="user" size="mn" black />
+            <span className={styles.tableTitleName}>User</span>
+          </div>
+        </Pagination.Column>
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="user" size="mn" black />
+            <span className={styles.tableTitleName}>Username</span>
+          </div>
+        </Pagination.Column>
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="email" size="mn" black />
+            <span className={styles.tableTitleName}>Email</span>
+          </div>
+        </Pagination.Column>
+
+        {barbers.map((barber) => (
+          <Pagination.Row key={barber.id}>
+            <Pagination.Cell>
+              {barber.name} {barber.surname}
+            </Pagination.Cell>
+            <Pagination.Cell>{barber.username}</Pagination.Cell>
+            <Pagination.Cell>{barber.email}</Pagination.Cell>
+          </Pagination.Row>
+        ))}
       </Pagination>
     </div>
   );
