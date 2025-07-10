@@ -10,9 +10,9 @@ import Image from '@components/common/Image/Image';
 // Define role-based navigation
 const adminNav = [
   { to: '/admin/dashboard', label: 'Dashboard', icon: 'dashboard' },
-  { to: '/admin/appointments', label: 'Appointments', icon: 'appointment' },
   { to: '/admin/barbers', label: 'Barbers', icon: 'barber' },
   { to: '/admin/clients', label: 'Clients', icon: 'client' },
+  { to: '/admin/appointments', label: 'Appointments', icon: 'appointment' },
   { to: '/admin/settings', label: 'Settings', icon: 'settings' },
 ];
 const barberNav = [
