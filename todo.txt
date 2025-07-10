@@ -14,16 +14,20 @@ Proposed:
 2. Frontend:
 
 Important:  
-  - on backend return availabilities, appointments sorted based on date (newer to older)
-  
-  - add responsivity to sidebar, show toggle button on header, width 100% for (small screens)
-  
+  - make Pagination support table format, so it's reusable for user accounts
+
+  - add invite barber option in admin barbers page
+  - add all admin pages and implement all admin endpoints from backend to the frontend
   - add admin barbers page, to view all barbers, invite new and delete existing
 
-  - add settings page for admin, client and barber
-
+  - do the same for barber pages/endpoints
+  - do the same for client pages/endpoints
+  - do the same for public pages/endpoints
 
 Proposed:
+  - on backend return availabilities, appointments sorted based on date (newer to older)
+  - add responsivity to sidebar, show toggle button on header, width 100% for (small screens)
+
   - change structure of project:
     - you can register as barbershop owner, then invite your own barbers
     - or you can register as client and view barbershops
