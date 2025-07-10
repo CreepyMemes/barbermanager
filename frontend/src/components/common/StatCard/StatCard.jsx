@@ -3,7 +3,7 @@ import styles from './StatCard.module.scss';
 import Card from '@components/common/Card/Card';
 import Icon from '@components/common/Icon/Icon';
 
-function StatCard({ icon, label, value, children, className = '' }) {
+function StatCard({ icon, label, children, className = '' }) {
   // Get all style classes into a string
   const computedClassName = [className, styles.card].join(' ');
 
@@ -15,7 +15,7 @@ function StatCard({ icon, label, value, children, className = '' }) {
 
       <div className={styles.content}>
         <div className={styles.label}>{label}</div>
-        {children ? children : <div className={styles.value}>{value}</div>}
+        {children}
       </div>
     </Card>
   );

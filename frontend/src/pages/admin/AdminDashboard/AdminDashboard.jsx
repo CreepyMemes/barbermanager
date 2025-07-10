@@ -10,32 +10,50 @@ function AdminDashboard() {
   return (
     <div className={styles.adminDashboard}>
       {/* Revenue */}
-      <StatCard icon="revenue" label="Total Revenue" value={`$${profile.total_revenue}`} />
+      <StatCard icon="revenue" label="Total Revenue">
+        <span className={styles.value}>{`$${profile.total_revenue}`}</span>
+      </StatCard>
 
       {/* Total Barbers */}
-      <StatCard icon="barber" label="Total Barbers" value={profile.total_barbers} />
+      <StatCard icon="barber" label="Total Barbers">
+        <span className={styles.value}>{profile.total_barbers} </span>
+      </StatCard>
 
       {/* Total Appointments */}
-      <StatCard icon="appointment" label="Total Appointments" value={profile.total_appointments} />
+      <StatCard icon="appointment" label="Total Appointments">
+        <span className={styles.value}>{profile.total_appointments} </span>
+      </StatCard>
 
       {/* Completed Appointments */}
-      <StatCard icon="completed" label="Completed Appointments" value={profile.completed_appointments} />
+      <StatCard icon="completed" label="Completed Appointments">
+        <span className={styles.value}>{profile.completed_appointments} </span>
+      </StatCard>
 
       {/* Ongoing Appointments */}
-      <StatCard icon="calendar" label="Ongoing Appointments" value={profile.ongoing_appointments} />
+      <StatCard icon="calendar" label="Ongoing Appointments">
+        <span className={styles.value}> {profile.ongoing_appointments} </span>
+      </StatCard>
 
       {/* Cancelled Appointments */}
-      <StatCard icon="cancelled" label="Cancelled Appointments" value={profile.cancelled_appointments} />
+      <StatCard icon="cancelled" label="Cancelled Appointments">
+        <span className={styles.value}> {profile.cancelled_appointments} </span>
+      </StatCard>
 
       {/* Total Clients */}
-      <StatCard icon="client" label="Total Clients" value={profile.total_clients} />
+      <StatCard icon="client" label="Total Clients">
+        <span className={styles.value}> {profile.total_clients} </span>
+      </StatCard>
 
       {/* Total Reviews */}
-      <StatCard icon="review" label="Total Reviews" value={profile.total_reviews} />
+      <StatCard icon="review" label="Total Reviews">
+        <span className={styles.value}> {profile.total_reviews} </span>
+      </StatCard>
 
       {/* Average Rating */}
       <StatCard icon="rating" label="Average Rating">
-        <RadialChart value={profile.average_rating} max={5} size="70" />
+        <span className={styles.value}>
+          <RadialChart value={profile.average_rating} max={5} size="70" />
+        </span>
       </StatCard>
     </div>
   );
