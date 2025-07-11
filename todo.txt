@@ -14,8 +14,15 @@ Proposed:
 2. Frontend:
 
 Important:  
- 
-  - add invite barber option in admin barbers page
+
+  - add actions for editing barber and deleting it
+  - add above action to invite a new barber
+  - add view barber profile on clicking barber 
+
+  - add appointment page (use tag for status in pagination table)
+
+  - add availability page to edit it for selected barber (admins only)
+
   - add all admin pages and implement all admin endpoints from backend to the frontend
   - add admin barbers page, to view all barbers, invite new and delete existing
 
@@ -25,6 +32,8 @@ Important:
 
 Proposed:
   - on backend return availabilities, appointments sorted based on date (newer to older)
+  
+  - fix Pagination table not responsive, it's height doesn't change
   - add responsivity to sidebar, show toggle button on header, width 100% for (small screens)
 
   - change structure of project:
