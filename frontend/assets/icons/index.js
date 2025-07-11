@@ -5,6 +5,7 @@ import AppointmentIcon from './appointment.svg?react';
 import BarberIcon from './barber.svg?react';
 import ClientIcon from './client.svg?react';
 import SettingsIcon from './settings.svg?react';
+import DialIcon from './dial.svg?react';
 import ReviewIcon from './review.svg?react';
 import ServiceIcon from './service.svg?react';
 import MenuIcon from './menu.svg?react';
@@ -25,6 +26,8 @@ import RightIcon from './right.svg?react';
 import UserIcon from './user.svg?react';
 import HourglassIcon from './hourglass.svg?react';
 import SpinnerIcon from './spinner.svg?react';
+import PenIcon from './pen.svg?react';
+import TrashIcon from './trash.svg?react';
 
 const icons = {
   github: GithubIcon,
@@ -54,6 +57,9 @@ const icons = {
   user: UserIcon,
   hourglass: HourglassIcon,
   spinner: SpinnerIcon,
+  pen: PenIcon,
+  trash: TrashIcon,
+  dial: DialIcon,
 };
 
 export default icons;
