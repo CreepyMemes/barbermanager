@@ -1,0 +1,34 @@
+@use '@styles/variables.module.scss' as *;
+
+.tag {
+  padding: 0.6em 1em;
+  border-radius: 5px;
+  border: 1.5px solid;
+
+  font-size: 1rem;
+  line-height: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.1rem;
+
+  display: block;
+  width: fit-content;
+}
+
+// Colors
+.green {
+  background: $color-tag-green-bg;
+  color: $color-tag-green-text;
+  border-color: $color-tag-green-border;
+}
+
+.yellow {
+  background: $color-tag-yellow-bg;
+  color: $color-tag-yellow-text;
+  border-color: $color-tag-yellow-border;
+}
+
+.red {
+  background: $color-tag-red-bg;
+  color: $color-tag-red-text;
+  border-color: $color-tag-red-border;
+}
