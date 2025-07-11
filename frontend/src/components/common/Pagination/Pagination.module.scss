@@ -17,9 +17,9 @@
       background-color: $color-card-dark;
 
       .table-head-row {
-        padding: 0.25rem 1rem;
+        padding: 1rem 1rem;
 
-        font-size: 1rem;
+        font-size: 1.2rem;
         font-weight: 500;
         border-bottom: 1px solid $border-light;
 
@@ -46,11 +46,11 @@
 
 // Empty content
 .empty {
+  padding: 1rem;
   color: $color-muted;
   font-style: italic;
   text-align: center;
   font-size: 1.04rem;
-  padding-top: 0.6rem;
 }
 
 // Pagination Nav

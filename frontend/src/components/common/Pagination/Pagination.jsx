@@ -4,8 +4,9 @@ import styles from './Pagination.module.scss';
 import StatCard from '@components/common/StatCard/StatCard';
 import Icon from '@components/common/Icon/Icon';
 import Button from '@components/common/Button/Button';
+import Spinner from '@components/common/Spinner/Spinner';
 
-function Pagination({ icon, label, children, itemsPerPage = 3, emptyMessage = 'No items' }) {
+function Pagination({ icon, label, children, itemsPerPage = 3, loading, emptyMessage = 'No items' }) {
   // Extracts first PaginationColumn and PaginationRow children by displayName
   const [action, columns, rows] = [Action.displayName, Column.displayName, Row.displayName].map((name) =>
     Children.toArray(children).filter((child) => child.type.displayName === name),
@@ -32,7 +33,16 @@ function Pagination({ icon, label, children, itemsPerPage = 3, emptyMessage = 'N
           </thead>
 
           <tbody className={styles.tableBody}>
-            {rows.length > 0 ? (
+            {loading && (
+              <tr>
+                <td colSpan={columns.length || 1} className={styles.empty}>
+                  <Spinner />
+                </td>
+              </tr>
+            )}
+
+            {!loading &&
+              rows.length > 0 &&
               pageRows.map((row, ridx) => {
                 const cells = Children.toArray(row.props.children).filter(
                   (cell) => cell.type.displayName === Cell.displayName,
@@ -47,8 +57,9 @@ function Pagination({ icon, label, children, itemsPerPage = 3, emptyMessage = 'N
                     ))}
                   </tr>
                 );
-              })
-            ) : (
+              })}
+
+            {!loading && rows.length === 0 && (
               <tr>
                 <td colSpan={columns.length || 1} className={styles.empty}>
                   {emptyMessage}
