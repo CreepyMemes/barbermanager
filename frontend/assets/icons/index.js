@@ -14,14 +14,17 @@ import RevenueIcon from './revenue.svg?react';
 import AvailabilityIcon from './availability.svg?react';
 import CalendarIcon from './calendar.svg?react';
 import EmailIcon from './email.svg?react';
+import EmailBaseIcon from './email_base.svg?react';
 import CancelledIcon from './cancelled.svg?react';
 import CompletedIcon from './completed.svg?react';
 import RatingIcon from './rating.svg?react';
 import EyeOpenIcon from './eye_open.svg?react';
 import EyeClosedIcon from './eye_closed.svg?react';
-import Left from './left.svg?react';
-import Right from './right.svg?react';
-import User from './user.svg?react';
+import LeftIcon from './left.svg?react';
+import RightIcon from './right.svg?react';
+import UserIcon from './user.svg?react';
+import HourglassIcon from './hourglass.svg?react';
+import SpinnerIcon from './spinner.svg?react';
 
 const icons = {
   github: GithubIcon,
@@ -40,14 +43,17 @@ const icons = {
   availability: AvailabilityIcon,
   calendar: CalendarIcon,
   email: EmailIcon,
+  email_base: EmailBaseIcon,
   cancelled: CancelledIcon,
   completed: CompletedIcon,
   rating: RatingIcon,
   eye_open: EyeOpenIcon,
   eye_closed: EyeClosedIcon,
-  left: Left,
-  right: Right,
-  user: User,
+  left: LeftIcon,
+  right: RightIcon,
+  user: UserIcon,
+  hourglass: HourglassIcon,
+  spinner: SpinnerIcon,
 };
 
 export default icons;
