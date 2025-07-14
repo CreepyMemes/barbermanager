@@ -7,6 +7,9 @@ import { useEffect, useRef } from 'react';
 function Popup({ open, onClose, children, className }) {
   const backdropRef = useRef();
 
+  // Get all style classes into a string
+  const computedClassName = [className, styles.popup].join(' ');
+
   /**
    *  Close when pressing ESC
    */
@@ -36,7 +39,7 @@ function Popup({ open, onClose, children, className }) {
       onMouseDown={handleBackdropClick}
       tabIndex={-1} //
     >
-      <Card className={styles.popup}>
+      <Card className={computedClassName}>
         <Button
           className={styles.closeBtn}
           type="button"
