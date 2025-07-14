@@ -119,7 +119,14 @@ function Login() {
                 size="md"
               />
 
-              <Button className={styles.loginBtn} type="submit" size="md" disabled={isLoggingIn} wide color="primary">
+              <Button
+                className={styles.loginBtn}
+                type="submit"
+                color="primary"
+                size="md"
+                disabled={isLoggingIn}
+                wide //
+              >
                 <span className={styles.line}>
                   {isLoggingIn ? (
                     <>
