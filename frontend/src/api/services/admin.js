@@ -10,6 +10,14 @@ export async function getAdminProfile() {
 }
 
 /**
+ * Fetches the list of all barbers registered in the system.
+ */
+export async function getAllBarbers() {
+  const { data } = await api.instance.get(ENDPOINTS.admin.barbers);
+  return data;
+}
+
+/**
  * Retrieves all client accounts from the server.
  */
 export async function getAllClients() {
@@ -18,10 +26,10 @@ export async function getAllClients() {
 }
 
 /**
- * Fetches the list of all barbers registered in the system.
+ * Fetches the complete list of appointments managed by the admin.
  */
-export async function getAllBarbers() {
-  const { data } = await api.instance.get(ENDPOINTS.admin.barbers);
+export async function getAllAppointments() {
+  const { data } = await api.instance.get(ENDPOINTS.admin.appointments);
   return data;
 }
 
@@ -61,12 +69,4 @@ export async function updateBarberAvailability(barberId, availabilityId, patchDa
  */
 export async function deleteBarberAvailability(barberId, availabilityId) {
   await api.instance.delete(ENDPOINTS.admin.barberAvailability(barberId, availabilityId));
-}
-
-/**
- * Fetches the complete list of appointments managed by the admin.
- */
-export async function getAllAppointments() {
-  const { data } = await api.instance.get(ENDPOINTS.admin.appointments);
-  return data;
 }
