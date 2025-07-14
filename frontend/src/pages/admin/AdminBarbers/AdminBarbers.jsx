@@ -8,11 +8,13 @@ import Icon from '@components/common/Icon/Icon';
 import Profile from '@components/common/Profile/Profile';
 import Rating from '@components/common/Rating/Rating';
 import Tag from '@components/common/Tag/Tag';
+import Button from '@components/common/Button/Button';
 
 function AdminBarbers() {
   const { profile } = useAuth();
   const [barbers, setBarbers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState(null); // optionally indicate deleting
 
   /**
    * Define fetchBarbers (single responsibility, outside effect)
@@ -36,6 +38,27 @@ function AdminBarbers() {
     }
   }, [profile, fetchBarbers]);
 
+  // Delete barber handler with confirmation
+  const handleDeleteBarber = useCallback(
+    async (barberId, barberEmail) => {
+      const confirmed = window.confirm(
+        `Are you sure you want to delete barber "${barberEmail}"?\nThis action cannot be undone.`,
+      );
+      if (!confirmed) return;
+
+      try {
+        setDeletingId(barberId);
+        await api.admin.deleteBarber(barberId);
+        await fetchBarbers(); // refresh list after deletion
+      } catch (err) {
+        window.alert('Failed to delete barber. Please try again.');
+      } finally {
+        setDeletingId(null);
+      }
+    },
+    [fetchBarbers],
+  );
+
   // Only render UI for admins; otherwise, render nothing
   if (!profile || profile?.role !== 'ADMIN') return null;
 
@@ -46,6 +69,7 @@ function AdminBarbers() {
           <div className={styles.action}>put invite new barber here</div>
         </Pagination.Action>
 
+        {/* Table Headers */}
         <Pagination.Column>
           <div className={styles.tableTitle}>
             <Icon name="user" size="ty" black />
@@ -81,6 +105,14 @@ function AdminBarbers() {
           </div>
         </Pagination.Column>
 
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="dial" size="ty" black />
+            <span className={styles.tableTitleName}>Actions</span>
+          </div>
+        </Pagination.Column>
+
+        {/* Table Rows */}
         {barbers.map((barber) => (
           <Pagination.Row key={barber.id}>
             <Pagination.Cell>
@@ -103,6 +135,19 @@ function AdminBarbers() {
               <Tag className={styles.tag} color={barber.is_active ? 'green' : 'yellow'}>
                 {barber.is_active ? 'Active' : 'Inactive'}
               </Tag>
+            </Pagination.Cell>
+
+            <Pagination.Cell>
+              <Button
+                type="button"
+                size="sm"
+                color="animated"
+                onClick={() => handleDeleteBarber(barber.id, barber.email)}
+                disabled={deletingId === barber.id}
+                aria-label={`Delete barber ${barber.full_name || barber.email}`}
+              >
+                <Icon name="trash" size="sm" black />
+              </Button>
             </Pagination.Cell>
           </Pagination.Row>
         ))}
