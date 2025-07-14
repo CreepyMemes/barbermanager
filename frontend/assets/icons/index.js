@@ -9,6 +9,7 @@ import DialIcon from './dial.svg?react';
 import ReviewIcon from './review.svg?react';
 import ServiceIcon from './service.svg?react';
 import MenuIcon from './menu.svg?react';
+import CloseIcon from './close.svg?react';
 import DocsIcon from './docs.svg?react';
 import BugIcon from './bug.svg?react';
 import RevenueIcon from './revenue.svg?react';
@@ -28,6 +29,7 @@ import HourglassIcon from './hourglass.svg?react';
 import SpinnerIcon from './spinner.svg?react';
 import PenIcon from './pen.svg?react';
 import TrashIcon from './trash.svg?react';
+import WarningIcon from './warning.svg?react';
 
 const icons = {
   github: GithubIcon,
@@ -40,6 +42,7 @@ const icons = {
   review: ReviewIcon,
   service: ServiceIcon,
   menu: MenuIcon,
+  close: CloseIcon,
   docs: DocsIcon,
   bug: BugIcon,
   revenue: RevenueIcon,
@@ -60,6 +63,7 @@ const icons = {
   pen: PenIcon,
   trash: TrashIcon,
   dial: DialIcon,
+  warning: WarningIcon,
 };
 
 export default icons;
