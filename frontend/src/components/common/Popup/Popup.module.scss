@@ -1,0 +1,44 @@
+@use '@styles/variables.module.scss' as *;
+
+.backdrop {
+  position: fixed;
+  z-index: 10000;
+  width: 100vw;
+  height: 100vh;
+  inset: 0;
+
+  background: rgba(21, 21, 21, 0.5);
+
+  animation: popup-fade-in 0.14s;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .popup {
+    position: relative;
+
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    .close-btn {
+      position: absolute;
+      right: 1.5rem;
+      top: 1.2rem;
+      z-index: 1;
+      background: none;
+    }
+  }
+}
+
+@keyframes popup-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
