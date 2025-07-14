@@ -3,6 +3,7 @@ import styles from './ClientDashboard.module.scss';
 
 import StatCard from '@components/common/StatCard/StatCard';
 import Pagination from '@components/common/Pagination/Pagination';
+import Rating from '@components/common/Rating/Rating';
 
 function ClientDashboard() {
   const { profile } = useAuth();
@@ -38,10 +39,8 @@ function ClientDashboard() {
       <Pagination icon="review" label="Posted Reviews" emptyMessage="No reviews yet">
         {profile?.reviews?.map((review) => (
           <div key={review.id} className={styles.reviewRow}>
-            <span className={styles.stars}>
-              {'★'.repeat(review.rating)}
-              {'☆'.repeat(5 - review.rating)}
-            </span>
+            <Rating rating={review.rating} />
+
             <span className={styles.reviewComment}>
               {review.comment?.length > 30 ? review.comment.slice(0, 30) + '…' : review.comment}
             </span>
