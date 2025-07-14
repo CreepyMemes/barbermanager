@@ -52,7 +52,7 @@ function Login() {
     <>
       {registered && (
         <Card className={styles.registered}>
-          <Icon name="email" size="md" color="success" black />
+          <Icon name="email" size="md" black />
           <div>
             <strong>Account created!</strong>
             {registered === '1' && <div>Please check your email to verify your account before logging in.</div>}
