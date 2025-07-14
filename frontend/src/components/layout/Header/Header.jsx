@@ -27,7 +27,7 @@ function Header() {
           <div className={styles.actions}>
             {isAuthenticated && profile && (
               <>
-                <Button onClick={handleLogout} size="md" color="primary">
+                <Button onClick={handleLogout} size="md" color="transdark">
                   Logout
                 </Button>
 
@@ -37,7 +37,7 @@ function Header() {
 
             {!isAuthenticated && (
               <>
-                <Button href="/login" size="md" color="primary">
+                <Button href="/login" size="md" color="transdark">
                   Login
                 </Button>
 
