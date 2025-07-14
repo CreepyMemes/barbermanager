@@ -4,8 +4,10 @@ import styles from './AdminBarbers.module.scss';
 
 import api from '@api';
 import Pagination from '@components/common/Pagination/Pagination';
-import Spinner from '@components/common/Spinner/Spinner';
 import Icon from '@components/common/Icon/Icon';
+import Profile from '@components/common/Profile/Profile';
+import Rating from '@components/common/Rating/Rating';
+import Tag from '@components/common/Tag/Tag';
 
 function AdminBarbers() {
   const { profile } = useAuth();
@@ -37,81 +39,71 @@ function AdminBarbers() {
   // Only render UI for admins; otherwise, render nothing
   if (!profile || profile?.role !== 'ADMIN') return null;
 
-  // console.log(barbers[0]);
   return (
     <div className={styles.adminBarbers}>
-      {/* <Pagination icon="barber" label="Registered Barbers" emptyMessage="No barbers found.">
-        {isLoading ? (
-          <Spinner />
-        ) : (
-          barbers.map((barber) => (
-            <div key={barber.id} className={styles.barberRow}>
-              <div className={styles.header}>
-                <span className={styles.barberName}>
-                  {barber.name || barber.username || barber.email}
-                  {!barber.is_active && (
-                    <span className={styles.inactive} title="Inactive">
-                      (inactive)
-                    </span>
-                  )}
-                </span>
-                <span className={styles.barberRating}>
-                  {'★'.repeat(barber.average_rating)}
-                  {'☆'.repeat(5 - barber.average_rating)}
-                  {barber.average_rating > 0 && <span className={styles.ratingValue}> {barber.average_rating}/5</span>}
-                </span>
-              </div>
-              <div className={styles.details}>
-                <span className={styles.email}>{barber.email}</span>
-                <span className={styles.revenue}>
-                  Revenue: <span className={styles.revenueValue}>€{barber.total_revenue.toFixed(2)}</span>
-                </span>
-                <span className={styles.completed}>Completed: {barber.completed_appointments}</span>
-              </div>
-              <div className={styles.services}>
-                <span className={styles.servicesLabel}>Services:</span>
-                {barber.services.length ? (
-                  <span className={styles.servicesList}>{barber.services.map((srv) => srv.name).join(', ')}</span>
-                ) : (
-                  <span className={styles.servicesNone}>None</span>
-                )}
-              </div>
-            </div>
-          ))
-        )}
-      </Pagination> */}
-
-      <Pagination icon="barber" label="Barbers" itemsPerPage="5" emptyMessage="No barbers found.">
+      <Pagination icon="barber" label="Barbers" itemsPerPage="5" loading={isLoading} emptyMessage="No barbers found.">
         <Pagination.Action>
           <div className={styles.action}>put invite new barber here</div>
         </Pagination.Action>
 
         <Pagination.Column>
           <div className={styles.tableTitle}>
-            <Icon name="user" size="mn" black />
+            <Icon name="user" size="ty" black />
             <span className={styles.tableTitleName}>User</span>
           </div>
         </Pagination.Column>
+
         <Pagination.Column>
           <div className={styles.tableTitle}>
-            <Icon name="user" size="mn" black />
-            <span className={styles.tableTitleName}>Username</span>
+            <Icon name="email_base" size="ty" black />
+            <span className={styles.tableTitleName}>Email</span>
           </div>
         </Pagination.Column>
+
         <Pagination.Column>
           <div className={styles.tableTitle}>
-            <Icon name="email" size="mn" black />
-            <span className={styles.tableTitleName}>Email</span>
+            <Icon name="review" size="ty" black />
+            <span className={styles.tableTitleName}>Rating</span>
+          </div>
+        </Pagination.Column>
+
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="revenue" size="ty" black />
+            <span className={styles.tableTitleName}>Revenue</span>
+          </div>
+        </Pagination.Column>
+
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="spinner" size="ty" black />
+            <span className={styles.tableTitleName}>Status</span>
           </div>
         </Pagination.Column>
 
         {barbers.map((barber) => (
           <Pagination.Row key={barber.id}>
             <Pagination.Cell>
-              {barber.name} {barber.surname}
+              <Profile profile={barber} />
             </Pagination.Cell>
-            <Pagination.Cell>{barber.username}</Pagination.Cell>
-            <Pagination.Cell>{barber.email}</Pagination.Cell>
+
+            <Pagination.Cell>
+              <span className={styles.email}>{barber.email}</span>
+            </Pagination.Cell>
+
+            <Pagination.Cell>
+              <Rating rating={barber.average_rating} />
+            </Pagination.Cell>
+
+            <Pagination.Cell>
+              <span className={styles.revenue}>${barber.total_revenue}</span>
+            </Pagination.Cell>
+
+            <Pagination.Cell>
+              <Tag className={styles.tag} color={barber.is_active ? 'green' : 'yellow'}>
+                {barber.is_active ? 'Active' : 'Inactive'}
+              </Tag>
+            </Pagination.Cell>
           </Pagination.Row>
         ))}
       </Pagination>
