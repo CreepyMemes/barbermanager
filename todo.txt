@@ -17,8 +17,6 @@ Important:
   
   - implement all admin pages and endpoints from api
   
-    - add above action to invite a new barber
-
     - add actions for editing barber availability (opens either page or popup)
     - add view barber profile on clicking barber 
 

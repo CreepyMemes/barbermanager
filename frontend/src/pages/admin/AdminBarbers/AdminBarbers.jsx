@@ -11,6 +11,7 @@ import Tag from '@components/common/Tag/Tag';
 import Button from '@components/common/Button/Button';
 import Popup from '@components/common/Popup/Popup';
 import Form from '@components/common/Form/Form';
+import Input from '@components/common/Input/Input';
 import Error from '@components/common/Error/Error';
 import Spinner from '@components/common/Spinner/Spinner';
 
@@ -18,9 +19,13 @@ function AdminBarbers() {
   const { profile } = useAuth();
   const [barbers, setBarbers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [deletingId, setDeletingId] = useState(null); // Used to disable buttton associated to the deleted barber while loading
 
-  const [popup, setPopup] = useState({ open: false, barber: null });
+  const [isDeletingId, setIsDeletingId] = useState(null); // Used to disable button associated to the deleted barber while loading
+  const [isInviting, setIsInviting] = useState(false); // Used to disable the invite barber button
+
+  // Popup states
+  const [deletePopup, setDeletePopup] = useState({ open: false, barber: null });
+  const [invitePopup, setInvitePopup] = useState(false);
 
   /**
    * Define fetchBarbers (single responsibility, outside effect)
@@ -44,33 +49,53 @@ function AdminBarbers() {
     }
   }, [profile, fetchBarbers]);
 
-  /**
-   * Handles setting the delete barber popup to be opened, and sets the selected barber
-   */
-  function openDeletePopup(barber) {
-    setPopup({ open: true, barber });
-  }
+  // Invite popup open
+  const openInvitePopup = () => {
+    setInvitePopup(true);
+  };
+
+  // Invite popup close
+  const closeInvitePopup = () => {
+    setInvitePopup(false);
+  };
+
+  // Handles setting the delete barber popup to be opened, and sets the selected barber
+  const openDeletePopup = (barber) => {
+    setDeletePopup({ open: true, barber });
+  };
+
+  // Handles settitng the delete barber popup to be closed
+  const closeDeletePopup = () => {
+    setDeletePopup({ open: false, barber: null });
+  };
 
   /**
-   * Handles settitng the delete barber popup to be closed
+   * Handles inviting a new barber
    */
-  function closeDeletePopup() {
-    setPopup({ open: false, barber: null });
-  }
+  const handleInviteBarber = async ({ email }) => {
+    setIsInviting(true);
+
+    try {
+      await api.admin.inviteBarber(email); // throws on error (handled by Form)
+      closeInvitePopup();
+      await fetchBarbers(); // refresh list after invitation
+    } finally {
+      setIsInviting(false);
+    }
+  };
 
   /**
    * Delete barber handler with confirmation
    */
   const handleDeleteBarber = async () => {
-    setDeletingId(popup.barber.id);
+    setIsDeletingId(deletePopup.barber.id);
 
     try {
-      await api.admin.deleteBarber(popup.barber.id); // throws on error, caught by FormProvider
+      await api.admin.deleteBarber(deletePopup.barber.id); // throws on error (handled by Form)
       closeDeletePopup();
-
       await fetchBarbers(); // refresh list after deletion
     } finally {
-      setDeletingId(null);
+      setIsDeletingId(null);
     }
   };
 
@@ -82,7 +107,40 @@ function AdminBarbers() {
       <div className={styles.adminBarbers}>
         <Pagination icon="barber" label="Barbers" itemsPerPage="5" loading={isLoading} emptyMessage="No barbers found.">
           <Pagination.Action>
-            <div className={styles.action}>put invite new barber here</div>
+            <div className={styles.action}>
+              <Button
+                className={styles.refreshBtn}
+                type="button"
+                color="primary"
+                size="md"
+                onClick={fetchBarbers}
+                disabled={isLoading}
+              >
+                <span className={styles.line}>
+                  {isLoading ? (
+                    <>
+                      <Spinner size={'sm'} /> Refreshing...
+                    </>
+                  ) : (
+                    <>
+                      <Icon name="refresh" size="ty" /> Refresh Barbers
+                    </>
+                  )}
+                </span>
+              </Button>
+
+              <Button
+                className={styles.actionBtn}
+                type="button"
+                color="primary"
+                size="md"
+                onClick={openInvitePopup}
+                disabled={isInviting} //
+              >
+                <Icon name="plus" size="ty" />
+                <span>Invite barber</span>
+              </Button>
+            </div>
           </Pagination.Action>
 
           {/* Table Headers */}
@@ -159,7 +217,7 @@ function AdminBarbers() {
                   size="sm"
                   color="animated"
                   onClick={() => openDeletePopup(barber)}
-                  disabled={deletingId === barber.id}
+                  disabled={isDeletingId === barber.id}
                 >
                   <Icon name="trash" size="sm" black />
                 </Button>
@@ -169,7 +227,66 @@ function AdminBarbers() {
         </Pagination>
       </div>
 
-      <Popup className={styles.deleteBarberPopup} open={popup.open} onClose={closeDeletePopup}>
+      {/* Invite barber popup */}
+      <Popup className={styles.inviteBarberPopup} open={invitePopup} onClose={closeInvitePopup}>
+        <Form initialFields={{ email: '' }} onSubmit={handleInviteBarber}>
+          <div className={styles.inviteBarber}>
+            <div className={styles.inviteBarberHeader}>
+              <Icon name="email_base" size="lg" black />
+              <span className={styles.inviteBarberTitle}>Invite barber</span>
+            </div>
+            <div className={styles.inviteBarberContent}>
+              <div className={styles.inviteBarberText}>
+                Enter the barber&apos;s email address to send them an invitation to register.
+              </div>
+              <div className={styles.inviteBarberField}>
+                <Input
+                  label="Barber email"
+                  type="email"
+                  name="email"
+                  required
+                  placeholder="barber@email.com"
+                  size="md"
+                  disabled={isInviting}
+                />
+              </div>
+              <div className={styles.inviteBarberAction}>
+                <Button
+                  type="button"
+                  color="translight"
+                  onClick={closeInvitePopup}
+                  size="md"
+                  wide //
+                >
+                  Cancel
+                </Button>
+
+                <Button
+                  type="submit"
+                  color="primary"
+                  size="md"
+                  disabled={isInviting}
+                  wide //
+                >
+                  <span className={styles.line}>
+                    {isInviting ? (
+                      <>
+                        <Spinner size={'sm'} /> Sending...
+                      </>
+                    ) : (
+                      'Send'
+                    )}
+                  </span>
+                </Button>
+              </div>
+            </div>
+            <Error />
+          </div>
+        </Form>
+      </Popup>
+
+      {/* Delete barber popup */}
+      <Popup className={styles.deleteBarberPopup} open={deletePopup.open} onClose={closeDeletePopup}>
         <Form
           initialFields={{}} // no fields required
           onSubmit={handleDeleteBarber}
@@ -182,7 +299,9 @@ function AdminBarbers() {
 
             <div className={styles.deleteBarberContent}>
               <span className={styles.deleteBarberText}>Are you sure you want to delete </span>
-              <span className={styles.deleteBarberEmail}>{popup.barber?.username}</span>
+              <span className={styles.deleteBarberUsername}>
+                {deletePopup.barber?.username || deletePopup.barber?.email}
+              </span>
               <span className={styles.deleteBarberText}> ? This action cannot be undone. </span>
 
               <div className={styles.deleteBarberAction}>
@@ -200,11 +319,11 @@ function AdminBarbers() {
                   type="submit"
                   color="primary"
                   size="md"
-                  disabled={deletingId === popup.barber?.id}
+                  disabled={isDeletingId === deletePopup.barber?.id}
                   wide //
                 >
                   <span className={styles.line}>
-                    {deletingId ? (
+                    {isDeletingId ? (
                       <>
                         <Spinner size={'sm'} /> Deleting...
                       </>
