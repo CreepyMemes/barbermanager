@@ -1,4 +1,4 @@
-import { useState, Children } from 'react';
+import { useState, useEffect, Children } from 'react';
 import styles from './Pagination.module.scss';
 
 import StatCard from '@components/common/StatCard/StatCard';
@@ -16,6 +16,16 @@ function Pagination({ icon, label, children, itemsPerPage = 3, loading, emptyMes
   const [page, setPage] = useState(0);
   const pageCount = Math.ceil(rows.length / itemsPerPage);
   const pageRows = rows.slice(page * itemsPerPage, (page + 1) * itemsPerPage);
+
+  // Generates a stable row identity signature for pagination reset logic
+  const rowKeys = rows.map((r) => r.key).join(',');
+
+  /**
+   *  Always reset to first page when table content or paging changes
+   */
+  useEffect(() => {
+    setPage(0);
+  }, [rowKeys, itemsPerPage]);
 
   return (
     <StatCard icon={icon} label={label}>
