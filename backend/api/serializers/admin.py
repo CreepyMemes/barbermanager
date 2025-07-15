@@ -87,10 +87,7 @@ class DeleteBarberSerializer(serializers.Serializer):
             self.barber = Barber.objects.get(id=value)
         except Barber.DoesNotExist:
             raise serializers.ValidationError("Barber with this ID does not exist.")  
-        
-        if not self.barber.is_active:
-            raise serializers.ValidationError("Barber is not active and cannot be deleted.") # TODO: not sure if this is a needed check, maybe we should let admin delete inactive barbers
-        
+
         return value
     
     def delete(self):
