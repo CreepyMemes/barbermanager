@@ -12,6 +12,7 @@ from ..utils import (
     PasswordValidationMixin,
     PhoneNumberValidationMixin,
     UIDTokenValidationSerializer,
+    BarberValidationMixin,
 )
 
 class GetCurrentUserSerializer(UserValidationMixin, serializers.Serializer):
@@ -65,7 +66,7 @@ class RegisterClientSerializer(UsernameValidationMixin, EmailValidationMixin, Pa
         return client
 
 
-class RegisterBarberSerializer(UIDTokenValidationSerializer, UsernameValidationMixin, PasswordValidationMixin, serializers.Serializer):
+class RegisterBarberSerializer(UIDTokenValidationSerializer, BarberValidationMixin, UsernameValidationMixin, PasswordValidationMixin, serializers.Serializer):
     """
     Barber completes registration via invite link. Only sets username and password.
     """
@@ -76,17 +77,18 @@ class RegisterBarberSerializer(UIDTokenValidationSerializer, UsernameValidationM
     description = serializers.CharField(required=False)
 
     def validate(self, attrs):
-        attrs = self.validate_uid_token(attrs)
+        attrs = self.validate_uid_token(attrs, target_key='barber')  # Returns User object to 'barber' key
+        attrs = self.validate_barber(attrs, check_active=False)      # Changes User object in 'barber' to be type Barber
         attrs = self.validate_username_format(attrs)
         attrs = self.validate_username_unique(attrs)
 
-        if attrs['user'].is_active:
+        if attrs['barber'].is_active:
             raise serializers.ValidationError('Account already registered.')
 
         return attrs
-    
+
     def create(self, validated_data):
-        barber = validated_data['user']
+        barber = validated_data['barber']
         barber.username = validated_data['username']
         barber.name = validated_data['name']
         barber.surname = validated_data['surname']
