@@ -15,6 +15,7 @@ import NotFound from '@pages/NotFound/NotFound';
 import ConfirmPasswordReset from '@pages/ConfirmPasswordReset/ConfirmPasswordReset';
 
 import AdminBarbers from '@pages/admin/AdminBarbers/AdminBarbers';
+import AdminClients from '@pages/admin/AdminClients/AdminClients';
 
 // Helper for cleaner protected route declaration
 const protectedRoute = (element, role) => <ProtectedRoute role={role}>{element}</ProtectedRoute>;
@@ -42,6 +43,7 @@ function AppRoutes() {
 
         {/* Unique role protected pages */}
         <Route path="admin/barbers" element={protectedRoute(<AdminBarbers />, 'ADMIN')} />
+        <Route path="admin/clients" element={protectedRoute(<AdminClients />, 'ADMIN')} />
 
         {/* 404 page (this must be last) */}
         <Route path="*" element={<NotFound />} />
