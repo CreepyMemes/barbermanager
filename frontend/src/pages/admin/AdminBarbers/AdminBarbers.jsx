@@ -24,10 +24,11 @@ function AdminBarbers() {
   const [invitePopup, setInvitePopup] = useState(false);
 
   /**
-   * Define fetchBarbers (single responsibility, outside effect)
+   * Defines fetching barbers from api (single responsibility, outside effect)
    */
   const fetchBarbers = useCallback(async () => {
     setIsLoading(true);
+
     try {
       const result = await api.admin.getAllBarbers();
       setBarbers(result.barbers || []);
@@ -40,7 +41,7 @@ function AdminBarbers() {
    * Only fetch if profile is loaded AND user is admin
    */
   useEffect(() => {
-    if (profile && profile.role === 'ADMIN') {
+    if (profile?.role === 'ADMIN') {
       fetchBarbers();
     }
   }, [profile, fetchBarbers]);
@@ -72,7 +73,7 @@ function AdminBarbers() {
   };
 
   // Only render UI for admins; otherwise, render nothing
-  if (!profile || profile?.role !== 'ADMIN') return null;
+  if (!profile || profile.role !== 'ADMIN') return null;
 
   return (
     <>
@@ -184,7 +185,7 @@ function AdminBarbers() {
 
               <Pagination.Cell>
                 <Tag className={styles.tag} color={barber.is_active ? 'green' : 'yellow'}>
-                  {barber.is_active ? 'Active' : 'Inactive'}
+                  {barber.is_active ? 'Active' : 'Invited'}
                 </Tag>
               </Pagination.Cell>
 
