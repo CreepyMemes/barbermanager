@@ -126,7 +126,9 @@ function AdminClients() {
             </Pagination.Cell>
 
             <Pagination.Cell>
-              <span className={styles.email}>{client.email}</span>
+              <div className={styles.emailContainer}>
+                <span className={styles.email}>{client.email}</span>
+              </div>
             </Pagination.Cell>
 
             <Pagination.Cell>

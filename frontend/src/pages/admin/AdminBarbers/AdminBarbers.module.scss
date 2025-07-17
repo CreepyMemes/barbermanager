@@ -41,10 +41,18 @@
     }
   }
 
-  .email {
-    color: $color-primary;
-    font-size: 1.2rem;
-    font-weight: 500;
+  .email-container {
+    display: flex; // need this to hide overflow
+
+    .email {
+      color: $color-primary;
+      font-size: 1.2rem;
+      font-weight: 500;
+
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 
   .revenue {

@@ -172,7 +172,9 @@ function AdminBarbers() {
               </Pagination.Cell>
 
               <Pagination.Cell>
-                <span className={styles.email}>{barber.email}</span>
+                <div className={styles.emailContainer}>
+                  <span className={styles.email}>{barber.email}</span>
+                </div>
               </Pagination.Cell>
 
               <Pagination.Cell>
