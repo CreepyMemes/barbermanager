@@ -343,11 +343,11 @@ class Barber(User):
     @property
     def ongoing_appointments(self):
         """
-        Returns a list of all the ongoing appointments for this barber.
+        Returns the sum of all the ongoing appointments for this barber.
         """
         from .appointment import AppointmentStatus
-        return [appointment.to_dict() for appointment in self.appointments_received.filter(status=AppointmentStatus.ONGOING.value)]
-
+        return self.appointments_received.filter(status=AppointmentStatus.ONGOING.value).count()
+    
     @property
     def total_revenue(self):
         from .appointment import AppointmentStatus
