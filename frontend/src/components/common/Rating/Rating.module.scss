@@ -24,10 +24,10 @@
       align-items: center; // vertical centering
 
       .stars {
-        height: 2rem;
+        height: 1.5rem;
 
         color: $color-rating;
-        font-size: 2rem;
+        font-size: 1.5rem;
         letter-spacing: 0.2em;
         font-weight: 800;
         line-height: 1; // prevent star "drifting"
