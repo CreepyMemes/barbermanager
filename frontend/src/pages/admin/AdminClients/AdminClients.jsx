@@ -99,6 +99,13 @@ function AdminClients() {
 
         <Pagination.Column>
           <div className={styles.tableTitle}>
+            <Icon name="revenue" size="ty" black />
+            <span className={styles.tableTitleName}>Spent</span>
+          </div>
+        </Pagination.Column>
+
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
             <Icon name="completed" size="ty" black />
             <span className={styles.tableTitleName}>Completed</span>
           </div>
@@ -137,6 +144,10 @@ function AdminClients() {
                   )}
                 </div>
               </div>
+            </Pagination.Cell>
+
+            <Pagination.Cell>
+              <span className={styles.spent}>${client.total_spent}</span>
             </Pagination.Cell>
 
             <Pagination.Cell>
