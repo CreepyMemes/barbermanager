@@ -1,0 +1,90 @@
+@use '@styles/variables.module.scss' as *;
+
+.admin-appointments {
+  padding: 5rem;
+
+  .action {
+    padding-block: 1rem;
+    display: flex;
+    justify-content: start;
+
+    .refresh-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+
+      .line {
+        display: flex;
+        gap: 1rem;
+      }
+    }
+  }
+
+  .table-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .table-title-name {
+      display: block;
+      height: 1.7rem;
+      font-weight: 600;
+    }
+  }
+
+  .id {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: $color-primary;
+  }
+
+  .simple-id {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: $color-primary;
+  }
+
+  .date-container {
+    display: flex;
+    flex-direction: start;
+
+    .date {
+      width: 6.5rem;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .date {
+        font-size: 1.15rem;
+        font-weight: 600;
+      }
+
+      .slot {
+        color: $color-primary;
+        font-size: 1.05rem;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .services {
+    font-size: 1.08rem;
+
+    .no-services {
+      color: $color-primary;
+      font-style: italic;
+    }
+  }
+
+  .tag {
+    width: 8rem;
+    text-align: center;
+  }
+
+  .reminder-tag {
+    width: 8rem;
+    text-align: center;
+  }
+}

@@ -15,18 +15,16 @@ Proposed:
 
 Important:  
   
+  - fix pagination tables in barber and client dashboards
+
   - implement all admin pages and endpoints from api
-
-    - quickly make appointments page, use tag for status in pagination table (just a table, no operations)
-    - quickly make clients page (just a table, no operations)
-
+  
     - add availability page to edit it for selected barber (admins only)
     - add actions for editing barber availability (opens either page or popup)
     - add view barber profile on clicking barber (idk if i should add this)
 
     - make settings page, to edit profile values, like name, profile image, etc...
 
-  - fix pagination tables in barber and client dashboards
   
   - do the same for barber pages/endpoints
   - do the same for client pages/endpoints
@@ -54,6 +52,8 @@ Proposed:
   
   - cleanup Form code, make it work automagically (Form.Button, auto fields, Form.Input, etc)
   - see how vite tests work and maybe implement some
+
+  - check this logical thing, if we delete a barber that has associated appointments, do they stay or get deleted? This may impact total revenue accuracy, etc..
 
 -----------------------------------------------------------------------------------------------------------------------------------------
 3. Docs:
