@@ -32,6 +32,7 @@ import SpinnerIcon from './spinner.svg?react';
 import PenIcon from './pen.svg?react';
 import TrashIcon from './trash.svg?react';
 import WarningIcon from './warning.svg?react';
+import IdIcon from './id.svg?react';
 
 const icons = {
   github: GithubIcon,
@@ -68,6 +69,7 @@ const icons = {
   trash: TrashIcon,
   dial: DialIcon,
   warning: WarningIcon,
+  id: IdIcon,
 };
 
 export default icons;
