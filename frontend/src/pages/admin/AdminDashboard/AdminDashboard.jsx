@@ -1,113 +1,61 @@
 import { useAuth } from '@hooks/useAuth';
 import styles from './AdminDashboard.module.scss';
-import Card from '@components/common/Card/Card';
-import Icon from '@components/common/Icon/Icon';
+
+import StatCard from '@components/common/StatCard/StatCard';
 import RadialChart from '@components/common/RadialChart/RadialChart';
 
 function AdminDashboard() {
   const { profile } = useAuth();
 
   return (
-    <>
+    <div className={styles.adminDashboard}>
       {/* Revenue */}
-      <Card className={styles.card}>
-        <div className={styles.icon}>
-          <Icon name="revenue" size="sm" black />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.label}>Total Revenue</div>
-          <div className={styles.value}>${profile.total_revenue}</div>
-        </div>
-      </Card>
+      <StatCard icon="revenue" label="Total Revenue">
+        <span className={styles.value}>{`$${profile.total_revenue}`}</span>
+      </StatCard>
 
-      {/* Barbers */}
-      <Card className={styles.card}>
-        <div className={styles.icon}>
-          <Icon name="barber" size="sm" black />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.label}>Total Barbers</div>
-          <div className={styles.value}>{profile.total_barbers}</div>
-        </div>
-      </Card>
+      {/* Total Barbers */}
+      <StatCard icon="barber" label="Total Barbers">
+        <span className={styles.value}>{profile.total_barbers} </span>
+      </StatCard>
 
-      {/* Appointments */}
-      <Card className={styles.card}>
-        <div className={styles.icon}>
-          <Icon name="appointment" size="sm" black />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.label}>Total Appointments</div>
-          <div className={styles.value}>{profile.total_appointments}</div>
-        </div>
-      </Card>
+      {/* Total Appointments */}
+      <StatCard icon="appointment" label="Total Appointments">
+        <span className={styles.value}>{profile.total_appointments} </span>
+      </StatCard>
 
       {/* Completed Appointments */}
-      <Card className={styles.card}>
-        <div className={styles.icon}>
-          <Icon name="completed" size="sm" black />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.label}>Completed Appointments</div>
-          <div className={styles.value}>{profile.completed_appointments}</div>
-        </div>
-      </Card>
+      <StatCard icon="completed" label="Completed Appointments">
+        <span className={styles.value}>{profile.completed_appointments} </span>
+      </StatCard>
 
       {/* Ongoing Appointments */}
-      <Card className={styles.card}>
-        <div className={styles.icon}>
-          <Icon name="calendar" size="sm" black />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.label}>Ongoing Appointments</div>
-          <div className={styles.value}>{profile.ongoing_appointments}</div>
-        </div>
-      </Card>
+      <StatCard icon="calendar" label="Ongoing Appointments">
+        <span className={styles.value}> {profile.ongoing_appointments} </span>
+      </StatCard>
 
       {/* Cancelled Appointments */}
-      <Card className={styles.card}>
-        <div className={styles.icon}>
-          <Icon name="cancelled" size="sm" black />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.label}>Cancelled Appointments</div>
-          <div className={styles.value}>{profile.cancelled_appointments}</div>
-        </div>
-      </Card>
+      <StatCard icon="cancelled" label="Cancelled Appointments">
+        <span className={styles.value}> {profile.cancelled_appointments} </span>
+      </StatCard>
 
-      {/* Clients */}
-      <Card className={styles.card}>
-        <div className={styles.icon}>
-          <Icon name="client" size="sm" black />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.label}>Total Clients</div>
-          <div className={styles.value}>{profile.total_clients}</div>
-        </div>
-      </Card>
+      {/* Total Clients */}
+      <StatCard icon="client" label="Total Clients">
+        <span className={styles.value}> {profile.total_clients} </span>
+      </StatCard>
 
-      {/* Reviews */}
-      <Card className={styles.card}>
-        <div className={styles.icon}>
-          <Icon name="review" size="sm" black />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.label}>Total Reviews</div>
-          <div className={styles.value}>{profile.total_reviews}</div>
-        </div>
-      </Card>
+      {/* Total Reviews */}
+      <StatCard icon="review" label="Total Reviews">
+        <span className={styles.value}> {profile.total_reviews} </span>
+      </StatCard>
 
       {/* Average Rating */}
-      <Card className={styles.card}>
-        <div className={styles.icon}>
-          <Icon name="rating" size="sm" black />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.label}>Average Rating</div>
+      <StatCard icon="rating" label="Average Rating">
+        <span className={styles.value}>
           <RadialChart value={profile.average_rating} max={5} size="70" />
-        </div>
-      </Card>
-    </>
+        </span>
+      </StatCard>
+    </div>
   );
 }
 

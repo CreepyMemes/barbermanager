@@ -66,7 +66,7 @@ class InviteBarberSerializer(EmailValidationMixin, serializers.Serializer):
     def create(self, validated_data):
         barber = Barber(
             email=validated_data['email'],
-            username= f'barber_{uuid.uuid4()}', # Generate random username placeholder
+            username=f'b_{str(uuid.uuid4())[:8]}', # first 8 chars of UUID (e.g. 'b_d3a7f601')
             is_active=False
         )
         barber.set_unusable_password()
@@ -87,10 +87,7 @@ class DeleteBarberSerializer(serializers.Serializer):
             self.barber = Barber.objects.get(id=value)
         except Barber.DoesNotExist:
             raise serializers.ValidationError("Barber with this ID does not exist.")  
-        
-        if not self.barber.is_active:
-            raise serializers.ValidationError("Barber is not active and cannot be deleted.") # TODO: not sure if this is a needed check, maybe we should let admin delete inactive barbers
-        
+
         return value
     
     def delete(self):

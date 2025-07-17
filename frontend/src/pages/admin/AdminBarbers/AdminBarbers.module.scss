@@ -1,0 +1,68 @@
+@use '@styles/variables.module.scss' as *;
+
+.admin-barbers {
+  padding: 5rem;
+
+  .action {
+    padding-block: 1rem;
+
+    display: flex;
+    justify-content: space-between;
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .refresh-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+
+      .line {
+        display: flex;
+        gap: 1rem;
+      }
+    }
+  }
+
+  .table-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .table-title-name {
+      display: block;
+      height: 1.7rem; // this is a hack to align icon with title
+      font-weight: 600;
+    }
+  }
+
+  .email-container {
+    display: flex; // need this to hide overflow
+
+    .email {
+      color: $color-primary;
+      font-size: 1.2rem;
+      font-weight: 500;
+
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .revenue {
+    color: $color-primary;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .tag {
+    width: 7rem;
+    text-align: center; // centers text in tag
+  }
+}

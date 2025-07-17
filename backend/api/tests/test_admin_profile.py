@@ -314,17 +314,6 @@ class AdminProfileTest(APITestCase):
         self.assertIn("does not exist", str(resp.data["id"][0]))
 
 
-    def test_delete_barber_inactive(self):
-        """
-        Cannot delete an inactive barber (validation error).
-        """
-        self.login_as_admin()
-        url = reverse("delete_barber", kwargs={"barber_id": self.barber_inactive.id})
-        resp = self.client.delete(url)
-        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("not active", str(resp.data["id"][0]))
-
-
     def test_delete_barber_requires_admin(self):
         """
         Only admins can delete barbers.

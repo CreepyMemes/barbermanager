@@ -1,0 +1,37 @@
+@use '@styles/variables.module.scss' as *;
+
+.profile {
+  border-radius: $border-radius;
+  color: $color-secondary;
+
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  .profile-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+
+    .fullname {
+      color: $color-primary;
+      font-size: 1.3rem;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+
+    .noname {
+      color: $color-primary;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+
+    .username {
+      color: $color-primary;
+
+      font-size: 1.2rem;
+      font-weight: 500;
+      text-transform: capitalize;
+    }
+  }
+}

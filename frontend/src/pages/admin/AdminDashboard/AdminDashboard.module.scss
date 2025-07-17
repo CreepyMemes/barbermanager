@@ -1,43 +1,18 @@
 @use '@styles/variables.module.scss' as *;
 
-.card {
-  display: flex;
-  align-items: flex-start;
-  gap: 2rem;
-  // grid-column: span 2;
+.admin-dashboard {
+  padding: 5rem;
 
-  .icon {
-    border-radius: 50%;
-    background-color: $color-icon;
-    height: 4.5rem;
-    width: 4.5rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 0.25rem;
-    box-shadow: 0 0.5rem 1.5rem rgba($color-accent, 0.05);
-  }
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 5rem;
 
-  .content {
-    flex: 1;
+  .value {
+    display: block;
+    margin-top: 1rem;
 
-    .label {
-      padding-bottom: 0.5rem;
-      margin-bottom: 1rem;
-      border-bottom: 1px solid $border-light;
-
-      color: $color-main;
-      font-weight: 700;
-      font-size: 1.22rem;
-      letter-spacing: 0.03em;
-      line-height: 1.2;
-    }
-
-    .value {
-      font-size: 2rem;
-      font-weight: 800;
-      color: $color-primary;
-      margin-bottom: 0.1rem;
-    }
+    font-size: 2rem;
+    font-weight: 800;
+    color: $color-primary;
   }
 }

@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.core import mail
 from django.conf import settings
 import re
-from api.models import User, Roles
+from api.models import User, Barber, Roles
 
 @patch('django.core.mail.send_mail', return_value=1) 
 class BarberAuthFlowTest(APITestCase):
@@ -66,20 +66,28 @@ class BarberAuthFlowTest(APITestCase):
         response, uid, token = self.invite_barber(email)
 
         self.assertEqual(response.data.get('detail'), 'Barber invited successfully.')
-        
+
         register_url = reverse(self.register_url, kwargs={'uidb64': uid, 'token': token})
 
-        data = {'username': 'newbarbertest', 'password': 'BarberPass123!', 'name': 'test name', 'surname': 'test surname', 'name': 'test name', 'surname': 'test surname'}
+        data = {
+            'username': 'newbarbertest',
+            'password': 'BarberPass123!',
+            'name': 'test name',
+            'surname': 'test surname'
+        }
         response = self.client.post(register_url, data, format='json')
-
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data.get('detail'), 'Barber registered and account activated.')
 
         # Check user created and active with correct role
-        user = User.objects.filter(email=email).first()
-        self.assertIsNotNone(user)
-        self.assertTrue(user.is_active)
-        self.assertEqual(user.role, Roles.BARBER.value)
+        barber = Barber.objects.filter(email=email).first()
+        self.assertIsNotNone(barber)
+        self.assertTrue(barber.is_active)
+        self.assertEqual(barber.role, Roles.BARBER.value)
+
+        # Test correct saving of name and surname:
+        self.assertEqual(barber.name, 'test name')
+        self.assertEqual(barber.surname, 'test surname')
 
 
     def test_register_barber_invalid_uid(self, mock_send_mail):

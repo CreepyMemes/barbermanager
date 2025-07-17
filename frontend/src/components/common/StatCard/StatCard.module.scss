@@ -1,0 +1,37 @@
+@use '@styles/variables.module.scss' as *;
+
+.card {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+
+  .icon {
+    border-radius: 50%;
+    background-color: $color-icon;
+    height: 4.5rem;
+    width: 4.5rem;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .content {
+    flex: 1;
+
+    .label {
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid $border;
+
+      color: $color-main;
+      font-weight: 700;
+      font-size: 1.5rem;
+      letter-spacing: 0.03em;
+
+      // This prevents overflow
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}

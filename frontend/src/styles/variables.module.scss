@@ -4,13 +4,17 @@ $color-secondary: #e3e1dd;
 $color-light: #f9f7f3;
 $color-accent: #585858;
 $color-muted: #a5a39a;
-
-$color-error-bg: #fae1e1; // error background color
-$color-error: #f44;
 $color-lighter: #454545;
 $color-main: #343432;
-$color-card: #f4f2ee;
+
+// Icon colors
 $color-icon: #efdc9f;
+$color-rating: #fabb3d;
+
+// Card colors
+$color-card: #f4f2ee;
+$color-card-darker: #efebe8;
+$color-card-dark: #efdc9f;
 
 // Borders/Shadows
 $border: #696968;
@@ -18,6 +22,27 @@ $border-light: #bab8b8;
 $border-error: #fba4a4;
 $border-hover: #dcbb51;
 $border-radius: 8px;
+
+// Error colors
+$color-error-bg: #fae1e1;
+$color-error: #f44;
+
+// Tag colors
+$color-tag-green-bg: #e9f9eb;
+$color-tag-green-text: #23863a;
+$color-tag-green-border: #aae3b7;
+
+$color-tag-yellow-bg: #faf2dc;
+$color-tag-yellow-text: #9d6b07;
+$color-tag-yellow-border: #f8cd6f;
+
+$color-tag-blue-bg: #e6f0fa;
+$color-tag-blue-text: #1765ad;
+$color-tag-blue-border: #85b6e2;
+
+$color-tag-red-bg: $color-error-bg;
+$color-tag-red-text: $color-error;
+$color-tag-red-border: $border-error;
 
 // Screen sizes
 $bp-huge: 126.87em; //2030px

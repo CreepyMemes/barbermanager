@@ -1,0 +1,47 @@
+@use '@styles/variables.module.scss' as *;
+
+.delete-barber-popup {
+  padding: 5rem;
+
+  .delete-barber {
+    width: 40rem;
+
+    .delete-barber-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+
+      .delete-barber-title {
+        font-size: 2.5rem;
+        font-weight: 600;
+      }
+    }
+
+    .delete-barber-content {
+      margin-top: 2rem;
+      text-align: center;
+
+      .delete-barber-text {
+        font-size: 1.5rem;
+      }
+
+      .delete-barber-username {
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+    }
+
+    .delete-barber-action {
+      margin-block: 2rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 2rem;
+
+      .line {
+        display: flex;
+        gap: 1rem;
+      }
+    }
+  }
+}

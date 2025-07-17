@@ -1,104 +1,137 @@
+import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@hooks/useAuth';
 import styles from './ClientDashboard.module.scss';
-import Card from '@components/common/Card/Card';
+import api from '@api';
+
 import Icon from '@components/common/Icon/Icon';
+import StatCard from '@components/common/StatCard/StatCard';
+import Pagination from '@components/common/Pagination/Pagination';
+import Rating from '@components/common/Rating/Rating';
+import Spinner from '@components/common/Spinner/Spinner';
+import Profile from '@components/common/Profile/Profile';
 
 function ClientDashboard() {
   const { profile } = useAuth();
 
-  return (
-    <>
-      {/* Next Appointment */}
-      <Card className={styles.card}>
-        <div className={styles.icon}>
-          <Icon name="availability" size="sm" black />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.label}>Next Appointment</div>
-          {profile.next_appointment ? (
-            <div className={styles.value}>
-              <span>{profile.next_appointment.date.replaceAll('-', ' / ')}</span>
-              <span>{profile.next_appointment.slot}</span>
-            </div>
-          ) : (
-            <div className={styles.empty}>No future appointment</div>
-          )}
-        </div>
-      </Card>
+  const [barbers, setBarbers] = useState({}); // barberId -> profile
 
-      {/* Total Appointment */}
-      <Card className={styles.card}>
-        <div className={styles.icon}>
-          <Icon name="calendar" size="sm" black />
+  /**
+   * Defines fetching all barber profiles needed for reviews (only unique barber IDs)
+   */
+  const fetchBarberProfiles = useCallback(async (reviews) => {
+    if (!reviews) return;
+
+    const barberIds = [...new Set(reviews.map((r) => r.barber_id))];
+
+    const entries = await Promise.all(
+      barberIds.map(async (id) => {
+        try {
+          const { profile } = await api.pub.getBarberProfilePublic(id);
+          return [id, profile];
+        } catch {
+          return [id, null];
+        }
+      }),
+    );
+
+    setBarbers(Object.fromEntries(entries)); // assembles into { [id]: profile }
+  }, []);
+
+  /**
+   *  Only run on reviews change
+   */
+  useEffect(() => {
+    if (profile?.reviews?.length > 0) {
+      fetchBarberProfiles(profile.reviews);
+    }
+  }, [profile?.reviews, fetchBarberProfiles]);
+
+  return (
+    <div className={styles.clientDashboard}>
+      {/* Next Appointment */}
+      <StatCard icon="availability" label="Next Appointment" emptyMessage="No future appointment">
+        <div className={styles.nextAppointmentValue}>
+          <span className={styles.nextAppointmentSlot}>{profile.next_appointment.slot}</span>
+          <span className={styles.nextAppointmentDate}>{profile.next_appointment.date.replaceAll('-', ' / ')}</span>
         </div>
-        <div className={styles.content}>
-          <div className={styles.label}>Total Appointments</div>
-          <div className={styles.value}>{profile?.appointments?.length}</div>
-        </div>
-      </Card>
+      </StatCard>
+
+      {/* Total Appointments */}
+      <StatCard icon="calendar" label="Total Appointments">
+        <span className={styles.value}>{profile?.appointments?.length}</span>
+      </StatCard>
 
       {/* Completed Appointments */}
-      <Card className={styles.card}>
-        <div className={styles.icon}>
-          <Icon name="completed" size="sm" black />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.label}>Completed Appointments</div>
-          <div className={styles.value}>{profile.completed_appointments}</div>
-        </div>
-      </Card>
+      <StatCard icon="completed" label="Completed Appointments">
+        <span className={styles.value}>{profile.completed_appointments}</span>
+      </StatCard>
 
-      {/* Booked Appointments */}
-      <Card className={styles.card}>
-        <div className={styles.icon}>
-          <Icon name="appointment" size="sm" black />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.label}>Booked Appointments</div>
-          <ul className={styles.list}>
-            {profile?.appointments?.length > 0 ? (
-              profile.appointments.map((appointment) => (
-                <li className={styles.listItem} key={appointment.id}>
-                  <span className={styles.appointmentDate}>{appointment.date}</span>
-                  <span className={styles.appointmentSlot}>{appointment.slot}</span>
-                  <span className={styles.appointmentStatus}>{appointment.status}</span>
-                </li>
-              ))
-            ) : (
-              <div className={styles.empty}>No appointments</div>
-            )}
-          </ul>
-        </div>
-      </Card>
+      {/* Posted Reviews */}
+      <Pagination
+        icon="review"
+        label="Posted Reviews"
+        itemsPerPage={5}
+        emptyMessage="No reviews yet" //
+      >
+        <Pagination.Action>
+          <div className={styles.action}></div>
+        </Pagination.Action>
 
-      {/* Reviews */}
-      <Card className={styles.card}>
-        <div className={styles.icon}>
-          <Icon name="review" size="sm" black />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.label}>Posted Reviews</div>
-          <ul className={styles.list}>
-            {profile?.reviews?.length > 0 ? (
-              profile.reviews.slice(0, 3).map((review) => (
-                <li className={styles.listItem} key={review.id}>
-                  <span className={styles.stars}>
-                    {'★'.repeat(review.rating)}
-                    {'☆'.repeat(5 - review.rating)}
-                  </span>
-                  <span className={styles.reviewComment}>
-                    {review.comment?.length > 30 ? review.comment.slice(0, 30) + '…' : review.comment}
-                  </span>
-                  <span className={styles.reviewDate}>{review.created_at}</span>
-                </li>
-              ))
-            ) : (
-              <li className={styles.empty}>No reviews yet</li>
-            )}
-          </ul>
-        </div>
-      </Card>
-    </>
+        {/* Table headers */}
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="barber" size="ty" black />
+            <span className={styles.tableTitleName}>Barber</span>
+          </div>
+        </Pagination.Column>
+
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="rating" size="ty" black />
+            <span className={styles.tableTitleName}>Rating</span>
+          </div>
+        </Pagination.Column>
+
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="comment" size="ty" black />
+            <span className={styles.tableTitleName}>Comment</span>
+          </div>
+        </Pagination.Column>
+
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="date" size="ty" black />
+            <span className={styles.tableTitleName}>Date</span>
+          </div>
+        </Pagination.Column>
+
+        {/* Table rows */}
+        {profile.reviews.map((review) => (
+          <Pagination.Row key={review.id}>
+            <Pagination.Cell>
+              {barbers[review.barber_id] ? <Profile profile={barbers[review.barber_id]} /> : <Spinner size="sm" />}
+            </Pagination.Cell>
+
+            <Pagination.Cell>
+              <Rating rating={review.rating} />
+            </Pagination.Cell>
+
+            <Pagination.Cell>
+              <div className={styles.reviewComment}>
+                <span className={styles.comment}>{review.comment}</span>
+              </div>
+            </Pagination.Cell>
+
+            <Pagination.Cell>
+              <div className={styles.reviewDate}>
+                <span className={styles.date}>{review.created_at.replaceAll('-', ' / ')}</span>
+              </div>
+            </Pagination.Cell>
+          </Pagination.Row>
+        ))}
+      </Pagination>
+    </div>
   );
 }
 

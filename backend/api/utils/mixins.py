@@ -85,7 +85,7 @@ class UIDTokenValidationSerializer(serializers.Serializer):
     """
     Utility serializer that handlles token checks, from which other serializers inherit
     """
-    def validate_uid_token(self, attrs):
+    def validate_uid_token(self, attrs, target_key='user'):
         from .utils import get_user_from_uid_token
 
         uidb64 = self.context.get('uidb64')
@@ -96,7 +96,7 @@ class UIDTokenValidationSerializer(serializers.Serializer):
 
         user = get_user_from_uid_token(uidb64, token)
 
-        attrs['user'] = user
+        attrs[target_key] = user
         return attrs
 
 
@@ -104,7 +104,7 @@ class ModelInstanceOrIDValidationMixin:
     """
     Mixin to fetch and validate a user model instance from either an instance or a PK in context.
     """
-    def validate_user_model(self, model, attrs):
+    def validate_user_model(self, model, attrs, check_active):
         from ..models import User
         model_name = model.__name__
         out_key = model_name.lower()
@@ -116,13 +116,19 @@ class ModelInstanceOrIDValidationMixin:
             if key in self.context:
                 found = self.context[key]
                 break
-        
+
+        # If not found in `context` search in `attrs`
+        for key in context_keys:
+            if key in attrs:
+                found = attrs[key]
+                break
+            
         if not found:
             raise serializers.ValidationError(f"No {model_name} or ID provided in context.")
         
         # If it's the correct model instance, return directly
         if isinstance(found, model):
-            if not found.is_active:
+            if check_active and not found.is_active:
                 raise serializers.ValidationError(f"{model_name} is inactive.")
             
             attrs[out_key] = found
@@ -136,7 +142,7 @@ class ModelInstanceOrIDValidationMixin:
                 user_type = getattr(found, user_type_name, None)
 
                 if user_type:
-                    if not user_type.is_active:
+                    if check_active and not user_type.is_active:
                         raise serializers.ValidationError(f"{model_name} is inactive.")
                     
                     attrs[out_key] = user_type
@@ -162,36 +168,36 @@ class UserValidationMixin(ModelInstanceOrIDValidationMixin):
     """
     Mixin to validate that a user_id from context exists and is active. Also adds 'user' to attrs.
     """
-    def validate_user(self, attrs):
+    def validate_user(self, attrs, check_active=True):
         from ..models import User
-        return self.validate_user_model(User, attrs)
+        return self.validate_user_model(User, attrs, check_active)
 
 
 class AdminValidationMixin(ModelInstanceOrIDValidationMixin):
     """
     Mixin to validate that an Admin instance or ID from context, ensure active, adds 'admin' to attrs.
     """
-    def validate_admin(self, attrs):
+    def validate_admin(self, attrs, check_active=True):
         from ..models import Admin
-        return self.validate_user_model(Admin, attrs)
+        return self.validate_user_model(Admin, attrs, check_active)
     
 
 class ClientValidationMixin(ModelInstanceOrIDValidationMixin):
     """
     Mixin to validate that a Client instance or ID from context, ensure active, adds 'client' to attrs.
     """
-    def validate_client(self, attrs):
+    def validate_client(self, attrs, check_active=True):
         from ..models import Client
-        return self.validate_user_model(Client, attrs)
+        return self.validate_user_model(Client, attrs, check_active)
 
 
 class BarberValidationMixin(ModelInstanceOrIDValidationMixin):
     """
     Mixin to validate that a Barber instance or ID from context, ensure active, adds 'barber' to attrs.
     """
-    def validate_barber(self, attrs):
+    def validate_barber(self, attrs, check_active=True):
         from ..models import Barber
-        return self.validate_user_model(Barber, attrs)
+        return self.validate_user_model(Barber, attrs, check_active)
 
 
 class AppointmentValidationMixin:
@@ -409,7 +415,7 @@ class GetBarbersMixin:
     """
     Mixin for retrieving and serializing Barber models.
     """
-    _PUBLIC_EXCLUDES = ['email', 'username', 'availabilities', 'is_active']
+    _PUBLIC_EXCLUDES = ['email', 'ongoing_appointments', 'availabilities', 'is_active', 'total_revenue']
 
     def get_barbers_queryset(self, show_all=False):
         """
@@ -451,7 +457,7 @@ class GetClientsMixin:
     """
     Mixin for retrieving and serializing Client models.
     """
-    _PUBLIC_EXCLUDES = ['email', 'name', 'surname', 'phone_number', 'appointments', 'is_active']
+    _PUBLIC_EXCLUDES = ['email', 'phone_number', 'appointments', 'is_active', 'next_appointment', 'total_spent']
 
     def get_clients_queryset(self, show_all=False):
         """

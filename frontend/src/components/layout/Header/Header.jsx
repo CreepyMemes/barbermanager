@@ -5,7 +5,7 @@ import styles from './Header.module.scss';
 import Logo from '@components/common/Logo/Logo';
 import Spinner from '@components/common/Spinner/Spinner';
 import Button from '@components/common/Button/Button';
-import Image from '@components/common/Image/Image';
+import ProfileImage from '@components/common/ProfileImage/ProfileImage';
 
 function Header() {
   const { isAuthenticated, profile, logout, isFetchingProfile } = useAuth();
@@ -27,19 +27,17 @@ function Header() {
           <div className={styles.actions}>
             {isAuthenticated && profile && (
               <>
-                <Button onClick={handleLogout} size="md" color="primary">
+                <Button onClick={handleLogout} size="md" color="transdark">
                   Logout
                 </Button>
 
-                <div className={styles.profile}>
-                  <Image src={profile.profile_image} name="avatar" alt="Profile" />
-                </div>
+                <ProfileImage src={profile.profile_image} />
               </>
             )}
 
             {!isAuthenticated && (
               <>
-                <Button href="/login" size="md" color="primary">
+                <Button href="/login" size="md" color="transdark">
                   Login
                 </Button>
 

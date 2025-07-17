@@ -23,20 +23,6 @@
       display: flex;
       align-items: center;
       gap: 1.5rem;
-
-      .profile {
-        display: flex;
-        align-items: center;
-        gap: 0.85rem;
-
-        img {
-          height: 3.2rem;
-          border-radius: 50%;
-          object-fit: cover;
-          margin-right: 0.65rem;
-          border: 2px solid $color-accent;
-        }
-      }
     }
   }
 }

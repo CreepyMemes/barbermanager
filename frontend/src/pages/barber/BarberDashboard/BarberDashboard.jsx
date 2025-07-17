@@ -1,141 +1,225 @@
+import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@hooks/useAuth';
 import styles from './BarberDashboard.module.scss';
-import Card from '@components/common/Card/Card';
+import api from '@api';
+
 import Icon from '@components/common/Icon/Icon';
+import StatCard from '@components/common/StatCard/StatCard';
+import Pagination from '@components/common/Pagination/Pagination';
 import RadialChart from '@components/common/RadialChart/RadialChart';
+import Rating from '@components/common/Rating/Rating';
+import Spinner from '@components/common/Spinner/Spinner';
+import Profile from '@components/common/Profile/Profile';
 
 function BarberDashboard() {
   const { profile } = useAuth();
 
+  const [clients, setClients] = useState({}); // clientId -> profile
+
+  /**
+   * Defines fetching all client profiles needed for reviews (only unique client IDs)
+   */
+  const fetchClientProfiles = useCallback(async (reviews) => {
+    if (!reviews) return;
+
+    const clientIds = [...new Set(reviews.map((r) => r.client_id))];
+
+    const entries = await Promise.all(
+      clientIds.map(async (id) => {
+        try {
+          const { profile } = await api.pub.getClientProfilePublic(id);
+          return [id, profile];
+        } catch {
+          return [id, null];
+        }
+      }),
+    );
+
+    setClients(Object.fromEntries(entries)); // assembles into { [id]: profile }
+  }, []);
+
+  /**
+   *  Only run on reviews change
+   */
+  useEffect(() => {
+    if (profile?.reviews?.length > 0) {
+      fetchClientProfiles(profile.reviews);
+    }
+  }, [profile?.reviews, fetchClientProfiles]);
+
   return (
-    <>
-      {/* Revenue */}
-      <Card className={styles.card}>
-        <div className={styles.icon}>
-          <Icon name="revenue" size="sm" black />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.label}>Total Revenue</div>
-          <div className={styles.value}>${profile.total_revenue}</div>
-        </div>
-      </Card>
-
-      {/* Completed Appointments */}
-      <Card className={styles.card}>
-        <div className={styles.icon}>
-          <Icon name="completed" size="sm" black />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.label}>Completed Appointments</div>
-          <div className={styles.value}>{profile.completed_appointments}</div>
-        </div>
-      </Card>
-
-      {/* Services */}
-      <Card className={styles.card}>
-        <div className={styles.icon}>
-          <Icon name="service" size="sm" black />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.label}>Services</div>
-          <ul className={styles.list}>
-            {profile?.services?.length > 0 ? (
-              profile.services.map((service) => (
-                <li className={styles.listItem} key={service.id}>
-                  <span className={styles.serviceName}>{service.name}</span>
-                  <span className={styles.servicePrice}>${service.price}</span>
-                </li>
-              ))
-            ) : (
-              <li className={styles.empty}>No services</li>
-            )}
-          </ul>
-        </div>
-      </Card>
-
-      {/* Availabilities */}
-      <Card className={styles.card}>
-        <div className={styles.icon}>
-          <Icon name="availability" size="sm" black />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.label}>Upcoming Availabilities</div>
-          <ul className={styles.list}>
-            {profile?.availabilities?.length > 0 ? (
-              profile.availabilities.slice(0, 3).map((av) => (
-                <li className={styles.listItem} key={av.id}>
-                  <span className={styles.availabilityDate}>{av.date}</span>
-                  <span className={styles.availabilitySlots}>{av.slots.join(', ')}</span>
-                </li>
-              ))
-            ) : (
-              <li className={styles.empty}>No availabilities</li>
-            )}
-          </ul>
-        </div>
-      </Card>
+    <div className={styles.barberDashboard}>
+      {/* Total Revenue */}
+      <StatCard icon="revenue" label="Total Revenue">
+        <span className={styles.value}>{`$${profile.total_revenue}`}</span>
+      </StatCard>
 
       {/* Ongoing Appointments */}
-      <Card className={styles.card}>
-        <div className={styles.icon}>
-          <Icon name="calendar" size="sm" black />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.label}>Ongoing Appointments</div>
-          <ul className={styles.list}>
-            {profile.ongoing_appointments?.length > 0 ? (
-              profile.ongoing_appointments.map((appointment) => (
-                <li className={styles.listItem} key={appointment.id}>
-                  <span className={styles.appointmentDate}>{appointment.date}</span>
-                  <span className={styles.appointmentSlot}>{appointment.slot}</span>
-                </li>
-              ))
-            ) : (
-              <div className={styles.empty}>No appointments</div>
-            )}
-          </ul>
-        </div>
-      </Card>
+      <StatCard icon="calendar" label="Ongoing Appointments">
+        <span className={styles.value}>{profile.ongoing_appointments}</span>
+      </StatCard>
 
-      {/* Reviews */}
-      <Card className={styles.card}>
-        <div className={styles.icon}>
-          <Icon name="review" size="sm" black />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.label}>Received Reviews</div>
-          <ul className={styles.list}>
-            {profile?.reviews?.length > 0 ? (
-              profile.reviews.slice(0, 3).map((review) => (
-                <li className={styles.listItem} key={review.id}>
-                  <span className={styles.stars}>
-                    {'★'.repeat(review.rating)}
-                    {'☆'.repeat(5 - review.rating)}
-                  </span>
-                  <span className={styles.reviewComment}>
-                    {review.comment?.length > 30 ? review.comment.slice(0, 30) + '…' : review.comment}
-                  </span>
-                  <span className={styles.reviewDate}>{review.created_at}</span>
-                </li>
-              ))
-            ) : (
-              <li className={styles.empty}>No reviews yet</li>
-            )}
-          </ul>
-        </div>
-      </Card>
+      {/* Completed Appointments */}
+      <StatCard icon="completed" label="Completed Appointments">
+        <span className={styles.value}>{profile.completed_appointments}</span>
+      </StatCard>
+
+      {/* Upcoming Availabilities */}
+      <Pagination
+        icon="availability"
+        label="Upcoming Availabilities"
+        itemsPerPage={5}
+        emptyMessage="No availabilities" //
+      >
+        <Pagination.Action>
+          <div className={styles.action}></div>
+        </Pagination.Action>
+
+        {/* Table headers */}
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="date" size="ty" black />
+            <span className={styles.tableTitleName}>Date</span>
+          </div>
+        </Pagination.Column>
+
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="hourglass" size="ty" black />
+            <span className={styles.tableTitleName}>Slots</span>
+          </div>
+        </Pagination.Column>
+
+        {/* Table rows */}
+        {(profile?.availabilities || []).map((availability) => (
+          <Pagination.Row key={availability.id}>
+            <Pagination.Cell>
+              <span className={styles.availabilityDate}>{availability.date.replaceAll('-', ' / ')}</span>
+            </Pagination.Cell>
+
+            <Pagination.Cell>
+              <div className={styles.availabilitySlots}>
+                <span className={styles.slots}>{availability.slots.join(', ')}</span>
+              </div>
+            </Pagination.Cell>
+          </Pagination.Row>
+        ))}
+      </Pagination>
+
+      {/* Services */}
+      <Pagination
+        icon="service"
+        label="Services"
+        itemsPerPage={5}
+        emptyMessage="No services" //
+      >
+        <Pagination.Action>
+          <div className={styles.action}></div>
+        </Pagination.Action>
+
+        {/* Table headers */}
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="scissors" size="ty" black />
+            <span className={styles.tableTitleName}>Name</span>
+          </div>
+        </Pagination.Column>
+
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="revenue" size="ty" black />
+            <span className={styles.tableTitleName}>Price</span>
+          </div>
+        </Pagination.Column>
+
+        {/* Table rows */}
+        {profile?.services?.map((service) => (
+          <Pagination.Row key={service.id}>
+            <Pagination.Cell>
+              <span className={styles.serviceName}>{service.name}</span>
+            </Pagination.Cell>
+
+            <Pagination.Cell>
+              <span className={styles.servicePrice}>${service.price}</span>
+            </Pagination.Cell>
+          </Pagination.Row>
+        ))}
+      </Pagination>
+
+      {/* Received Reviews */}
+      <Pagination
+        icon="review"
+        label="Received Reviews"
+        itemsPerPage={5}
+        emptyMessage="No reviews yet" //
+      >
+        <Pagination.Action>
+          <div className={styles.action}></div>
+        </Pagination.Action>
+
+        {/* Table headers */}
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="client" size="ty" black />
+            <span className={styles.tableTitleName}>Client</span>
+          </div>
+        </Pagination.Column>
+
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="rating" size="ty" black />
+            <span className={styles.tableTitleName}>Rating</span>
+          </div>
+        </Pagination.Column>
+
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="comment" size="ty" black />
+            <span className={styles.tableTitleName}>Comment</span>
+          </div>
+        </Pagination.Column>
+
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="date" size="ty" black />
+            <span className={styles.tableTitleName}>Date</span>
+          </div>
+        </Pagination.Column>
+
+        {/* Table rows */}
+        {profile.reviews.map((review) => (
+          <Pagination.Row key={review.id}>
+            <Pagination.Cell>
+              {clients[review.client_id] ? <Profile profile={clients[review.client_id]} /> : <Spinner size="sm" />}
+            </Pagination.Cell>
+
+            <Pagination.Cell>
+              <Rating rating={review.rating} />
+            </Pagination.Cell>
+
+            <Pagination.Cell>
+              <div className={styles.reviewComment}>
+                <span className={styles.comment}>{review.comment}</span>
+              </div>
+            </Pagination.Cell>
+
+            <Pagination.Cell>
+              <div className={styles.reviewDate}>
+                <span className={styles.date}>{review.created_at.replaceAll('-', ' / ')}</span>
+              </div>
+            </Pagination.Cell>
+          </Pagination.Row>
+        ))}
+      </Pagination>
 
       {/* Average Rating */}
-      <Card className={styles.card}>
-        <div className={styles.icon}>
-          <Icon name="rating" size="sm" black />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.label}>Average Rating</div>
+      <StatCard icon="rating" label="Average Rating">
+        <span className={styles.value}>
           <RadialChart value={profile.average_rating} max={5} size="70" />
-        </div>
-      </Card>
-    </>
+        </span>
+      </StatCard>
+    </div>
   );
 }
+
 export default BarberDashboard;

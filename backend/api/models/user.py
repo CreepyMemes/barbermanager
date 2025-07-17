@@ -241,13 +241,6 @@ class Client(User):
         super().save(*args, **kwargs)
 
     @property
-    def appointments(self):
-        """
-        Returns a list of dicts representing all this client's appointments.
-        """
-        return [appointment.to_dict() for appointment in self.appointments_created.all()]
-
-    @property
     def completed_appointments(self):
         """
         Returns the sum of all the completed appointments for this cllient.
@@ -255,7 +248,6 @@ class Client(User):
         from .appointment import AppointmentStatus
         return self.appointments_created.filter(status=AppointmentStatus.COMPLETED.value).count()
     
-
     @property
     def next_appointment(self):
         """
@@ -272,16 +264,29 @@ class Client(User):
         """
         return [review.to_dict() for review in self.client_reviews.all()]
     
+    @property
+    def total_spent(self):
+        from .appointment import AppointmentStatus
+        """
+        Returns the sum of the services in all completed appointments for this barber.
+        """
+        spent = (
+            self.appointments_created.filter(status=AppointmentStatus.COMPLETED.value)
+            .annotate(price_sum=Sum('services__price'))
+            .aggregate(total=Sum('price_sum'))['total']
+        )
+        return float(spent) if spent else 0.0
+
     def to_dict(self):
         base = super().to_dict()
         base.update({      
             'name': self.name,
             'surname': self.surname,
             'phone_number': self.phone_number,
-            'appointments': self.appointments,
             'completed_appointments': self.completed_appointments,
             'next_appointment': self.next_appointment,
             'reviews': self.reviews,
+            'total_spent': self.total_spent,
         })
         return base
 
@@ -329,11 +334,11 @@ class Barber(User):
     @property
     def ongoing_appointments(self):
         """
-        Returns a list of all the ongoing appointments for this barber.
+        Returns the sum of all the ongoing appointments for this barber.
         """
         from .appointment import AppointmentStatus
-        return [appointment.to_dict() for appointment in self.appointments_received.filter(status=AppointmentStatus.ONGOING.value)]
-
+        return self.appointments_received.filter(status=AppointmentStatus.ONGOING.value).count()
+    
     @property
     def total_revenue(self):
         from .appointment import AppointmentStatus

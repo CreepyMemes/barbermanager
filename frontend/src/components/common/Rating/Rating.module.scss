@@ -1,0 +1,40 @@
+@use '@styles/variables.module.scss' as *;
+
+.review-stars {
+  display: flex;
+  justify-content: start;
+
+  .rating {
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    .rating-value {
+      color: $color-primary;
+      font-weight: 600;
+      font-size: 1.2rem;
+      // height: 0.9rem;
+    }
+
+    .stars-container {
+      display: flex;
+      justify-content: center;
+      align-items: center; // vertical centering
+
+      .stars {
+        height: 1.5rem;
+
+        color: $color-rating;
+        font-size: 1.5rem;
+        letter-spacing: 0.2em;
+        font-weight: 800;
+        line-height: 1; // prevent star "drifting"
+
+        display: flex;
+        align-items: center; // vertical centering of star text
+      }
+    }
+  }
+}

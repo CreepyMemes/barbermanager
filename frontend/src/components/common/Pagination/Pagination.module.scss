@@ -1,0 +1,73 @@
+@use '@styles/variables.module.scss' as *;
+
+.table-wrapper {
+  width: 100%;
+  // margin-top: 2rem;
+
+  border: 1px solid $border;
+  border-radius: $border-radius;
+  overflow: hidden;
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+
+    .table-head {
+      background-color: $color-card-dark;
+
+      .table-head-row {
+        padding: 1rem 1rem;
+
+        font-size: 1.2rem;
+        font-weight: 500;
+        border-bottom: 1px solid $border-light;
+
+        text-align: left;
+      }
+    }
+
+    .table-body {
+      > tr:nth-of-type(even) {
+        background-color: $color-card-darker;
+      }
+
+      .table-body-row {
+        padding: 1rem 1rem;
+        border-bottom: 1px solid $border-light;
+      }
+
+      tr:last-child .table-body-row {
+        border-bottom: none;
+      }
+    }
+  }
+}
+
+// Empty content
+.empty {
+  padding: 1rem;
+  color: $color-muted;
+  font-style: italic;
+  text-align: center;
+  font-size: 1.04rem;
+}
+
+// Pagination Nav
+.pagination-nav {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 1rem;
+
+  .page-button {
+    padding: 0.8rem;
+  }
+
+  .page-status {
+    color: $color-main;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+}
