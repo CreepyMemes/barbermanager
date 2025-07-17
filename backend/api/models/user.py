@@ -272,6 +272,19 @@ class Client(User):
         """
         return [review.to_dict() for review in self.client_reviews.all()]
     
+    @property
+    def total_spent(self):
+        from .appointment import AppointmentStatus
+        """
+        Returns the sum of the services in all completed appointments for this barber.
+        """
+        spent = (
+            self.appointments_created.filter(status=AppointmentStatus.COMPLETED.value)
+            .annotate(price_sum=Sum('services__price'))
+            .aggregate(total=Sum('price_sum'))['total']
+        )
+        return float(spent) if spent else 0.0
+
     def to_dict(self):
         base = super().to_dict()
         base.update({      
@@ -282,6 +295,7 @@ class Client(User):
             'completed_appointments': self.completed_appointments,
             'next_appointment': self.next_appointment,
             'reviews': self.reviews,
+            'total_spent': self.total_spent,
         })
         return base
 
