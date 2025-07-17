@@ -4,6 +4,7 @@ const COLOR_MAP = {
   green: styles.green,
   yellow: styles.yellow,
   red: styles.red,
+  blue: styles.blue,
 };
 
 function Tag({ className, color, children }) {
