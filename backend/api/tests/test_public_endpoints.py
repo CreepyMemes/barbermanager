@@ -97,14 +97,14 @@ class PublicEndpointsTest(APITestCase):
 
     def barber_to_private(self, barber):
             barber = barber.copy()
-            for field in ['email', 'username', 'availabilities', 'is_active']:
+            for field in ['email', 'ongoing_appointments', 'availabilities', 'is_active', 'total_revenue']:
                 barber.pop(field, None)
             return barber
     
 
     def client_to_private(self, client):
             client = client.copy()
-            for field in ['email', 'name', 'surname', 'phone_number', 'appointments', 'is_active']:
+            for field in ['email', 'phone_number', 'appointments', 'is_active', 'next_appointment', 'total_spent']:
                 client.pop(field, None)
             return client
 
