@@ -18,19 +18,19 @@ Important:
   - fix pagination tables in barber and client dashboards
 
   - implement all admin pages and endpoints from api
-  
+
+    - make settings page, to edit profile values, like name, profile image, etc...
+
     - add availability page to edit it for selected barber (admins only)
     - add actions for editing barber availability (opens either page or popup)
     - add view barber profile on clicking barber (idk if i should add this)
 
-    - make settings page, to edit profile values, like name, profile image, etc...
-
-  
   - do the same for barber pages/endpoints
   - do the same for client pages/endpoints
   - do the same for public pages/endpoints
 
 Proposed:
+  - fix table text overflow when screen width is small
   - add error message when loading tables if the api request fails
   - on backend return availabilities, appointments sorted based on date (newer to older)
   

@@ -19,10 +19,14 @@ function ClientDashboard() {
       </Pagination>
 
       {/* Total Appointments */}
-      <StatCard icon="calendar" label="Total Appointments" value={profile?.appointments?.length} />
+      <StatCard icon="calendar" label="Total Appointments">
+        <span className={styles.value}>{profile?.appointments?.length}</span>
+      </StatCard>
 
       {/* Completed Appointments */}
-      <StatCard icon="completed" label="Completed Appointments" value={profile.completed_appointments} />
+      <StatCard icon="completed" label="Completed Appointments">
+        <span className={styles.value}>{profile.completed_appointments}</span>
+      </StatCard>
 
       {/* Booked Appointments */}
       <Pagination icon="appointment" label="Booked Appointments" emptyMessage="No appointments">
@@ -51,4 +55,5 @@ function ClientDashboard() {
     </div>
   );
 }
+
 export default ClientDashboard;
