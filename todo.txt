@@ -14,29 +14,52 @@ Proposed:
 2. Frontend:
 
 Important:  
-  - add admin barbers page, to view all barbers, invite new and delete existing
-  - add reusable pagination component, to use in all lists
+  
+  - implement all admin pages and endpoints from api
 
-  - add settings page for admin, client and barber
+    - make settings page, to edit profile values, like name, profile image, etc...
 
+    - add availability page to edit it for selected barber (admins only)
+    - add actions for editing barber availability (opens either page or popup)
+    - add view barber profile on clicking barber (idk if i should add this)
+
+  - do the same for barber, client, public pages/endpoints
+
+  - remove availabilities from barber dashboard and put them on their own page
+  - remove reviews page from barbers sidebar
+
+  - important functionality for:
+    - admin: profile, availabilities
+    - barber: profile, services 
+    - client: profile, appointment, reviews 
 
 Proposed:
+
+  - fix table text overflow when screen width is small
+  - add error message when loading tables if the api request fails
+  - on backend return availabilities, appointments sorted based on date (newer to older)
+  
+  - add delete appointment functionality for admins and barbers?
+  
+  - add responsivity to sidebar, show toggle button on header, width 100% for (small screens)
+  - add media queries for screen sizes on each layout component 
+   
+  - add skeleton loading for page components
+
+  - cleanup Form code, make it work automagically (Form.Button, auto fields, Form.Input, etc)
+    
+  - see if it's worth it to fix loading spinner not showing when accessing dashboard from a route 
+    this happens because to redirect you need to be authenticated to get role
+  
+  - see how vite tests work and maybe implement some
+
+  - check this logical thing, if we delete a barber that has associated appointments, do they stay or get deleted? This may impact total revenue accuracy, etc..
+    same with barber services, if an appointment uses deleted services what happens? does the appointment get deleted?
+  
   - change structure of project:
     - you can register as barbershop owner, then invite your own barbers
     - or you can register as client and view barbershops
     - admim can view evrything about the platform
-    
-  - add media queries for screen sizes on each layout component 
-    make mobile sidebar button on header
-
-  - add skeleton loading for page components
-  
-  - see if it's worth it to fix loading spinner not showing when accessing dashboard from a route 
-    this happens because to redirect you need to be authenticated to get role
-  
-  - cleanup Form code, make it work automagically (Form.Button, auto fields, Form.Input, etc)
-  - see how vite tests work and maybe implement some
-
 -----------------------------------------------------------------------------------------------------------------------------------------
 3. Docs:
 

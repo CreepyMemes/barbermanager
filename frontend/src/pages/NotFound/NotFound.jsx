@@ -18,7 +18,7 @@ function NotFound() {
             <p>The page may have moved, or the URL may be incorrect.</p>
             <p>Go back to the homepage and continue browsing.</p>
           </div>
-          <Button href="/" color="primary" size="md" width="content">
+          <Button href="/" color="transdark" size="md" width="content">
             Go back to home
           </Button>
         </section>

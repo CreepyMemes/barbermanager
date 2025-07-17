@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, Sum
 from enum import Enum
 from .user import Barber, Client
 
@@ -104,14 +104,24 @@ class Appointment(models.Model):
         """
         return list(self.services.values_list('id', flat=True))
     
+    @property
+    def amount_spent(self):
+        """
+        Returns the total price of all services in this appointment.
+        """
+        # Aggregate sum of prices.
+        total = self.services.aggregate(total=Sum('price'))['total']
+        return float(total) if total else 0.0
+    
     def to_dict(self):
         """
         Returns a JSON-serializable dict representation of the appointment.
         """
         return {
             'id': self.id,
-            'client_id': self.client.id,
             'barber_id': self.barber.id,
+            'client_id': self.client.id,
+            'amount_spent': self.amount_spent,
             'service_ids': self.service_ids,
             'date': self.date,
             'slot': self.slot.strftime("%H:%M"),

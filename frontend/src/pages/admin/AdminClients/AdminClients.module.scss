@@ -1,0 +1,106 @@
+@use '@styles/variables.module.scss' as *;
+
+.admin-clients {
+  padding: 5rem;
+
+  .action {
+    padding-block: 1rem;
+
+    display: flex;
+    justify-content: start;
+
+    .refresh-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+
+      .line {
+        display: flex;
+        gap: 1rem;
+      }
+    }
+  }
+
+  .table-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .table-title-name {
+      display: block;
+      height: 1.7rem; // this is a hack to align icon with title
+      font-weight: 600;
+    }
+  }
+
+  .email-container {
+    display: flex; // need this to hide overflow
+
+    .email {
+      color: $color-primary;
+      font-size: 1.2rem;
+      font-weight: 500;
+
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .next-appointment-container {
+    display: flex;
+    flex-direction: start;
+
+    .next-appointment {
+      width: 6.5rem;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .appointment-date {
+        font-size: 1.15rem;
+        font-weight: 600;
+      }
+
+      .appointment-slot {
+        color: $color-primary;
+        font-size: 1.05rem;
+        font-weight: 500;
+      }
+
+      .no-appointment {
+        color: $color-primary;
+        font-size: 2rem;
+      }
+    }
+  }
+
+  .spent {
+    color: $color-primary;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .completed {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .count {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .text {
+      font-size: 1.2rem;
+      font-weight: 500;
+    }
+  }
+
+  .tag {
+    width: 7rem;
+    text-align: center;
+  }
+}

@@ -5,14 +5,14 @@ import styles from './Sidebar.module.scss';
 import Spinner from '@components/common/Spinner/Spinner';
 import Button from '@components/common/Button/Button';
 import Icon from '@components/common/Icon/Icon';
-import Image from '@components/common/Image/Image';
+import ProfileImage from '@components/common/ProfileImage/ProfileImage';
 
 // Define role-based navigation
 const adminNav = [
   { to: '/admin/dashboard', label: 'Dashboard', icon: 'dashboard' },
-  { to: '/admin/appointments', label: 'Appointments', icon: 'appointment' },
   { to: '/admin/barbers', label: 'Barbers', icon: 'barber' },
   { to: '/admin/clients', label: 'Clients', icon: 'client' },
+  { to: '/admin/appointments', label: 'Appointments', icon: 'appointment' },
   { to: '/admin/settings', label: 'Settings', icon: 'settings' },
 ];
 const barberNav = [
@@ -51,9 +51,9 @@ function Sidebar() {
             <div className={styles.top}>
               {isAuthenticated && profile && (
                 <div className={styles.profile}>
-                  <Image src={profile.profile_image} name="avatar" alt="Profile" />
+                  <ProfileImage src={profile.profile_image} />
 
-                  <div>
+                  <div className={styles.profileText}>
                     <div className={styles.username}>{profile.username || profile.email}</div>
                     <div className={styles.role}>{profile.role?.toLowerCase() || ''}</div>
                   </div>

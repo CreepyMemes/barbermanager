@@ -52,7 +52,7 @@ function Login() {
     <>
       {registered && (
         <Card className={styles.registered}>
-          <Icon name="email" size="md" color="success" black />
+          <Icon name="email" size="md" black />
           <div>
             <strong>Account created!</strong>
             {registered === '1' && <div>Please check your email to verify your account before logging in.</div>}
@@ -119,7 +119,14 @@ function Login() {
                 size="md"
               />
 
-              <Button className={styles.loginBtn} type="submit" size="md" disabled={isLoggingIn} wide color="primary">
+              <Button
+                className={styles.loginBtn}
+                type="submit"
+                color="primary"
+                size="md"
+                disabled={isLoggingIn}
+                wide //
+              >
                 <span className={styles.line}>
                   {isLoggingIn ? (
                     <>

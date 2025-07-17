@@ -70,6 +70,30 @@
   }
 }
 
+.translight {
+  background: none;
+  color: $color-primary;
+  border: 1px solid $border;
+
+  &:hover:not(:disabled):not([aria-disabled='true']) {
+    background-color: $color-lighter;
+    color: $color-light;
+    border-color: $color-primary;
+  }
+}
+
+.transdark {
+  background: none;
+  color: $color-light;
+  border: 1px solid $border;
+
+  &:hover:not(:disabled):not([aria-disabled='true']) {
+    background-color: $color-lighter;
+    color: $color-light;
+    border-color: $color-primary;
+  }
+}
+
 .link {
   // background: $color-primary;
   color: $color-primary;

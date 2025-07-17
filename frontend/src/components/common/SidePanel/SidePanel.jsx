@@ -5,7 +5,7 @@ import Logo from '@components/common/Logo/Logo';
 
 function SidePanel({ heading, children }) {
   // Extracts first SidePanelInner and SidePanelActions children by displayName
-  const [inner, actions] = ['SidePanelInner', 'SidePanelActions'].map((name) =>
+  const [inner, actions] = [Inner.displayName, Actions.displayName].map((name) =>
     Children.toArray(children).find((child) => child.type.displayName === name),
   );
 
