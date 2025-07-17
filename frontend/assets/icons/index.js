@@ -17,6 +17,7 @@ import BugIcon from './bug.svg?react';
 import RevenueIcon from './revenue.svg?react';
 import AvailabilityIcon from './availability.svg?react';
 import CalendarIcon from './calendar.svg?react';
+import DateIcon from './date.svg?react';
 import EmailIcon from './email.svg?react';
 import EmailBaseIcon from './email_base.svg?react';
 import CancelledIcon from './cancelled.svg?react';
@@ -33,6 +34,7 @@ import PenIcon from './pen.svg?react';
 import TrashIcon from './trash.svg?react';
 import WarningIcon from './warning.svg?react';
 import IdIcon from './id.svg?react';
+import CommentIcon from './comment.svg?react';
 
 const icons = {
   github: GithubIcon,
@@ -53,6 +55,7 @@ const icons = {
   revenue: RevenueIcon,
   availability: AvailabilityIcon,
   calendar: CalendarIcon,
+  date: DateIcon,
   email: EmailIcon,
   email_base: EmailBaseIcon,
   cancelled: CancelledIcon,
@@ -70,6 +73,7 @@ const icons = {
   dial: DialIcon,
   warning: WarningIcon,
   id: IdIcon,
+  comment: CommentIcon,
 };
 
 export default icons;
