@@ -38,6 +38,7 @@ function AdminClients() {
     }
   }, [profile, fetchClients]);
 
+  // Only render UI for admins; otherwise, render nothing// Only render UI for admins; otherwise, render nothing
   if (!profile || profile.role !== 'ADMIN') return null;
 
   return (
