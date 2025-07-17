@@ -8,11 +8,13 @@ import Icon from '@components/common/Icon/Icon';
 import Tag from '@components/common/Tag/Tag';
 import Button from '@components/common/Button/Button';
 import Spinner from '@components/common/Spinner/Spinner';
+import Profile from '@components/common/Profile/Profile';
 
 function AdminAppointments() {
   const { profile } = useAuth();
   const [appointments, setAppointments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [barbers, setBarbers] = useState({}); // barberId -> profile
 
   /**
    * Defines fetching all appointmentts from api (single responsibility, outside effect)
@@ -29,6 +31,28 @@ function AdminAppointments() {
   }, []);
 
   /**
+   * Defines fetching all barber profiles needed (only unique barber IDs)
+   */
+  const fetchBarberProfiles = useCallback(async (appointments) => {
+    // Gets all unique barber IDs from appointments
+    const barberIds = [...new Set(appointments.map((a) => a.barber_id))];
+
+    // fetches all profiles in parallel
+    const entries = await Promise.all(
+      barberIds.map(async (id) => {
+        try {
+          const { profile } = await api.pub.getBarberProfilePublic(id);
+          return [id, profile];
+        } catch {
+          return [id, null];
+        }
+      }),
+    );
+
+    setBarbers(Object.fromEntries(entries)); // assembles into { [id]: profile }
+  }, []);
+
+  /**
    * Only fetch if profile is loaded AND user is admin
    */
   useEffect(() => {
@@ -36,6 +60,15 @@ function AdminAppointments() {
       fetchAppointments();
     }
   }, [profile, fetchAppointments]);
+
+  /**
+   * When appointments change, fetch needed barber profiles
+   */
+  useEffect(() => {
+    if (appointments.length > 0) {
+      fetchBarberProfiles(appointments);
+    }
+  }, [appointments, fetchBarberProfiles]);
 
   // Only render UI for admins; otherwise, render nothing
   if (!profile || profile.role !== 'ADMIN') return null;
@@ -78,7 +111,7 @@ function AdminAppointments() {
         <Pagination.Column>
           <div className={styles.tableTitle}>
             <Icon name="id" size="ty" black />
-            <span className={styles.tableTitleName}>ID</span>
+            <span className={styles.tableTitleName}>Appointment ID</span>
           </div>
         </Pagination.Column>
 
@@ -92,7 +125,7 @@ function AdminAppointments() {
         <Pagination.Column>
           <div className={styles.tableTitle}>
             <Icon name="barber" size="ty" black />
-            <span className={styles.tableTitleName}>Barber ID</span>
+            <span className={styles.tableTitleName}>Barber</span>
           </div>
         </Pagination.Column>
 
@@ -128,7 +161,10 @@ function AdminAppointments() {
         {appointments.map((appointment) => (
           <Pagination.Row key={appointment.id}>
             <Pagination.Cell>
-              <span className={styles.id}>#{appointment.id}</span>
+              <div className={styles.appointmentId}>
+                <span className={styles.id}>#{appointment.id}</span>
+                <span className={styles.text}>appointment</span>
+              </div>
             </Pagination.Cell>
 
             <Pagination.Cell>
@@ -141,7 +177,11 @@ function AdminAppointments() {
             </Pagination.Cell>
 
             <Pagination.Cell>
-              <span className={styles.simpleId}>{appointment.barber_id}</span>
+              {barbers[appointment.barber_id] ? (
+                <Profile profile={barbers[appointment.barber_id]} />
+              ) : (
+                <Spinner size="sm" />
+              )}
             </Pagination.Cell>
 
             <Pagination.Cell>

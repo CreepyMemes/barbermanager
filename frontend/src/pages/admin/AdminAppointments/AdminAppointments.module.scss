@@ -33,12 +33,23 @@
     }
   }
 
-  .id {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: $color-primary;
+  .appointment-id {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .id {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .text {
+      font-size: 1.2rem;
+      font-weight: 500;
+    }
   }
 
+  // TODO REMOVE AFTER CHANGING CLIENT PROFILE
   .simple-id {
     font-size: 1.1rem;
     font-weight: 500;
