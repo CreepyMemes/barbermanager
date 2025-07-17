@@ -35,6 +35,7 @@ import TrashIcon from './trash.svg?react';
 import WarningIcon from './warning.svg?react';
 import IdIcon from './id.svg?react';
 import CommentIcon from './comment.svg?react';
+import ScissorsIcon from './scissors.svg?react';
 
 const icons = {
   github: GithubIcon,
@@ -74,6 +75,7 @@ const icons = {
   warning: WarningIcon,
   id: IdIcon,
   comment: CommentIcon,
+  scissors: ScissorsIcon,
 };
 
 export default icons;
