@@ -80,7 +80,7 @@ function ClientDashboard() {
         {/* Table headers */}
         <Pagination.Column>
           <div className={styles.tableTitle}>
-            <Icon name="client" size="ty" black />
+            <Icon name="barber" size="ty" black />
             <span className={styles.tableTitleName}>Barber</span>
           </div>
         </Pagination.Column>
