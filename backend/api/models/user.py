@@ -241,13 +241,6 @@ class Client(User):
         super().save(*args, **kwargs)
 
     @property
-    def appointments(self):
-        """
-        Returns a list of dicts representing all this client's appointments.
-        """
-        return [appointment.to_dict() for appointment in self.appointments_created.all()]
-
-    @property
     def completed_appointments(self):
         """
         Returns the sum of all the completed appointments for this cllient.
@@ -255,7 +248,6 @@ class Client(User):
         from .appointment import AppointmentStatus
         return self.appointments_created.filter(status=AppointmentStatus.COMPLETED.value).count()
     
-
     @property
     def next_appointment(self):
         """
@@ -291,7 +283,6 @@ class Client(User):
             'name': self.name,
             'surname': self.surname,
             'phone_number': self.phone_number,
-            'appointments': self.appointments,
             'completed_appointments': self.completed_appointments,
             'next_appointment': self.next_appointment,
             'reviews': self.reviews,
