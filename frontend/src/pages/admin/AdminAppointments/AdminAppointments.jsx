@@ -14,7 +14,9 @@ function AdminAppointments() {
   const { profile } = useAuth();
   const [appointments, setAppointments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
   const [barbers, setBarbers] = useState({}); // barberId -> profile
+  const [clients, setClients] = useState({}); // clientId -> profile
 
   /**
    * Defines fetching all appointmentts from api (single responsibility, outside effect)
@@ -37,7 +39,7 @@ function AdminAppointments() {
     // Gets all unique barber IDs from appointments
     const barberIds = [...new Set(appointments.map((a) => a.barber_id))];
 
-    // fetches all profiles in parallel
+    // fetches all barber profiles in parallel
     const entries = await Promise.all(
       barberIds.map(async (id) => {
         try {
@@ -50,6 +52,27 @@ function AdminAppointments() {
     );
 
     setBarbers(Object.fromEntries(entries)); // assembles into { [id]: profile }
+  }, []);
+
+  /**
+   * Defines fetching all client profiles needed (only unique client IDs)
+   */
+  const fetchClientProfiles = useCallback(async (appointments) => {
+    // Gets all unique client IDs from appointments
+    const clientIds = [...new Set(appointments.map((a) => a.client_id))];
+
+    // fetches all client profiles in parallel
+    const entries = await Promise.all(
+      clientIds.map(async (id) => {
+        try {
+          const { profile } = await api.pub.getClientProfilePublic(id);
+          return [id, profile];
+        } catch {
+          return [id, null];
+        }
+      }),
+    );
+    setClients(Object.fromEntries(entries));
   }, []);
 
   /**
@@ -67,8 +90,9 @@ function AdminAppointments() {
   useEffect(() => {
     if (appointments.length > 0) {
       fetchBarberProfiles(appointments);
+      fetchClientProfiles(appointments);
     }
-  }, [appointments, fetchBarberProfiles]);
+  }, [appointments, fetchBarberProfiles, fetchClientProfiles]);
 
   // Only render UI for admins; otherwise, render nothing
   if (!profile || profile.role !== 'ADMIN') return null;
@@ -131,8 +155,8 @@ function AdminAppointments() {
 
         <Pagination.Column>
           <div className={styles.tableTitle}>
-            <Icon name="user" size="ty" black />
-            <span className={styles.tableTitleName}>Client ID</span>
+            <Icon name="client" size="ty" black />
+            <span className={styles.tableTitleName}>Client</span>
           </div>
         </Pagination.Column>
 
@@ -185,7 +209,11 @@ function AdminAppointments() {
             </Pagination.Cell>
 
             <Pagination.Cell>
-              <span className={styles.simpleId}>{appointment.client_id}</span>
+              {clients[appointment.client_id] ? (
+                <Profile profile={clients[appointment.client_id]} />
+              ) : (
+                <Spinner size="sm" />
+              )}
             </Pagination.Cell>
 
             <Pagination.Cell>
