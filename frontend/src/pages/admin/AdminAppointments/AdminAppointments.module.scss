@@ -33,29 +33,6 @@
     }
   }
 
-  .appointment-id {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-
-    .id {
-      font-size: 1.5rem;
-      font-weight: 600;
-    }
-
-    .text {
-      font-size: 1.2rem;
-      font-weight: 500;
-    }
-  }
-
-  // TODO REMOVE AFTER CHANGING CLIENT PROFILE
-  .simple-id {
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: $color-primary;
-  }
-
   .date-container {
     display: flex;
     flex-direction: start;
@@ -80,20 +57,29 @@
     }
   }
 
+  .amount-spent {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .amount {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+  }
+
   .services {
     font-size: 1.08rem;
+    font-weight: 600;
 
     .no-services {
       color: $color-primary;
       font-style: italic;
+      font-weight: 500;
     }
   }
 
-  .tag {
-    width: 8rem;
-    text-align: center;
-  }
-
+  .status-tag,
   .reminder-tag {
     width: 8rem;
     text-align: center;
