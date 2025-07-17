@@ -11,10 +11,14 @@ function BarberDashboard() {
   return (
     <div className={styles.barberDashboard}>
       {/* Total Revenue */}
-      <StatCard icon="revenue" label="Total Revenue" value={`$${profile.total_revenue}`} />
+      <StatCard icon="revenue" label="Total Revenue">
+        <span className={styles.value}>{`$${profile.total_revenue}`}</span>
+      </StatCard>
 
       {/* Completed Appointments */}
-      <StatCard icon="completed" label="Completed Appointments" value={profile.completed_appointments} />
+      <StatCard icon="completed" label="Completed Appointments">
+        <span className={styles.value}>{profile.completed_appointments}</span>
+      </StatCard>
 
       {/* Services */}
       <Pagination icon="service" label="Services" emptyMessage="No services">
@@ -64,9 +68,12 @@ function BarberDashboard() {
 
       {/* Average Rating */}
       <StatCard icon="rating" label="Average Rating">
-        <RadialChart value={profile.average_rating} max={5} size="70" />
+        <span className={styles.value}>
+          <RadialChart value={profile.average_rating} max={5} size="70" />
+        </span>
       </StatCard>
     </div>
   );
 }
+
 export default BarberDashboard;
