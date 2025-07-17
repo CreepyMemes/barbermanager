@@ -69,6 +69,12 @@
     }
   }
 
+  .spent {
+    color: $color-primary;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
   .completed {
     display: flex;
     align-items: center;
