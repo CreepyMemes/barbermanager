@@ -318,16 +318,9 @@ class Barber(User):
         super().save(*args, **kwargs)
     
     @property
-    def services(self):
-        """
-        Returns a list of dicts representing this barber's services.
-        """
-        return [service.to_dict() for service in self.services_offered.all()]
-    
-    @property
     def upcoming_appointments(self):
         """
-        Returns a list of dicts, each representing an upcoming ongoing appointment for this barber.
+        Returns a list of dicts, each representing an upcoming (ongoing) appointment for this barber.
         """
         from .appointment import AppointmentStatus
         from django.utils import timezone
@@ -350,14 +343,6 @@ class Barber(User):
         """
         from .appointment import AppointmentStatus
         return self.appointments_received.filter(status=AppointmentStatus.COMPLETED.value).count()
-    
-    @property
-    def ongoing_appointments(self):
-        """
-        Returns the sum of all the ongoing appointments for this barber.
-        """
-        from .appointment import AppointmentStatus
-        return self.appointments_received.filter(status=AppointmentStatus.ONGOING.value).count()
     
     @property
     def total_revenue(self):
@@ -396,10 +381,8 @@ class Barber(User):
             'name': self.name,
             'surname': self.surname,
             'description': self.description,
-            'services': self.services,
-            'upcoming_appointments': self.upcoming_appointments,
-            'ongoing_appointments': self.ongoing_appointments,
             'completed_appointments': self.completed_appointments,
+            'upcoming_appointments': self.upcoming_appointments,
             'total_revenue': self.total_revenue,
             'reviews': self.reviews,
             'average_rating': self.average_rating,
