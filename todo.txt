@@ -14,23 +14,26 @@ Proposed:
 2. Frontend:
 
 Important:  
+
+  - role based:
+    - make settings page, to edit profile values, like name, profile image, etc... (for admins, barbers, clients)
   
-  - add update service functitonality to barber services
+  - barbers:
+    - add update service functitonality to barber services
 
-  - fix barber availabilities showing past ones (in api)
-  - replace barber availabilities in dashboard with upcoming appointment (add in api)
+    - fix barber availabilities showing past ones (in api task)
+    - replace barber availabilities in dashboard with upcoming appointment (add in api)
 
-  - add manage availability functionality to admin barbers (create, update, delete)
-  - add availability page to edit it for selected barber 
+  - admins:
+    - add manage availability functionality to admin barbers (create, update, delete)
+    - add availability page to edit it for selected barber 
 
-  - make settings page, to edit profile values, like name, profile image, etc... (for admins, barbers, clients)
+  - clients:
+    - make clients appointments page, where they can view, create and cancel appointments
+    - make client reviews page, were thhtey can create, edit, delete reviews to barbers which they have completed appointments with
 
-  - add view barber profile on clicking barber (idk if i should add this)
-
-  - important functionality for:
-    - admin: profile, availabilities
-    - barber: profile, services 
-    - client: profile, appointment, reviews 
+  - public:
+    - add view barber profile on clicking barber (idk if i should add this)
 
 Proposed:
 
