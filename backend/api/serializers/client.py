@@ -14,6 +14,7 @@ from ..utils import (
 from ..models import (
     Appointment, 
     Service, 
+    AppointmentService,
     Review,
     AppointmentStatus, 
 )
@@ -127,10 +128,17 @@ class CreateClientAppointmentSerializer(ClientValidationMixin, BarberValidationM
             slot=slot
         )
         appointment.save()
-        appointment.services.set(services)
+
+        for service in services:
+            AppointmentService.objects.create(
+                appointment=appointment,
+                name=service.name,
+                price=service.price,
+                original_service=service
+            )
 
         return appointment
-    
+
 
 class CancelClientAppointmentSerializer(ClientValidationMixin, AppointmentValidationMixin, serializers.Serializer):
     """
