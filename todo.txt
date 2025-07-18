@@ -15,18 +15,18 @@ Proposed:
 
 Important:  
   
-  - implement all admin pages and endpoints from api
+  - add update service functitonality to barber services
 
-    - make settings page, to edit profile values, like name, profile image, etc...
+  - move barber availabilities from dashboard to its own page
+  - replace barber availabilities in dashboard with upcoming appointment (add in api)
+  - make barber appointments page
+  
+  - add manage availability functionality to admin barbers (create, update, delete)
+  - add availability page to edit it for selected barber 
 
-    - add availability page to edit it for selected barber (admins only)
-    - add actions for editing barber availability (opens either page or popup)
-    - add view barber profile on clicking barber (idk if i should add this)
+  - make settings page, to edit profile values, like name, profile image, etc... (for admins, barbers, clients)
 
-  - do the same for barber, client, public pages/endpoints
-
-  - remove availabilities from barber dashboard and put them on their own page
-  - remove reviews page from barbers sidebar
+  - add view barber profile on clicking barber (idk if i should add this)
 
   - important functionality for:
     - admin: profile, availabilities
@@ -35,6 +35,8 @@ Important:
 
 Proposed:
 
+  - enhance popup to stop it from being closed while loading
+  
   - fix table text overflow when screen width is small
   - add error message when loading tables if the api request fails
   - on backend return availabilities, appointments sorted based on date (newer to older)
