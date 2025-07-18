@@ -45,6 +45,81 @@ class Service(models.Model):
         }
     
 
+class Appointment(models.Model):
+    """
+    Represents a scheduled appointment booked by a client with a barber.
+
+    - Each appointment records which client is booking, which barber, the date and time slot, and the selected services.
+    - Clients may book only one appointment per date.
+    - Prevents double-booking by ensuring a barber can have only one appointment per slot on a given date.
+    - Tracks the appointment status (e.g., ongoing, completed, canceled).
+    """
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='appointments_created')
+    barber = models.ForeignKey(Barber, on_delete=models.CASCADE, related_name='appointments_received')
+    date = models.DateField()
+    slot = models.TimeField()
+    services = models.ManyToManyField(Service, through='AppointmentService', related_name='appointments')
+    status = models.CharField( max_length=10, choices=AppointmentStatus.choices(), default=AppointmentStatus.ONGOING.value)
+    reminder_email_sent = models.BooleanField(default=False)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['client', 'date'], condition=~Q(status=AppointmentStatus.CANCELLED.value), name='unique_appointment_per_client_date_if_not_cancelled'),
+            models.UniqueConstraint(fields=['barber', 'date', 'slot'], condition=~Q(status=AppointmentStatus.CANCELLED.value), name='unique_appointment_per_barber_date_slot_if_not_cancelled'),
+        ]
+
+    @property
+    def service_ids(self):
+        """
+        Returns a list of dicts representing this barber's services.
+        """
+        return list(self.services.values_list('id', flat=True))
+    
+    @property
+    def amount_spent(self):
+        """
+        Returns the total price of all services in this appointment.
+        """
+        total = self.line_items.aggregate(total=Sum('price'))['total']
+        return float(total) if total else 0.0
+    
+    def to_dict(self):
+        """
+        Returns a JSON-serializable dict representation of the appointment.
+        """
+        return {
+            'id': self.id,
+            'barber_id': self.barber.id,
+            'client_id': self.client.id,
+            'amount_spent': self.amount_spent,
+            'services': [
+                {
+                    'id': line.original_service_id,
+                    'name': line.name, 
+                    'price': float(line.price),
+                }
+                for line in self.line_items.all()],
+            'date': self.date,
+            'slot': self.slot.strftime("%H:%M"),
+            'status': self.status,
+            'reminder_email_sent': self.reminder_email_sent,
+        }
+
+
+class AppointmentService(models.Model):
+    """
+    Stores a copy ("line item") of each service included in an appointment, capturing its details at the time of booking.
+
+    - Links to a specific appointment via a foreign key.
+    - Snapshots the service name and price at booking time, so appointment history is preserved even if the Service is changed or deleted.
+    - Optionally links back to the original Service for reference, but original_service may be null if the Service is removed from the system.
+    """
+    appointment = models.ForeignKey('Appointment', on_delete=models.CASCADE, related_name='line_items')
+    original_service = models.ForeignKey(Service, on_delete=models.SET_NULL, null=True, blank=True)
+    name = models.CharField(max_length=100)
+    price = models.DecimalField(max_digits=6, decimal_places=2)
+
+
 class Availability(models.Model):
     """
     Stores a barber's available time slots for client bookings on a particular date.
@@ -71,62 +146,6 @@ class Availability(models.Model):
             'barber_id': self.barber.id,
             'date': self.date,
             'slots': self.slots,
-        }
-
-
-class Appointment(models.Model):
-    """
-    Represents a scheduled appointment booked by a client with a barber.
-
-    - Each appointment records which client is booking, which barber, the date and time slot, and the selected services.
-    - Clients may book only one appointment per date.
-    - Prevents double-booking by ensuring a barber can have only one appointment per slot on a given date.
-    - Tracks the appointment status (e.g., ongoing, completed, canceled).
-    """
-    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='appointments_created')
-    barber = models.ForeignKey(Barber, on_delete=models.CASCADE, related_name='appointments_received')
-    date = models.DateField()
-    slot = models.TimeField()
-    services = models.ManyToManyField(Service)
-    status = models.CharField( max_length=10, choices=AppointmentStatus.choices(), default=AppointmentStatus.ONGOING.value)
-    reminder_email_sent = models.BooleanField(default=False)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['client', 'date'], condition=~Q(status=AppointmentStatus.CANCELLED.value), name='unique_appointment_per_client_date_if_not_cancelled'),
-            models.UniqueConstraint(fields=['barber', 'date', 'slot'], condition=~Q(status=AppointmentStatus.CANCELLED.value), name='unique_appointment_per_barber_date_slot_if_not_cancelled'),
-        ]
-
-    @property
-    def service_ids(self):
-        """
-        Returns a list of dicts representing this barber's services.
-        """
-        return list(self.services.values_list('id', flat=True))
-    
-    @property
-    def amount_spent(self):
-        """
-        Returns the total price of all services in this appointment.
-        """
-        # Aggregate sum of prices.
-        total = self.services.aggregate(total=Sum('price'))['total']
-        return float(total) if total else 0.0
-    
-    def to_dict(self):
-        """
-        Returns a JSON-serializable dict representation of the appointment.
-        """
-        return {
-            'id': self.id,
-            'barber_id': self.barber.id,
-            'client_id': self.client.id,
-            'amount_spent': self.amount_spent,
-            'service_ids': self.service_ids,
-            'date': self.date,
-            'slot': self.slot.strftime("%H:%M"),
-            'status': self.status,
-            'reminder_email_sent': self.reminder_email_sent,
         }
 
 
