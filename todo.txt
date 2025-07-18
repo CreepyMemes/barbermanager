@@ -21,7 +21,6 @@ Important:
   - barbers:
     - add update service functitonality to barber services
 
-    - fix barber availabilities showing past ones (in api task)
     - replace barber availabilities in dashboard with upcoming appointment (add in api)
 
   - admins:

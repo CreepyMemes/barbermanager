@@ -501,24 +501,69 @@ class GetAvailabilitiesMixin:
     """
     def get_availabilities_queryset(self, barber_id, show_all=False):
         """
-        Returns Availability queryset for a specific barber.
+        Returns Availability queryset for a specific barber, only for dates today or in the future.
         If show_all is True, returns all availabilities.
         """
         from ..models import Availability
-        return Availability.objects.filter(barber_id=barber_id) if not show_all else Availability.objects.all()
-    
+        import datetime
+        return Availability.objects.filter(barber_id=barber_id, date__gte=datetime.date.today()) if not show_all else Availability.objects.all()
+
+    def _filter_slots_future(self, availability):
+        """
+        Given an Availability instance, for today, filter out slots that are not in the future.
+        For future dates (date > today), leave slots as is.
+        If after filtering no slot remains, returns empty list.
+        """
+        import datetime
+
+        today = datetime.date.today()
+        now = datetime.datetime.now().time()
+
+        if availability.date == today:
+            filtered = [slot for slot in availability.slots if self._slot_str_is_future(slot, now)]
+            return filtered
+        
+        return availability.slots
+
+    def _slot_str_is_future(self, slot_str, now_time):
+        """
+        slot_str: e.g. "14:00"
+        now_time: a datetime.time object
+        Returns True if slot_str represents a time strictly AFTER now_time.
+        """
+        import datetime
+
+        try:
+            hour, minute = map(int, slot_str.split(':'))
+            slot_time = datetime.time(hour=hour, minute=minute)
+            return slot_time > now_time
+        
+        except Exception:
+            return False
+
     def get_availability_public(self, availability):
         """
-        Returns all data for a single availability.
+        Returns all data for a single availability, only showing future slots where appropriate.
         """
-        return availability.to_dict()
+        availability_data = availability.to_dict()
+        availability_data["slots"] = self._filter_slots_future(availability)
+        return availability_data
     
     def get_availabilities_public(self, barber_id, show_all=False):
         """
-        Returns all barbers as full dicts (all or only active).
+        Returns list of availability dicts ONLY with future-dated availabilities, and with slots filtered for "today".
+        Removes any today-availabilities that have zero remaining slots.
         """
-        return [self.get_availability_public(b) for b in self.get_availabilities_queryset(barber_id=barber_id, show_all=show_all)]
+        result = []
+        for availability in self.get_availabilities_queryset(barber_id=barber_id, show_all=show_all):
+            filtered_slots = self._filter_slots_future(availability)
 
+            if filtered_slots:
+                availability_data = availability.to_dict()
+                availability_data['slots'] = filtered_slots
+                result.append(availability_data)
+
+        return result
 
 class GetServicesMixin:
     """
