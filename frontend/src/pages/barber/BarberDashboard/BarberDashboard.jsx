@@ -68,7 +68,7 @@ function BarberDashboard() {
       <Pagination
         icon="availability"
         label="Upcoming Availabilities"
-        itemsPerPage={5}
+        itemsPerPage={3}
         emptyMessage="No availabilities" //
       >
         <Pagination.Action>
@@ -106,51 +106,18 @@ function BarberDashboard() {
         ))}
       </Pagination>
 
-      {/* Services */}
-      <Pagination
-        icon="service"
-        label="Services"
-        itemsPerPage={5}
-        emptyMessage="No services" //
-      >
-        <Pagination.Action>
-          <div className={styles.action}></div>
-        </Pagination.Action>
-
-        {/* Table headers */}
-        <Pagination.Column>
-          <div className={styles.tableTitle}>
-            <Icon name="scissors" size="ty" black />
-            <span className={styles.tableTitleName}>Name</span>
-          </div>
-        </Pagination.Column>
-
-        <Pagination.Column>
-          <div className={styles.tableTitle}>
-            <Icon name="revenue" size="ty" black />
-            <span className={styles.tableTitleName}>Price</span>
-          </div>
-        </Pagination.Column>
-
-        {/* Table rows */}
-        {profile?.services?.map((service) => (
-          <Pagination.Row key={service.id}>
-            <Pagination.Cell>
-              <span className={styles.serviceName}>{service.name}</span>
-            </Pagination.Cell>
-
-            <Pagination.Cell>
-              <span className={styles.servicePrice}>${service.price}</span>
-            </Pagination.Cell>
-          </Pagination.Row>
-        ))}
-      </Pagination>
+      {/* Average Rating */}
+      <StatCard icon="rating" label="Average Rating">
+        <span className={styles.value}>
+          <RadialChart value={profile.average_rating} max={5} size="70" />
+        </span>
+      </StatCard>
 
       {/* Received Reviews */}
       <Pagination
         icon="review"
         label="Received Reviews"
-        itemsPerPage={5}
+        itemsPerPage={3}
         emptyMessage="No reviews yet" //
       >
         <Pagination.Action>
@@ -211,13 +178,6 @@ function BarberDashboard() {
           </Pagination.Row>
         ))}
       </Pagination>
-
-      {/* Average Rating */}
-      <StatCard icon="rating" label="Average Rating">
-        <span className={styles.value}>
-          <RadialChart value={profile.average_rating} max={5} size="70" />
-        </span>
-      </StatCard>
     </div>
   );
 }
