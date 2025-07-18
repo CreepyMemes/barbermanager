@@ -119,6 +119,7 @@ function BarberServices() {
           </Pagination.Action>
 
           {/* Table headers */}
+
           <Pagination.Column>
             <div className={styles.tableTitle}>
               <Icon name="scissors" size="ty" black />
@@ -130,6 +131,13 @@ function BarberServices() {
             <div className={styles.tableTitle}>
               <Icon name="revenue" size="ty" black />
               <span className={styles.tableTitleName}>Price</span>
+            </div>
+          </Pagination.Column>
+
+          <Pagination.Column>
+            <div className={styles.tableTitle}>
+              <Icon name="id" size="ty" black />
+              <span className={styles.tableTitleName}>Service ID</span>
             </div>
           </Pagination.Column>
 
@@ -149,6 +157,13 @@ function BarberServices() {
 
               <Pagination.Cell>
                 <span className={styles.servicePrice}>${service.price}</span>
+              </Pagination.Cell>
+
+              <Pagination.Cell>
+                <div className={styles.serviceId}>
+                  <span className={styles.hash}># </span>
+                  <span className={styles.id}>{service.id} </span>
+                </div>
               </Pagination.Cell>
 
               <Pagination.Cell>

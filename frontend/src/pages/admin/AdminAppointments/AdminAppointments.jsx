@@ -123,7 +123,7 @@ function AdminAppointments() {
                   </>
                 ) : (
                   <>
-                    <Icon name="refresh" size="ty" /> Refresh Appointments
+                    <Icon name="refresh" size="ty" /> Refresh appointments
                   </>
                 )}
               </span>
@@ -148,13 +148,6 @@ function AdminAppointments() {
 
         <Pagination.Column>
           <div className={styles.tableTitle}>
-            <Icon name="revenue" size="ty" black />
-            <span className={styles.tableTitleName}>Spent</span>
-          </div>
-        </Pagination.Column>
-
-        <Pagination.Column>
-          <div className={styles.tableTitle}>
             <Icon name="client" size="ty" black />
             <span className={styles.tableTitleName}>Client</span>
           </div>
@@ -164,6 +157,13 @@ function AdminAppointments() {
           <div className={styles.tableTitle}>
             <Icon name="service" size="ty" black />
             <span className={styles.tableTitleName}>Services</span>
+          </div>
+        </Pagination.Column>
+
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="revenue" size="ty" black />
+            <span className={styles.tableTitleName}>Spent</span>
           </div>
         </Pagination.Column>
 
@@ -202,12 +202,6 @@ function AdminAppointments() {
             </Pagination.Cell>
 
             <Pagination.Cell>
-              <div className={styles.amountSpent}>
-                <span className={styles.amount}>${appointment.amount_spent}</span>
-              </div>
-            </Pagination.Cell>
-
-            <Pagination.Cell>
               {clients[appointment.client_id] ? (
                 <Profile profile={clients[appointment.client_id]} />
               ) : (
@@ -216,22 +210,13 @@ function AdminAppointments() {
             </Pagination.Cell>
 
             <Pagination.Cell>
-              <span className={styles.services}>
-                {barbers[appointment.barber_id] ? (
-                  appointment.service_ids.length > 0 ? (
-                    appointment.service_ids
-                      .map((serviceId) => {
-                        const service = barbers[appointment.barber_id].services.find((s) => s.id === serviceId);
-                        return service.name;
-                      })
-                      .join(', ')
-                  ) : (
-                    <span className={styles.noServices}>None</span>
-                  )
-                ) : (
-                  <Spinner size="sm" />
-                )}
-              </span>
+              <span className={styles.services}>{appointment.services.map((service) => service.name).join(', ')}</span>
+            </Pagination.Cell>
+
+            <Pagination.Cell>
+              <div className={styles.amountSpent}>
+                <span className={styles.amount}>${appointment.amount_spent}</span>
+              </div>
             </Pagination.Cell>
 
             <Pagination.Cell>
