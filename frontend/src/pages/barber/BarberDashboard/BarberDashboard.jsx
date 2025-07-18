@@ -17,35 +17,41 @@ function BarberDashboard() {
   const [clients, setClients] = useState({}); // clientId -> profile
 
   /**
-   * Defines fetching all client profiles needed for reviews (only unique client IDs)
+   * Defines fetching all client profiles needed for reviews and appointments (only unique client IDs)
    */
-  const fetchClientProfiles = useCallback(async (reviews) => {
-    if (!reviews) return;
+  const fetchClientProfiles = useCallback(
+    async (reviews = [], upcoming_appointments = []) => {
+      const reviewClientIds = (reviews || []).map((r) => r.client_id); // Get clients from reviews
+      const appointmentClientIds = (upcoming_appointments || []).map((a) => a.client_id); // Get clients from appointments
+      const allClientIds = Array.from(new Set([...reviewClientIds, ...appointmentClientIds])); // Combine both
+      const clientIds = allClientIds.filter((id) => !(id in clients)); // Only get those not already in our clients cache
 
-    const clientIds = [...new Set(reviews.map((r) => r.client_id))];
+      if (clientIds.length === 0) return;
 
-    const entries = await Promise.all(
-      clientIds.map(async (id) => {
-        try {
-          const { profile } = await api.pub.getClientProfilePublic(id);
-          return [id, profile];
-        } catch {
-          return [id, null];
-        }
-      }),
-    );
+      const entries = await Promise.all(
+        clientIds.map(async (id) => {
+          try {
+            const { profile } = await api.pub.getClientProfilePublic(id);
+            return [id, profile];
+          } catch {
+            return [id, null];
+          }
+        }),
+      );
 
-    setClients(Object.fromEntries(entries)); // assembles into { [id]: profile }
-  }, []);
+      setClients((prev) => ({ ...prev, ...Object.fromEntries(entries) })); // includes clients in deps to always know which client ids are loaded
+    },
+    [clients],
+  );
 
   /**
-   *  Only run on reviews change
+   *  Only run when reviews or appointments change
    */
   useEffect(() => {
-    if (profile?.reviews?.length > 0) {
-      fetchClientProfiles(profile.reviews);
+    if (profile?.reviews || profile?.upcoming_appointments) {
+      fetchClientProfiles(profile?.reviews, profile?.upcoming_appointments);
     }
-  }, [profile?.reviews, fetchClientProfiles]);
+  }, [profile?.reviews, profile?.upcoming_appointments, fetchClientProfiles]);
 
   return (
     <div className={styles.barberDashboard}>
@@ -64,12 +70,78 @@ function BarberDashboard() {
         <span className={styles.value}>{profile.completed_appointments}</span>
       </StatCard>
 
-      {/* Upcoming Appointment */}
-      <StatCard icon="date" label="Upcoming Appointments">
-        <span className={styles.value}>
-          TODO (change to pagination) on api new profile field (similar to client next appointment)
-        </span>
-      </StatCard>
+      {/* Upcoming Appointments */}
+      <Pagination
+        icon="date"
+        label="Upcoming Appointments"
+        itemsPerPage={5}
+        emptyMessage="No appointments found." //
+      >
+        <Pagination.Action>
+          <div className={styles.action}></div>
+        </Pagination.Action>
+
+        {/* Table headers */}
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="client" size="ty" black />
+            <span className={styles.tableTitleName}>Client</span>
+          </div>
+        </Pagination.Column>
+
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="calendar" size="ty" black />
+            <span className={styles.tableTitleName}>Date</span>
+          </div>
+        </Pagination.Column>
+
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="revenue" size="ty" black />
+            <span className={styles.tableTitleName}>Spent</span>
+          </div>
+        </Pagination.Column>
+
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="service" size="ty" black />
+            <span className={styles.tableTitleName}>Services</span>
+          </div>
+        </Pagination.Column>
+
+        {/* Table rows */}
+        {profile.upcoming_appointments.map((appointment) => (
+          <Pagination.Row key={appointment.id}>
+            <Pagination.Cell>
+              {clients[appointment.client_id] ? (
+                <Profile profile={clients[appointment.client_id]} />
+              ) : (
+                <Spinner size="sm" />
+              )}
+            </Pagination.Cell>
+
+            <Pagination.Cell>
+              <div className={styles.dateContainer}>
+                <div className={styles.date}>
+                  <span className={styles.date}>{appointment.date.replaceAll('-', ' / ')}</span>
+                  <span className={styles.slot}>( {appointment.slot} )</span>
+                </div>
+              </div>
+            </Pagination.Cell>
+
+            <Pagination.Cell>
+              <div className={styles.amountSpent}>
+                <span className={styles.amount}>${appointment.amount_spent}</span>
+              </div>
+            </Pagination.Cell>
+
+            <Pagination.Cell>
+              <span className={styles.services}>{appointment.services.map((service) => service.name).join(', ')}</span>
+            </Pagination.Cell>
+          </Pagination.Row>
+        ))}
+      </Pagination>
 
       {/* Average Rating */}
       <StatCard icon="rating" label="Average Rating">
