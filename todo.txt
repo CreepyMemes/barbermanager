@@ -64,6 +64,7 @@ Proposed:
     - you can register as barbershop owner, then invite your own barbers
     - or you can register as client and view barbershops
     - admim can view evrything about the platform
+    - services are like tags, barbers can add them to their own list, but not create new ones (although this is a pricing problem as it has to be the same for everyone)
 -----------------------------------------------------------------------------------------------------------------------------------------
 3. Docs:
 
