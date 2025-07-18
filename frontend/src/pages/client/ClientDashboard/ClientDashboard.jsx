@@ -49,16 +49,20 @@ function ClientDashboard() {
   return (
     <div className={styles.clientDashboard}>
       {/* Next Appointment */}
-      <StatCard icon="availability" label="Next Appointment" emptyMessage="No future appointment">
-        <div className={styles.nextAppointmentValue}>
-          <span className={styles.nextAppointmentSlot}>{profile.next_appointment.slot}</span>
-          <span className={styles.nextAppointmentDate}>{profile.next_appointment.date.replaceAll('-', ' / ')}</span>
-        </div>
+      <StatCard icon="availability" label="Next Appointment">
+        {profile.next_appointment ? (
+          <div className={styles.nextAppointmentValue}>
+            <span className={styles.nextAppointmentSlot}>{profile.next_appointment?.slot}</span>
+            <span className={styles.nextAppointmentDate}>{profile.next_appointment?.date.replaceAll('-', ' / ')}</span>
+          </div>
+        ) : (
+          <span className={styles.empty}>No future appointment</span>
+        )}
       </StatCard>
 
       {/* Total Appointments */}
       <StatCard icon="calendar" label="Total Appointments">
-        <span className={styles.value}>{profile?.appointments?.length}</span>
+        <span className={styles.value}>{profile.total_appointments}</span>
       </StatCard>
 
       {/* Completed Appointments */}

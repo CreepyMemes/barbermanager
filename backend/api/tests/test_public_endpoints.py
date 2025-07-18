@@ -104,7 +104,7 @@ class PublicEndpointsTest(APITestCase):
 
     def client_to_private(self, client):
             client = client.copy()
-            for field in ['email', 'phone_number', 'appointments', 'is_active', 'next_appointment', 'total_spent']:
+            for field in ['email', 'phone_number', 'is_active', 'total_appointments', 'completed_appointments', 'next_appointment', 'total_spent']:
                 client.pop(field, None)
             return client
 

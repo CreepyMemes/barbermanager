@@ -241,9 +241,16 @@ class Client(User):
         super().save(*args, **kwargs)
 
     @property
+    def total_appointments(self):
+        """
+        Returns the sum of all the  appointments for this client.
+        """
+        return self.appointments_created.count()
+    
+    @property
     def completed_appointments(self):
         """
-        Returns the sum of all the completed appointments for this cllient.
+        Returns the sum of all the completed appointments for this client.
         """
         from .appointment import AppointmentStatus
         return self.appointments_created.filter(status=AppointmentStatus.COMPLETED.value).count()
@@ -283,6 +290,7 @@ class Client(User):
             'name': self.name,
             'surname': self.surname,
             'phone_number': self.phone_number,
+            'total_appointments': self.total_appointments,
             'completed_appointments': self.completed_appointments,
             'next_appointment': self.next_appointment,
             'reviews': self.reviews,

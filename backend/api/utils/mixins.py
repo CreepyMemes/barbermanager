@@ -457,7 +457,7 @@ class GetClientsMixin:
     """
     Mixin for retrieving and serializing Client models.
     """
-    _PUBLIC_EXCLUDES = ['email', 'phone_number', 'appointments', 'is_active', 'next_appointment', 'total_spent']
+    _PUBLIC_EXCLUDES = ['email', 'phone_number', 'is_active', 'total_appointments', 'completed_appointments', 'next_appointment', 'total_spent']
 
     def get_clients_queryset(self, show_all=False):
         """
