@@ -4,7 +4,19 @@ import Button from '@components/common/Button/Button';
 import Icon from '@components/common/Icon/Icon';
 import { useState } from 'react';
 
-function Input({ label, type = 'text', name, required, autoComplete, disabled, size = 'md', placeholder, hide }) {
+function Input({
+  label,
+  type = 'text',
+  min,
+  step,
+  name,
+  required,
+  autoComplete,
+  disabled,
+  size = 'md',
+  placeholder,
+  hide,
+}) {
   const { fields, handleChange } = useForm();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -27,6 +39,8 @@ function Input({ label, type = 'text', name, required, autoComplete, disabled, s
           className={className}
           name={name}
           type={inputType}
+          min={min}
+          step={step}
           value={fields[name]}
           onChange={handleChange}
           autoComplete={autoComplete}
