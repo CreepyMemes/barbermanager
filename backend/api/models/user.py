@@ -256,7 +256,7 @@ class Client(User):
         return self.appointments_created.filter(status=AppointmentStatus.COMPLETED.value).count()
     
     @property
-    def next_appointment(self):
+    def upcoming_appointment(self):
         """
         Returns the single ongoing Appointment instance for this client, or None.
         """
@@ -292,7 +292,7 @@ class Client(User):
             'phone_number': self.phone_number,
             'total_appointments': self.total_appointments,
             'completed_appointments': self.completed_appointments,
-            'next_appointment': self.next_appointment,
+            'upcoming_appointment': self.upcoming_appointment,
             'reviews': self.reviews,
             'total_spent': self.total_spent,
         })
