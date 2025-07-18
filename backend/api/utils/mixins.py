@@ -415,7 +415,7 @@ class GetBarbersMixin:
     """
     Mixin for retrieving and serializing Barber models.
     """
-    _PUBLIC_EXCLUDES = ['email', 'ongoing_appointments', 'availabilities', 'is_active', 'total_revenue']
+    _PUBLIC_EXCLUDES = ['email', 'completed_appointments',  'upcoming_appointments', 'availabilities', 'is_active', 'total_revenue']
 
     def get_barbers_queryset(self, show_all=False):
         """
@@ -564,6 +564,7 @@ class GetAvailabilitiesMixin:
                 result.append(availability_data)
 
         return result
+
 
 class GetServicesMixin:
     """

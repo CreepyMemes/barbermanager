@@ -45,7 +45,7 @@
     }
   }
 
-  .nextAppointment-value {
+  .upcoming-appointment-value {
     margin-top: 1rem;
 
     display: flex;
@@ -53,13 +53,13 @@
     align-items: baseline;
     gap: 0.8rem;
 
-    .nextAppointment-date {
+    .upcoming-appointment-date {
       font-size: 1.3rem;
       font-weight: 600;
       color: $color-primary;
     }
 
-    .nextAppointment-slot {
+    .upcoming-appointment-slot {
       font-size: 2rem;
       font-weight: 600;
       color: $color-primary;
