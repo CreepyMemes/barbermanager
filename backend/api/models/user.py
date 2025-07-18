@@ -325,11 +325,23 @@ class Barber(User):
         return [service.to_dict() for service in self.services_offered.all()]
     
     @property
-    def availabilities(self):
+    def upcoming_appointments(self):
         """
-        Returns a list of dicts representing this barber's availabilities.
+        Returns a list of dicts, each representing an upcoming ongoing appointment for this barber.
         """
-        return [availability.to_dict() for availability in self.availabilities_assigned.all()]
+        from .appointment import AppointmentStatus
+        from django.utils import timezone
+
+        now = timezone.now()
+
+        appointments = self.appointments_received.filter(status=AppointmentStatus.ONGOING.value)
+        
+        appointments = appointments.filter(
+            Q(date__gt=now.date()) |
+            Q(date=now.date(), slot__gte=now.time())
+        ).order_by('date', 'slot')
+        
+        return [appointment.to_dict() for appointment in appointments]
     
     @property
     def completed_appointments(self):
@@ -385,7 +397,7 @@ class Barber(User):
             'surname': self.surname,
             'description': self.description,
             'services': self.services,
-            'availabilities': self.availabilities,
+            'upcoming_appointments': self.upcoming_appointments,
             'ongoing_appointments': self.ongoing_appointments,
             'completed_appointments': self.completed_appointments,
             'total_revenue': self.total_revenue,

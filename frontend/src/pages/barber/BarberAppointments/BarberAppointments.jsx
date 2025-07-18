@@ -49,7 +49,8 @@ function BarberAppointments() {
         }
       }),
     );
-    setClients(Object.fromEntries(entries));
+
+    setClients(Object.fromEntries(entries)); // assembles into { [id]: profile }
   }, []);
 
   /**
