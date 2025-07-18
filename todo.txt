@@ -19,8 +19,7 @@ Important:
 
   - move barber availabilities from dashboard to its own page
   - replace barber availabilities in dashboard with upcoming appointment (add in api)
-  - make barber appointments page
-  
+
   - add manage availability functionality to admin barbers (create, update, delete)
   - add availability page to edit it for selected barber 
 
@@ -56,7 +55,7 @@ Proposed:
   - see how vite tests work and maybe implement some
 
   - check this logical thing, if we delete a barber that has associated appointments, do they stay or get deleted? This may impact total revenue accuracy, etc..
-    same with barber services, if an appointment uses deleted services what happens? does the appointment get deleted?
+    fix this the same way we did it for services?
   
   - change structure of project:
     - you can register as barbershop owner, then invite your own barbers
