@@ -28,7 +28,7 @@ function CreateServicePopup({ open, onClose, onCreate }) {
         <div className={styles.createService}>
           <div className={styles.createServiceHeader}>
             <Icon name="email_base" size="lg" black />
-            <span className={styles.createServiceTitle}>Invite barber</span>
+            <span className={styles.createServiceTitle}>Create service</span>
           </div>
           <div className={styles.createServiceContent}>
             <div className={styles.createServiceText}>
