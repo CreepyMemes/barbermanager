@@ -17,7 +17,7 @@ Important:
   
   - add update service functitonality to barber services
 
-  - move barber availabilities from dashboard to its own page
+  - fix barber availabilities showing past ones (in api)
   - replace barber availabilities in dashboard with upcoming appointment (add in api)
 
   - add manage availability functionality to admin barbers (create, update, delete)
