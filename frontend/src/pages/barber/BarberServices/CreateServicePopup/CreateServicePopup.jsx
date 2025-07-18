@@ -27,7 +27,7 @@ function CreateServicePopup({ open, onClose, onCreate }) {
       <Form initialFields={{ name: '', price: '' }} onSubmit={handleSubmit}>
         <div className={styles.createService}>
           <div className={styles.createServiceHeader}>
-            <Icon name="email_base" size="lg" black />
+            <Icon name="id" size="lg" black />
             <span className={styles.createServiceTitle}>Create service</span>
           </div>
           <div className={styles.createServiceContent}>
