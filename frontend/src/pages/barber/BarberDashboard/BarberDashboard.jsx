@@ -60,14 +60,16 @@ function BarberDashboard() {
         <span className={styles.value}>{`$${profile.total_revenue}`}</span>
       </StatCard>
 
-      {/* Ongoing Appointments */}
-      <StatCard icon="calendar" label="Ongoing Appointments">
-        <span className={styles.value}>{profile.ongoing_appointments}</span>
-      </StatCard>
-
       {/* Completed Appointments */}
       <StatCard icon="completed" label="Completed Appointments">
         <span className={styles.value}>{profile.completed_appointments}</span>
+      </StatCard>
+
+      {/* Average Rating */}
+      <StatCard icon="rating" label="Average Rating">
+        <span className={styles.value}>
+          <RadialChart value={profile.average_rating} max={5} size="70" />
+        </span>
       </StatCard>
 
       {/* Upcoming Appointments */}
@@ -142,13 +144,6 @@ function BarberDashboard() {
           </Pagination.Row>
         ))}
       </Pagination>
-
-      {/* Average Rating */}
-      <StatCard icon="rating" label="Average Rating">
-        <span className={styles.value}>
-          <RadialChart value={profile.average_rating} max={5} size="70" />
-        </span>
-      </StatCard>
 
       {/* Received Reviews */}
       <Pagination
