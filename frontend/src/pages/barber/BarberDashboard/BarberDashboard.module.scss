@@ -40,26 +40,6 @@
     }
   }
 
-  .availability-date {
-    color: $color-primary;
-    font-size: 1.2rem;
-    font-weight: 600;
-  }
-
-  .availability-slots {
-    display: flex;
-
-    .slots {
-      color: $color-primary;
-      font-size: 1rem;
-      font-weight: 600;
-
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-  }
-
   .review-comment {
     display: flex;
 
