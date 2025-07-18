@@ -20,6 +20,15 @@
     color: $color-primary;
   }
 
+  .empty {
+    display: block;
+    margin-top: 1rem;
+    font-style: italic;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: $color-muted;
+  }
+
   .action {
     padding-block: 1rem;
   }
