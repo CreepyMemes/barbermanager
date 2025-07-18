@@ -41,6 +41,19 @@
     }
   }
 
+  .service-id {
+    .hash {
+      color: $color-primary;
+      font-weight: 500;
+      font-size: 1.2rem;
+    }
+
+    .id {
+      color: $color-primary;
+      font-weight: 600;
+      font-size: 1.4rem;
+    }
+  }
   .service-name {
     color: $color-primary;
     font-weight: 600;
