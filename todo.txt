@@ -15,17 +15,16 @@ Proposed:
 
 Important:  
 
-  - role based:
+  - all roles:
     - make settings page, to edit profile values, like name, profile image, etc... (for admins, barbers, clients)
   
-  - barbers:
-    - create reviews page for barber
-
   - admins:
     - add manage availability functionality to admin barbers (create, update, delete)
     - add availability page to edit it for selected barber 
 
   - clients:
+    - change review endpoint to be for barber id not appointment 
+      - check if client has at least 1 completed appointment with the barber
     - make clients appointments page, where they can view, create and cancel appointments
     - make client reviews page, where thtey can create, edit, delete reviews (to barbers which they have completed appointments with)
 

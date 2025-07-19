@@ -20,6 +20,7 @@ import AdminAppointments from '@pages/admin/AdminAppointments/AdminAppointments'
 import BarberServices from '@pages/barber/BarberServices/BarberServices';
 import BarberAppointments from '@pages/barber/BarberAppointments/BarberAppointments';
 import BarberAvailabilities from '@pages/barber/BarberAvailabilities/BarberAvailabilities';
+import BarberReviews from '@pages/barber/BarberReviews/BarberReviews';
 
 // Helper for cleaner protected route declaration
 const protectedRoute = (element, role) => <ProtectedRoute role={role}>{element}</ProtectedRoute>;
@@ -53,6 +54,7 @@ function AppRoutes() {
         <Route path="barber/services" element={protectedRoute(<BarberServices />, 'BARBER')} />
         <Route path="barber/appointments" element={protectedRoute(<BarberAppointments />, 'BARBER')} />
         <Route path="barber/availabilities" element={protectedRoute(<BarberAvailabilities />, 'BARBER')} />
+        <Route path="barber/reviews" element={protectedRoute(<BarberReviews />, 'BARBER')} />
 
         {/* 404 page (this must be last) */}
         <Route path="*" element={<NotFound />} />
