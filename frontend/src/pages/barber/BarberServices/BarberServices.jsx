@@ -5,6 +5,7 @@ import api from '@api';
 
 import CreateServicePopup from './CreateServicePopup/CreateServicePopup';
 import DeleteServicePopup from './DeleteServicePopup/DeleteServicePopup';
+import UpdateServicePopup from './UpdateServicePopup/UpdateServicePopup';
 
 import Icon from '@components/common/Icon/Icon';
 import Pagination from '@components/common/Pagination/Pagination';
@@ -17,8 +18,9 @@ function BarberServices() {
   const [isLoading, setIsLoading] = useState(true);
 
   // Popup states
-  const [deletePopup, setDeletePopup] = useState({ open: false, service: null });
   const [createPopup, setCreatePopup] = useState(false);
+  const [deletePopup, setDeletePopup] = useState({ open: false, service: null });
+  const [updatePopup, setUpdatePopup] = useState({ open: false, service: null });
 
   /**
    * Defines fetching services from api (single responsibility, outside effect)
@@ -51,6 +53,10 @@ function BarberServices() {
   const openDeletePopup = (service) => setDeletePopup({ open: true, service });
   const closeDeletePopup = () => setDeletePopup({ open: false, service: null });
 
+  // Update popup state handlers
+  const openUpdatePopup = (service) => setUpdatePopup({ open: true, service });
+  const closeUpdatePopup = () => setUpdatePopup({ open: false, service: null });
+
   /**
    * Handles inviting a new barber
    */
@@ -66,6 +72,15 @@ function BarberServices() {
   const handleDeleteService = async (serviceId) => {
     await api.barber.deleteBarberService(serviceId);
     closeDeletePopup();
+    await fetchServices();
+  };
+
+  /**
+   * Handles updating the selected service
+   */
+  const handleUpdateService = async ({ name, price }) => {
+    await api.barber.updateBarberService(updatePopup.service.id, { name, price });
+    closeUpdatePopup();
     await fetchServices();
   };
 
@@ -167,14 +182,25 @@ function BarberServices() {
               </Pagination.Cell>
 
               <Pagination.Cell>
-                <Button
-                  type="button"
-                  size="sm"
-                  color="animated"
-                  onClick={() => openDeletePopup(service)} //
-                >
-                  <Icon name="trash" size="sm" black />
-                </Button>
+                <div className={styles.actions}>
+                  <Button
+                    type="button"
+                    size="sm"
+                    color="animated"
+                    onClick={() => openUpdatePopup(service)} //
+                  >
+                    <Icon name="pen" size="ty" black />
+                  </Button>
+
+                  <Button
+                    type="button"
+                    size="sm"
+                    color="animated"
+                    onClick={() => openDeletePopup(service)} //
+                  >
+                    <Icon name="trash" size="ty" black />
+                  </Button>
+                </div>
               </Pagination.Cell>
             </Pagination.Row>
           ))}
@@ -192,6 +218,13 @@ function BarberServices() {
         onClose={closeDeletePopup}
         onDelete={handleDeleteService}
         service={deletePopup.service} //
+      />
+
+      <UpdateServicePopup
+        open={updatePopup.open}
+        onClose={closeUpdatePopup}
+        onUpdate={handleUpdateService}
+        service={updatePopup.service} //
       />
     </>
   );

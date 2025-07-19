@@ -8,7 +8,7 @@ import Icon from '@components/common/Icon/Icon';
 import Spinner from '@components/common/Spinner/Spinner';
 import Error from '@components/common/Error/Error';
 
-function DeleteServicePopup({ open, onClose, service, onDelete }) {
+function DeleteServicePopup({ open, onClose, onDelete, service }) {
   const [isDeleting, setIsDeletingId] = useState(false); // Used to disable the delete service button
 
   const handleDelete = async () => {
@@ -31,7 +31,7 @@ function DeleteServicePopup({ open, onClose, service, onDelete }) {
           </div>
           <div className={styles.deleteServiceContent}>
             <span className={styles.deleteServiceText}>Are you sure you want to delete </span>
-            <span className={styles.deleteServiceUsername}>{service?.name}</span>
+            <span className={styles.deleteServiceName}>{service?.name}</span>
             <span className={styles.deleteServiceText}> ? This action cannot be undone. </span>
 
             <div className={styles.deleteServiceAction}>

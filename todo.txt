@@ -19,7 +19,6 @@ Important:
     - make settings page, to edit profile values, like name, profile image, etc... (for admins, barbers, clients)
   
   - barbers:
-    - add update service functitonality to barber services
     - create reviews page for barber
 
   - admins:
@@ -28,7 +27,7 @@ Important:
 
   - clients:
     - make clients appointments page, where they can view, create and cancel appointments
-    - make client reviews page, were thhtey can create, edit, delete reviews to barbers which they have completed appointments with
+    - make client reviews page, where thtey can create, edit, delete reviews (to barbers which they have completed appointments with)
 
   - public:
     - add view barber profile on clicking barber (idk if i should add this)
