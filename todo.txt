@@ -20,7 +20,7 @@ Important:
   
   - barbers:
     - add update service functitonality to barber services
-    - deprecate barber reviews endpoint or field from barber profile (just dont leave both)
+    - create reviews page for barber
 
   - admins:
     - add manage availability functionality to admin barbers (create, update, delete)

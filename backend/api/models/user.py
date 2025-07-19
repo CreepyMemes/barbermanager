@@ -265,11 +265,11 @@ class Client(User):
         return appointment.to_dict() if appointment else None
 
     @property
-    def reviews(self):
+    def latest_reviews(self):
         """
         Returns a list of dicts representing all reviews made by this client.
         """
-        return [review.to_dict() for review in self.client_reviews.all()]
+        return [review.to_dict() for review in self.client_reviews.order_by('-created_at')[:3]]
     
     @property
     def total_spent(self):
@@ -293,7 +293,7 @@ class Client(User):
             'total_appointments': self.total_appointments,
             'completed_appointments': self.completed_appointments,
             'upcoming_appointment': self.upcoming_appointment,
-            'reviews': self.reviews,
+            'latest_reviews': self.latest_reviews,
             'total_spent': self.total_spent,
         })
         return base
@@ -358,11 +358,11 @@ class Barber(User):
         return float(revenue) if revenue else 0.0
     
     @property
-    def reviews(self):
+    def latest_reviews(self):
         """
         Returns a list of dicts representing this barber's reviews.
         """
-        return [review.to_dict() for review in self.barber_reviews.all()]
+        return [review.to_dict() for review in self.barber_reviews.order_by('-created_at')[:3]]
     
     @property
     def average_rating(self):
@@ -384,7 +384,7 @@ class Barber(User):
             'completed_appointments': self.completed_appointments,
             'upcoming_appointments': self.upcoming_appointments,
             'total_revenue': self.total_revenue,
-            'reviews': self.reviews,
+            'latest_reviews': self.latest_reviews,
             'average_rating': self.average_rating,
         })
         return base
