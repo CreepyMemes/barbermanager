@@ -25,8 +25,11 @@ Important:
   - clients:
     - change review endpoint to be for barber id not appointment 
       - check if client has at least 1 completed appointment with the barber
+
     - make clients appointments page, where they can view, create and cancel appointments
+    
     - make client reviews page, where thtey can create, edit, delete reviews (to barbers which they have completed appointments with)
+      - workflow: select create review action, opens popup with barbers which you have completed appointtments with, select one and write review
 
   - public:
     - add view barber profile on clicking barber (idk if i should add this)
