@@ -34,6 +34,7 @@ function CreateServicePopup({ open, onClose, onCreate }) {
             <div className={styles.createServiceText}>
               Enter the service&apos;s name and price for you newly offered service.
             </div>
+
             <div className={styles.createServiceField}>
               <Input
                 label="Service name"
