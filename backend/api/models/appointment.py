@@ -41,7 +41,7 @@ class Service(models.Model):
             'id': self.id,
             'barber_id': self.barber.id,
             'name': self.name,
-            'price': self.price,
+            'price': float(self.price),
         }
     
 
@@ -76,6 +76,13 @@ class Appointment(models.Model):
         return list(self.services.values_list('id', flat=True))
     
     @property
+    def services_list(self):
+        """
+        Returns a list of dicts of all services associated with this appointment at booking time.
+        """
+        return [service.to_dict() for service in self.line_items.all()]
+    
+    @property
     def amount_spent(self):
         """
         Returns the total price of all services in this appointment.
@@ -92,13 +99,7 @@ class Appointment(models.Model):
             'barber_id': self.barber.id,
             'client_id': self.client.id,
             'amount_spent': self.amount_spent,
-            'services': [
-                {
-                    'id': line.original_service_id,
-                    'name': line.name, 
-                    'price': float(line.price),
-                }
-                for line in self.line_items.all()],
+            'services': self.services_list,
             'date': self.date,
             'slot': self.slot.strftime("%H:%M"),
             'status': self.status,
@@ -119,6 +120,13 @@ class AppointmentService(models.Model):
     name = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=6, decimal_places=2)
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'original_service_id': self.original_service_id,
+            'name': self.name,
+            'price': float(self.price),
+        }
 
 class Availability(models.Model):
     """
