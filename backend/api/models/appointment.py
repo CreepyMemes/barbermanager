@@ -128,6 +128,7 @@ class AppointmentService(models.Model):
             'price': float(self.price),
         }
 
+
 class Availability(models.Model):
     """
     Stores a barber's available time slots for client bookings on a particular date.

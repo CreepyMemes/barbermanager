@@ -145,10 +145,10 @@ function BarberDashboard() {
         ))}
       </Pagination>
 
-      {/* Received Reviews */}
+      {/* Latest Reviews */}
       <Pagination
         icon="review"
-        label="Received Reviews"
+        label="Latest Reviews"
         itemsPerPage={3}
         emptyMessage="No reviews yet" //
       >
@@ -186,7 +186,7 @@ function BarberDashboard() {
         </Pagination.Column>
 
         {/* Table rows */}
-        {profile.reviews.map((review) => (
+        {profile.latest_reviews.map((review) => (
           <Pagination.Row key={review.id}>
             <Pagination.Cell>
               {clients[review.client_id] ? <Profile profile={clients[review.client_id]} /> : <Spinner size="sm" />}

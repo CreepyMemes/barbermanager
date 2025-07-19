@@ -72,10 +72,10 @@ function ClientDashboard() {
         <span className={styles.value}>{profile.completed_appointments}</span>
       </StatCard>
 
-      {/* Posted Reviews */}
+      {/* Latest Reviews */}
       <Pagination
         icon="review"
-        label="Posted Reviews"
+        label="Latest Reviews"
         itemsPerPage={5}
         emptyMessage="No reviews yet" //
       >
@@ -113,7 +113,7 @@ function ClientDashboard() {
         </Pagination.Column>
 
         {/* Table rows */}
-        {profile.reviews.map((review) => (
+        {profile.latest_reviews.map((review) => (
           <Pagination.Row key={review.id}>
             <Pagination.Cell>
               {barbers[review.barber_id] ? <Profile profile={barbers[review.barber_id]} /> : <Spinner size="sm" />}
