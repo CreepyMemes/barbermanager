@@ -37,7 +37,7 @@ function UpdateServicePopup({ open, onClose, onUpdate, service }) {
     if (price !== '' && price !== undefined) payload.price = price;
 
     try {
-      await onUpdate(payload);
+      await onUpdate(service.id, payload);
     } finally {
       setIsUpdating(false);
     }

@@ -78,8 +78,8 @@ function BarberServices() {
   /**
    * Handles updating the selected service
    */
-  const handleUpdateService = async ({ name, price }) => {
-    await api.barber.updateBarberService(updatePopup.service.id, { name, price });
+  const handleUpdateService = async (servivceId, { name, price }) => {
+    await api.barber.updateBarberService(servivceId, { name, price });
     closeUpdatePopup();
     await fetchServices();
   };
