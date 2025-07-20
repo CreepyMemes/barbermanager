@@ -168,8 +168,6 @@ class Review(models.Model):
     - Only appointments that have been completed should be reviewed.
     - Includes rating, optional comment, and timestamp of creation.
     """
-    appointment = models.OneToOneField(Appointment,  on_delete=models.CASCADE,  related_name='appointment_review')
-    
     client = models.ForeignKey(Client, null=True, blank=True, on_delete=models.SET_NULL, related_name='client_reviews')
     barber = models.ForeignKey(Barber, null=True, blank=True, on_delete=models.SET_NULL, related_name='barber_reviews')
 
@@ -189,7 +187,6 @@ class Review(models.Model):
         """
         return {
             'id': self.id,
-            'appointment_id': self.appointment.id,
             'client_id': self.client.id if self.client else None,
             'barber_id': self.barber.id if self.barber else None,
             'rating': self.rating,

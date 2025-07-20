@@ -346,30 +346,21 @@ class ReviewValidationMixin:
     """
     Mixin that provides validation methods for review-related actions:
     
-    - Ensures an appointment exists, belongs to the client, is completed, and has not yet been reviewed by the client for the barber before allowing review creation.
+    - Ensures that the client has at least one COMPLETED appointment with the barber, and has not reviewed them yet.
     - Ensures a review exists and belongs to the requesting client when retrieving or modifying a review.
     """
     def validate_appointment_for_review(self, attrs):
         from ..models import Appointment, Review, AppointmentStatus
 
         client = attrs['client']
-        appointment_id = self.context.get('appointment_id')
-
-        try:
-            appointment = Appointment.objects.get(pk=appointment_id, client=client)
-        except Appointment.DoesNotExist:
-            raise serializers.ValidationError(f'Appointment with ID: "{appointment_id}" for the client: "{client}" does not exist.')
-
-        if appointment.status != AppointmentStatus.COMPLETED.value:
-            raise serializers.ValidationError('Only COMPLETED appointments can be reviewed.')
-
-        barber = appointment.barber
+        barber = attrs['barber']
 
         if Review.objects.filter(client=client, barber=barber).exists():
-            raise serializers.ValidationError(f'Client: "{client}" review for the barber: "{barber}" already exists.')
+            raise serializers.ValidationError(f'Client: "{client}" already has a review for the barber: "{barber}".')
         
-        attrs['appointment'] = appointment
-        attrs['barber'] = barber
+        if not Appointment.objects.filter(client=client, barber=barber, status=AppointmentStatus.COMPLETED.value).exists():
+            raise serializers.ValidationError('You may only review a barber if you have completed at least one appointment with them.')
+
         return attrs
     
     def validate_find_review(self, attrs):
