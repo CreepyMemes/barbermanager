@@ -21,14 +21,13 @@ Important:
   
   - admins:
     - add create mutliple avaiabiities api endpointt (takes in start date, end date, start slot, end slot, 30 min interval each)
+    
     - add manage availability functionality to admin barbers (create, update, delete)
       - workflow: select create availability, then enter either 1 date or interal (form takes account of whether using singuar creation api or multiple)
+    
     - add availability page to edit it for selected barber 
 
   - clients:
-    - change review api endpoint to be for barber id not appointment 
-      - check if client has at least 1 completed appointment with the barber
-
     - make clients appointments page, where they can view, create and cancel appointments
     
     - make client reviews page, where thtey can create, edit, delete reviews (to barbers which they have completed appointments with)
