@@ -8,6 +8,7 @@ from api.models import (
     Barber,
     Client,
     Service,
+    AppointmentService,
     Appointment,
     AppointmentStatus
 )
@@ -63,6 +64,18 @@ class RunningTasksTestCase(TestCase):
             surname=f"a{suffix}"
         )
 
+    def add_services(self, appointment, service_list):
+        """
+        Helper to bulk assign services via AppointmentService
+        """
+        for service in service_list:
+            AppointmentService.objects.create(
+                appointment=appointment,
+                name=service.name,
+                price=service.price,
+                original_service=service
+            )
+
     def create_appointment(self, *, date, slot, status=AppointmentStatus.ONGOING.value, reminder_email_sent=False, client=None):
         appointment = Appointment.objects.create(
             client=client if client is not None else self.client,
@@ -72,7 +85,7 @@ class RunningTasksTestCase(TestCase):
             status=status,
             reminder_email_sent=reminder_email_sent,
         )
-        appointment.services.set([self.service])
+        self.add_services(appointment, [self.service])
         return appointment
 
     @patch("api.tasks.timezone")
