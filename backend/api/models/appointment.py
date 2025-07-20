@@ -54,8 +54,9 @@ class Appointment(models.Model):
     - Prevents double-booking by ensuring a barber can have only one appointment per slot on a given date.
     - Tracks the appointment status (e.g., ongoing, completed, canceled).
     """
-    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='appointments_created')
-    barber = models.ForeignKey(Barber, on_delete=models.CASCADE, related_name='appointments_received')
+    client = models.ForeignKey(Client, null=True, blank=True, on_delete=models.SET_NULL, related_name='appointments_created')
+    barber = models.ForeignKey(Barber, null=True, blank=True, on_delete=models.SET_NULL, related_name='appointments_received')
+
     date = models.DateField()
     slot = models.TimeField()
     services = models.ManyToManyField(Service, through='AppointmentService', related_name='appointments')
@@ -96,8 +97,8 @@ class Appointment(models.Model):
         """
         return {
             'id': self.id,
-            'barber_id': self.barber.id,
-            'client_id': self.client.id,
+            'client_id': self.client.id if self.client else None,
+            'barber_id': self.barber.id if self.barber else None,
             'amount_spent': self.amount_spent,
             'services': self.services_list,
             'date': self.date,
@@ -168,8 +169,10 @@ class Review(models.Model):
     - Includes rating, optional comment, and timestamp of creation.
     """
     appointment = models.OneToOneField(Appointment,  on_delete=models.CASCADE,  related_name='appointment_review')
-    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='client_reviews')
-    barber = models.ForeignKey(Barber, on_delete=models.CASCADE, related_name='barber_reviews')
+    
+    client = models.ForeignKey(Client, null=True, blank=True, on_delete=models.SET_NULL, related_name='client_reviews')
+    barber = models.ForeignKey(Barber, null=True, blank=True, on_delete=models.SET_NULL, related_name='barber_reviews')
+
     rating = models.PositiveSmallIntegerField()
     comment = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -187,8 +190,8 @@ class Review(models.Model):
         return {
             'id': self.id,
             'appointment_id': self.appointment.id,
-            'client_id': self.client.id,
-            'barber_id': self.barber.id,
+            'client_id': self.client.id if self.client else None,
+            'barber_id': self.barber.id if self.barber else None,
             'rating': self.rating,
             'comment': self.comment,
             'created_at': self.created_at.strftime('%Y-%m-%d'),

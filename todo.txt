@@ -16,14 +16,17 @@ Proposed:
 Important:  
 
   - all roles:
+    - add admin api endpoint to update and delete profile
     - make settings page, to edit profile values, like name, profile image, etc... (for admins, barbers, clients)
   
   - admins:
+    - add create mutliple avaiabiities api endpointt (takes in start date, end date, start slot, end slot, 30 min interval each)
     - add manage availability functionality to admin barbers (create, update, delete)
+      - workflow: select create availability, then enter either 1 date or interal (form takes account of whether using singuar creation api or multiple)
     - add availability page to edit it for selected barber 
 
   - clients:
-    - change review endpoint to be for barber id not appointment 
+    - change review api endpoint to be for barber id not appointment 
       - check if client has at least 1 completed appointment with the barber
 
     - make clients appointments page, where they can view, create and cancel appointments
@@ -56,8 +59,7 @@ Proposed:
   
   - see how vite tests work and maybe implement some
 
-  - check this logical thing, if we delete a barber that has associated appointments, do they stay or get deleted? This may impact total revenue accuracy, etc..
-    fix this the same way we did it for services?
+
   
   - change structure of project:
     - you can register as barbershop owner, then invite your own barbers
