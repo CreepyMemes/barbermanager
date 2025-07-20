@@ -9,6 +9,7 @@ from api.models import (
     Barber,
     Client,
     Service,
+    AppointmentService,
     Availability,
     Appointment,
     Review,
@@ -92,14 +93,23 @@ class AdminProfileTest(APITestCase):
         service_1 = Service.objects.create(
             barber=self.barber, 
             name="Haircut", 
-            price=Decimal("5.5")
+            price=Decimal("5.50")
         )
-
         service_2 = Service.objects.create(
             barber=self.barber, 
             name="Buzz", 
             price=Decimal("10.00")
         )
+
+        # -- Helper to bulk assign services via AppointmentService --
+        def _add_services(appointment, service_list):
+            for s in service_list:
+                AppointmentService.objects.create(
+                    appointment=appointment,
+                    name=s.name,
+                    price=s.price,
+                    original_service=s
+                )
 
         # Create cancelled appointment
         appointment_1 = Appointment.objects.create(
@@ -109,17 +119,17 @@ class AdminProfileTest(APITestCase):
             slot=datetime.time(12, 0),
             status=AppointmentStatus.CANCELLED.value,
         )
-        appointment_1.services.add(service_1, service_2)
+        _add_services(appointment_1, [service_1, service_2])
 
         # Create appointment same day as cancelled one
         appointment_2 = Appointment.objects.create(
             client=self.client_user, 
             barber=self.barber,
-            date=datetime.date.today() ,
+            date=datetime.date.today(),
             slot=datetime.time(14, 0),
             status=AppointmentStatus.COMPLETED.value,
         )
-        appointment_2.services.add(service_1, service_2)
+        _add_services(appointment_2, [service_1, service_2])
 
         # Create completed appointment on another day
         appointment_3 = Appointment.objects.create(
@@ -129,8 +139,8 @@ class AdminProfileTest(APITestCase):
             slot=datetime.time(14, 0),
             status=AppointmentStatus.COMPLETED.value,
         )
-        appointment_3.services.add(service_2)
-        
+        _add_services(appointment_3, [service_2])
+
         # Create ongoing appointment on another day
         appointment_4 = Appointment.objects.create(
             client=self.client_user, 
@@ -139,11 +149,10 @@ class AdminProfileTest(APITestCase):
             slot=datetime.time(15, 0),
             status=AppointmentStatus.ONGOING.value,
         )
-        appointment_4.services.add(service_2)
-        
-        # Create reveiw for completed appointment
+        _add_services(appointment_4, [service_2])
+
+        # Create review for completed appointment
         Review.objects.create(
-            appointment=appointment_2, 
             client=self.client_user, 
             barber=self.barber, 
             rating=5, 
@@ -178,22 +187,19 @@ class AdminProfileTest(APITestCase):
             slot=datetime.time(14, 0),
             status=AppointmentStatus.COMPLETED.value,
         )
-        appointment_5.services.add(service_2)
+        _add_services(appointment_5, [service_2])
 
-        # Create reveiw by another client
+        # Create review by another client for this barber
         Review.objects.create(
-            appointment=appointment_5, 
             client=client_1, 
-            barber=self.barber, 
+            barber=self.barber,  # Review is for self.barber
             rating=2, 
             comment="trash..."
         )
 
         self.login_as_admin()
-
-        response = self.client.get(self.profile_url)  
+        response = self.client.get(self.profile_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
         profile = response.data["profile"]
         self.assertEqual(profile, self.admin.to_dict())
         self.assertEqual(profile['role'], Roles.ADMIN.value)
@@ -488,11 +494,19 @@ class AdminProfileTest(APITestCase):
             price=20
         )
         appointment_1 = Appointment.objects.create(
-            client=self.client_user, barber=self.barber,
-            date=datetime.date.today(), slot=datetime.time(9, 0),
+            client=self.client_user, 
+            barber=self.barber,
+            date=datetime.date.today(), 
+            slot=datetime.time(9, 0),
             status=AppointmentStatus.COMPLETED.value
         )
-        appointment_1.services.add(service_1)
+
+        AppointmentService.objects.create(
+            appointment=appointment_1,
+            name=service_1.name,
+            price=service_1.price,
+            original_service=service_1
+        )
 
         self.login_as_admin()
 
