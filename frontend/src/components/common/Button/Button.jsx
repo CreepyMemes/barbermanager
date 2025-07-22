@@ -1,3 +1,4 @@
+import { useState, cloneElement, isValidElement, Children } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import styles from './Button.module.scss';
 
@@ -7,13 +8,41 @@ function Button({
   disabled,
   type = 'button',
   href,
-  nav = 'false',
+  nav = false,
   activeClassName,
   size,
   wide,
   color,
   className,
 }) {
+  const [hovered, setHovered] = useState(false);
+
+  /**
+   * Returns true for Icon component only, tests displayName if set, otherwise function/class name
+   */
+  const isIconElement = (child) => {
+    const type = child.type;
+    return type && ((type.displayName && type.displayName === 'Icon') || (type.name && type.name === 'Icon'));
+  };
+
+  /**
+   * Enhances currently present black prop on Icon children
+   */
+  const enhancedChildren = Children.map(children, (child) => {
+    if (isValidElement(child) && isIconElement(child) && typeof child.props.black !== 'undefined') {
+      return cloneElement(child, { black: !hovered });
+    }
+    return child;
+  });
+
+  /**
+   * These props let all variants get hover
+   */
+  const hoverProps = {
+    onMouseEnter: () => setHovered(true),
+    onMouseLeave: () => setHovered(false),
+  };
+
   // Get all style classes into a string
   const computedClassName = [className, styles.button, styles[size], styles[color], wide ? styles.wide : ''].join(' ');
 
@@ -29,8 +58,9 @@ function Button({
             tabIndex={disabled ? -1 : undefined}
             aria-disabled={disabled}
             onClick={disabled ? (e) => e.preventDefault() : onClick}
+            {...hoverProps}
           >
-            {children}
+            {enhancedChildren}
           </NavLink>
         );
       }
@@ -43,8 +73,9 @@ function Button({
           tabIndex={disabled ? -1 : undefined}
           aria-disabled={disabled}
           onClick={disabled ? (e) => e.preventDefault() : onClick}
+          {...hoverProps}
         >
-          {children}
+          {enhancedChildren}
         </Link>
       );
     }
@@ -59,15 +90,23 @@ function Button({
         onClick={disabled ? (e) => e.preventDefault() : onClick}
         target="_blank" // maybe for external?
         rel="noopener noreferrer"
+        {...hoverProps}
       >
-        {children}
+        {enhancedChildren}
       </a>
     );
   }
 
+  // fallback: button
   return (
-    <button className={computedClassName} type={type} onClick={onClick} disabled={disabled}>
-      {children}
+    <button
+      className={computedClassName}
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+      {...hoverProps} //
+    >
+      {enhancedChildren}
     </button>
   );
 }
