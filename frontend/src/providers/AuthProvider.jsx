@@ -98,15 +98,16 @@ function AuthProvider({ children }) {
   return (
     <AuthContext.Provider
       value={{
-        isAuthenticated, // True onlly when user is authenticated
+        isAuthenticated, // True only when user is authenticated
 
         user, // basic user information (form api/auth/me)
         profile, // role based profie information (from /api/<role>/profile)
+        setProfile, // to always set latest profile data
 
-        isFetchingProfile, // only true during fetchProfile()
         isLoggingIn, // only true during login()
-        isLoggingOut, // only true during logout()
         login,
+
+        isLoggingOut, // only true during logout()
         logout,
       }}
     >

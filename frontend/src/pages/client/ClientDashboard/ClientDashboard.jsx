@@ -11,7 +11,8 @@ import Spinner from '@components/common/Spinner/Spinner';
 import Profile from '@components/common/Profile/Profile';
 
 function ClientDashboard() {
-  const { profile } = useAuth();
+  const { profile, setProfile } = useAuth();
+  const [isLoading, setIsLoading] = useState(true);
 
   const [barbers, setBarbers] = useState({}); // barberId -> profile
 
@@ -38,6 +39,27 @@ function ClientDashboard() {
   }, []);
 
   /**
+   * Defines fetching latest profile data
+   */
+  const fetchProfile = useCallback(async () => {
+    setIsLoading(true);
+
+    try {
+      const { profile } = await api.client.getClientProfile();
+      setProfile(profile);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [setProfile]);
+
+  /**
+   *  Fetches on mount to keep profile data always up to date
+   */
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
+
+  /**
    *  Only run on reviews change
    */
   useEffect(() => {
@@ -45,6 +67,9 @@ function ClientDashboard() {
       fetchBarberProfiles(profile.reviews);
     }
   }, [profile?.reviews, fetchBarberProfiles]);
+
+  // While fetching latest profile data show loading spinner
+  if (isLoading) return <Spinner />;
 
   return (
     <div className={styles.clientDashboard}>

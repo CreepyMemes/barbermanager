@@ -12,7 +12,8 @@ import Spinner from '@components/common/Spinner/Spinner';
 import Profile from '@components/common/Profile/Profile';
 
 function BarberDashboard() {
-  const { profile } = useAuth();
+  const { profile, setProfile } = useAuth();
+  const [isLoading, setIsLoading] = useState(true);
 
   const [clients, setClients] = useState({}); // clientId -> profile
 
@@ -45,6 +46,27 @@ function BarberDashboard() {
   );
 
   /**
+   * Defines fetching latest profile data
+   */
+  const fetchProfile = useCallback(async () => {
+    setIsLoading(true);
+
+    try {
+      const { profile } = await api.barber.getBarberProfile();
+      setProfile(profile);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [setProfile]);
+
+  /**
+   *  Fetches on mount to keep profile data always up to date
+   */
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
+
+  /**
    *  Only run when reviews or appointments change
    */
   useEffect(() => {
@@ -52,6 +74,9 @@ function BarberDashboard() {
       fetchClientProfiles(profile?.reviews, profile?.upcoming_appointments);
     }
   }, [profile?.reviews, profile?.upcoming_appointments, fetchClientProfiles]);
+
+  // While fetching latest profile data show loading spinner
+  if (isLoading) return <Spinner />;
 
   return (
     <div className={styles.barberDashboard}>

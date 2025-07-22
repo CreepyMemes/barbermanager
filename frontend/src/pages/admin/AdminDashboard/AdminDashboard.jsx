@@ -1,11 +1,39 @@
+import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@hooks/useAuth';
 import styles from './AdminDashboard.module.scss';
+import api from '@api';
 
+import Spinner from '@components/common/Spinner/Spinner';
 import StatCard from '@components/common/StatCard/StatCard';
 import RadialChart from '@components/common/RadialChart/RadialChart';
 
 function AdminDashboard() {
-  const { profile } = useAuth();
+  const { profile, setProfile } = useAuth();
+  const [isLoading, setIsLoading] = useState(true);
+
+  /**
+   * Defines fetching latest profile data
+   */
+  const fetchProfile = useCallback(async () => {
+    setIsLoading(true);
+
+    try {
+      const { profile } = await api.admin.getAdminProfile();
+      setProfile(profile);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [setProfile]);
+
+  /**
+   *  Fetches on mount to keep profile data always up to date
+   */
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
+
+  // While fetching latest profile data show loading spinner
+  if (isLoading) return <Spinner />;
 
   return (
     <div className={styles.adminDashboard}>
