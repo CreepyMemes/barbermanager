@@ -10,9 +10,11 @@ import RegisterClient from '@pages/RegisterClient/RegisterClient';
 import RegisterBarber from '@pages/RegisterBarber/RegisterBarber';
 import VerifyEmail from '@pages/VerifyEmail/VerifyEmail';
 import RequestPasswordReset from '@pages/RequestPasswordReset/RequestPasswordReset';
-import Dashboard from '@pages/Dashboard/Dashboard';
-import NotFound from '@pages/NotFound/NotFound';
 import ConfirmPasswordReset from '@pages/ConfirmPasswordReset/ConfirmPasswordReset';
+import NotFound from '@pages/NotFound/NotFound';
+
+import Dashboard from '@pages/Dashboard/Dashboard';
+import Settings from '@pages/Settings/Settings';
 
 import AdminBarbers from '@pages/admin/AdminBarbers/AdminBarbers';
 import AdminClients from '@pages/admin/AdminClients/AdminClients';
@@ -40,11 +42,11 @@ function AppRoutes() {
 
         {/* Shortcut redirects (from /:page to  /:role/:page) */}
         <Route path="dashboard" element={protectedRoute(<RoleRedirect />)} />
-        {/* <Route path="settings" element={protectedRoute(<RoleRedirect />)} /> */}
+        <Route path="settings" element={protectedRoute(<RoleRedirect />)} />
 
         {/* Role based pages */}
         <Route path=":role/dashboard" element={protectedRoute(<Dashboard />)} />
-        {/* <Route path=":role/settings" element={protectedRoute(<Settings />)} /> */}
+        <Route path=":role/settings" element={protectedRoute(<Settings />)} />
 
         {/* Unique role protected pages */}
         <Route path="admin/barbers" element={protectedRoute(<AdminBarbers />, 'ADMIN')} />
