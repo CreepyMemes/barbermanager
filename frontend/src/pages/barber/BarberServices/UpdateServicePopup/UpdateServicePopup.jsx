@@ -92,6 +92,7 @@ function UpdateServicePopup({ open, onClose, onUpdate, service }) {
               >
                 Cancel
               </Button>
+
               <Button
                 type="submit"
                 color="primary"
