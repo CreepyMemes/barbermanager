@@ -3,7 +3,7 @@ import styles from './UploadPicturePopup.module.scss';
 
 import Popup from '@components/common/Popup/Popup';
 import Form from '@components/common/Form/Form';
-import FileInput from '@components/common/FileInput/FileInput';
+import Input from '@components/common/Input/Input';
 import Button from '@components/common/Button/Button';
 import Icon from '@components/common/Icon/Icon';
 import Spinner from '@components/common/Spinner/Spinner';
@@ -52,10 +52,13 @@ function UploadPicturePopup({ open, onClose, onUpload }) {
           <div className={styles.uploadPictureContent}>
             <span className={styles.uploadPictureText}>Select a profile image to upload.</span>
 
-            <FileInput
+            <Input
+              label="Profile Picture"
               name="profile_image"
+              type="file"
+              accept="image/*"
               disabled={isUploading}
-              accept="image/*" //
+              placeholder="Choose an image"
             />
 
             <div className={styles.uploadPictureAction}>
