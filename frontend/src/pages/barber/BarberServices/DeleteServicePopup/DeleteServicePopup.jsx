@@ -9,15 +9,15 @@ import Spinner from '@components/common/Spinner/Spinner';
 import Error from '@components/common/Error/Error';
 
 function DeleteServicePopup({ open, onClose, onDelete, service }) {
-  const [isDeleting, setIsDeletingId] = useState(false); // Used to disable the delete service button
+  const [isDeleting, setIsDeleting] = useState(false); // Used to disable the delete service button
 
   const handleDelete = async () => {
-    setIsDeletingId(true);
+    setIsDeleting(true);
 
     try {
       await onDelete(service.id); // Parent handles fetch and closing
     } finally {
-      setIsDeletingId(false);
+      setIsDeleting(false);
     }
   };
 
