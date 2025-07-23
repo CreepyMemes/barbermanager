@@ -1,5 +1,7 @@
 import api from '@api';
 import axiosInstance from './instance';
+import { performGlobalLogout } from '@utils/globalLogout';
+
 /**
  * Variable that tracks the current refresh promise
  */
@@ -34,6 +36,7 @@ axiosInstance.interceptors.response.use(
     // Remove everything and bubble up for logout if no refresh token found
     if (!api.auth.getRefreshToken()) {
       api.auth.removeTokens();
+      performGlobalLogout();
       return Promise.reject(error); // just throw, AuthProvider will handle redirect
     }
 
