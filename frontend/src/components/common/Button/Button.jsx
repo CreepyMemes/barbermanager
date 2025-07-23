@@ -14,34 +14,36 @@ function Button({
   wide,
   color,
   className,
+  autoIconInvert = false, // <-- new prop, default false
 }) {
   const [hovered, setHovered] = useState(false);
 
-  /**
-   * Returns true for Icon component only, tests displayName if set, otherwise function/class name
-   */
   const isIconElement = (child) => {
     const type = child.type;
     return type && ((type.displayName && type.displayName === 'Icon') || (type.name && type.name === 'Icon'));
   };
 
   /**
-   * Enhances currently present black prop on Icon children
+   * Enhances currently present black prop on Icon children, if autoIconInvert is true
    */
-  const enhancedChildren = Children.map(children, (child) => {
-    if (isValidElement(child) && isIconElement(child) && typeof child.props.black !== 'undefined') {
-      return cloneElement(child, { black: !hovered });
-    }
-    return child;
-  });
+  const composedChildren = autoIconInvert
+    ? Children.map(children, (child) => {
+        if (isValidElement(child) && isIconElement(child) && typeof child.props.black !== 'undefined') {
+          return cloneElement(child, { black: !hovered });
+        }
+        return child;
+      })
+    : children;
 
   /**
    * These props let all variants get hover
    */
-  const hoverProps = {
-    onMouseEnter: () => setHovered(true),
-    onMouseLeave: () => setHovered(false),
-  };
+  const hoverProps = autoIconInvert
+    ? {
+        onMouseEnter: () => setHovered(true),
+        onMouseLeave: () => setHovered(false),
+      }
+    : {};
 
   // Get all style classes into a string
   const computedClassName = [className, styles.button, styles[size], styles[color], wide ? styles.wide : ''].join(' ');
@@ -60,7 +62,7 @@ function Button({
             onClick={disabled ? (e) => e.preventDefault() : onClick}
             {...hoverProps}
           >
-            {enhancedChildren}
+            {composedChildren}
           </NavLink>
         );
       }
@@ -75,7 +77,7 @@ function Button({
           onClick={disabled ? (e) => e.preventDefault() : onClick}
           {...hoverProps}
         >
-          {enhancedChildren}
+          {composedChildren}
         </Link>
       );
     }
@@ -92,21 +94,20 @@ function Button({
         rel="noopener noreferrer"
         {...hoverProps}
       >
-        {enhancedChildren}
+        {composedChildren}
       </a>
     );
   }
 
-  // fallback: button
   return (
     <button
       className={computedClassName}
       type={type}
       onClick={onClick}
       disabled={disabled}
-      {...hoverProps} //
+      {...hoverProps} ///
     >
-      {enhancedChildren}
+      {composedChildren}
     </button>
   );
 }
