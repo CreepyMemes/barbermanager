@@ -101,6 +101,7 @@ class User(AbstractUser):
             'id': self.id,
             'role': self.role,
             'is_active': self.is_active,
+            'date_joined': self.date_joined.strftime('%Y-%m-%d') if self.date_joined else None,
             'username': self.username,
             'email': self.email,
             'profile_image': self.profile_image.url if self.profile_image else None,
