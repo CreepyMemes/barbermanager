@@ -29,7 +29,7 @@ class ImageUploadTest(APITestCase):
         self.login_url = reverse("login_user")
         self.manage_image_url = reverse("manage_profile_image")
         self.profile_url_map = {
-            'admin': reverse("get_admin_profile"),
+            'admin': reverse("manage_admin_profile"),
             'barber': reverse("manage_barber_profile"),
             'client': reverse("manage_client_profile"),
         }

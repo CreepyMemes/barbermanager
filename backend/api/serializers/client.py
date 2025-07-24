@@ -14,6 +14,7 @@ from ..utils import (
 from ..models import (
     Appointment, 
     Service, 
+    AppointmentService,
     Review,
     AppointmentStatus, 
 )
@@ -127,10 +128,17 @@ class CreateClientAppointmentSerializer(ClientValidationMixin, BarberValidationM
             slot=slot
         )
         appointment.save()
-        appointment.services.set(services)
+
+        for service in services:
+            AppointmentService.objects.create(
+                appointment=appointment,
+                name=service.name,
+                price=service.price,
+                original_service=service
+            )
 
         return appointment
-    
+
 
 class CancelClientAppointmentSerializer(ClientValidationMixin, AppointmentValidationMixin, serializers.Serializer):
     """
@@ -162,21 +170,21 @@ class GetClientReviewsSerializer(ClientValidationMixin, GetReviewsMixin, seriali
         return {'reviews': self.get_reviews_public(client_id=client.id)}
 
 
-class CreateClientReviewSerializer(ClientValidationMixin, ReviewValidationMixin, serializers.Serializer):
+class CreateClientReviewSerializer(ClientValidationMixin, BarberValidationMixin, ReviewValidationMixin, serializers.Serializer):
     """
-    Client only: Creates a review post for a to the barber associated to the given client's COMPLETED appointment
+    Client only: Creates a review for a barber if at least one completed appointment exists (one per barber).
     """
     rating = serializers.IntegerField(min_value=1, max_value=5)
     comment = serializers.CharField(allow_blank=True, required=False, max_length=500)
 
     def validate(self, attrs):
         attrs = self.validate_client(attrs)
+        attrs = self.validate_barber(attrs)
         attrs = self.validate_appointment_for_review(attrs)
         return attrs
 
     def create(self, validated_data):
         review = Review(
-            appointment=validated_data['appointment'],
             client=validated_data['client'],
             barber=validated_data['barber'],
             rating=validated_data['rating'],

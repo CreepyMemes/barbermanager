@@ -1,0 +1,73 @@
+@use '@styles/variables.module.scss' as *;
+
+.barber-services {
+  padding: 5rem;
+
+  .action {
+    padding-block: 1rem;
+
+    display: flex;
+    justify-content: space-between;
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .refresh-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+
+      .line {
+        display: flex;
+        gap: 1rem;
+      }
+    }
+  }
+
+  .table-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .table-title-name {
+      display: block;
+      height: 1.7rem; // this is a hack to align icon with title
+      font-weight: 600;
+    }
+  }
+
+  .service-id {
+    .hash {
+      color: $color-primary;
+      font-weight: 500;
+      font-size: 1.2rem;
+    }
+
+    .id {
+      color: $color-primary;
+      font-weight: 600;
+      font-size: 1.4rem;
+    }
+  }
+  .service-name {
+    color: $color-primary;
+    font-weight: 600;
+    font-size: 1.3rem;
+  }
+
+  .service-price {
+    color: $color-primary;
+    font-weight: 600;
+    font-size: 1.3rem;
+  }
+
+  .actions {
+    display: flex;
+    gap: 2rem;
+  }
+}

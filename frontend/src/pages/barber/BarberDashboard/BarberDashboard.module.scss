@@ -8,8 +8,8 @@
   grid-gap: 5rem;
 
   :nth-child(4),
-  :nth-child(6) {
-    grid-column: span 2;
+  :nth-child(5) {
+    grid-column: span 3;
   }
 
   .value {
@@ -37,35 +37,49 @@
     }
   }
 
-  .service-name {
-    color: $color-primary;
-    font-weight: 600;
-    font-size: 1.2rem;
-  }
-
-  .service-price {
-    color: $color-primary;
-    font-weight: 600;
-    font-size: 1rem;
-  }
-
-  .availability-date {
-    color: $color-primary;
-    font-size: 1.2rem;
-    font-weight: 600;
-  }
-
-  .availability-slots {
+  .date-container {
     display: flex;
+    flex-direction: start;
 
-    .slots {
-      color: $color-primary;
-      font-size: 1rem;
+    .date {
+      width: 6.5rem;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .date {
+        font-size: 1.15rem;
+        font-weight: 600;
+      }
+
+      .slot {
+        color: $color-primary;
+        font-size: 1.05rem;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .amount-spent {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .amount {
+      font-size: 1.5rem;
       font-weight: 600;
+    }
+  }
 
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+  .services {
+    font-size: 1.08rem;
+    font-weight: 600;
+
+    .no-services {
+      color: $color-primary;
+      font-style: italic;
+      font-weight: 500;
     }
   }
 
@@ -74,7 +88,7 @@
 
     .comment {
       color: $color-lighter;
-      font-size: 1rem;
+      font-size: 1.2rem;
 
       white-space: nowrap;
       overflow: hidden;

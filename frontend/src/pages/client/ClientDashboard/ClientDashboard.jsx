@@ -11,7 +11,8 @@ import Spinner from '@components/common/Spinner/Spinner';
 import Profile from '@components/common/Profile/Profile';
 
 function ClientDashboard() {
-  const { profile } = useAuth();
+  const { profile, setProfile } = useAuth();
+  const [isLoading, setIsLoading] = useState(true);
 
   const [barbers, setBarbers] = useState({}); // barberId -> profile
 
@@ -38,6 +39,27 @@ function ClientDashboard() {
   }, []);
 
   /**
+   * Defines fetching latest profile data
+   */
+  const fetchProfile = useCallback(async () => {
+    setIsLoading(true);
+
+    try {
+      const { profile } = await api.client.getClientProfile();
+      setProfile(profile);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [setProfile]);
+
+  /**
+   *  Fetches on mount to keep profile data always up to date
+   */
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
+
+  /**
    *  Only run on reviews change
    */
   useEffect(() => {
@@ -46,19 +68,28 @@ function ClientDashboard() {
     }
   }, [profile?.reviews, fetchBarberProfiles]);
 
+  // While fetching latest profile data show loading spinner
+  if (isLoading) return <Spinner />;
+
   return (
     <div className={styles.clientDashboard}>
-      {/* Next Appointment */}
-      <StatCard icon="availability" label="Next Appointment" emptyMessage="No future appointment">
-        <div className={styles.nextAppointmentValue}>
-          <span className={styles.nextAppointmentSlot}>{profile.next_appointment.slot}</span>
-          <span className={styles.nextAppointmentDate}>{profile.next_appointment.date.replaceAll('-', ' / ')}</span>
-        </div>
+      {/* Upcoming Appointment */}
+      <StatCard icon="availability" label="Upcoming Appointment">
+        {profile.upcoming_appointment ? (
+          <div className={styles.upcomingAppointmentValue}>
+            <span className={styles.upcomingAppointmentSlot}>{profile.upcoming_appointment?.slot}</span>
+            <span className={styles.upcomingAppointmentDate}>
+              {profile.upcoming_appointment?.date.replaceAll('-', ' / ')}
+            </span>
+          </div>
+        ) : (
+          <span className={styles.empty}>No future appointment</span>
+        )}
       </StatCard>
 
       {/* Total Appointments */}
       <StatCard icon="calendar" label="Total Appointments">
-        <span className={styles.value}>{profile?.appointments?.length}</span>
+        <span className={styles.value}>{profile.total_appointments}</span>
       </StatCard>
 
       {/* Completed Appointments */}
@@ -66,10 +97,10 @@ function ClientDashboard() {
         <span className={styles.value}>{profile.completed_appointments}</span>
       </StatCard>
 
-      {/* Posted Reviews */}
+      {/* Latest Reviews */}
       <Pagination
         icon="review"
-        label="Posted Reviews"
+        label="Latest Reviews"
         itemsPerPage={5}
         emptyMessage="No reviews yet" //
       >
@@ -107,7 +138,7 @@ function ClientDashboard() {
         </Pagination.Column>
 
         {/* Table rows */}
-        {profile.reviews.map((review) => (
+        {profile.latest_reviews.map((review) => (
           <Pagination.Row key={review.id}>
             <Pagination.Cell>
               {barbers[review.barber_id] ? <Profile profile={barbers[review.barber_id]} /> : <Spinner size="sm" />}

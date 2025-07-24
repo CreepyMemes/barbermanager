@@ -5,6 +5,15 @@ import react from '@vitejs/plugin-react';
 import eslint from 'vite-plugin-eslint';
 import svgr from 'vite-plugin-svgr';
 
+/**
+ * Util function to check if the given contentType is allowed to be printed (for debugging purposes)
+ */
+function isTextContentType(contentType) {
+  if (!contentType) return false;
+  // only log text, json, js, html, xml, x-www-form-urlencoded
+  return /^(text\/|application\/(json|javascript|xml|x-www-form-urlencoded)|.*\/.*\+json)/i.test(contentType);
+}
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
@@ -58,9 +67,16 @@ export default defineConfig({
               bodyData.push(chunk);
             });
             req.on('end', () => {
-              if (bodyData.length > 0) {
+              if (bodyData.length === 0) return;
+
+              // Check content-type header
+              if (isTextContentType(req.headers['content-type'])) {
                 const raw = Buffer.concat(bodyData).toString();
                 console.log(`[proxyReq] ${req.method} ${req.url} -- Request Body:`, raw);
+              } else {
+                console.log(
+                  `[proxyReq] ${req.method} ${req.url} -- Request Body: <not logged, content-type ${req.headers['content-type']}>`,
+                );
               }
             });
           });
@@ -71,9 +87,16 @@ export default defineConfig({
               body.push(chunk);
             });
             proxyRes.on('end', () => {
-              if (body.length > 0) {
+              if (body.length === 0) return;
+
+              // Check content-type header
+              if (isTextContentType(proxyRes.headers['content-type'])) {
                 const raw = Buffer.concat(body).toString();
                 console.log(`[proxyRes] ${req.method} ${req.url} -- Response Body:`, raw);
+              } else {
+                console.log(
+                  `[proxyRes] ${req.method} ${req.url} -- Response Body: <not logged, content-type ${proxyRes.headers['content-type']}>`,
+                );
               }
             });
           });

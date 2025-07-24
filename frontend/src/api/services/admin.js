@@ -2,11 +2,26 @@ import api from '@api';
 import { ENDPOINTS } from '@api/endpoints';
 
 /**
- * Retrieves the admin's profile information from the server.
+ * Retrieves the current admin's profile information.
  */
 export async function getAdminProfile() {
   const { data } = await api.instance.get(ENDPOINTS.admin.profile);
   return data;
+}
+
+/**
+ * Updates the admin profile with provided fields.
+ */
+export async function updateAdminProfile(patchData) {
+  const { data } = await api.instance.patch(ENDPOINTS.admin.profile, patchData);
+  return data;
+}
+
+/**
+ * Deletes the admin's account from the system.
+ */
+export async function deleteAdminProfile() {
+  await api.instance.delete(ENDPOINTS.admin.profile);
 }
 
 /**

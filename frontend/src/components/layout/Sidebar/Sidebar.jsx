@@ -19,6 +19,7 @@ const barberNav = [
   { to: '/barber/dashboard', label: 'Dashboard', icon: 'dashboard' },
   { to: '/barber/services', label: 'Services', icon: 'service' },
   { to: '/barber/appointments', label: 'Appointments', icon: 'appointment' },
+  { to: '/barber/availabilities', label: 'Availabilities', icon: 'availability' },
   { to: '/barber/reviews', label: 'Reviews', icon: 'review' },
   { to: '/barber/settings', label: 'Settings', icon: 'settings' },
 ];

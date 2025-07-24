@@ -141,16 +141,16 @@ def get_client_reviews(request):
 @extend_schema(
     request=CreateClientReviewSerializer,
     responses={201: OpenApiResponse(description="Review created successfully.")},
-    description="Client only: Create a review for a completed appointment.",
+    description="Client only: Create a review for the given barber.",
 )
 @api_view(['POST'])
 @permission_classes([IsClientRole])
 @parser_classes([JSONParser]) 
-def create_client_review(request, appointment_id):
+def create_client_review(request, barber_id):
     """
-    Client only:  Creates a new review post for the barber associated to the authenticated client's appointment
+    Client only: Create a review for the given barber.
     """
-    serializer = CreateClientReviewSerializer(data=request.data,context={'client': request.user, 'appointment_id': appointment_id})
+    serializer = CreateClientReviewSerializer(data=request.data,context={'client': request.user, 'barber_id': barber_id})
     serializer.is_valid(raise_exception=True)
     serializer.create(serializer.validated_data)
 

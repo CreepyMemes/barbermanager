@@ -41,10 +41,10 @@ from ..serializers import (
 @parser_classes([JSONParser]) 
 def manage_barber_profile(request):
     """
-    Barber only: Handles get and update operations for the authenticated barber's profile.
+    Barber only: Handles get, update and delete operations for the authenticated barber's profile.
 
     - GET: Updates general profie information by the authenticated barber.
-    - PATCH: Barber only: Gets all related profile information for authenticated barber.
+    - PATCH: Gets all related profile information for authenticated barber.
     - DELETE: Deletes the account of the authenticated barber.
     """
     if request.method == 'GET':
