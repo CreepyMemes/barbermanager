@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@hooks/useAuth';
-import styles from './BarberSettings.module.scss';
+import styles from './ClientSettings.module.scss';
 import api from '@api';
 
 import StatCard from '@components/common/StatCard/StatCard';
@@ -16,7 +16,7 @@ import UploadPicturePopup from '@components/ui/UploadPicturePopup/UploadPictureP
 import DeletePicturePopup from '@components/ui/DeletePicturePopup/DeletePicturePopup';
 import DeleteProfilePopup from '@components/ui/DeleteProfilePopup/DeleteProfilePopup';
 
-function BarberSettings() {
+function ClientSettings() {
   const { profile, setProfile, logout } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -34,7 +34,7 @@ function BarberSettings() {
     setIsLoading(true);
 
     try {
-      const { profile } = await api.barber.getBarberProfile();
+      const { profile } = await api.client.getClientProfile();
       setProfile(profile);
     } finally {
       setIsLoading(false);
@@ -85,7 +85,7 @@ function BarberSettings() {
    * Handles deleting a new profile picture
    */
   const handleDeleteProfile = async () => {
-    await api.barber.deleteBarberProfile();
+    await api.client.deleteClientProfile();
     closeDeleteProfilePopup();
     await logout();
   };
@@ -93,14 +93,14 @@ function BarberSettings() {
   /**
    * Validate at least one field is provided, matching backend logic
    */
-  const validateUpdateProfile = ({ username, name, surname, description }) => {
+  const validateUpdateProfile = ({ username, name, surname, phone_number }) => {
     if (
       (!username || username.trim() === '') &&
       (!name || name.trim() === '') &&
       (!surname || surname.trim() === '') &&
-      (!description || description.trim() === '')
+      (!phone_number || phone_number.trim() === '')
     ) {
-      return 'Provide at least one field to update: Username, Name, Surname or Description.';
+      return 'Provide at least one field to update: Username, Name, Surname or Phone Number.';
     }
     return undefined;
   };
@@ -109,17 +109,17 @@ function BarberSettings() {
    * Handles form submission for updating the profile data
    * Send only the filled fields to the API
    */
-  const handleUpdateProfile = async ({ username, name, surname, description }) => {
+  const handleUpdateProfile = async ({ username, name, surname, phone_number }) => {
     setIsUpdatingProfile(true);
 
     const payload = {};
     if (username && username.trim() !== '') payload.username = username.trim();
     if (name && name.trim() !== '') payload.name = name.trim();
     if (surname && surname.trim() !== '') payload.surname = surname.trim();
-    if (description && description.trim() !== '') payload.description = description.trim();
+    if (phone_number && phone_number.trim() !== '') payload.phone_number = phone_number.trim();
 
     try {
-      await api.barber.updateBarberProfile(payload);
+      await api.client.updateClientProfile(payload);
       await fetchProfile(); // Refresh profile after update
     } finally {
       setIsUpdatingProfile(false);
@@ -128,7 +128,7 @@ function BarberSettings() {
 
   return (
     <>
-      <div className={styles.barberSettings}>
+      <div className={styles.clientSettings}>
         <StatCard icon="pen" label="Update Profile">
           {/* Profile Picture Management */}
           <section className={styles.profileImageSection}>
@@ -164,7 +164,7 @@ function BarberSettings() {
           <section className={styles.updateProfileSection}>
             <Form
               className={styles.updateProfileForm}
-              initialFields={{ username: '', name: '', surname: '', description: '' }}
+              initialFields={{ username: '', name: '', surname: '', phone_number: '' }}
               onSubmit={handleUpdateProfile}
               validate={validateUpdateProfile} //
             >
@@ -178,10 +178,10 @@ function BarberSettings() {
                   disabled={isUpdatingProfile}
                 />
                 <Input
-                  label="Description"
-                  name="description"
-                  type="text"
-                  placeholder={profile.description}
+                  label="Phone Number"
+                  name="phone_number"
+                  type="tel"
+                  placeholder={profile.phone_number}
                   size="md"
                   disabled={isUpdatingProfile}
                 />
@@ -269,4 +269,4 @@ function BarberSettings() {
   );
 }
 
-export default BarberSettings;
+export default ClientSettings;

@@ -15,9 +15,6 @@ Proposed:
 
 Important:  
 
-  - all roles:
-    - finish settings pages by adapting them to client and admin
-
   - admins:
     - add create mutliple avaiabiities api endpoint (takes in start date, end date, start slot, end slot, 30 min interval each)
     
@@ -37,6 +34,8 @@ Important:
     - add view barber profile on clicking barber (idk if i should add this)
 
 Proposed:
+
+  - make reusable update popup to handle all inputs (as custom jsx) and reusable delete popup
 
   - enhance popup to stop it from being closed while loading
 
