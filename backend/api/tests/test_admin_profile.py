@@ -23,7 +23,7 @@ class AdminProfileTest(APITestCase):
     """
     def setUp(self):
         # Endpoint URLs
-        self.profile_url = reverse("get_admin_profile")
+        self.manage_profile_url = reverse("manage_admin_profile")
         self.invite_url = reverse("invite_barber")
         self.get_all_barbers = reverse("get_all_barbers")
         self.get_all_clients = reverse("get_all_clients")
@@ -198,7 +198,7 @@ class AdminProfileTest(APITestCase):
         )
 
         self.login_as_admin()
-        response = self.client.get(self.profile_url)
+        response = self.client.get(self.manage_profile_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         profile = response.data["profile"]
         self.assertEqual(profile, self.admin.to_dict())
@@ -210,11 +210,11 @@ class AdminProfileTest(APITestCase):
         Only admins can access profile admin endpoint (403/401 otherwise).
         """
         # Not authenticated at all
-        response = self.client.get(self.profile_url)
+        response = self.client.get(self.manage_profile_url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
         self.login_as_client()
-        response = self.client.get(self.profile_url)
+        response = self.client.get(self.manage_profile_url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
