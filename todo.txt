@@ -16,11 +16,11 @@ Proposed:
 Important:  
 
   - all roles:
-    - add admin api endpoint to update and delete profile
-    - make settings page, to edit profile values, like name, profile image, etc... (for admins, barbers, clients)
-  
+    - finish settings page by adding update profile popup (do it for barber for now, then adapt to client and admin)
+      - don't forget to change data to the fields in the handler function, for consistency, look at update services
+    
   - admins:
-    - add create mutliple avaiabiities api endpointt (takes in start date, end date, start slot, end slot, 30 min interval each)
+    - add create mutliple avaiabiities api endpoint (takes in start date, end date, start slot, end slot, 30 min interval each)
     
     - add manage availability functionality to admin barbers (create, update, delete)
       - workflow: select create availability, then enter either 1 date or interal (form takes account of whether using singuar creation api or multiple)
@@ -28,6 +28,7 @@ Important:
     - add availability page to edit it for selected barber 
 
   - clients:
+    - add recent appointments (like reviews) in api profile
     - make clients appointments page, where they can view, create and cancel appointments
     
     - make client reviews page, where thtey can create, edit, delete reviews (to barbers which they have completed appointments with)

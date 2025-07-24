@@ -2,6 +2,7 @@ import uuid
 from rest_framework import serializers
 from ..utils import (
     AdminValidationMixin,
+    UsernameValidationMixin,
     EmailValidationMixin,
     BarberValidationMixin,
     AvailabilityValidationMixin,
@@ -27,6 +28,46 @@ class GetAdminProfileSerializer(AdminValidationMixin, GetAdminsMixin, serializer
     def to_representation(self, validated_data):
         admin = validated_data['admin']
         return {'profile': self.get_admin_private(admin) }
+
+
+class UpdateAdminProfileSerializer(AdminValidationMixin, UsernameValidationMixin, serializers.Serializer):
+    """
+    Admin only: Updates general informations about a given admin.
+    """
+    username = serializers.CharField(required=False)
+
+    def validate(self, attrs):
+        attrs = self.validate_admin(attrs)
+
+        if not any(field in attrs for field in ('username')):
+            raise serializers.ValidationError('You must provide at least one field: username.')
+        
+        if 'username' in attrs:
+            attrs = self.validate_username_unique(attrs, user_instance=attrs['admin'])
+
+        return attrs
+
+    def update(self, instance, validated_data):
+        if 'username' in validated_data:
+            instance.username = validated_data['username']
+
+        instance.save()
+        return instance
+
+    def save(self, **kwargs):
+        return self.update(self.validated_data['admin'], self.validated_data)
+    
+
+class DeleteAdminProfileSerializer(AdminValidationMixin, serializers.Serializer):
+    """
+    Admin only: Deletes a given existing admin account.
+    """
+    def validate(self, attrs):
+        attrs = self.validate_admin(attrs)
+        return attrs
+
+    def delete(self):
+        self.validated_data['admin'].delete()
 
 
 class GetAllBarbersSerializer(GetBarbersMixin, serializers.Serializer):

@@ -13,6 +13,8 @@ from ..utils import (
 )
 from ..serializers import (
     GetAdminProfileSerializer,
+    UpdateAdminProfileSerializer,
+    DeleteAdminProfileSerializer,
     GetAllBarbersSerializer,
     GetAllClientsSerializer,
     InviteBarberSerializer,
@@ -23,22 +25,52 @@ from ..serializers import (
     GetAllAppointmentsSerializer,
 )
 
-
 @extend_schema(
     methods=['GET'],
     responses={200: GetAdminProfileSerializer},
     description="Admin only: Gets all related profile information for authenticated admin.",
 )
-@api_view(['GET'])
+@extend_schema(
+    methods=['PATCH'],
+    request=UpdateAdminProfileSerializer,
+    responses={200: OpenApiResponse(description="Profile info updated successfully.")},
+    description="Admin only: Update information for the authenticated barber's profile.",
+)
+@extend_schema(
+    methods=['DELETE'],
+    responses={204: OpenApiResponse(description="Admin deleted successfully.")},
+    description="Admin only: Delete the authenticated barber's account.",
+)
+@api_view(['GET', 'PATCH', 'DELETE'])
 @permission_classes([IsAdminRole])
-def get_admin_profile(request):
+@parser_classes([JSONParser]) 
+def manage_admin_profile(request):
     """
-    Admin only: Gets all related profile information for authenticated admin.
+    Admin only: Handles get, update and delete operations for the authenticated admin's profile.
+
+    - GET: Updates general profie information by the authenticated admin.
+    - PATCH: Gets all related profile information for authenticated admin.
+    - DELETE: Deletes the account of the authenticated admin.
     """
-    serializer = GetAdminProfileSerializer(data={}, context={'admin': request.user})
-    serializer.is_valid(raise_exception=True)
+    if request.method == 'GET':
+        serializer = GetAdminProfileSerializer(data={}, context={'admin': request.user})
+        serializer.is_valid(raise_exception=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    elif request.method == 'PATCH':
+        serializer = UpdateAdminProfileSerializer(data=request.data, context={'admin': request.user})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        
+        return Response({"detail": "Profile info updated successfully."}, status=status.HTTP_200_OK)
+    
+    elif request.method == 'DELETE':
+        serializer = DeleteAdminProfileSerializer(data={}, context={'admin': request.user})
+        serializer.is_valid(raise_exception=True)
+        serializer.delete()
+        
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @extend_schema(
