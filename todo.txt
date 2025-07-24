@@ -16,9 +16,8 @@ Proposed:
 Important:  
 
   - all roles:
-    - finish settings page by adding update profile popup (do it for barber for now, then adapt to client and admin)
-      - don't forget to change data to the fields in the handler function, for consistency, look at update services
-    
+    - finish settings pages by adapting them to client and admin
+
   - admins:
     - add create mutliple avaiabiities api endpoint (takes in start date, end date, start slot, end slot, 30 min interval each)
     
@@ -40,7 +39,7 @@ Important:
 Proposed:
 
   - enhance popup to stop it from being closed while loading
-  
+
   - fix table text overflow when screen width is small
   - add error message when loading tables if the api request fails
   - on backend return availabilities, appointments sorted based on date (newer to older)
@@ -49,6 +48,7 @@ Proposed:
   
   - add responsivity to sidebar, show toggle button on header, width 100% for (small screens)
   - add media queries for screen sizes on each layout component 
+  - fix settings page responsivity, input fields get of the card, on small screens
    
   - add skeleton loading for page components
 
