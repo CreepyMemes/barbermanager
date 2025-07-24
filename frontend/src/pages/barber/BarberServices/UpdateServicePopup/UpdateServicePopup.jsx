@@ -13,7 +13,7 @@ function UpdateServicePopup({ open, onClose, onUpdate, service }) {
   const [isUpdating, setIsUpdating] = useState(false); // Used to disable the update service button
 
   /**
-   * Validate at least one provided, matching your backend logic
+   * Validate at least one field is provided, matching backend logic
    */
   const validate = ({ name, price }) => {
     const nameValue = name && name.trim();
