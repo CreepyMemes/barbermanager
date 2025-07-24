@@ -27,7 +27,8 @@ Important:
     - add recent appointments (like reviews) in api profile
     - make clients appointments page, where they can view, create and cancel appointments
     
-    - make client reviews page, where thtey can create, edit, delete reviews (to barbers which they have completed appointments with)
+    - add client api endpoint that returns all barbers that the client has a completed appointment with (to be used for making reviews)
+    - make client reviews page, where they can create, edit, delete reviews (to barbers which they have completed appointments with)
       - workflow: select create review action, opens popup with barbers which you have completed appointtments with, select one and write review
 
   - public:
@@ -58,13 +59,12 @@ Proposed:
   
   - see how vite tests work and maybe implement some
 
-
-  
   - change structure of project:
     - you can register as barbershop owner, then invite your own barbers
     - or you can register as client and view barbershops
     - admim can view evrything about the platform
     - services are like tags, barbers can add them to their own list, but not create new ones (although this is a pricing problem as it has to be the same for everyone)
+    
 -----------------------------------------------------------------------------------------------------------------------------------------
 3. Docs:
 
