@@ -12,40 +12,71 @@ import Spinner from '@components/common/Spinner/Spinner';
 import Profile from '@components/common/Profile/Profile';
 
 function BarberDashboard() {
-  const { profile } = useAuth();
+  const { profile, setProfile } = useAuth();
+  const [isLoading, setIsLoading] = useState(true);
 
   const [clients, setClients] = useState({}); // clientId -> profile
 
   /**
-   * Defines fetching all client profiles needed for reviews (only unique client IDs)
+   * Defines fetching all client profiles needed for reviews and appointments (only unique client IDs)
    */
-  const fetchClientProfiles = useCallback(async (reviews) => {
-    if (!reviews) return;
+  const fetchClientProfiles = useCallback(
+    async (reviews = [], upcoming_appointments = []) => {
+      const reviewClientIds = (reviews || []).map((r) => r.client_id); // Get clients from reviews
+      const appointmentClientIds = (upcoming_appointments || []).map((a) => a.client_id); // Get clients from appointments
+      const allClientIds = Array.from(new Set([...reviewClientIds, ...appointmentClientIds])); // Combine both
+      const clientIds = allClientIds.filter((id) => !(id in clients)); // Only get those not already in our clients cache
 
-    const clientIds = [...new Set(reviews.map((r) => r.client_id))];
+      if (clientIds.length === 0) return;
 
-    const entries = await Promise.all(
-      clientIds.map(async (id) => {
-        try {
-          const { profile } = await api.pub.getClientProfilePublic(id);
-          return [id, profile];
-        } catch {
-          return [id, null];
-        }
-      }),
-    );
+      const entries = await Promise.all(
+        clientIds.map(async (id) => {
+          try {
+            const { profile } = await api.pub.getClientProfilePublic(id);
+            return [id, profile];
+          } catch {
+            return [id, null];
+          }
+        }),
+      );
 
-    setClients(Object.fromEntries(entries)); // assembles into { [id]: profile }
-  }, []);
+      setClients((prev) => ({ ...prev, ...Object.fromEntries(entries) })); // includes clients in deps to always know which client ids are loaded
+    },
+    [clients],
+  );
 
   /**
-   *  Only run on reviews change
+   * Defines fetching latest profile data
+   */
+  const fetchProfile = useCallback(async () => {
+    setIsLoading(true);
+
+    try {
+      const { profile } = await api.barber.getBarberProfile();
+      setProfile(profile);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [setProfile]);
+
+  /**
+   *  Fetches on mount to keep profile data always up to date
    */
   useEffect(() => {
-    if (profile?.reviews?.length > 0) {
-      fetchClientProfiles(profile.reviews);
+    fetchProfile();
+  }, [fetchProfile]);
+
+  /**
+   *  Only run when reviews or appointments change
+   */
+  useEffect(() => {
+    if (profile?.reviews || profile?.upcoming_appointments) {
+      fetchClientProfiles(profile?.reviews, profile?.upcoming_appointments);
     }
-  }, [profile?.reviews, fetchClientProfiles]);
+  }, [profile?.reviews, profile?.upcoming_appointments, fetchClientProfiles]);
+
+  // While fetching latest profile data show loading spinner
+  if (isLoading) return <Spinner />;
 
   return (
     <div className={styles.barberDashboard}>
@@ -54,22 +85,24 @@ function BarberDashboard() {
         <span className={styles.value}>{`$${profile.total_revenue}`}</span>
       </StatCard>
 
-      {/* Ongoing Appointments */}
-      <StatCard icon="calendar" label="Ongoing Appointments">
-        <span className={styles.value}>{profile.ongoing_appointments}</span>
-      </StatCard>
-
       {/* Completed Appointments */}
       <StatCard icon="completed" label="Completed Appointments">
         <span className={styles.value}>{profile.completed_appointments}</span>
       </StatCard>
 
-      {/* Upcoming Availabilities */}
+      {/* Average Rating */}
+      <StatCard icon="rating" label="Average Rating">
+        <span className={styles.value}>
+          <RadialChart value={profile.average_rating} max={5} size="70" />
+        </span>
+      </StatCard>
+
+      {/* Upcoming Appointments */}
       <Pagination
-        icon="availability"
-        label="Upcoming Availabilities"
+        icon="date"
+        label="Upcoming Appointments"
         itemsPerPage={5}
-        emptyMessage="No availabilities" //
+        emptyMessage="No appointments found." //
       >
         <Pagination.Action>
           <div className={styles.action}></div>
@@ -78,79 +111,70 @@ function BarberDashboard() {
         {/* Table headers */}
         <Pagination.Column>
           <div className={styles.tableTitle}>
-            <Icon name="date" size="ty" black />
+            <Icon name="client" size="ty" black />
+            <span className={styles.tableTitleName}>Client</span>
+          </div>
+        </Pagination.Column>
+
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="calendar" size="ty" black />
             <span className={styles.tableTitleName}>Date</span>
           </div>
         </Pagination.Column>
 
         <Pagination.Column>
           <div className={styles.tableTitle}>
-            <Icon name="hourglass" size="ty" black />
-            <span className={styles.tableTitleName}>Slots</span>
+            <Icon name="revenue" size="ty" black />
+            <span className={styles.tableTitleName}>Spent</span>
+          </div>
+        </Pagination.Column>
+
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="service" size="ty" black />
+            <span className={styles.tableTitleName}>Services</span>
           </div>
         </Pagination.Column>
 
         {/* Table rows */}
-        {(profile?.availabilities || []).map((availability) => (
-          <Pagination.Row key={availability.id}>
+        {profile.upcoming_appointments.map((appointment) => (
+          <Pagination.Row key={appointment.id}>
             <Pagination.Cell>
-              <span className={styles.availabilityDate}>{availability.date.replaceAll('-', ' / ')}</span>
+              {clients[appointment.client_id] ? (
+                <Profile profile={clients[appointment.client_id]} />
+              ) : (
+                <Spinner size="sm" />
+              )}
             </Pagination.Cell>
 
             <Pagination.Cell>
-              <div className={styles.availabilitySlots}>
-                <span className={styles.slots}>{availability.slots.join(', ')}</span>
+              <div className={styles.dateContainer}>
+                <div className={styles.date}>
+                  <span className={styles.date}>{appointment.date.replaceAll('-', ' / ')}</span>
+                  <span className={styles.slot}>( {appointment.slot} )</span>
+                </div>
               </div>
             </Pagination.Cell>
-          </Pagination.Row>
-        ))}
-      </Pagination>
 
-      {/* Services */}
-      <Pagination
-        icon="service"
-        label="Services"
-        itemsPerPage={5}
-        emptyMessage="No services" //
-      >
-        <Pagination.Action>
-          <div className={styles.action}></div>
-        </Pagination.Action>
-
-        {/* Table headers */}
-        <Pagination.Column>
-          <div className={styles.tableTitle}>
-            <Icon name="scissors" size="ty" black />
-            <span className={styles.tableTitleName}>Name</span>
-          </div>
-        </Pagination.Column>
-
-        <Pagination.Column>
-          <div className={styles.tableTitle}>
-            <Icon name="revenue" size="ty" black />
-            <span className={styles.tableTitleName}>Price</span>
-          </div>
-        </Pagination.Column>
-
-        {/* Table rows */}
-        {profile?.services?.map((service) => (
-          <Pagination.Row key={service.id}>
             <Pagination.Cell>
-              <span className={styles.serviceName}>{service.name}</span>
+              <div className={styles.amountSpent}>
+                <span className={styles.amount}>${appointment.amount_spent}</span>
+              </div>
             </Pagination.Cell>
 
             <Pagination.Cell>
-              <span className={styles.servicePrice}>${service.price}</span>
+              <span className={styles.services}>{appointment.services.map((service) => service.name).join(', ')}</span>
             </Pagination.Cell>
           </Pagination.Row>
         ))}
       </Pagination>
 
-      {/* Received Reviews */}
+      {/* Latest Reviews */}
       <Pagination
         icon="review"
-        label="Received Reviews"
-        itemsPerPage={5}
+        label="Latest Reviews"
+        itemsPerPage={3}
         emptyMessage="No reviews yet" //
       >
         <Pagination.Action>
@@ -187,7 +211,7 @@ function BarberDashboard() {
         </Pagination.Column>
 
         {/* Table rows */}
-        {profile.reviews.map((review) => (
+        {profile.latest_reviews.map((review) => (
           <Pagination.Row key={review.id}>
             <Pagination.Cell>
               {clients[review.client_id] ? <Profile profile={clients[review.client_id]} /> : <Spinner size="sm" />}
@@ -211,13 +235,6 @@ function BarberDashboard() {
           </Pagination.Row>
         ))}
       </Pagination>
-
-      {/* Average Rating */}
-      <StatCard icon="rating" label="Average Rating">
-        <span className={styles.value}>
-          <RadialChart value={profile.average_rating} max={5} size="70" />
-        </span>
-      </StatCard>
     </div>
   );
 }

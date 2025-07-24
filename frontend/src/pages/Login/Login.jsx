@@ -35,7 +35,7 @@ function Login() {
    * Fields declaration for this form
    */
   const initialFields = {
-    identtifier: '',
+    identifier: '',
     password: '',
   };
 

@@ -1,6 +1,8 @@
 import datetime
+from zoneinfo import ZoneInfo
 from decimal import Decimal
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework.test import APITestCase
 from rest_framework import status
 from api.models import (
@@ -273,27 +275,59 @@ class BarberProfileTest(APITestCase):
 
     def test_list_availabilities(self):
         """
-        Barber can list all their availabilities.
+        Only future availabilities and future slots for today are listed.
         """
-        availability_1 = Availability.objects.create(
-            barber=self.barber_user, 
-            date=datetime.date.today(), 
-            slots=["09:00", "10:00"]
-        )
-        availability_2 = Availability.objects.create(
-            barber=self.barber_user, 
-            date=datetime.date.today() + datetime.timedelta(days=1), 
-            slots=["15:00"]
-        )
-        
-        self.login_as_barber()
+        now = timezone.now().astimezone(ZoneInfo('Europe/Rome'))
 
+        today = now.date()
+        yesterday = today - datetime.timedelta(days=1)
+        tomorrow = today + datetime.timedelta(days=1)
+
+        past_hour = (now - datetime.timedelta(hours=1)).time().strftime('%H:%M')
+        future_hour = (now + datetime.timedelta(hours=1)).time().strftime('%H:%M')
+
+        # Correct assignment
+        past_hour = (now - datetime.timedelta(hours=1)).time().strftime('%H:%M')
+        future_hour = (now + datetime.timedelta(hours=1)).time().strftime('%H:%M')
+
+        # For tomorrow (should show up with both slots)
+        availability_tomorrow = Availability.objects.create(
+            barber=self.barber_user,
+            date=tomorrow,
+            slots=[past_hour, future_hour]
+        )
+
+        # For yesterday (should not show up)
+        availability_yesterday = Availability.objects.create(
+            barber=self.barber_user,
+            date=yesterday,
+            slots=[past_hour, future_hour]
+        )
+
+        # For today (only future_hour should be visible)
+        availability_today = Availability.objects.create(
+            barber=self.barber_user,
+            date=today,
+            slots=[past_hour, future_hour]
+        )
+
+        self.login_as_barber()
         response = self.client.get(self.availabilities_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+        # Get returned availabilities
         availabilities = response.data["availabilities"]
-        self.assertIn(availability_1.to_dict(), availabilities)
-        self.assertIn(availability_2.to_dict(), availabilities)
+
+        # Yesterday shouldn't show up
+        self.assertNotIn(availability_yesterday.to_dict(), availabilities)
+
+        # For today: only the future slot should show
+        expected_today_dict = availability_today.to_dict()
+        expected_today_dict['slots'] = [future_hour]
+        self.assertIn(expected_today_dict, availabilities)
+
+        # Both slots should show for tomorrow
+        self.assertIn(availability_tomorrow.to_dict(), availabilities)
 
 
     def test_list_availabilities_only_barber(self):
@@ -344,11 +378,13 @@ class BarberProfileTest(APITestCase):
         """
         client = Client.objects.create_user(username="c3", password="x", email="c3@e.com", is_active=True)
         app = Appointment.objects.create(
-            client=client, barber=self.barber_user,
-            date=datetime.date.today(), slot=datetime.time(10, 0),
+            client=client, 
+            barber=self.barber_user,
+            date=datetime.date.today(), 
+            slot=datetime.time(10, 0),
             status=AppointmentStatus.COMPLETED.value)
         
-        rev = Review.objects.create(appointment=app, client=client, barber=self.barber_user, rating=5, comment="Great!")
+        rev = Review.objects.create(client=client, barber=self.barber_user, rating=5, comment="Great!")
         self.login_as_barber()
         resp = self.client.get(self.reviews_url)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)

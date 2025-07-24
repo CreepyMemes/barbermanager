@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.settings import api_settings
@@ -255,6 +256,10 @@ class RefreshTokenCustomSerializer(TokenRefreshSerializer):
 
         try:
             validated_data = super().validate(attrs)
+
+        except ObjectDoesNotExist:
+            raise serializers.ValidationError({'refresh_token': ["User not found or has been deleted."]})
+        
         except TokenError as e:
             raise serializers.ValidationError({'refresh_token': [str(e)]})
         

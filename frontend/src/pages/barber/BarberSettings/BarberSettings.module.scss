@@ -1,0 +1,67 @@
+@use '@styles/variables.module.scss' as *;
+
+.barber-settings {
+  padding: 5rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: 5rem;
+
+  .action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .profile-image-section {
+    padding: 2rem;
+
+    display: flex;
+    align-items: center;
+    gap: 5rem;
+
+    .image-action {
+      display: flex;
+      gap: 2rem;
+    }
+  }
+
+  .update-profile-section {
+    padding: 2rem;
+
+    .update-profile-form {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+
+      .input-group {
+        display: flex;
+        gap: 2rem;
+      }
+
+      .input-group > * {
+        flex: 1;
+      }
+
+      .save-btn {
+        margin-top: 1rem;
+      }
+
+      .line {
+        display: flex;
+        gap: 1rem;
+      }
+    }
+  }
+
+  .delete-profile-section {
+    padding: 2rem;
+  }
+}
+
+@media (max-width: $bp-small) {
+  .input-group {
+    flex-direction: column;
+  }
+}

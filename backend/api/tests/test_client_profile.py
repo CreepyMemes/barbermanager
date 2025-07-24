@@ -7,6 +7,7 @@ from api.models import (
     Barber,
     Client,
     Service,
+    AppointmentService,
     Availability,
     Appointment,
     Review,
@@ -54,6 +55,25 @@ class ClientProfileTest(APITestCase):
             surname="Doe",
         )
 
+        self.barber_user_other = Client.objects.create_user( # For "not-owner" checks
+            username="barbone",
+            email="barbo@abc.com",
+            password="OtherBestPwd123!",
+            name="Rock",
+            surname="Bottom",
+        )
+
+    def add_services(self, appointment, service_list):
+        """
+        Helper to bulk assign services via AppointmentService
+        """
+        for service in service_list:
+            AppointmentService.objects.create(
+                appointment=appointment,
+                name=service.name,
+                price=service.price,
+                original_service=service
+            )
 
     def login_as_client(self):
         """
@@ -169,13 +189,15 @@ class ClientProfileTest(APITestCase):
             date=datetime.date.today(), slot=datetime.time(10, 0),
             status=AppointmentStatus.ONGOING.value,
         )
-        app_1.services.set([s1])
+        self.add_services(app_1, [s1])
+
         app_2 = Appointment.objects.create(
             client=self.client_user, barber=self.barber_user,
             date=datetime.date.today() + datetime.timedelta(days=1), slot=datetime.time(11, 0),
             status=AppointmentStatus.COMPLETED.value,
         )
-        app_2.services.set([s1])
+        self.add_services(app_2, [s1])
+
         self.login_as_client()
         resp = self.client.get(self.appointments_url)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
@@ -258,24 +280,33 @@ class ClientProfileTest(APITestCase):
         """
         Rejects double bookings for same client/date or same barber/slot or ongoing.
         """
-        s1 = Service.objects.create(barber=self.barber_user, name="Cut", price=9)
+        service_1 = Service.objects.create(barber=self.barber_user, name="Cut", price=9)
         today = datetime.date.today()
         slot = datetime.time(9, 0)
         # Set available
         Availability.objects.create(barber=self.barber_user, date=today, slots=["09:00"])
 
         # Prior appointment (ONGOING for client)
-        appt = Appointment.objects.create(
-            client=self.client_user, barber=self.barber_user, date=today, slot=slot,
+        appointment = Appointment.objects.create(
+            client=self.client_user, 
+            barber=self.barber_user, 
+            date=today, 
+            slot=slot,
             status=AppointmentStatus.ONGOING.value
         )
-        appt.services.set([s1])
+        AppointmentService.objects.create(
+            appointment=appointment,
+            name=service_1.name,
+            price=service_1.price,
+            original_service=service_1
+        )
+
         self.login_as_client()
         url = reverse("create_client_appointment", kwargs={"barber_id": self.barber_user.id})
         data = {
             "date": today,
             "slot": "09:00",
-            "services": [s1.id],
+            "services": [service_1.id],
         }
         # Should fail: client already has ONGOING appt
         resp = self.client.post(url, data, format="json")
@@ -339,11 +370,14 @@ class ClientProfileTest(APITestCase):
         """
         s1 = Service.objects.create(barber=self.barber_user, name="B", price=7)
         appt = Appointment.objects.create(
-            client=self.client_user, barber=self.barber_user,
-            date=datetime.date.today(), slot=datetime.time(8,0),
+            client=self.client_user, 
+            barber=self.barber_user,
+            date=datetime.date.today(), 
+            slot=datetime.time(8,0),
             status=AppointmentStatus.ONGOING.value
         )
-        appt.services.set([s1])
+        self.add_services(appt, [s1])
+
         self.login_as_client()
         url = reverse("delete_client_appointment", kwargs={"appointment_id": appt.id})
         resp = self.client.delete(url)
@@ -362,7 +396,8 @@ class ClientProfileTest(APITestCase):
             date=datetime.date.today(), slot=datetime.time(8,0),
             status=AppointmentStatus.COMPLETED.value
         )
-        appt.services.set([s1])
+        self.add_services(appt, [s1])
+
         self.login_as_client()
         # Not ONGOING
         url = reverse("delete_client_appointment", kwargs={"appointment_id": appt.id})
@@ -376,7 +411,8 @@ class ClientProfileTest(APITestCase):
             date=datetime.date.today(), slot=datetime.time(9,0),
             status=AppointmentStatus.ONGOING.value
         )
-        appt2.services.set([s1])
+        self.add_services(appt2, [s1])
+
         url2 = reverse("delete_client_appointment", kwargs={"appointment_id": appt2.id})
         resp2 = self.client.delete(url2)
         self.assertEqual(resp2.status_code, status.HTTP_400_BAD_REQUEST)
@@ -388,20 +424,26 @@ class ClientProfileTest(APITestCase):
         Client can list all the reviews they've posted.
         """
         # Need at least one completed appointment and review created
-        s1 = Service.objects.create(barber=self.barber_user, name="BE", price=6)
-        appt = Appointment.objects.create(
-            client=self.client_user, barber=self.barber_user,
-            date=datetime.date.today(), slot=datetime.time(22,0),
+        service_1 = Service.objects.create(barber=self.barber_user, name="BE", price=6)
+        appointment = Appointment.objects.create(
+            client=self.client_user, 
+            barber=self.barber_user,
+            date=datetime.date.today(), 
+            slot=datetime.time(22,0),
             status=AppointmentStatus.COMPLETED.value
         )
-        appt.services.set([s1])
-        rev = Review.objects.create(
-            appointment=appt, client=self.client_user, barber=self.barber_user, rating=4, comment="Nice cut!"
+        self.add_services(appointment, [service_1])
+        
+        review = Review.objects.create(
+            client=self.client_user, 
+            barber=self.barber_user, 
+            rating=4, 
+            comment="Nice cut!"
         )
         self.login_as_client()
         resp = self.client.get(self.reviews_url)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        self.assertTrue(any(r["id"] == rev.id for r in resp.data["reviews"]))
+        self.assertTrue(any(r["id"] == review.id for r in resp.data["reviews"]))
         self.assertEqual(resp.data["reviews"][0]["comment"], "Nice cut!")
 
 
@@ -422,19 +464,22 @@ class ClientProfileTest(APITestCase):
         """
         s1 = Service.objects.create(barber=self.barber_user, name="Mow", price=10)
         appt = Appointment.objects.create(
-            client=self.client_user, barber=self.barber_user,
-            date=datetime.date.today(), slot=datetime.time(12,0),
+            client=self.client_user, 
+            barber=self.barber_user,
+            date=datetime.date.today(), 
+            slot=datetime.time(12,0),
             status=AppointmentStatus.COMPLETED.value
         )
-        appt.services.set([s1])
+        self.add_services(appt, [s1])
+        
         self.login_as_client()
-        url = reverse("create_client_review", kwargs={"appointment_id": appt.id})
+        url = reverse("create_client_review", kwargs={"barber_id": self.barber_user.id})
         data = {"rating": 5, "comment": "Spectacular"}
         resp = self.client.post(url, data, format="json")
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        
         review = Review.objects.get(client=self.client_user, barber=self.barber_user)
         self.assertEqual(review.rating, 5)
-        self.assertEqual(review.appointment, appt)
         self.assertEqual(review.comment, "Spectacular")
 
 
@@ -444,16 +489,20 @@ class ClientProfileTest(APITestCase):
         """
         s1 = Service.objects.create(barber=self.barber_user, name="Face", price=6)
         appt = Appointment.objects.create(
-            client=self.client_user, barber=self.barber_user,
-            date=datetime.date.today(), slot=datetime.time(15,0),
+            client=self.client_user, 
+            barber=self.barber_user,
+            date=datetime.date.today(), 
+            slot=datetime.time(15,0),
             status=AppointmentStatus.ONGOING.value
         )
-        appt.services.set([s1])
+        self.add_services(appt, [s1])
+
+        
         self.login_as_client()
-        url = reverse("create_client_review", kwargs={"appointment_id": appt.id})
+        url = reverse("create_client_review", kwargs={"barber_id": self.barber_user.id})
         resp = self.client.post(url, {"rating": 4, "comment": ""}, format="json")
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("Only COMPLETED appointments can be reviewed", str(resp.data["detail"]))
+        self.assertIn("ou may only review a barber if you have completed at least one appointment with them.", str(resp.data["detail"]))
 
 
     def test_create_review_cannot_duplicate(self):
@@ -466,30 +515,28 @@ class ClientProfileTest(APITestCase):
             date=datetime.date.today(), slot=datetime.time(17,0),
             status=AppointmentStatus.COMPLETED.value
         )
-        completed.services.set([s1])
+        self.add_services(completed, [s1])
+        
         review = Review.objects.create(
-            appointment=completed, client=self.client_user, barber=self.barber_user, rating=3, comment="zzz"
+            client=self.client_user, 
+            barber=self.barber_user, 
+            rating=3, 
+            comment="zzz"
         )
+
         self.login_as_client()
-        url = reverse("create_client_review", kwargs={"appointment_id": completed.id})
+        url = reverse("create_client_review", kwargs={"barber_id": self.barber_user.id})
         resp = self.client.post(url, {"rating": 5, "comment": ""}, format="json")
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("review for the barber", str(resp.data["detail"]))
 
 
-    def test_create_review_fail_wrong_appointment(self):
+    def test_create_review_fail_wrong_barber(self):
         """
         Can only review your own appointments.
         """
-        s1 = Service.objects.create(barber=self.barber_user, name="Lol", price=7)
-        appt = Appointment.objects.create(
-            client=self.client_user_other, barber=self.barber_user,
-            date=datetime.date.today(), slot=datetime.time(11,0),
-            status=AppointmentStatus.COMPLETED.value
-        )
-        appt.services.set([s1])
         self.login_as_client()
-        url = reverse("create_client_review", kwargs={"appointment_id": appt.id})
+        url = reverse("create_client_review", kwargs={"barber_id": self.barber_user_other.id})
         resp = self.client.post(url, {"rating": 2, "comment": ""}, format="json")
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("does not exist", str(resp.data["detail"]))
@@ -499,39 +546,55 @@ class ClientProfileTest(APITestCase):
         """
         Client can update their own review's rating/comment.
         """
-        s1 = Service.objects.create(barber=self.barber_user, name="BU", price=1)
-        appt = Appointment.objects.create(
-            client=self.client_user, barber=self.barber_user,
-            date=datetime.date.today(), slot=datetime.time(20,0),
+        service_1 = Service.objects.create(barber=self.barber_user, name="BU", price=1)
+        appointment = Appointment.objects.create(
+            client=self.client_user, 
+            barber=self.barber_user,
+            date=datetime.date.today(), 
+            slot=datetime.time(20,0),
             status=AppointmentStatus.COMPLETED.value
         )
-        appt.services.set([s1])
-        rev = Review.objects.create(appointment=appt, client=self.client_user, barber=self.barber_user, rating=3, comment="Old comment")
+        self.add_services(appointment, [service_1])
+
+        review = Review.objects.create(
+            client=self.client_user, 
+            barber=self.barber_user, 
+            rating=3, 
+            comment="Old comment"
+        )
         self.login_as_client()
-        url = reverse("manage_client_reviews", kwargs={"review_id": rev.id})
+        url = reverse("manage_client_reviews", kwargs={"review_id": review.id})
         resp = self.client.patch(url, {"rating": 2, "comment": "Better"}, format="json")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        rev.refresh_from_db()
-        self.assertEqual(rev.rating, 2)
-        self.assertEqual(rev.comment, "Better")
-        self.assertIsNotNone(rev.edited_at)
+        review.refresh_from_db()
+        self.assertEqual(review.rating, 2)
+        self.assertEqual(review.comment, "Better")
+        self.assertIsNotNone(review.edited_at)
 
 
     def test_update_review_requires_field(self):
         """
         Cannot update a review with no fields specified.
         """
-        s1 = Service.objects.create(barber=self.barber_user, name="XY", price=8)
-        appt = Appointment.objects.create(
-            client=self.client_user, barber=self.barber_user,
-            date=datetime.date.today(), slot=datetime.time(18,0),
+        service_1 = Service.objects.create(barber=self.barber_user, name="XY", price=8)
+        appointment = Appointment.objects.create(
+            client=self.client_user, 
+            barber=self.barber_user,
+            date=datetime.date.today(), 
+            slot=datetime.time(18,0),
             status=AppointmentStatus.COMPLETED.value
         )
-        appt.services.set([s1])
-        rev = Review.objects.create(appointment=appt, client=self.client_user, barber=self.barber_user, rating=2, comment="hi")
+        self.add_services(appointment, [service_1])
+
+        review = Review.objects.create(
+            client=self.client_user, 
+            barber=self.barber_user, 
+            rating=2, 
+            comment="hi"
+        )
 
         self.login_as_client()
-        url = reverse("manage_client_reviews", kwargs={"review_id": rev.id})
+        url = reverse("manage_client_reviews", kwargs={"review_id": review.id})
 
         response = self.client.patch(url, {}, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -553,19 +616,27 @@ class ClientProfileTest(APITestCase):
         """
         Client can delete their review.
         """
-        s1 = Service.objects.create(barber=self.barber_user, name="XC", price=4)
-        appt = Appointment.objects.create(
-            client=self.client_user, barber=self.barber_user,
-            date=datetime.date.today(), slot=datetime.time(19,0),
+        service_1 = Service.objects.create(barber=self.barber_user, name="XC", price=4)
+        appointment = Appointment.objects.create(
+            client=self.client_user, 
+            barber=self.barber_user,
+            date=datetime.date.today(), 
+            slot=datetime.time(19,0),
             status=AppointmentStatus.COMPLETED.value
         )
-        appt.services.set([s1])
-        rev = Review.objects.create(appointment=appt, client=self.client_user, barber=self.barber_user, rating=1, comment="x")
+        self.add_services(appointment, [service_1])
+
+        review = Review.objects.create(
+            client=self.client_user, 
+            barber=self.barber_user, 
+            rating=1, 
+            comment="x"
+        )
         self.login_as_client()
-        url = reverse("manage_client_reviews", kwargs={"review_id": rev.id})
+        url = reverse("manage_client_reviews", kwargs={"review_id": review.id})
         resp = self.client.delete(url)
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertFalse(Review.objects.filter(pk=rev.id).exists())
+        self.assertFalse(Review.objects.filter(pk=review.id).exists())
 
 
     def test_delete_review_not_found(self):

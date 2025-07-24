@@ -346,30 +346,21 @@ class ReviewValidationMixin:
     """
     Mixin that provides validation methods for review-related actions:
     
-    - Ensures an appointment exists, belongs to the client, is completed, and has not yet been reviewed by the client for the barber before allowing review creation.
+    - Ensures that the client has at least one COMPLETED appointment with the barber, and has not reviewed them yet.
     - Ensures a review exists and belongs to the requesting client when retrieving or modifying a review.
     """
     def validate_appointment_for_review(self, attrs):
         from ..models import Appointment, Review, AppointmentStatus
 
         client = attrs['client']
-        appointment_id = self.context.get('appointment_id')
-
-        try:
-            appointment = Appointment.objects.get(pk=appointment_id, client=client)
-        except Appointment.DoesNotExist:
-            raise serializers.ValidationError(f'Appointment with ID: "{appointment_id}" for the client: "{client}" does not exist.')
-
-        if appointment.status != AppointmentStatus.COMPLETED.value:
-            raise serializers.ValidationError('Only COMPLETED appointments can be reviewed.')
-
-        barber = appointment.barber
+        barber = attrs['barber']
 
         if Review.objects.filter(client=client, barber=barber).exists():
-            raise serializers.ValidationError(f'Client: "{client}" review for the barber: "{barber}" already exists.')
+            raise serializers.ValidationError(f'Client: "{client}" already has a review for the barber: "{barber}".')
         
-        attrs['appointment'] = appointment
-        attrs['barber'] = barber
+        if not Appointment.objects.filter(client=client, barber=barber, status=AppointmentStatus.COMPLETED.value).exists():
+            raise serializers.ValidationError('You may only review a barber if you have completed at least one appointment with them.')
+
         return attrs
     
     def validate_find_review(self, attrs):
@@ -415,7 +406,7 @@ class GetBarbersMixin:
     """
     Mixin for retrieving and serializing Barber models.
     """
-    _PUBLIC_EXCLUDES = ['email', 'ongoing_appointments', 'availabilities', 'is_active', 'total_revenue']
+    _PUBLIC_EXCLUDES = ['email', 'completed_appointments',  'upcoming_appointments', 'availabilities', 'is_active', 'total_revenue']
 
     def get_barbers_queryset(self, show_all=False):
         """
@@ -457,7 +448,7 @@ class GetClientsMixin:
     """
     Mixin for retrieving and serializing Client models.
     """
-    _PUBLIC_EXCLUDES = ['email', 'phone_number', 'appointments', 'is_active', 'next_appointment', 'total_spent']
+    _PUBLIC_EXCLUDES = ['email', 'phone_number', 'is_active', 'total_appointments', 'completed_appointments', 'next_appointment', 'total_spent']
 
     def get_clients_queryset(self, show_all=False):
         """
@@ -501,23 +492,69 @@ class GetAvailabilitiesMixin:
     """
     def get_availabilities_queryset(self, barber_id, show_all=False):
         """
-        Returns Availability queryset for a specific barber.
+        Returns Availability queryset for a specific barber, only for dates today or in the future.
         If show_all is True, returns all availabilities.
         """
         from ..models import Availability
-        return Availability.objects.filter(barber_id=barber_id) if not show_all else Availability.objects.all()
-    
+        import datetime
+        return Availability.objects.filter(barber_id=barber_id, date__gte=datetime.date.today()) if not show_all else Availability.objects.all()
+
+    def _filter_slots_future(self, availability):
+        """
+        Given an Availability instance, for today, filter out slots that are not in the future.
+        For future dates (date > today), leave slots as is.
+        If after filtering no slot remains, returns empty list.
+        """
+        import datetime
+
+        today = datetime.date.today()
+        now = datetime.datetime.now().time()
+
+        if availability.date == today:
+            filtered = [slot for slot in availability.slots if self._slot_str_is_future(slot, now)]
+            return filtered
+        
+        return availability.slots
+
+    def _slot_str_is_future(self, slot_str, now_time):
+        """
+        slot_str: e.g. "14:00"
+        now_time: a datetime.time object
+        Returns True if slot_str represents a time strictly AFTER now_time.
+        """
+        import datetime
+
+        try:
+            hour, minute = map(int, slot_str.split(':'))
+            slot_time = datetime.time(hour=hour, minute=minute)
+            return slot_time > now_time
+        
+        except Exception:
+            return False
+
     def get_availability_public(self, availability):
         """
-        Returns all data for a single availability.
+        Returns all data for a single availability, only showing future slots where appropriate.
         """
-        return availability.to_dict()
+        availability_data = availability.to_dict()
+        availability_data["slots"] = self._filter_slots_future(availability)
+        return availability_data
     
     def get_availabilities_public(self, barber_id, show_all=False):
         """
-        Returns all barbers as full dicts (all or only active).
+        Returns list of availability dicts ONLY with future-dated availabilities, and with slots filtered for "today".
+        Removes any today-availabilities that have zero remaining slots.
         """
-        return [self.get_availability_public(b) for b in self.get_availabilities_queryset(barber_id=barber_id, show_all=show_all)]
+        result = []
+        for availability in self.get_availabilities_queryset(barber_id=barber_id, show_all=show_all):
+            filtered_slots = self._filter_slots_future(availability)
+
+            if filtered_slots:
+                availability_data = availability.to_dict()
+                availability_data['slots'] = filtered_slots
+                result.append(availability_data)
+
+        return result
 
 
 class GetServicesMixin:

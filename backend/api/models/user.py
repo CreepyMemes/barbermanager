@@ -241,15 +241,22 @@ class Client(User):
         super().save(*args, **kwargs)
 
     @property
+    def total_appointments(self):
+        """
+        Returns the sum of all the  appointments for this client.
+        """
+        return self.appointments_created.count()
+    
+    @property
     def completed_appointments(self):
         """
-        Returns the sum of all the completed appointments for this cllient.
+        Returns the sum of all the completed appointments for this client.
         """
         from .appointment import AppointmentStatus
         return self.appointments_created.filter(status=AppointmentStatus.COMPLETED.value).count()
     
     @property
-    def next_appointment(self):
+    def upcoming_appointment(self):
         """
         Returns the single ongoing Appointment instance for this client, or None.
         """
@@ -258,11 +265,11 @@ class Client(User):
         return appointment.to_dict() if appointment else None
 
     @property
-    def reviews(self):
+    def latest_reviews(self):
         """
         Returns a list of dicts representing all reviews made by this client.
         """
-        return [review.to_dict() for review in self.client_reviews.all()]
+        return [review.to_dict() for review in self.client_reviews.order_by('-created_at')[:3]]
     
     @property
     def total_spent(self):
@@ -283,9 +290,10 @@ class Client(User):
             'name': self.name,
             'surname': self.surname,
             'phone_number': self.phone_number,
+            'total_appointments': self.total_appointments,
             'completed_appointments': self.completed_appointments,
-            'next_appointment': self.next_appointment,
-            'reviews': self.reviews,
+            'upcoming_appointment': self.upcoming_appointment,
+            'latest_reviews': self.latest_reviews,
             'total_spent': self.total_spent,
         })
         return base
@@ -310,18 +318,23 @@ class Barber(User):
         super().save(*args, **kwargs)
     
     @property
-    def services(self):
+    def upcoming_appointments(self):
         """
-        Returns a list of dicts representing this barber's services.
+        Returns a list of dicts, each representing an upcoming (ongoing) appointment for this barber.
         """
-        return [service.to_dict() for service in self.services_offered.all()]
-    
-    @property
-    def availabilities(self):
-        """
-        Returns a list of dicts representing this barber's availabilities.
-        """
-        return [availability.to_dict() for availability in self.availabilities_assigned.all()]
+        from .appointment import AppointmentStatus
+        from django.utils import timezone
+
+        now = timezone.now()
+
+        appointments = self.appointments_received.filter(status=AppointmentStatus.ONGOING.value)
+        
+        appointments = appointments.filter(
+            Q(date__gt=now.date()) |
+            Q(date=now.date(), slot__gte=now.time())
+        ).order_by('date', 'slot')
+        
+        return [appointment.to_dict() for appointment in appointments]
     
     @property
     def completed_appointments(self):
@@ -330,14 +343,6 @@ class Barber(User):
         """
         from .appointment import AppointmentStatus
         return self.appointments_received.filter(status=AppointmentStatus.COMPLETED.value).count()
-    
-    @property
-    def ongoing_appointments(self):
-        """
-        Returns the sum of all the ongoing appointments for this barber.
-        """
-        from .appointment import AppointmentStatus
-        return self.appointments_received.filter(status=AppointmentStatus.ONGOING.value).count()
     
     @property
     def total_revenue(self):
@@ -353,11 +358,11 @@ class Barber(User):
         return float(revenue) if revenue else 0.0
     
     @property
-    def reviews(self):
+    def latest_reviews(self):
         """
         Returns a list of dicts representing this barber's reviews.
         """
-        return [review.to_dict() for review in self.barber_reviews.all()]
+        return [review.to_dict() for review in self.barber_reviews.order_by('-created_at')[:3]]
     
     @property
     def average_rating(self):
@@ -376,12 +381,10 @@ class Barber(User):
             'name': self.name,
             'surname': self.surname,
             'description': self.description,
-            'services': self.services,
-            'availabilities': self.availabilities,
-            'ongoing_appointments': self.ongoing_appointments,
             'completed_appointments': self.completed_appointments,
+            'upcoming_appointments': self.upcoming_appointments,
             'total_revenue': self.total_revenue,
-            'reviews': self.reviews,
+            'latest_reviews': self.latest_reviews,
             'average_rating': self.average_rating,
         })
         return base

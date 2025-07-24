@@ -7,6 +7,7 @@ from rest_framework import status
 from api.models import (
     Barber,
     Service,
+    AppointmentService,
     Availability,
     Appointment,
     Client,
@@ -55,9 +56,9 @@ class PublicEndpointsTest(APITestCase):
         self.service3 = Service.objects.create(barber=self.barber2, name="Kids Cut", price=Decimal("15.00"))
 
         #  Create Availabilities
-        self.availability1 = Availability.objects.create(barber=self.barber1, date=datetime.date.today(), slots=["09:00", "10:00"])
-        self.availability2 = Availability.objects.create(barber=self.barber1, date=datetime.date.today() + datetime.timedelta(days=1), slots=["16:00"])
-        self.availability3 = Availability.objects.create(barber=self.barber2, date=datetime.date.today(), slots=["12:00"])
+        self.availability1 = Availability.objects.create(barber=self.barber1, date=datetime.date.today() + datetime.timedelta(days=1), slots=["09:00", "10:00"])
+        self.availability2 = Availability.objects.create(barber=self.barber1, date=datetime.date.today() + datetime.timedelta(days=2), slots=["16:00"])
+        self.availability3 = Availability.objects.create(barber=self.barber2, date=datetime.date.today() + datetime.timedelta(days=3), slots=["12:00"])
         
         # Clients and reviews for public profile demo
         self.client_user = Client.objects.create_user(
@@ -75,9 +76,9 @@ class PublicEndpointsTest(APITestCase):
             slot=datetime.time(9, 0),
             status=AppointmentStatus.COMPLETED.value
         )
-        self.appointment.services.set([self.service1])
+        self.add_services(self.appointment, [self.service1])
+
         self.review = Review.objects.create(
-            appointment=self.appointment,
             client=self.client_user,
             barber=self.barber1,
             rating=4,
@@ -95,16 +96,28 @@ class PublicEndpointsTest(APITestCase):
         self.barber_2_serv_url = reverse("get_barber_services_public", kwargs={'barber_id': self.barber2.id})
 
 
+    def add_services(self, appointment, service_list):
+        """
+        Helper to bulk assign services via AppointmentService
+        """
+        for service in service_list:
+            AppointmentService.objects.create(
+                appointment=appointment,
+                name=service.name,
+                price=service.price,
+                original_service=service
+            )
+
     def barber_to_private(self, barber):
             barber = barber.copy()
-            for field in ['email', 'ongoing_appointments', 'availabilities', 'is_active', 'total_revenue']:
+            for field in ['email', 'completed_appointments',  'upcoming_appointments', 'availabilities', 'is_active', 'total_revenue']:
                 barber.pop(field, None)
             return barber
     
 
     def client_to_private(self, client):
             client = client.copy()
-            for field in ['email', 'phone_number', 'appointments', 'is_active', 'next_appointment', 'total_spent']:
+            for field in ['email', 'phone_number', 'is_active', 'total_appointments', 'completed_appointments', 'next_appointment', 'total_spent']:
                 client.pop(field, None)
             return client
 
@@ -170,7 +183,8 @@ class PublicEndpointsTest(APITestCase):
 
         # Should show both availabilities for this barber
         availabilities = response.data["availabilities"]
-        self.assertEqual(self.barber1.availabilities, availabilities)
+        for availabililty in [self.availability1, self.availability2]:
+            self.assertIn(availabililty.to_dict(), availabilities)
 
 
     def test_get_barber_availabilities_not_found(self):

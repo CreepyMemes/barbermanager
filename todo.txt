@@ -14,26 +14,30 @@ Proposed:
 2. Frontend:
 
 Important:  
-  
-  - implement all admin pages and endpoints from api
 
-    - make settings page, to edit profile values, like name, profile image, etc...
+  - admins:
+    - add create mutliple avaiabiities api endpoint (takes in start date, end date, start slot, end slot, 30 min interval each)
+    
+    - add manage availability functionality to admin barbers (create, update, delete)
+      - workflow: select create availability, then enter either 1 date or interal (form takes account of whether using singuar creation api or multiple)
+    
+    - add availability page to edit it for selected barber 
 
-    - add availability page to edit it for selected barber (admins only)
-    - add actions for editing barber availability (opens either page or popup)
+  - clients:
+    - add recent appointments (like reviews) in api profile
+    - make clients appointments page, where they can view, create and cancel appointments
+    
+    - make client reviews page, where thtey can create, edit, delete reviews (to barbers which they have completed appointments with)
+      - workflow: select create review action, opens popup with barbers which you have completed appointtments with, select one and write review
+
+  - public:
     - add view barber profile on clicking barber (idk if i should add this)
 
-  - do the same for barber, client, public pages/endpoints
-
-  - remove availabilities from barber dashboard and put them on their own page
-  - remove reviews page from barbers sidebar
-
-  - important functionality for:
-    - admin: profile, availabilities
-    - barber: profile, services 
-    - client: profile, appointment, reviews 
-
 Proposed:
+
+  - make reusable update popup to handle all inputs (as custom jsx) and reusable delete popup
+
+  - enhance popup to stop it from being closed while loading
 
   - fix table text overflow when screen width is small
   - add error message when loading tables if the api request fails
@@ -43,6 +47,7 @@ Proposed:
   
   - add responsivity to sidebar, show toggle button on header, width 100% for (small screens)
   - add media queries for screen sizes on each layout component 
+  - fix settings page responsivity, input fields get of the card, on small screens
    
   - add skeleton loading for page components
 
@@ -53,13 +58,13 @@ Proposed:
   
   - see how vite tests work and maybe implement some
 
-  - check this logical thing, if we delete a barber that has associated appointments, do they stay or get deleted? This may impact total revenue accuracy, etc..
-    same with barber services, if an appointment uses deleted services what happens? does the appointment get deleted?
+
   
   - change structure of project:
     - you can register as barbershop owner, then invite your own barbers
     - or you can register as client and view barbershops
     - admim can view evrything about the platform
+    - services are like tags, barbers can add them to their own list, but not create new ones (although this is a pricing problem as it has to be the same for everyone)
 -----------------------------------------------------------------------------------------------------------------------------------------
 3. Docs:
 

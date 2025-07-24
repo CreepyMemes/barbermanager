@@ -20,6 +20,15 @@
     color: $color-primary;
   }
 
+  .empty {
+    display: block;
+    margin-top: 1rem;
+    font-style: italic;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: $color-muted;
+  }
+
   .action {
     padding-block: 1rem;
   }
@@ -36,7 +45,7 @@
     }
   }
 
-  .nextAppointment-value {
+  .upcoming-appointment-value {
     margin-top: 1rem;
 
     display: flex;
@@ -44,13 +53,13 @@
     align-items: baseline;
     gap: 0.8rem;
 
-    .nextAppointment-date {
+    .upcoming-appointment-date {
       font-size: 1.3rem;
       font-weight: 600;
       color: $color-primary;
     }
 
-    .nextAppointment-slot {
+    .upcoming-appointment-slot {
       font-size: 2rem;
       font-weight: 600;
       color: $color-primary;
@@ -62,7 +71,7 @@
 
     .comment {
       color: $color-lighter;
-      font-size: 1rem;
+      font-size: 1.2rem;
 
       white-space: nowrap;
       overflow: hidden;

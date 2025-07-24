@@ -102,7 +102,7 @@ function AdminBarbers() {
                     </>
                   ) : (
                     <>
-                      <Icon name="refresh" size="ty" /> Refresh Barbers
+                      <Icon name="refresh" size="ty" /> Refresh barbers
                     </>
                   )}
                 </span>

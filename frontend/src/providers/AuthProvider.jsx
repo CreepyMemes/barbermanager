@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import AuthContext from '@contexts/AuthContext';
 import api from '@api';
+import { setGlobalLogout } from '@utils/globalLogout';
 
 /**
  * This provides authentication info, user, profile, login/logout logic.
@@ -24,6 +25,14 @@ function AuthProvider({ children }) {
     setProfile(null);
     setIsAuthenticated(false);
   }, []);
+
+  /**
+   * Assigns the global logout function reference whenever component is mounted (and cleanup on unmount)
+   */
+  useEffect(() => {
+    setGlobalLogout(handleLogout);
+    return () => setGlobalLogout(null);
+  }, [handleLogout]);
 
   /**
    * Helper callback function to automaticaly get the user profile by trying all profile endpoints.
@@ -98,15 +107,17 @@ function AuthProvider({ children }) {
   return (
     <AuthContext.Provider
       value={{
-        isAuthenticated, // True onlly when user is authenticated
+        isAuthenticated, // True only when user is authenticated
 
         user, // basic user information (form api/auth/me)
         profile, // role based profie information (from /api/<role>/profile)
+        isFetchingProfile, // passed to handle loading status
+        setProfile, // to always set latest profile data
 
-        isFetchingProfile, // only true during fetchProfile()
         isLoggingIn, // only true during login()
-        isLoggingOut, // only true during logout()
         login,
+
+        isLoggingOut, // only true during logout()
         logout,
       }}
     >

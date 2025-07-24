@@ -1,0 +1,55 @@
+@use '@styles/variables.module.scss' as *;
+
+.barber-availabilities {
+  padding: 5rem;
+
+  .action {
+    padding-block: 1rem;
+    display: flex;
+    justify-content: start;
+
+    .refresh-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+
+      .line {
+        display: flex;
+        gap: 1rem;
+      }
+    }
+  }
+
+  .table-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .table-title-name {
+      display: block;
+      height: 1.7rem;
+      font-weight: 600;
+    }
+  }
+
+  .availability-date {
+    color: $color-primary;
+    font-size: 1.3rem;
+    font-weight: 600;
+  }
+
+  .availability-slots {
+    display: flex;
+
+    .slots {
+      color: $color-primary;
+      font-size: 1.3rem;
+      font-weight: 600;
+
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
