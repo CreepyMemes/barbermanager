@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@hooks/useAuth';
-import styles from './BarberSettings.module.scss';
+import styles from './AdminSettings.module.scss';
 import api from '@api';
 
 import StatCard from '@components/common/StatCard/StatCard';
@@ -16,7 +16,7 @@ import UploadPicturePopup from '@components/ui/UploadPicturePopup/UploadPictureP
 import DeletePicturePopup from '@components/ui/DeletePicturePopup/DeletePicturePopup';
 import DeleteProfilePopup from '@components/ui/DeleteProfilePopup/DeleteProfilePopup';
 
-function BarberSettings() {
+function AdminSettings() {
   const { profile, setProfile, logout } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -34,7 +34,7 @@ function BarberSettings() {
     setIsLoading(true);
 
     try {
-      const { profile } = await api.barber.getBarberProfile();
+      const { profile } = await api.admin.getAdminProfile();
       setProfile(profile);
     } finally {
       setIsLoading(false);
@@ -85,7 +85,7 @@ function BarberSettings() {
    * Handles deleting a new profile picture
    */
   const handleDeleteProfile = async () => {
-    await api.barber.deleteBarberProfile();
+    await api.admin.deleteAdminProfile();
     closeDeleteProfilePopup();
     await logout();
   };
@@ -93,14 +93,9 @@ function BarberSettings() {
   /**
    * Validate at least one field is provided, matching backend logic
    */
-  const validateUpdateProfile = ({ username, name, surname, description }) => {
-    if (
-      (!username || username.trim() === '') &&
-      (!name || name.trim() === '') &&
-      (!surname || surname.trim() === '') &&
-      (!description || description.trim() === '')
-    ) {
-      return 'Provide at least one field to update: Username, Name, Surname or Description.';
+  const validateUpdateProfile = ({ username }) => {
+    if (!username || username.trim() === '') {
+      return 'Provide at least one field to update: Username.';
     }
     return undefined;
   };
@@ -109,17 +104,14 @@ function BarberSettings() {
    * Handles form submission for updating the profile data
    * Send only the filled fields to the API
    */
-  const handleUpdateProfile = async ({ username, name, surname, description }) => {
+  const handleUpdateProfile = async ({ username }) => {
     setIsUpdatingProfile(true);
 
     const payload = {};
     if (username && username.trim() !== '') payload.username = username.trim();
-    if (name && name.trim() !== '') payload.name = name.trim();
-    if (surname && surname.trim() !== '') payload.surname = surname.trim();
-    if (description && description.trim() !== '') payload.description = description.trim();
 
     try {
-      await api.barber.updateBarberProfile(payload);
+      await api.admin.updateAdminProfile(payload);
       await fetchProfile(); // Refresh profile after update
     } finally {
       setIsUpdatingProfile(false);
@@ -128,7 +120,7 @@ function BarberSettings() {
 
   return (
     <>
-      <div className={styles.barberSettings}>
+      <div className={styles.adminSettings}>
         <StatCard icon="pen" label="Update Profile">
           {/* Profile Picture Management */}
           <section className={styles.profileImageSection}>
@@ -164,7 +156,7 @@ function BarberSettings() {
           <section className={styles.updateProfileSection}>
             <Form
               className={styles.updateProfileForm}
-              initialFields={{ username: '', name: '', surname: '', description: '' }}
+              initialFields={{ username: '' }}
               onSubmit={handleUpdateProfile}
               validate={validateUpdateProfile} //
             >
@@ -174,33 +166,6 @@ function BarberSettings() {
                   name="username"
                   type="text"
                   placeholder={profile.username}
-                  size="md"
-                  disabled={isUpdatingProfile}
-                />
-                <Input
-                  label="Description"
-                  name="description"
-                  type="text"
-                  placeholder={profile.description}
-                  size="md"
-                  disabled={isUpdatingProfile}
-                />
-              </div>
-
-              <div className={styles.inputGroup}>
-                <Input
-                  label="Name"
-                  name="name"
-                  type="text"
-                  placeholder={profile.name}
-                  size="md"
-                  disabled={isUpdatingProfile}
-                />
-                <Input
-                  label="Surname"
-                  name="surname"
-                  type="text"
-                  placeholder={profile.surname}
                   size="md"
                   disabled={isUpdatingProfile}
                 />
@@ -269,4 +234,4 @@ function BarberSettings() {
   );
 }
 
-export default BarberSettings;
+export default AdminSettings;
