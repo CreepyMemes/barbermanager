@@ -39,7 +39,7 @@ class UpdateAdminProfileSerializer(AdminValidationMixin, UsernameValidationMixin
     def validate(self, attrs):
         attrs = self.validate_admin(attrs)
 
-        if not any(field in attrs for field in ('username')):
+        if not any(field in attrs for field in ['username']):
             raise serializers.ValidationError('You must provide at least one field: username.')
         
         if 'username' in attrs:
