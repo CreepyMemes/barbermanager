@@ -29,8 +29,8 @@ function AdminBarbers() {
     setIsLoading(true);
 
     try {
-      const result = await api.admin.getAllBarbers();
-      setBarbers(result.barbers || []);
+      const { barbers } = await api.admin.getAllBarbers();
+      setBarbers(barbers);
     } finally {
       setIsLoading(false);
     }
@@ -192,14 +192,25 @@ function AdminBarbers() {
             </Pagination.Cell>
 
             <Pagination.Cell>
-              <Button
-                type="button"
-                size="sm"
-                color="animated"
-                onClick={() => openDeletePopup(barber)} //
-              >
-                <Icon name="trash" size="sm" black />
-              </Button>
+              <div className={styles.actions}>
+                <Button
+                  type="button"
+                  size="sm"
+                  color="animated"
+                  href={`/admin/availabilities/barber/${barber.id}`} //
+                >
+                  <Icon name="availability" size="ty" black />
+                </Button>
+
+                <Button
+                  type="button"
+                  size="sm"
+                  color="animated"
+                  onClick={() => openDeletePopup(barber)} //
+                >
+                  <Icon name="trash" size="sm" black />
+                </Button>
+              </div>
             </Pagination.Cell>
           </Pagination.Row>
         ))}

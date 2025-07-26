@@ -28,8 +28,8 @@ function BarberServices() {
     setIsLoading(true);
 
     try {
-      const result = await api.barber.getBarberServices();
-      setServices(result.services || []);
+      const { services } = await api.barber.getBarberServices();
+      setServices(services);
     } finally {
       setIsLoading(false);
     }
