@@ -200,7 +200,7 @@ function AdminBarbers() {
                   disabled={!barber.is_active}
                   href={`/admin/availabilities/barber/${barber.id}`} //
                 >
-                  <Icon name="availability" size="ty" black />
+                  <Icon name="availability" size="sm" black />
                 </Button>
 
                 <Button
