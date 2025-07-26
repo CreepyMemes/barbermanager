@@ -40,7 +40,8 @@ export function isAnyFieldSet(payload, errorMsg = 'Provide at least one value to
   const anyHasValue = Object.entries(payload).some(
     ([_, value]) =>
       (typeof value === 'string' && value.trim() !== '') || //
-      (typeof value === 'number' && !isNaN(value)),
+      (typeof value === 'number' && !isNaN(value)) ||
+      (value !== null && value !== undefined && value !== ''),
   );
   return anyHasValue ? undefined : errorMsg;
 }
