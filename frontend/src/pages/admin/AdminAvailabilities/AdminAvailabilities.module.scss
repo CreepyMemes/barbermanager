@@ -1,0 +1,94 @@
+@use '@styles/variables.module.scss' as *;
+
+.admin-availabilities {
+  margin: 5rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: 5rem;
+
+  .profile-section {
+    padding: 2rem;
+
+    display: flex;
+    align-items: center;
+    gap: 5rem;
+
+    .profile-data {
+      display: flex;
+      gap: 2rem;
+    }
+  }
+
+  .action {
+    padding-block: 1rem;
+    display: flex;
+    justify-content: start;
+
+    .refresh-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+
+      .line {
+        display: flex;
+        gap: 1rem;
+      }
+    }
+  }
+
+  .table-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .table-title-name {
+      display: block;
+      height: 1.7rem;
+      font-weight: 600;
+    }
+  }
+
+  .availability-date {
+    color: $color-primary;
+    font-size: 1.3rem;
+    font-weight: 600;
+  }
+
+  .availability-slots {
+    display: flex;
+
+    .slots {
+      color: $color-primary;
+      font-size: 1.3rem;
+      font-weight: 600;
+
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .error {
+    padding-block: 2rem;
+    color: $color-primary;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+
+    .title {
+      font-size: 2.3rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .message {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+  }
+}

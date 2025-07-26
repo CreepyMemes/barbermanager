@@ -19,6 +19,8 @@ import Settings from '@pages/Settings/Settings';
 import AdminBarbers from '@pages/admin/AdminBarbers/AdminBarbers';
 import AdminClients from '@pages/admin/AdminClients/AdminClients';
 import AdminAppointments from '@pages/admin/AdminAppointments/AdminAppointments';
+import AdminAvailabilities from '@pages/admin/AdminAvailabilities/AdminAvailabilities';
+
 import BarberServices from '@pages/barber/BarberServices/BarberServices';
 import BarberAppointments from '@pages/barber/BarberAppointments/BarberAppointments';
 import BarberAvailabilities from '@pages/barber/BarberAvailabilities/BarberAvailabilities';
@@ -52,6 +54,7 @@ function AppRoutes() {
         <Route path="admin/barbers" element={protectedRoute(<AdminBarbers />, 'ADMIN')} />
         <Route path="admin/clients" element={protectedRoute(<AdminClients />, 'ADMIN')} />
         <Route path="admin/appointments" element={protectedRoute(<AdminAppointments />, 'ADMIN')} />
+        <Route path="admin/availabilities/barber/:barberId" element={protectedRoute(<AdminAvailabilities />, 'ADMIN')} />
 
         <Route path="barber/services" element={protectedRoute(<BarberServices />, 'BARBER')} />
         <Route path="barber/appointments" element={protectedRoute(<BarberAppointments />, 'BARBER')} />
