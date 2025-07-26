@@ -1,0 +1,50 @@
+@use '@styles/variables.module.scss' as *;
+
+.modal-popup {
+  padding: 5rem;
+
+  .modal {
+    width: 40rem;
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+
+      .modal-title {
+        font-size: 2.5rem;
+        font-weight: 600;
+      }
+    }
+
+    .modal-content {
+      margin-top: 2rem;
+
+      .modal-description {
+        text-align: center;
+        font-size: 1.5rem;
+      }
+    }
+
+    .modal-field {
+      margin-top: 2.5rem;
+
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .modal-action {
+      margin-block: 2rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 2rem;
+
+      .line {
+        display: flex;
+        gap: 1rem;
+      }
+    }
+  }
+}
