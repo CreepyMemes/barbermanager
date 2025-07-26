@@ -1,13 +1,21 @@
 import styles from './Profile.module.scss';
 
+import Spinner from '@components/common/Spinner/Spinner';
 import ProfileImage from '@components/ui/ProfileImage/ProfileImage';
 
-function Profile({ profile }) {
-  return (
-    <div className={styles.profile}>
-      <ProfileImage src={profile.profile_image} />
+function Profile({ profile, imageSize, className, fontSize = '1.3rem', loading }) {
+  // Get all style classes into a string
+  const computedClassName = [className, styles.profile].join(' ');
 
-      <div className={styles.profileText}>
+  // Render loading spinner if profile data is still loading
+  if (loading) {
+    return <Spinner size="sm" />;
+  }
+  return (
+    <div className={computedClassName}>
+      <ProfileImage src={profile.profile_image} size={imageSize} />
+
+      <div className={styles.profileText} style={{ fontSize: fontSize }}>
         {profile.name && profile.surname && (
           <div className={styles.fullname}>
             <span>
