@@ -13,7 +13,9 @@ import Profile from '@components/ui/Profile/Profile';
 function BarberAppointments() {
   const { profile } = useAuth();
   const [appointments, setAppointments] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+
+  const [isLoadingAppointments, setIsLoadingAppointments] = useState(true);
+  const [isLoadingClientProfiles, setIsLoadingClientProfiles] = useState(true);
 
   const [clients, setClients] = useState({}); // clientId -> profile
 
@@ -21,13 +23,13 @@ function BarberAppointments() {
    * Defines fetching all appointmentts from api (single responsibility, outside effect)
    */
   const fetchAppointments = useCallback(async () => {
-    setIsLoading(true);
+    setIsLoadingAppointments(true);
 
     try {
       const result = await api.barber.getBarberAppointments();
       setAppointments(result.appointments || []);
     } finally {
-      setIsLoading(false);
+      setIsLoadingAppointments(false);
     }
   }, []);
 
@@ -35,22 +37,27 @@ function BarberAppointments() {
    * Defines fetching all client profiles needed (only unique client IDs)
    */
   const fetchClientProfiles = useCallback(async (appointments) => {
-    // Gets all unique client IDs from appointments
-    const clientIds = [...new Set(appointments.map((a) => a.client_id))];
+    setIsLoadingClientProfiles(true);
+    try {
+      // Gets all unique client IDs from appointments
+      const clientIds = [...new Set(appointments.map((a) => a.client_id))];
 
-    // fetches all client profiles in parallel
-    const entries = await Promise.all(
-      clientIds.map(async (id) => {
-        try {
-          const { profile } = await api.pub.getClientProfilePublic(id);
-          return [id, profile];
-        } catch {
-          return [id, null];
-        }
-      }),
-    );
+      // fetches all client profiles in parallel
+      const entries = await Promise.all(
+        clientIds.map(async (id) => {
+          try {
+            const { profile } = await api.pub.getClientProfilePublic(id);
+            return [id, profile];
+          } catch {
+            return [id, null];
+          }
+        }),
+      );
 
-    setClients(Object.fromEntries(entries)); // assembles into { [id]: profile }
+      setClients(Object.fromEntries(entries)); // assembles into { [id]: profile }
+    } finally {
+      setIsLoadingClientProfiles(false);
+    }
   }, []);
 
   /**
@@ -80,7 +87,7 @@ function BarberAppointments() {
         icon="appointment"
         label="Appointments"
         itemsPerPage={7}
-        loading={isLoading}
+        loading={isLoadingAppointments}
         emptyMessage="No appointments found." //
       >
         <Pagination.Action>
@@ -91,10 +98,10 @@ function BarberAppointments() {
               color="primary"
               size="md"
               onClick={fetchAppointments}
-              disabled={isLoading} //
+              disabled={isLoadingAppointments} //
             >
               <span className={styles.line}>
-                {isLoading ? (
+                {isLoadingAppointments ? (
                   <>
                     <Spinner size="sm" /> Refreshing...
                   </>
@@ -155,7 +162,7 @@ function BarberAppointments() {
         {appointments.map((appointment) => (
           <Pagination.Row key={appointment.id}>
             <Pagination.Cell>
-              {clients[appointment.client_id] ? <Profile profile={clients[appointment.client_id]} /> : <Spinner size="sm" />}
+              <Profile profile={clients[appointment.client_id]} loading={isLoadingClientProfiles} />
             </Pagination.Cell>
 
             <Pagination.Cell>
