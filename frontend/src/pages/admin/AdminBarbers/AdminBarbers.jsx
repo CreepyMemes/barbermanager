@@ -214,9 +214,7 @@ function AdminBarbers() {
         onClose={closeInvitePopup}
       >
         <Modal.Title icon="email_base">Invite Barber</Modal.Title>
-        <Modal.Description>
-          Enter the barber&apos;s email address to send them an invitation to register.
-        </Modal.Description>
+        <Modal.Description>Enter the barber&apos;s email address to send them an invitation to register.</Modal.Description>
 
         <Input
           label="Barber email"
@@ -237,8 +235,8 @@ function AdminBarbers() {
       >
         <Modal.Title icon="warning">Delete Barber</Modal.Title>
         <Modal.Description>
-          Are you sure you want to delete <strong>{deletePopup.barber?.username || deletePopup.barber?.email}</strong> ?
-          This action cannot be undone.
+          Are you sure you want to delete <strong>{deletePopup.barber?.username || deletePopup.barber?.email}</strong> ? This
+          action cannot be undone.
         </Modal.Description>
       </Modal>
     </>

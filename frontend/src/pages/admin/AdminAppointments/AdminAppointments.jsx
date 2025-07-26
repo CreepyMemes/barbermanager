@@ -185,11 +185,7 @@ function AdminAppointments() {
         {appointments.map((appointment) => (
           <Pagination.Row key={appointment.id}>
             <Pagination.Cell>
-              {barbers[appointment.barber_id] ? (
-                <Profile profile={barbers[appointment.barber_id]} />
-              ) : (
-                <Spinner size="sm" />
-              )}
+              {barbers[appointment.barber_id] ? <Profile profile={barbers[appointment.barber_id]} /> : <Spinner size="sm" />}
             </Pagination.Cell>
 
             <Pagination.Cell>
@@ -202,11 +198,7 @@ function AdminAppointments() {
             </Pagination.Cell>
 
             <Pagination.Cell>
-              {clients[appointment.client_id] ? (
-                <Profile profile={clients[appointment.client_id]} />
-              ) : (
-                <Spinner size="sm" />
-              )}
+              {clients[appointment.client_id] ? <Profile profile={clients[appointment.client_id]} /> : <Spinner size="sm" />}
             </Pagination.Cell>
 
             <Pagination.Cell>
@@ -228,9 +220,7 @@ function AdminAppointments() {
             <Pagination.Cell>
               <Tag
                 className={styles.statusTag}
-                color={
-                  appointment.status === 'COMPLETED' ? 'green' : appointment.status === 'ONGOING' ? 'yellow' : 'red'
-                }
+                color={appointment.status === 'COMPLETED' ? 'green' : appointment.status === 'ONGOING' ? 'yellow' : 'red'}
               >
                 {appointment.status.charAt(0) + appointment.status.slice(1).toLowerCase()}
               </Tag>

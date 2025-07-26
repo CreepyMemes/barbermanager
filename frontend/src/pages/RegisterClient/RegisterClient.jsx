@@ -103,7 +103,7 @@ function RegisterClient() {
             className={styles.registerForm}
             initialFields={initialFields}
             onSubmit={handleRegister}
-            validate={validate}
+            validate={validate} //
           >
             <h2 className={styles.label}>Sign up</h2>
 

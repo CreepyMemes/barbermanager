@@ -193,7 +193,7 @@ function BarberSettings() {
                   type="text"
                   placeholder={profile.name}
                   size="md"
-                  disabled={isUpdatingProfile}
+                  disabled={isUpdatingProfile} //
                 />
                 <Input
                   label="Surname"
@@ -211,7 +211,7 @@ function BarberSettings() {
                 size="md"
                 color="primary"
                 disabled={isUpdatingProfile}
-                wide
+                wide //
               >
                 <span className={styles.line}>
                   {isUpdatingProfile ? (
@@ -265,7 +265,7 @@ function BarberSettings() {
           name="profile_image"
           type="file"
           accept="image/*"
-          placeholder="Choose an image"
+          placeholder="Choose an image" //
         />
       </Modal>
 
@@ -277,9 +277,7 @@ function BarberSettings() {
         onClose={closeDeletePicturePopup}
       >
         <Modal.Title icon="warning">Delete Picture</Modal.Title>
-        <Modal.Description>
-          Are you sure you want to delete your profile picture? This action cannot be undone.
-        </Modal.Description>
+        <Modal.Description>Are you sure you want to delete your profile picture? This action cannot be undone.</Modal.Description>
       </Modal>
 
       {/* Delete Profile Modal */}
@@ -290,9 +288,7 @@ function BarberSettings() {
         onClose={closeDeleteProfilePopup}
       >
         <Modal.Title icon="warning">Delete Profile</Modal.Title>
-        <Modal.Description>
-          Are you sure you want to delete your profile? This action cannot be undone.
-        </Modal.Description>
+        <Modal.Description>Are you sure you want to delete your profile? This action cannot be undone.</Modal.Description>
       </Modal>
     </>
   );

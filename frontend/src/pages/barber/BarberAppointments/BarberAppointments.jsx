@@ -155,11 +155,7 @@ function BarberAppointments() {
         {appointments.map((appointment) => (
           <Pagination.Row key={appointment.id}>
             <Pagination.Cell>
-              {clients[appointment.client_id] ? (
-                <Profile profile={clients[appointment.client_id]} />
-              ) : (
-                <Spinner size="sm" />
-              )}
+              {clients[appointment.client_id] ? <Profile profile={clients[appointment.client_id]} /> : <Spinner size="sm" />}
             </Pagination.Cell>
 
             <Pagination.Cell>
@@ -190,9 +186,7 @@ function BarberAppointments() {
             <Pagination.Cell>
               <Tag
                 className={styles.statusTag}
-                color={
-                  appointment.status === 'COMPLETED' ? 'green' : appointment.status === 'ONGOING' ? 'yellow' : 'red'
-                }
+                color={appointment.status === 'COMPLETED' ? 'green' : appointment.status === 'ONGOING' ? 'yellow' : 'red'}
               >
                 {appointment.status.charAt(0) + appointment.status.slice(1).toLowerCase()}
               </Tag>
