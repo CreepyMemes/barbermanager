@@ -65,4 +65,9 @@
     width: 7rem;
     text-align: center; // centers text in tag
   }
+
+  .actions {
+    display: flex;
+    gap: 2rem;
+  }
 }
