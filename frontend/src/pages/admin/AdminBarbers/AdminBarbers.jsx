@@ -197,6 +197,7 @@ function AdminBarbers() {
                   type="button"
                   size="sm"
                   color="animated"
+                  disabled={!barber.is_active}
                   href={`/admin/availabilities/barber/${barber.id}`} //
                 >
                   <Icon name="availability" size="ty" black />
