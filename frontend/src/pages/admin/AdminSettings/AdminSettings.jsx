@@ -3,12 +3,12 @@ import { useAuth } from '@hooks/useAuth';
 import styles from './AdminSettings.module.scss';
 import api from '@api';
 
-import StatCard from '@components/common/StatCard/StatCard';
+import StatCard from '@components/ui/StatCard/StatCard';
 import Form from '@components/common/Form/Form';
 import Input from '@components/common/Input/Input';
 import Icon from '@components/common/Icon/Icon';
 import Button from '@components/common/Button/Button';
-import ProfileImage from '@components/common/ProfileImage/ProfileImage';
+import ProfileImage from '@components/ui/ProfileImage/ProfileImage';
 import Spinner from '@components/common/Spinner/Spinner';
 import Error from '@components/common/Error/Error';
 

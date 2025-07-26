@@ -1,7 +1,7 @@
 import { useState, useEffect, Children } from 'react';
 import styles from './Pagination.module.scss';
 
-import StatCard from '@components/common/StatCard/StatCard';
+import StatCard from '@components/ui/StatCard/StatCard';
 import Icon from '@components/common/Icon/Icon';
 import Button from '@components/common/Button/Button';
 import Spinner from '@components/common/Spinner/Spinner';

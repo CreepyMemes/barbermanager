@@ -4,12 +4,12 @@ import styles from './BarberDashboard.module.scss';
 import api from '@api';
 
 import Icon from '@components/common/Icon/Icon';
-import StatCard from '@components/common/StatCard/StatCard';
+import StatCard from '@components/ui/StatCard/StatCard';
 import Pagination from '@components/common/Pagination/Pagination';
-import RadialChart from '@components/common/RadialChart/RadialChart';
-import Rating from '@components/common/Rating/Rating';
+import RadialChart from '@components/ui/RadialChart/RadialChart';
+import Rating from '@components/ui/Rating/Rating';
 import Spinner from '@components/common/Spinner/Spinner';
-import Profile from '@components/common/Profile/Profile';
+import Profile from '@components/ui/Profile/Profile';
 
 function BarberDashboard() {
   const { profile, setProfile } = useAuth();

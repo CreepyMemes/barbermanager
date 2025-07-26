@@ -1,6 +1,6 @@
 import styles from './Profile.module.scss';
 
-import ProfileImage from '@components/common/ProfileImage/ProfileImage';
+import ProfileImage from '@components/ui/ProfileImage/ProfileImage';
 
 function Profile({ profile }) {
   return (
