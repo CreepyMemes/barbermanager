@@ -7,7 +7,7 @@ import Spinner from '@components/common/Spinner/Spinner';
 import Card from '@components/common/Card/Card';
 import Icon from '@components/common/Icon/Icon';
 import Button from '@components/common/Button/Button';
-import Hero from '@components/common/Hero/Hero';
+import Hero from '@components/ui/Hero/Hero';
 
 function VerifyEmail() {
   const { uidb64, token } = useParams();

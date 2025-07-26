@@ -4,11 +4,11 @@ import styles from './ClientDashboard.module.scss';
 import api from '@api';
 
 import Icon from '@components/common/Icon/Icon';
-import StatCard from '@components/common/StatCard/StatCard';
+import StatCard from '@components/ui/StatCard/StatCard';
 import Pagination from '@components/common/Pagination/Pagination';
-import Rating from '@components/common/Rating/Rating';
+import Rating from '@components/ui/Rating/Rating';
 import Spinner from '@components/common/Spinner/Spinner';
-import Profile from '@components/common/Profile/Profile';
+import Profile from '@components/ui/Profile/Profile';
 
 function ClientDashboard() {
   const { profile, setProfile } = useAuth();

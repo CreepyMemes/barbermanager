@@ -5,10 +5,10 @@ import api from '@api';
 
 import Pagination from '@components/common/Pagination/Pagination';
 import Icon from '@components/common/Icon/Icon';
-import Rating from '@components/common/Rating/Rating';
+import Rating from '@components/ui/Rating/Rating';
 import Button from '@components/common/Button/Button';
 import Spinner from '@components/common/Spinner/Spinner';
-import Profile from '@components/common/Profile/Profile';
+import Profile from '@components/ui/Profile/Profile';
 
 function BarberReviews() {
   const { profile } = useAuth();

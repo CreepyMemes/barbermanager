@@ -15,14 +15,23 @@ Proposed:
 
 Important:  
 
+  - fix trash and warning icons in the buttons not getting white when hovered in profile settings (works in dev not in prod)
+
   - admins:
+    - add date joined to barbers and clients lists
+
     - add create mutliple avaiabiities api endpoint (takes in start date, end date, start slot, end slot, 30 min interval each)
+      - deprecate (readapt it's logic in a loop for each) singular create availability endpoint (useless can just select same start/end date or no end date)
     
     - add manage availability functionality to admin barbers (create, update, delete)
-      - workflow: select create availability, then enter either 1 date or interal (form takes account of whether using singuar creation api or multiple)
-    
-    - add availability page to edit it for selected barber 
-
+      - workflow: 
+        - go to admin barbers page
+        - choose a barber and select availability button, 
+        - this opens admin availabilities page with parameter as selected barber id (like barber availability page)
+        - each availability row has actions: edit and delelete
+        - availabilities pagination has create availability action
+        - create availability opens popup, select: date start-end and hour stard-end, ( same start-end date or no end date for singular new availability)
+        
   - clients:
     - add recent appointments (like reviews) in api profile
     - make clients appointments page, where they can view, create and cancel appointments
@@ -36,9 +45,11 @@ Important:
 
 Proposed:
 
-  - make reusable update popup to handle all inputs (as custom jsx) and reusable delete popup
+  - make reusable update popup to handle all inputs (as custom jsx) and reusable delete popup "Modal"
 
   - enhance popup to stop it from being closed while loading
+
+  - when creating appointment check if selected avaiability is not past
 
   - fix table text overflow when screen width is small
   - add error message when loading tables if the api request fails
@@ -49,7 +60,8 @@ Proposed:
   - add responsivity to sidebar, show toggle button on header, width 100% for (small screens)
   - add media queries for screen sizes on each layout component 
   - fix settings page responsivity, input fields get of the card, on small screens
-   
+  
+  - add loading prop to StatCard like Pagination (use it in dashboard instead of external if isLoading <Spinner/>)
   - add skeleton loading for page components
 
   - cleanup Form code, make it work automagically (Form.Button, auto fields, Form.Input, etc)

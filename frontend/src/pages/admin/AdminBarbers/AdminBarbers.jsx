@@ -8,8 +8,8 @@ import DeleteBarberPopup from './DeleteBarberPopup/DeleteBarberPopup';
 
 import Pagination from '@components/common/Pagination/Pagination';
 import Icon from '@components/common/Icon/Icon';
-import Profile from '@components/common/Profile/Profile';
-import Rating from '@components/common/Rating/Rating';
+import Profile from '@components/ui/Profile/Profile';
+import Rating from '@components/ui/Rating/Rating';
 import Tag from '@components/common/Tag/Tag';
 import Button from '@components/common/Button/Button';
 import Spinner from '@components/common/Spinner/Spinner';

@@ -8,7 +8,7 @@ import Icon from '@components/common/Icon/Icon';
 import Tag from '@components/common/Tag/Tag';
 import Button from '@components/common/Button/Button';
 import Spinner from '@components/common/Spinner/Spinner';
-import Profile from '@components/common/Profile/Profile';
+import Profile from '@components/ui/Profile/Profile';
 
 function BarberAppointments() {
   const { profile } = useAuth();
