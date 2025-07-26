@@ -106,16 +106,14 @@ function Modal({
 }
 
 // Subcomponents for clean declarative usage
-const Title = ({ icon, children }) => {
+const Title = ({ icon, children }) => (
   <div className={styles.modalHeader}>
     {<Icon name={icon} size="lg" black />}
     <span className={styles.modalTitle}>{children}</span>
-  </div>;
-};
+  </div>
+);
 
-const Description = ({ children }) => {
-  <div className={styles.modalDescription}>{children}</div>;
-};
+const Description = ({ children }) => <div className={styles.modalDescription}>{children}</div>;
 
 // Set display names for subcomponent identification
 Title.displayName = 'ModalTitle';
