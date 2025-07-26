@@ -16,7 +16,7 @@ function Footer() {
               className={styles.button}
               href="https://github.com/CreepyMemes/barbermanager"
               size="md"
-              color="animated"
+              color="animated" //
             >
               <Icon name="github" size={'md'} />
             </Button>

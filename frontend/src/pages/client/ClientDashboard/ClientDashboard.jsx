@@ -78,9 +78,7 @@ function ClientDashboard() {
         {profile.upcoming_appointment ? (
           <div className={styles.upcomingAppointmentValue}>
             <span className={styles.upcomingAppointmentSlot}>{profile.upcoming_appointment?.slot}</span>
-            <span className={styles.upcomingAppointmentDate}>
-              {profile.upcoming_appointment?.date.replaceAll('-', ' / ')}
-            </span>
+            <span className={styles.upcomingAppointmentDate}>{profile.upcoming_appointment?.date.replaceAll('-', ' / ')}</span>
           </div>
         ) : (
           <span className={styles.empty}>No future appointment</span>

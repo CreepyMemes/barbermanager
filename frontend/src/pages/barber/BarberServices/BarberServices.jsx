@@ -261,8 +261,7 @@ function BarberServices() {
       >
         <Modal.Title icon="pen">Update Service</Modal.Title>
         <Modal.Description>
-          Enter new values to update the service:{' '}
-          <strong>{updatePopup.service?.name} This action cannot be undone.</strong>
+          Enter new values to update the service: <strong>{updatePopup.service?.name} This action cannot be undone.</strong>
         </Modal.Description>
 
         <Input

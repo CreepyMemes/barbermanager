@@ -141,11 +141,7 @@ function BarberDashboard() {
         {profile.upcoming_appointments.map((appointment) => (
           <Pagination.Row key={appointment.id}>
             <Pagination.Cell>
-              {clients[appointment.client_id] ? (
-                <Profile profile={clients[appointment.client_id]} />
-              ) : (
-                <Spinner size="sm" />
-              )}
+              {clients[appointment.client_id] ? <Profile profile={clients[appointment.client_id]} /> : <Spinner size="sm" />}
             </Pagination.Cell>
 
             <Pagination.Cell>

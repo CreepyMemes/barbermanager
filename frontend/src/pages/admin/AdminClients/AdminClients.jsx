@@ -136,9 +136,7 @@ function AdminClients() {
                 <div className={styles.nextAppointment}>
                   {client.next_appointment ? (
                     <>
-                      <span className={styles.appointmentDate}>
-                        {client.next_appointment.date.replaceAll('-', ' / ')}
-                      </span>
+                      <span className={styles.appointmentDate}>{client.next_appointment.date.replaceAll('-', ' / ')}</span>
                       <span className={styles.appointmentSlot}>( {client.next_appointment.slot} )</span>
                     </>
                   ) : (

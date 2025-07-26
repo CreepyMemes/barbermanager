@@ -65,9 +65,7 @@ function Pagination({
             {!loading &&
               rows.length > 0 &&
               pageRows.map((row, ridx) => {
-                const cells = Children.toArray(row.props.children).filter(
-                  (cell) => cell.type.displayName === Cell.displayName,
-                );
+                const cells = Children.toArray(row.props.children).filter((cell) => cell.type.displayName === Cell.displayName);
 
                 return (
                   <tr key={row.key || ridx}>
