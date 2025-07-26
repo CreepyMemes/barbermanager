@@ -3,15 +3,14 @@ import { useAuth } from '@hooks/useAuth';
 import styles from './AdminBarbers.module.scss';
 import api from '@api';
 
-import InviteBarberPopup from './InviteBarberPopup/InviteBarberPopup';
-import DeleteBarberPopup from './DeleteBarberPopup/DeleteBarberPopup';
-
-import Pagination from '@components/common/Pagination/Pagination';
 import Icon from '@components/common/Icon/Icon';
+import Pagination from '@components/common/Pagination/Pagination';
 import Profile from '@components/ui/Profile/Profile';
 import Rating from '@components/ui/Rating/Rating';
 import Tag from '@components/common/Tag/Tag';
 import Button from '@components/common/Button/Button';
+import Modal from '@components/common/Modal/Modal';
+import Input from '@components/common/Input/Input';
 import Spinner from '@components/common/Spinner/Spinner';
 
 function AdminBarbers() {
@@ -57,8 +56,8 @@ function AdminBarbers() {
   /**
    * Handles inviting a new barber
    */
-  const handleInviteBarber = async (email) => {
-    await api.admin.inviteBarber(email);
+  const handleInviteBarber = async ({ email }) => {
+    await api.admin.inviteBarber({ email });
     closeInvitePopup();
     await fetchBarbers();
   };
@@ -77,147 +76,171 @@ function AdminBarbers() {
 
   return (
     <>
-      <div className={styles.adminBarbers}>
-        <Pagination
-          icon="barber"
-          label="Barbers"
-          itemsPerPage="5"
-          loading={isLoading}
-          emptyMessage="No barbers found." //
-        >
-          <Pagination.Action>
-            <div className={styles.action}>
+      {/* Registered Barbers Pagination */}
+      <Pagination
+        className={styles.adminBarbers}
+        icon="barber"
+        label="Barbers"
+        itemsPerPage={5}
+        loading={isLoading}
+        emptyMessage="No barbers found." //
+      >
+        <Pagination.Action>
+          <div className={styles.action}>
+            <Button
+              className={styles.refreshBtn}
+              type="button"
+              color="primary"
+              size="md"
+              onClick={fetchBarbers}
+              disabled={isLoading}
+            >
+              <span className={styles.line}>
+                {isLoading ? (
+                  <>
+                    <Spinner size={'sm'} /> Refreshing...
+                  </>
+                ) : (
+                  <>
+                    <Icon name="refresh" size="ty" /> Refresh barbers
+                  </>
+                )}
+              </span>
+            </Button>
+
+            <Button
+              className={styles.actionBtn}
+              type="button"
+              color="primary"
+              size="md"
+              onClick={openInvitePopup} //
+            >
+              <Icon name="plus" size="ty" />
+              <span>Invite barber</span>
+            </Button>
+          </div>
+        </Pagination.Action>
+
+        {/* Table Headers */}
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="user" size="ty" black />
+            <span className={styles.tableTitleName}>User</span>
+          </div>
+        </Pagination.Column>
+
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="email_base" size="ty" black />
+            <span className={styles.tableTitleName}>Email</span>
+          </div>
+        </Pagination.Column>
+
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="review" size="ty" black />
+            <span className={styles.tableTitleName}>Rating</span>
+          </div>
+        </Pagination.Column>
+
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="revenue" size="ty" black />
+            <span className={styles.tableTitleName}>Revenue</span>
+          </div>
+        </Pagination.Column>
+
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="spinner" size="ty" black />
+            <span className={styles.tableTitleName}>Status</span>
+          </div>
+        </Pagination.Column>
+
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
+            <Icon name="dial" size="ty" black />
+            <span className={styles.tableTitleName}>Actions</span>
+          </div>
+        </Pagination.Column>
+
+        {/* Table Rows */}
+        {barbers.map((barber) => (
+          <Pagination.Row key={barber.id}>
+            <Pagination.Cell>
+              <Profile profile={barber} />
+            </Pagination.Cell>
+
+            <Pagination.Cell>
+              <div className={styles.emailContainer}>
+                <span className={styles.email}>{barber.email}</span>
+              </div>
+            </Pagination.Cell>
+
+            <Pagination.Cell>
+              <Rating rating={barber.average_rating} />
+            </Pagination.Cell>
+
+            <Pagination.Cell>
+              <span className={styles.revenue}>${barber.total_revenue}</span>
+            </Pagination.Cell>
+
+            <Pagination.Cell>
+              <Tag className={styles.tag} color={barber.is_active ? 'green' : 'yellow'}>
+                {barber.is_active ? 'Active' : 'Invited'}
+              </Tag>
+            </Pagination.Cell>
+
+            <Pagination.Cell>
               <Button
-                className={styles.refreshBtn}
                 type="button"
-                color="primary"
-                size="md"
-                onClick={fetchBarbers}
-                disabled={isLoading}
+                size="sm"
+                color="animated"
+                onClick={() => openDeletePopup(barber)} //
               >
-                <span className={styles.line}>
-                  {isLoading ? (
-                    <>
-                      <Spinner size={'sm'} /> Refreshing...
-                    </>
-                  ) : (
-                    <>
-                      <Icon name="refresh" size="ty" /> Refresh barbers
-                    </>
-                  )}
-                </span>
+                <Icon name="trash" size="sm" black />
               </Button>
+            </Pagination.Cell>
+          </Pagination.Row>
+        ))}
+      </Pagination>
 
-              <Button
-                className={styles.actionBtn}
-                type="button"
-                color="primary"
-                size="md"
-                onClick={openInvitePopup} //
-              >
-                <Icon name="plus" size="ty" />
-                <span>Invite barber</span>
-              </Button>
-            </div>
-          </Pagination.Action>
-
-          {/* Table Headers */}
-          <Pagination.Column>
-            <div className={styles.tableTitle}>
-              <Icon name="user" size="ty" black />
-              <span className={styles.tableTitleName}>User</span>
-            </div>
-          </Pagination.Column>
-
-          <Pagination.Column>
-            <div className={styles.tableTitle}>
-              <Icon name="email_base" size="ty" black />
-              <span className={styles.tableTitleName}>Email</span>
-            </div>
-          </Pagination.Column>
-
-          <Pagination.Column>
-            <div className={styles.tableTitle}>
-              <Icon name="review" size="ty" black />
-              <span className={styles.tableTitleName}>Rating</span>
-            </div>
-          </Pagination.Column>
-
-          <Pagination.Column>
-            <div className={styles.tableTitle}>
-              <Icon name="revenue" size="ty" black />
-              <span className={styles.tableTitleName}>Revenue</span>
-            </div>
-          </Pagination.Column>
-
-          <Pagination.Column>
-            <div className={styles.tableTitle}>
-              <Icon name="spinner" size="ty" black />
-              <span className={styles.tableTitleName}>Status</span>
-            </div>
-          </Pagination.Column>
-
-          <Pagination.Column>
-            <div className={styles.tableTitle}>
-              <Icon name="dial" size="ty" black />
-              <span className={styles.tableTitleName}>Actions</span>
-            </div>
-          </Pagination.Column>
-
-          {/* Table Rows */}
-          {barbers.map((barber) => (
-            <Pagination.Row key={barber.id}>
-              <Pagination.Cell>
-                <Profile profile={barber} />
-              </Pagination.Cell>
-
-              <Pagination.Cell>
-                <div className={styles.emailContainer}>
-                  <span className={styles.email}>{barber.email}</span>
-                </div>
-              </Pagination.Cell>
-
-              <Pagination.Cell>
-                <Rating rating={barber.average_rating} />
-              </Pagination.Cell>
-
-              <Pagination.Cell>
-                <span className={styles.revenue}>${barber.total_revenue}</span>
-              </Pagination.Cell>
-
-              <Pagination.Cell>
-                <Tag className={styles.tag} color={barber.is_active ? 'green' : 'yellow'}>
-                  {barber.is_active ? 'Active' : 'Invited'}
-                </Tag>
-              </Pagination.Cell>
-
-              <Pagination.Cell>
-                <Button
-                  type="button"
-                  size="sm"
-                  color="animated"
-                  onClick={() => openDeletePopup(barber)} //
-                >
-                  <Icon name="trash" size="sm" black />
-                </Button>
-              </Pagination.Cell>
-            </Pagination.Row>
-          ))}
-        </Pagination>
-      </div>
-
-      <InviteBarberPopup
+      {/* Invite Barber Modal */}
+      <Modal
         open={invitePopup}
+        fields={{ email: '' }}
+        action={{ submit: 'Send', loading: 'Sending...' }}
+        onSubmit={handleInviteBarber}
         onClose={closeInvitePopup}
-        onInvite={handleInviteBarber} //
-      />
+      >
+        <Modal.Title icon="email_base">Invite Barber</Modal.Title>
+        <Modal.Description>
+          Enter the barber&apos;s email address to send them an invitation to register.
+        </Modal.Description>
 
-      <DeleteBarberPopup
+        <Input
+          label="Barber email"
+          type="email"
+          name="email"
+          required
+          placeholder="barber@email.com"
+          size="md" //
+        />
+      </Modal>
+
+      {/* Delete Barber Modal */}
+      <Modal
         open={deletePopup.open}
+        action={{ submit: 'Delete', loading: 'Deleting...' }}
+        onSubmit={() => handleDeleteBarber(deletePopup.barber?.id)}
         onClose={closeDeletePopup}
-        onDelete={handleDeleteBarber}
-        barber={deletePopup.barber} //
-      />
+      >
+        <Modal.Title icon="warning">Delete Barber</Modal.Title>
+        <Modal.Description>
+          Are you sure you want to delete <strong>{deletePopup.barber?.username || deletePopup.barber?.email}</strong> ?
+          This action cannot be undone.
+        </Modal.Description>
+      </Modal>
     </>
   );
 }
