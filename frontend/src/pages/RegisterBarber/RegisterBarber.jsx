@@ -33,12 +33,12 @@ function RegisterBarber() {
     setStatus('pending');
 
     try {
-      const resp = await api.auth.getEmailFromToken(uidb64, token);
+      const { email } = await api.auth.getEmailFromToken(uidb64, token);
+      setEmail(email);
       setStatus('success');
-      setEmail(resp?.email);
     } catch (error) {
-      setStatus('error');
       setMessage(error?.response?.data?.detail || 'The regisitration link is invalid or expired.');
+      setStatus('error');
     }
   }, [uidb64, token]);
 
@@ -136,7 +136,7 @@ function RegisterBarber() {
               className={styles.registerForm}
               initialFields={initialFields}
               onSubmit={handleRegister}
-              validate={validate}
+              validate={validate} //
             >
               <h2 className={styles.label}>Sign up</h2>
 
