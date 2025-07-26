@@ -13,7 +13,9 @@ import Profile from '@components/ui/Profile/Profile';
 
 function BarberDashboard() {
   const { profile, setProfile } = useAuth();
-  const [isLoading, setIsLoading] = useState(true);
+
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
+  const [isLoadingClientProfiles, setIsLoadingClientProfiles] = useState(true);
 
   const [clients, setClients] = useState({}); // clientId -> profile
 
@@ -22,25 +24,31 @@ function BarberDashboard() {
    */
   const fetchClientProfiles = useCallback(
     async (reviews = [], upcoming_appointments = []) => {
-      const reviewClientIds = (reviews || []).map((r) => r.client_id); // Get clients from reviews
-      const appointmentClientIds = (upcoming_appointments || []).map((a) => a.client_id); // Get clients from appointments
-      const allClientIds = Array.from(new Set([...reviewClientIds, ...appointmentClientIds])); // Combine both
-      const clientIds = allClientIds.filter((id) => !(id in clients)); // Only get those not already in our clients cache
+      setIsLoadingClientProfiles(true);
 
-      if (clientIds.length === 0) return;
+      try {
+        const reviewClientIds = (reviews || []).map((r) => r.client_id); // Get clients from reviews
+        const appointmentClientIds = (upcoming_appointments || []).map((a) => a.client_id); // Get clients from appointments
+        const allClientIds = Array.from(new Set([...reviewClientIds, ...appointmentClientIds])); // Combine both
+        const clientIds = allClientIds.filter((id) => !(id in clients)); // Only get those not already in our clients cache
 
-      const entries = await Promise.all(
-        clientIds.map(async (id) => {
-          try {
-            const { profile } = await api.pub.getClientProfilePublic(id);
-            return [id, profile];
-          } catch {
-            return [id, null];
-          }
-        }),
-      );
+        if (clientIds.length === 0) return;
 
-      setClients((prev) => ({ ...prev, ...Object.fromEntries(entries) })); // includes clients in deps to always know which client ids are loaded
+        const entries = await Promise.all(
+          clientIds.map(async (id) => {
+            try {
+              const { profile } = await api.pub.getClientProfilePublic(id);
+              return [id, profile];
+            } catch {
+              return [id, null];
+            }
+          }),
+        );
+
+        setClients((prev) => ({ ...prev, ...Object.fromEntries(entries) })); // includes clients in deps to always know which client ids are loaded
+      } finally {
+        setIsLoadingClientProfiles(false);
+      }
     },
     [clients],
   );
@@ -49,13 +57,13 @@ function BarberDashboard() {
    * Defines fetching latest profile data
    */
   const fetchProfile = useCallback(async () => {
-    setIsLoading(true);
+    setIsLoadingProfile(true);
 
     try {
       const { profile } = await api.barber.getBarberProfile();
       setProfile(profile);
     } finally {
-      setIsLoading(false);
+      setIsLoadingProfile(false);
     }
   }, [setProfile]);
 
@@ -76,7 +84,7 @@ function BarberDashboard() {
   }, [profile?.reviews, profile?.upcoming_appointments, fetchClientProfiles]);
 
   // While fetching latest profile data show loading spinner
-  if (isLoading) return <Spinner />;
+  if (isLoadingProfile) return <Spinner />;
 
   return (
     <div className={styles.barberDashboard}>
@@ -141,7 +149,7 @@ function BarberDashboard() {
         {profile.upcoming_appointments.map((appointment) => (
           <Pagination.Row key={appointment.id}>
             <Pagination.Cell>
-              {clients[appointment.client_id] ? <Profile profile={clients[appointment.client_id]} /> : <Spinner size="sm" />}
+              <Profile profile={clients[appointment.client_id]} loading={isLoadingClientProfiles} />
             </Pagination.Cell>
 
             <Pagination.Cell>
@@ -210,7 +218,7 @@ function BarberDashboard() {
         {profile.latest_reviews.map((review) => (
           <Pagination.Row key={review.id}>
             <Pagination.Cell>
-              {clients[review.client_id] ? <Profile profile={clients[review.client_id]} /> : <Spinner size="sm" />}
+              <Profile profile={clients[review.client_id]} loading={isLoadingClientProfiles} />
             </Pagination.Cell>
 
             <Pagination.Cell>
