@@ -246,7 +246,7 @@ function BarberServices() {
       >
         <Modal.Title icon="warning">Delete Service</Modal.Title>
         <Modal.Description>
-          Are you sure you want to delete <strong>{deletePopup.service?.name}</strong> ? This action cannot be undone.
+          Are you sure you want to delete <strong>{deletePopup.service?.name}</strong>? This action cannot be undone.
         </Modal.Description>
       </Modal>
 
@@ -261,7 +261,7 @@ function BarberServices() {
       >
         <Modal.Title icon="pen">Update Service</Modal.Title>
         <Modal.Description>
-          Enter new values to update the service: <strong>{updatePopup.service?.name} This action cannot be undone.</strong>
+          Enter new values to update the service: <strong>{updatePopup.service?.name}</strong>. This action cannot be undone.
         </Modal.Description>
 
         <Input
