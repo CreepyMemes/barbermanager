@@ -6,7 +6,7 @@ import styles from './Home.module.scss';
 import Spinner from '@components/common/Spinner/Spinner';
 import Button from '@components/common/Button/Button';
 import Hero from '@components/ui/Hero/Hero';
-import SidePanel from '@components/common/SidePanel/SidePanel';
+import SidePanel from '@components/ui/SidePanel/SidePanel';
 import Icon from '@components/common/Icon/Icon';
 
 function Home() {

@@ -11,7 +11,7 @@ import Input from '@components/common/Input/Input';
 import Button from '@components/common/Button/Button';
 import Error from '@components/common/Error/Error';
 import Hero from '@components/ui/Hero/Hero';
-import SidePanel from '@components/common/SidePanel/SidePanel';
+import SidePanel from '@components/ui/SidePanel/SidePanel';
 import Icon from '@components/common/Icon/Icon';
 
 function Login() {
