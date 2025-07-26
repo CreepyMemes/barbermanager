@@ -32,14 +32,15 @@ export function cleanPayload(payload) {
 }
 
 /**
- * Returns `true` if at least one field in payload has a non-empty value.
- * Optionally, pass a custom error message as second argument for errors.
+ * Validates that at least one field in the payload has a non-empty value.
+ * Returns `undefined` if valid (at least one field is set), or the error message if not.
+ * Optionally, pass a custom error message as the second argument.
  */
 export function isAnyFieldSet(payload, errorMsg = 'Provide at least one value to update.') {
-  for (const value of Object.values(payload)) {
-    if (value !== undefined && value !== null && (typeof value !== 'string' || value.trim() !== '')) {
-      return true;
-    }
-  }
-  return errorMsg;
+  const anyHasValue = Object.entries(payload).some(
+    ([_, value]) =>
+      (typeof value === 'string' && value.trim() !== '') || //
+      (typeof value === 'number' && !isNaN(value)),
+  );
+  return anyHasValue ? undefined : errorMsg;
 }
