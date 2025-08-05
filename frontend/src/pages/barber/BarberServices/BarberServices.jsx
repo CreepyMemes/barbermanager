@@ -57,7 +57,7 @@ function BarberServices() {
   const closeUpdatePopup = () => setUpdatePopup({ open: false, service: null });
 
   /**
-   * Handles inviting a new barber
+   * Handles inviting a new service
    */
   const handleCreateService = async ({ name, price }) => {
     await api.barber.createBarberService({ name, price });

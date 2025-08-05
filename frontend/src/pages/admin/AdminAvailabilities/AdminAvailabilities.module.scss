@@ -22,8 +22,16 @@
 
   .action {
     padding-block: 1rem;
+
     display: flex;
-    justify-content: start;
+    justify-content: space-between;
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
 
     .refresh-btn {
       display: flex;
@@ -68,6 +76,11 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+  }
+
+  .actions {
+    display: flex;
+    gap: 2rem;
   }
 
   .error {
