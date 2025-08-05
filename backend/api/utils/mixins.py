@@ -272,6 +272,7 @@ class AvailabilityValidationMixin:
 
     - Ensures a barber does not already have an availability set for the same date, preventing duplicate availabilities on a single day.
     - Validates the existence of an availability entry for the given barber and specified ID before allowing retrieval or update operations.
+    - Built in util function that generates the slots based on input start/end time and interval
     """
     def validate_availability_date(self, attrs, availability_instance=None):
         from ..models import Availability
@@ -302,6 +303,19 @@ class AvailabilityValidationMixin:
         
         attrs['availability'] = availability
         return attrs
+    
+    def generate_slots(self, start_time, end_time, interval):
+        from datetime import timedelta, datetime
+
+        slots = []
+        start_date = datetime.combine(datetime.today(), start_time)
+        end_date = datetime.combine(datetime.today(), end_time)
+
+        while start_date + timedelta(minutes=interval) <= end_date:
+            slots.append(start_date.strftime('%H:%M'))
+            start_date += timedelta(minutes=interval)
+
+        return slots
     
 
 class ServiceValidationMixin:
