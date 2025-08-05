@@ -26,6 +26,24 @@ export function cleanPayload(payload) {
       return acc;
     }
 
+    // Special case for days_of_week
+    if (key === 'days_of_week' && typeof value === 'string') {
+      const arr = value
+        .split(',')
+        .map((v) => Number(v.trim()))
+        .filter((v) => !isNaN(v));
+      if (arr.length) {
+        acc[key] = arr;
+      }
+      return acc;
+    }
+
+    // Convert slot_interval to int
+    if (key === 'slot_interval' && value !== '') {
+      acc[key] = Number(value);
+      return acc;
+    }
+
     acc[key] = typeof value === 'string' ? value.trim() : value;
     return acc;
   }, {});

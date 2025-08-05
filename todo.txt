@@ -16,15 +16,10 @@ Proposed:
 Important:  
 
   - fix trash and warning icons in the buttons not getting white when hovered in profile settings (works in dev not in prod)
+  - return availabilities in date sorted order, (not text based as it is rn) 
 
   - admins:
     - add date_joined to barbers and clients pagination pages
-
-    - add create new availability action (this runs new and only create multiple availabilities api endpoint)
-      - opens popup, enter fields required by the api endpoint
-      
-    - add edit availability (action button next to delete)
-    - add delete availabillity (actions button next to edit)
         
   - clients:
     - add recent appointments (like reviews) in api profile
