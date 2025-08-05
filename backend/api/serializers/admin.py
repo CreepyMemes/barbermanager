@@ -168,17 +168,6 @@ class CreateBarberAvailabilitySerializer(BarberValidationMixin, AvailabilityVali
         attrs['slot_interval'] = attrs.get('slot_interval', 30)
 
         return attrs
-
-    def generate_slots(self, start_time, end_time, interval):
-        slots = []
-        start_date = datetime.combine(datetime.today(), start_time)
-        end_date = datetime.combine(datetime.today(), end_time)
-
-        while start_date + timedelta(minutes=interval) <= end_date:
-            slots.append(start_date.strftime('%H:%M'))
-            start_date += timedelta(minutes=interval)
-
-        return slots
     
     def create(self, validated_data):
         barber = validated_data['barber']
@@ -223,36 +212,31 @@ class CreateBarberAvailabilitySerializer(BarberValidationMixin, AvailabilityVali
 
 class UpdateBarberAvailabilitySerializer(BarberValidationMixin, AvailabilityValidationMixin, serializers.Serializer):
     """
-    Admin only: Updates a given existing availability, for a given barber.
+    Admin only: Update slots for an existing availability by providing a new start/end time and optional interval.
     """
-    date = serializers.DateField(required=False)
-    slots = serializers.ListField(required=False, child=serializers.RegexField(r'^\d\d:\d\d$'), min_length=1)
+    start_time = serializers.TimeField(required=True)
+    end_time = serializers.TimeField(required=True)
+    slot_interval = serializers.IntegerField(required=False, min_value=1, default=30)
 
     def validate(self, attrs):
         attrs = self.validate_barber(attrs)
         attrs = self.validate_find_availability(attrs)
-
-        if 'date' not in attrs and 'slots' not in attrs:
-            raise serializers.ValidationError('You must provide at least one field: date or slots.')
-        
-        if 'date' in attrs:
-            attrs = self.validate_availability_date(attrs, availability_instance=attrs['availability'])
-
+        attrs['slot_interval'] = attrs.get('slot_interval', 30)
         return attrs
 
     def update(self, instance, validated_data):
-        if 'date' in validated_data:
-            instance.date = validated_data['date']
+        slots = self.generate_slots(validated_data['start_time'], validated_data['end_time'], validated_data['slot_interval'])
+        
+        if not slots:
+            raise serializers.ValidationError('No valid slots produced; check start_time, end_time, and interval.')
 
-        if 'slots' in validated_data:
-            instance.slots = validated_data['slots']
-
+        instance.slots = slots
         instance.save()
         return instance
 
     def save(self, **kwargs):
         return self.update(self.validated_data['availability'], self.validated_data)
-    
+
 
 class DeleteBarberAvailabilitySerializer(BarberValidationMixin, AvailabilityValidationMixin, serializers.Serializer):
     """
