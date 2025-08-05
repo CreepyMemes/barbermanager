@@ -1,4 +1,5 @@
 import uuid
+from datetime import timedelta, datetime
 from rest_framework import serializers
 from ..utils import (
     AdminValidationMixin,
@@ -138,19 +139,86 @@ class DeleteBarberSerializer(serializers.Serializer):
 
 class CreateBarberAvailabilitySerializer(BarberValidationMixin, AvailabilityValidationMixin, serializers.Serializer):
     """
-    Admin only: Creates a barber's availability for a specific date.
+    Admin only: Create a barber's availability for a date range (or a single day).
+
+    - start_date    (REQUIRED): first date (YYYY-MM-DD)
+    - end_date      (OPTIONAL): last date (YYYY-MM-DD), use start_date if omitted
+    - start_time    (REQUIRED): slot window (HH:MM)
+    - end_time      (REQUIRED): slot window (HH:MM)
+    - slot_interval (OPTIONAL): slot length in minutes (default 30)
+    - days_of_week  (OPTIONAL): list [0=Mon...6=Sun], used only if multiple days
     """
-    date = serializers.DateField(required=True)
-    slots = serializers.ListField(required=True, child=serializers.TimeField(required=True), min_length=1)
+    start_date = serializers.DateField(required=True)
+    end_date = serializers.DateField(required=False)
+    start_time = serializers.TimeField(required=True)
+    end_time = serializers.TimeField(required=True)
+    slot_interval = serializers.IntegerField(required=False, min_value=1, default=30)
+    days_of_week = serializers.ListField(required=False, allow_null=True, allow_empty=True, child=serializers.IntegerField(min_value=0, max_value=6))
 
     def validate(self, attrs):
         attrs = self.validate_barber(attrs)
-        attrs = self.validate_availability_date(attrs)
+
+        start_date = attrs['start_date']
+        end_date = attrs.get('end_date', start_date) # Defaults back to start_date if omitted
+
+        if end_date < start_date:
+            raise serializers.ValidationError("end_date cannot be before start_date")
+        
+        attrs['end_date'] = end_date  # ensure always present and >= start
+        attrs['slot_interval'] = attrs.get('slot_interval', 30)
+
         return attrs
 
+    def generate_slots(self, start_time, end_time, interval):
+        slots = []
+        start_date = datetime.combine(datetime.today(), start_time)
+        end_date = datetime.combine(datetime.today(), end_time)
+
+        while start_date + timedelta(minutes=interval) <= end_date:
+            slots.append(start_date.strftime('%H:%M'))
+            start_date += timedelta(minutes=interval)
+
+        return slots
+    
     def create(self, validated_data):
-        validated_data["slots"] = [slot.strftime("%H:%M") for slot in validated_data["slots"]]
-        return Availability.objects.create(**validated_data)
+        barber = validated_data['barber']
+        start_date = validated_data['start_date']
+        end_date = validated_data['end_date']
+        start_time = validated_data['start_time']
+        end_time = validated_data['end_time']
+        interval = validated_data['slot_interval']
+        days_of_week = validated_data.get('days_of_week')
+
+        # Single day mode, ignores days_of_week
+        if start_date == end_date:
+            target_dates = [start_date]
+
+        # Multi day mode, filters by days_of_week if provided
+        else:
+            span = (end_date - start_date).days + 1
+            raw_dates = [start_date + timedelta(days=days) for days in range(span)]
+
+            if days_of_week:
+                target_dates = [day for day in raw_dates if day.weekday() in days_of_week]
+            else:
+                target_dates = raw_dates
+
+        availabilities = []
+        for date in target_dates:
+            slots = self.generate_slots(start_time, end_time, interval)
+
+            if not slots:
+                continue
+
+            # Uniqueness enforced by update_or_create (overwrite for admin)
+            availability, _created = Availability.objects.update_or_create(
+                barber=barber,
+                date=date,
+                defaults={"slots": slots}
+            )
+            availabilities.append(availability)
+
+        return availabilities
 
 
 class UpdateBarberAvailabilitySerializer(BarberValidationMixin, AvailabilityValidationMixin, serializers.Serializer):

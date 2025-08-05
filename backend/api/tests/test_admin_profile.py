@@ -334,36 +334,45 @@ class AdminProfileTest(APITestCase):
 
     def test_create_availability_success(self):
         """
-        Admin can create a barber's availability for a date/slots.
+        Admin can create a barber's availability for a single date via new bulk API schema.
         """
         self.login_as_admin()
         url = reverse("create_barber_availability", kwargs={"barber_id": self.barber.id})
         today = datetime.date.today()
-        slots = ["10:00", "11:00"]
-        slots_as_times = [datetime.time(int(s.split(":")[0]), int(s.split(":")[1])) for s in slots]
-        resp = self.client.post(
-            url, {"date": str(today), "slots": slots}, format="json"
-        )
+        data = {
+            "start_date": str(today),
+            "start_time": "10:00",
+            "end_time": "12:00",
+            "slot_interval": 60,   # so slots: ["10:00", "11:00"], same as old test
+        }
+        resp = self.client.post(url, data, format="json")
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
         self.assertIn("created successfully", resp.data["detail"])
         self.assertTrue(Availability.objects.filter(barber=self.barber, date=today).exists())
         avail = Availability.objects.get(barber=self.barber, date=today)
-        self.assertEqual(sorted(avail.slots), sorted(slots))
+        self.assertEqual(sorted(avail.slots), ["10:00", "11:00"])
 
 
-    def test_create_availability_duplicate(self):
+    def test_create_availability_upserts(self):
         """
-        Cannot create two availabilities for same barber and date.
+        Creating for same barber/date should update the availability (not fail).
         """
         today = datetime.date.today()
         Availability.objects.create(barber=self.barber, date=today, slots=["09:00"])
         self.login_as_admin()
         url = reverse("create_barber_availability", kwargs={"barber_id": self.barber.id})
-        resp = self.client.post(
-            url, {"date": str(today), "slots": ["10:00"]}, format="json"
-        )
-        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("already exists", str(resp.data["detail"]))
+        data = {
+            "start_date": str(today),
+            "start_time": "10:00",
+            "end_time": "12:00",
+            "slot_interval": 60,   # slots: ["10:00", "11:00"]
+        }
+        resp = self.client.post(url, data, format="json")
+        # Now should be 201, not 400; upsert/overwrite OK
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        self.assertIn("created successfully", resp.data["detail"])
+        avail = Availability.objects.get(barber=self.barber, date=today)
+        self.assertEqual(sorted(avail.slots), ["10:00", "11:00"])
 
 
     def test_create_availability_requires_admin(self):

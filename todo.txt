@@ -20,12 +20,9 @@ Important:
   - admins:
     - add date_joined to barbers and clients pagination pages
 
-    - add create mutliple avaiabiities api endpoint (takes in start date, end date, start slot, end slot, 30 min interval each)
-      - deprecate (readapt it's logic in a loop for each) singular create availability endpoint (useless can just select same start/end date or no end date)
-    
     - add create new availability action (this runs new and only create multiple availabilities api endpoint)
-      - opens popup, select: date start-end and hour stard-end, ( same start-end date or no end date for singular new availability)
-    
+      - opens popup, enter fields required by the api endpoint
+      
     - add edit availability (action button next to delete)
     - add delete availabillity (actions button next to edit)
         
