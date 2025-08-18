@@ -50,14 +50,14 @@ function ConfirmationStep() {
     fetchBarberServices();
   }, [fetchBarberServices]);
 
-  // Find selected barber and service
-  const barber = barbers.find((b) => String(b.id) === String(fields.barber_id));
+  // Find selected barber and services
+  const selectedBarber = barbers.find((b) => String(b.id) === String(fields.barber_id));
   const selectedServices = services.filter((srv) => fields.services?.includes(String(srv.id)));
 
   return (
     <div>
       <div>
-        <b>Barber:</b> {barber ? `${barber.name} ${barber.surname}` : fields.barber_id}
+        <b>Barber:</b> {selectedBarber ? `${selectedBarber.name} ${selectedBarber.surname}` : fields.barber_id}
       </div>
       <div>
         <b>Services:</b> {selectedServices.length ? selectedServices.map((s) => s.name).join(', ') : fields.services?.join(', ')}
