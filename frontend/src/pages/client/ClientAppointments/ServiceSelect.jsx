@@ -8,58 +8,59 @@ import api from '@api';
  */
 const ServiceSelect = () => {
   const { fields, handleChange } = useForm();
+
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(false);
-  const barberId = fields.barber_id;
 
-  // Helper: coerce to array (handle blank or undefined)
-  const selected = Array.isArray(fields.services) ? fields.services : fields.services ? [fields.services] : [];
+  // Coerces to array, handles blank or undefined
+  const selectedServices = Array.isArray(fields.services) ? fields.services : fields.services ? [fields.services] : [];
 
-  // Fetch all offered services for the current barber
-  const fetchServices = useCallback(async (barberId, signal) => {
+  /**
+   * Fetches all offered services for the current barber from the API
+   */
+  const fetchServices = useCallback(async (barberId) => {
     setLoading(true);
+
     try {
-      const data = await api.pub.getBarberServicesPublic(barberId, { signal });
-      setServices(data.services || []);
-    } catch (error) {
-      if (error.name !== 'AbortError') {
-        setServices([]);
-      }
+      const { services } = await api.pub.getBarberServicesPublic(barberId);
+      setServices(services);
+    } catch {
+      setServices([]);
     } finally {
       setLoading(false);
     }
   }, []);
 
+  /**
+   * useEffect to fetch services on mount
+   */
   useEffect(() => {
-    if (!barberId) {
+    if (!fields.barber_id) {
       setServices([]);
       return;
     }
-    const controller = new AbortController();
-    fetchServices(barberId, controller.signal);
-    return () => controller.abort();
-  }, [barberId, fetchServices]);
 
-  if (!barberId) return <div>Please select a barber first.</div>;
+    fetchServices(fields.barber_id);
+  }, [fields.barber_id, fetchServices]);
 
-  // Custom handler for checkboxes to manage multiple selection
+  // If no barber is selected
+  if (!fields.barber_id) return <div>Please select a barber first.</div>;
+
+  /**
+   * Custom handler for checkboxes to manage multiple selection
+   */
   const handleCheckbox = (e) => {
     const id = e.target.value;
     let newSelected;
+
     if (e.target.checked) {
-      // add id if not present
-      newSelected = [...selected, id];
+      newSelected = [...selectedServices, id]; // add id if not present
     } else {
-      // remove id
-      newSelected = selected.filter((sid) => String(sid) !== String(id));
+      newSelected = selectedServices.filter((sid) => String(sid) !== String(id)); // remove id
     }
-    // synthesize an event matching the change handler's expectations
-    handleChange({
-      target: {
-        name: 'services',
-        value: newSelected,
-      },
-    });
+
+    // synthesizes an event matching the change handler's expectations
+    handleChange({ target: { name: 'services', value: newSelected } });
   };
 
   /**
@@ -69,12 +70,13 @@ const ServiceSelect = () => {
     <fieldset style={{ border: 0, padding: 0, margin: 0 }}>
       <legend>Select one or more services:</legend>
       {loading && <div>Loading services...</div>}
+
       {services.map(({ id, name, price }) => (
         <label key={id} style={{ display: 'block', marginBottom: 4 }}>
           <input
             type="checkbox"
             value={String(id)}
-            checked={selected.includes(String(id))}
+            checked={selectedServices.includes(String(id))}
             onChange={handleCheckbox}
             disabled={loading}
           />{' '}

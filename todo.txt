@@ -30,6 +30,9 @@ Important:
       - workflow: select create review action, opens popup with barbers which you have completed appointtments with, select one and write review,
         readapt client appointments page steps based moodal for this
 
+  - public:
+    - don't show booked slots for barber availabilities
+    
 Proposed:
 
   - add view barber profile on clicking barber (idk if i should add this)

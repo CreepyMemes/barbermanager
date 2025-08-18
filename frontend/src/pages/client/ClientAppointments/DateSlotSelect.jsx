@@ -7,21 +7,17 @@ const DateSlotSelect = () => {
   const [loading, setLoading] = useState(false);
   const [availabilities, setAvailabilities] = useState([]);
 
-  const barberId = fields.barber_id;
-
   /**
-   * Asynchronously fetches the barber's availabilities from the API, wrapped in useCallback for memoization
+   * Fetches the barber's availabilities from the API
    */
-  const fetchAvailabilities = useCallback(async (barberId, signal) => {
+  const fetchAvailabilities = useCallback(async (barberId) => {
     setLoading(true);
 
     try {
-      const data = await api.pub.getBarberAvailabilitiesPublic(barberId, { signal });
+      const data = await api.pub.getBarberAvailabilitiesPublic(barberId);
       setAvailabilities(data.availabilities || []);
-    } catch (error) {
-      if (error.name !== 'AbortError') {
-        setAvailabilities([]);
-      }
+    } catch {
+      setAvailabilities([]);
     } finally {
       setLoading(false);
     }
@@ -31,19 +27,19 @@ const DateSlotSelect = () => {
    * useEffect to fetch availabilities on mount
    */
   useEffect(() => {
-    if (!barberId) {
+    if (!fields.barber_id) {
       setAvailabilities([]);
       return;
     }
-    const controller = new AbortController();
-    fetchAvailabilities(barberId, controller.signal);
-    return () => controller.abort();
-  }, [barberId, fetchAvailabilities]);
+
+    fetchAvailabilities(fields.barber_id);
+  }, [fields.barber_id, fetchAvailabilities]);
 
   // If no barber is selected
-  if (!barberId) return <div>Please select a barber first.</div>;
+  if (!fields.barber_id) return <div>Please select a barber first.</div>;
 
-  const currentAvailability = availabilities.find((a) => a.date === fields.date);
+  // Find selected availability
+  const selectedAvailability = availabilities.find((a) => a.date === fields.date);
 
   /**
    *  Renders a select dropdown for barbers's availability slot
@@ -75,7 +71,7 @@ const DateSlotSelect = () => {
         required //
       >
         <option value="">Select timeslot...</option>
-        {currentAvailability?.slots?.map((slot) => (
+        {selectedAvailability?.slots?.map((slot) => (
           <option key={slot} value={slot}>
             {slot}
           </option>

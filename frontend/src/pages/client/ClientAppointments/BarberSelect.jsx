@@ -2,6 +2,10 @@ import { useEffect, useState, useCallback } from 'react';
 import { useForm } from '@hooks/useForm';
 import api from '@api';
 
+/**
+ * Dropdown selection list for barbers.
+ * Selected id is stored in `fields.barber_id`
+ */
 const BarberSelect = () => {
   const { fields, handleChange } = useForm();
 
@@ -9,18 +13,16 @@ const BarberSelect = () => {
   const [loading, setLoading] = useState(true);
 
   /**
-   * Asynchronously fetchess barbers from the API, wrapped in useCallback for memoization
+   * Fetches barbers from the API
    */
-  const fetchBarbers = useCallback(async (signal) => {
+  const fetchBarbers = useCallback(async () => {
     setLoading(true);
 
     try {
-      const data = await api.pub.getBarbersPublic({ signal });
-      setBarbers(data.barbers || []);
-    } catch (error) {
-      if (error.name !== 'AbortError') {
-        setBarbers([]);
-      }
+      const result = await api.pub.getBarbersPublic();
+      setBarbers(result.barbers || []);
+    } catch {
+      setBarbers([]);
     } finally {
       setLoading(false);
     }
@@ -30,9 +32,7 @@ const BarberSelect = () => {
    * useEffect to fetch barbers on mount
    */
   useEffect(() => {
-    const controller = new AbortController();
-    fetchBarbers(controller.signal);
-    return () => controller.abort();
+    fetchBarbers();
   }, [fetchBarbers]);
 
   /**
@@ -47,6 +47,7 @@ const BarberSelect = () => {
       required //
     >
       <option value="">Select barber...</option>
+
       {barbers.map(({ id, name, surname, username }) => (
         <option key={id} value={id}>
           ({username}) {name} {surname}
