@@ -37,6 +37,7 @@ import IdIcon from './id.svg?react';
 import CommentIcon from './comment.svg?react';
 import ScissorsIcon from './scissors.svg?react';
 import ImageIcon from './image.svg?react';
+import CheckIcon from './check.svg?react';
 
 const icons = {
   github: GithubIcon,
@@ -78,6 +79,7 @@ const icons = {
   comment: CommentIcon,
   scissors: ScissorsIcon,
   image: ImageIcon,
+  check: CheckIcon,
 };
 
 export default icons;
