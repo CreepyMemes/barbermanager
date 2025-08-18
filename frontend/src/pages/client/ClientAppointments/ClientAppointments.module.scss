@@ -1,0 +1,95 @@
+@use '@styles/variables.module.scss' as *;
+
+.client-appointments {
+  padding: 5rem;
+
+  .action {
+    padding-block: 1rem;
+
+    display: flex;
+    justify-content: space-between;
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .refresh-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+
+      .line {
+        display: flex;
+        gap: 1rem;
+      }
+    }
+  }
+
+  .table-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .table-title-name {
+      display: block;
+      height: 1.7rem;
+      font-weight: 600;
+    }
+  }
+
+  .date-container {
+    display: flex;
+    flex-direction: start;
+
+    .date {
+      width: 6.5rem;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .date {
+        font-size: 1.15rem;
+        font-weight: 600;
+      }
+
+      .slot {
+        color: $color-primary;
+        font-size: 1.05rem;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .amount-spent {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .amount {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+  }
+
+  .services {
+    font-size: 1.08rem;
+    font-weight: 600;
+
+    .no-services {
+      color: $color-primary;
+      font-style: italic;
+      font-weight: 500;
+    }
+  }
+
+  .status-tag,
+  .reminder-tag {
+    width: 8rem;
+    text-align: center;
+  }
+}
