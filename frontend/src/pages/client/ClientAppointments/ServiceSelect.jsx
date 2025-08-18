@@ -6,7 +6,7 @@ import api from '@api';
  * Checkbox multi-select for services.
  * Selected ids are stored in `fields.services` (array of string or number).
  */
-const ServiceSelect = () => {
+function ServiceSelect() {
   const { fields, handleChange } = useForm();
 
   const [services, setServices] = useState([]);
@@ -86,6 +86,6 @@ const ServiceSelect = () => {
       {services.length === 0 && !loading && <div>No services for this barber.</div>}
     </fieldset>
   );
-};
+}
 
 export default ServiceSelect;

@@ -2,7 +2,11 @@ import { useEffect, useState, useCallback } from 'react';
 import { useForm } from '@hooks/useForm';
 import api from '@api';
 
-const DateSlotSelect = () => {
+/**
+ * Dropdown selection list for date and slot.
+ * Selected id is stored in `fields.date` and `fields.slot`
+ */
+function DateSlotSelect() {
   const { fields, handleChange } = useForm();
   const [loading, setLoading] = useState(false);
   const [availabilities, setAvailabilities] = useState([]);
@@ -79,6 +83,6 @@ const DateSlotSelect = () => {
       </select>
     </>
   );
-};
+}
 
 export default DateSlotSelect;

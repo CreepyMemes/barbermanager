@@ -6,7 +6,7 @@ import api from '@api';
  * Dropdown selection list for barbers.
  * Selected id is stored in `fields.barber_id`
  */
-const BarberSelect = () => {
+function BarberSelect() {
   const { fields, handleChange } = useForm();
 
   const [barbers, setBarbers] = useState([]);
@@ -55,6 +55,6 @@ const BarberSelect = () => {
       ))}
     </select>
   );
-};
+}
 
 export default BarberSelect;
