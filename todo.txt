@@ -15,9 +15,9 @@ Proposed:
 
 Important:  
 
-  - fix trash and warning icons in the buttons not getting white when hovered in profile settings (works in dev not in prod)
-  - return availabilities in date sorted order, (not text based as it is rn) 
-
+  - misc:
+    - stylize barbers dropdown list, services checkbox and dateslot dropdown list with better data
+    
   - admins:
     - add date_joined to barbers and clients pagination pages
         
@@ -32,7 +32,10 @@ Important:
 
   - public:
     - don't show booked slots for barber availabilities
-    
+
+  - fix trash and warning icons in the buttons not getting white when hovered in profile settings (works in dev not in prod)
+  - return availabilities from API in date sorted order, (not text based as it is rn) 
+
 Proposed:
 
   - add view barber profile on clicking barber (idk if i should add this)

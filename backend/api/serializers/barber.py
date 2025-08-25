@@ -92,6 +92,33 @@ class GetBarberAvailabilitiesSerializer(BarberValidationMixin, GetAvailabilities
         return {'availabilities': self.get_availabilities_public(barber.id)}
 
 
+class GetBarberSlotsSerializer(BarberValidationMixin, GetAvailabilitiesMixin, serializers.Serializer):
+    """
+    Barber only: Returns all slots for a given barber and date
+    """
+    date = serializers.DateField(required=True)
+
+    def validate(self, attrs):
+        attrs = self.validate_barber(attrs)
+        return attrs
+
+    def to_representation(self, validated_data):
+        barber = validated_data['barber']
+        date = validated_data['date']
+
+        from ..models import Availability
+
+        # Find the matching availability instance for the barber and date
+        try:
+            availability = Availability.objects.get(barber=barber, date=date)
+        except Availability.DoesNotExist:
+            return {"slots": []}
+
+        # Optionally filter slots if date is today
+        slots = self._filter_slots_future(availability)
+        return {"slots": slots}
+
+
 class GetBarberServicesSerializer(BarberValidationMixin, GetServicesMixin, serializers.Serializer):
     """
     Barber only: Returns all services offered by a given barber

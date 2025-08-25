@@ -54,6 +54,7 @@ export const ENDPOINTS = {
   public: {
     barbers: '/public/barbers/',
     barberAvailabilities: (barberId) => `/public/barbers/${barberId}/availabilities/`,
+    barberSlots: (barberId) => `/public/barbers/${barberId}/slots/`,
     barberProfile: (barberId) => `/public/barbers/${barberId}/profile/`,
     barberServices: (barberId) => `/public/barbers/${barberId}/services/`,
     clientProfile: (clientId) => `/public/clients/${clientId}/profile/`,
