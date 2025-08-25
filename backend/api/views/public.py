@@ -7,6 +7,7 @@ from rest_framework import status
 from ..serializers import (
     GetBarbersPublicSerializer,
     GetBarberAvailabilitiesSerializer,
+    GetBarberSlotsSerializer,
     GetBarberServicesSerializer,
     GetBarberProfilePublicSerializer,
     GetClientProfilePublicSerializer
@@ -77,6 +78,25 @@ def get_barber_availabilities_public(request, barber_id):
     Get all availabilities for a specific barber.
     """
     serializer = GetBarberAvailabilitiesSerializer(data={}, context={'barber_id': barber_id})
+    serializer.is_valid(raise_exception=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@extend_schema(
+    methods=['POST'],
+    request=GetBarberSlotsSerializer,
+    responses={2010: OpenApiResponse(description="Returns the time slots for the selected date")},
+    description="Get all slots for a barber on a given date. (Public)"
+)
+@api_view(['POST'])
+@permission_classes([AllowAny])
+@authentication_classes([])
+@parser_classes([JSONParser])
+def get_barber_slots_public(request, barber_id):
+    """
+    Get all slots for a given barber and date (date in JSON).
+    """
+    serializer = GetBarberSlotsSerializer(data=request.data, context={'barber_id': barber_id})
     serializer.is_valid(raise_exception=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 

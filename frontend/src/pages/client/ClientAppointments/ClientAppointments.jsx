@@ -1,14 +1,12 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@hooks/useAuth';
+import { useForm } from '@hooks/useForm';
 import styles from './ClientAppointments.module.scss';
 import api from '@api';
 
-import BarberSelect from './BarberSelect';
-import ServiceSelect from './ServiceSelect';
-import DateSlotSelect from './DateSlotSelect';
-import ConfirmationStep from './ConfirmationStep';
-
 import Pagination from '@components/common/Pagination/Pagination';
+import Input from '@components/common/Input/Input';
+
 import Modal from '@components/common/Modal/Modal';
 import Icon from '@components/common/Icon/Icon';
 import Tag from '@components/common/Tag/Tag';
@@ -113,6 +111,195 @@ function ClientAppointments() {
     closeCancelPopup();
     await fetchAppointments();
   };
+
+  /**
+   * Function that fetches and returns all barbers from the API (useCallback to fix endless loop)
+   */
+  const fetchBarbers = useCallback(async () => {
+    const { barbers } = await api.pub.getBarbersPublic();
+    return barbers;
+  }, []);
+
+  /**
+   * Function that fetches and returns all services of the selected barber from the API (useCallback to fix endless loop)
+   */
+  const fetchServices = useCallback(async (barberId) => {
+    if (!barberId) return [];
+
+    const { services } = await api.pub.getBarberServicesPublic(barberId);
+    return services;
+  }, []);
+
+  /**
+   * Barbers selection component to render the dropdown input of barbers to be selected
+   */
+  const BarerSelect = () => {
+    return (
+      <Input
+        type="dropdown"
+        name="barber_id"
+        label="Barber"
+        fetcher={fetchBarbers}
+        mapOption={(barber) => ({ key: barber.id, value: `(${barber.username}) ${barber.name} ${barber.surname}` })}
+        required //
+      />
+    );
+  };
+
+  /**
+   * Services selection component to render the checkbox input of services to be selected
+   */
+  const ServiceSelect = () => {
+    const { fields } = useForm();
+
+    // If no barber is selected render error
+    if (!fields.barber_id) return <div>Please select a barber first.</div>;
+
+    return (
+      <Input
+        type="checkbox"
+        name="services"
+        label="Select one or more services"
+        fetcher={() => fetchServices(fields.barber_id)}
+        mapOption={(service) => ({ key: String(service.id), value: `${service.name} (${service.price})` })}
+        required //
+      />
+    );
+  };
+
+  /**
+   * Date and slot selection component to render the dropdown input of dates and slots to be selected
+   */
+  const DateSlotSelect = () => {
+    const { fields } = useForm();
+
+    /**
+     * Function that fetches all availabilities dates of the selected barber from the API (useCallback to fix endless loop)
+     */
+    const fetchAvailabilities = useCallback(async (barberId) => {
+      if (!barberId) return [];
+
+      const { availabilities } = await api.pub.getBarberAvailabilitiesPublic(barberId);
+      return availabilities;
+    }, []);
+
+    /**
+     * Function that fetches all slots of the selected availability date from the API (useCallback to fix endless loop)
+     */
+    const fetchSlots = useCallback(async (barberId, date) => {
+      if (!barberId || !date) return [];
+      const { slots } = await api.pub.getBarberSlotsPublic(barberId, { date });
+
+      return slots;
+    }, []);
+
+    // If no barber is selected render error
+    if (!fields.barber_id) return <div>Please select a barber first.</div>;
+
+    return (
+      <>
+        <Input
+          type="dropdown"
+          name="date"
+          label="Date"
+          fetcher={() => fetchAvailabilities(fields.barber_id)}
+          mapOption={(availability) => ({ key: availability.date, value: availability.date })}
+          required //
+        />
+
+        <Input
+          type="dropdown"
+          name="slot"
+          label="Slot"
+          fetcher={() => fetchSlots(fields.barber_id, fields.date)}
+          mapOption={(slot) => ({ key: slot, value: slot })}
+          disabled={!fields.date}
+          required //
+        />
+      </>
+    );
+  };
+
+  /**
+   * Confirmation step component to display current selection prior to submission
+   */
+  function ConfirmationStep() {
+    const { fields } = useForm();
+
+    const [barbers, setBarbers] = useState([]);
+    const [services, setServices] = useState([]);
+    const [loadingBarbers, setLoadingBarbers] = useState(false);
+    const [loadingServices, setLoadingServices] = useState(false);
+
+    /**
+     * Function that fetches all barbers from API
+     */
+    const loadBarbers = useCallback(async () => {
+      setLoadingBarbers(true);
+
+      try {
+        const result = await fetchBarbers();
+        setBarbers(result || []);
+      } finally {
+        setLoadingBarbers(false);
+      }
+    }, []);
+
+    /**
+     * Function that fetches all services for the selected barber from API
+     */
+    const loadServices = useCallback(async (barberId) => {
+      setLoadingServices(true);
+
+      try {
+        const result = await fetchServices(barberId);
+        setServices(result || []);
+      } finally {
+        setLoadingServices(false);
+      }
+    }, []);
+
+    /**
+     * Fetches all barbers on mount
+     */
+    useEffect(() => {
+      loadBarbers();
+    }, [loadBarbers]);
+
+    /**
+     * Fetches all selected barber's offered services on mount
+     */
+    useEffect(() => {
+      loadServices(fields.barber_id);
+    }, [loadServices, fields.barber_id]);
+
+    // Find selected barber and services
+    const selectedBarber = barbers.find((barber) => String(barber.id) === String(fields.barber_id));
+    const selectedServices = services.filter((service) => fields.services?.includes(String(service.id)));
+
+    return (
+      <div>
+        <div>
+          <b>Barber:</b>
+          {loadingBarbers ? 'Loading...' : selectedBarber ? `${selectedBarber.name} ${selectedBarber.surname}` : fields.barber_id}
+        </div>
+        <div>
+          <b>Services:</b>
+          {loadingServices
+            ? 'Loading...'
+            : selectedServices.length
+              ? selectedServices.map((s) => s.name).join(', ')
+              : fields.services?.join(', ')}
+        </div>
+        <div>
+          <b>Date:</b> {fields.date}
+        </div>
+        <div>
+          <b>Time Slot:</b> {fields.slot}
+        </div>
+      </div>
+    );
+  }
 
   // Only render UI for admins; otherwise, render nothing
   if (!profile || profile.role !== 'CLIENT') return null;
@@ -283,7 +470,7 @@ function ClientAppointments() {
         <Modal.Step validate={(fields) => (!fields.barber_id ? 'You must select a barber.' : undefined)}>
           <Modal.Title icon="barber">Choose Barber</Modal.Title>
           <Modal.Description>Please choose the barber you want to book.</Modal.Description>
-          <BarberSelect />
+          <BarerSelect />
         </Modal.Step>
 
         {/* STEP 2: Select Services */}

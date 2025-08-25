@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useForm } from '@hooks/useForm';
 import styles from './Input.module.scss';
 
@@ -6,39 +6,104 @@ import Button from '@components/common/Button/Button';
 import Icon from '@components/common/Icon/Icon';
 
 function Input({
-  label,
+  // General use
   type = 'text',
-  min,
-  step,
-  name,
-  required,
-  autoComplete,
-  disabled,
   size = 'md',
+  name,
+  label,
   placeholder,
+  disabled,
+  required,
+
+  // For Standard input
+  autoComplete,
   hide,
-  accept, // for file inputs
+  step,
+  min,
+
+  // For file input
+  accept,
+
+  // For dropdown and checkbox selections
+  fetcher,
+  mapOption,
 }) {
   const { fields, handleChange } = useForm();
-  const [showPassword, setShowPassword] = useState(false);
-  const inputRef = useRef(null);
 
   // Get all style classes into a string
   const className = [styles.input, styles[size]].join(' ');
 
-  // File upload functionality
-  const inputId = `input-${name}`;
+  // Dropdown & Checkbox options state
+  const [selectOptions, setSelectOptions] = useState([]);
+  const [selectLoading, setSelectLoading] = useState(false);
+  const [selectError, setSelectError] = useState('');
+
+  // Password Input state
+  const [showPassword, setShowPassword] = useState(false);
+
+  // File input functionality
+  const fileInputRef = useRef(null);
+  const fileInputId = `input-${name}`;
 
   // Password eye toggle functionality
   const showEye = type === 'password' && !hide;
   const inputType = showEye && showPassword ? 'text' : type;
 
+  // The selected item from tthet checkbox input
+  const checkboxSelected = Array.isArray(fields[name]) ? fields[name].map(String) : fields[name] ? [String(fields[name])] : [];
+
+  /**
+   * Runs the passed fetcher function to get all options for dropdown or checkbox
+   */
+  const fetchOptions = useCallback(async () => {
+    if (!fetcher) return;
+
+    setSelectLoading(true);
+    setSelectError('');
+
+    try {
+      const options = await fetcher();
+      setSelectOptions(mapOption ? options.map(mapOption) : options);
+    } catch {
+      setSelectOptions([]);
+      setSelectError('Failed to load options');
+    } finally {
+      setSelectLoading(false);
+    }
+  }, [fetcher, mapOption]);
+
+  /**
+   * Handles changing values based on selected checkboxes
+   */
+  const handleCheckbox = (e) => {
+    const id = e.target.value;
+    let newSelected;
+
+    if (e.target.checked) {
+      newSelected = [...checkboxSelected, id];
+    } else {
+      newSelected = checkboxSelected.filter((sid) => sid !== id);
+    }
+
+    // Synthesize event for useForm's handleChange
+    handleChange({ target: { name, value: newSelected } });
+  };
+
+  /**
+   * Fetches the passed fetcher function on mount if on dropdown mode
+   */
+  useEffect(() => {
+    if ((type === 'dropdown' || type === 'checkbox') && fetcher) {
+      fetchOptions();
+    }
+  }, [type, fetchOptions, fetcher]);
+
   /**
    * Handler for opening the window to upload a file when upload button is clicked
    */
   const handleUploadButton = () => {
-    if (!disabled && inputRef.current) {
-      inputRef.current.click();
+    if (!disabled && fileInputRef.current) {
+      fileInputRef.current.click();
     }
   };
 
@@ -54,19 +119,68 @@ function Input({
     });
   };
 
-  // Handler for toggling the password hiding
-  const handleToggleShow = () => {
-    setShowPassword((v) => !v);
-  };
+  // --- Checkbox Selection ---
+  if (type === 'checkbox') {
+    return (
+      <fieldset>
+        <legend>{label}</legend>
 
-  // If input type is a file
+        {selectOptions.map((option) => (
+          <label key={option.key} style={{ display: 'block' }}>
+            <input
+              type="checkbox"
+              value={option.key}
+              checked={checkboxSelected.includes(option.key)}
+              onChange={handleCheckbox}
+              disabled={selectLoading || disabled} //
+            />
+            {option.value}
+          </label>
+        ))}
+        {selectOptions.length === 0 && !selectLoading && !selectError && <div>No options</div>}
+
+        {selectLoading && <span>Loading…</span>}
+        {selectError && <span>{selectError}</span>}
+      </fieldset>
+    );
+  }
+
+  // --- Dropdown Selection ---
+  if (type === 'dropdown') {
+    return (
+      <label>
+        {label}
+        <select
+          className={className}
+          name={name}
+          value={fields[name] || ''}
+          onChange={handleChange}
+          disabled={selectLoading || disabled}
+          required={required} //
+        >
+          <option value="">{placeholder || 'Select...'}</option>
+
+          {selectOptions.map((option) => (
+            <option key={option.key} value={option.key}>
+              {option.value}
+            </option>
+          ))}
+        </select>
+
+        {selectLoading && <span className={styles.loading}>Loading...</span>}
+        {selectError && <span className={styles.error}>{selectError}</span>}
+      </label>
+    );
+  }
+
+  // --- File Input ---
   if (type === 'file') {
     return (
       <div className={styles.fileInput}>
         <input
           className={styles.fileInputField}
-          ref={inputRef}
-          id={inputId}
+          ref={fileInputRef}
+          id={fileInputId}
           type="file"
           name={name}
           accept={accept}
@@ -84,7 +198,7 @@ function Input({
           disabled={disabled}
           onClick={handleUploadButton}
           tabIndex={0}
-          aria-controls={inputId}
+          aria-controls={fileInputId}
         >
           <Icon name="plus" size="ty" />
           <span>{fields[name]?.name || placeholder || 'Choose a file'}</span>
@@ -93,7 +207,7 @@ function Input({
     );
   }
 
-  // Normal input (text, number, password, etc.)
+  // --- Standard Input (text, number, password, etc.) ---
   return (
     <label className={styles.label}>
       {label}
@@ -117,7 +231,7 @@ function Input({
           <Button
             className={styles.eyeBtn}
             type="button"
-            onClick={handleToggleShow}
+            onClick={() => setShowPassword((v) => !v)}
             tabIndex={-1}
             color="animated"
             size="sm"
