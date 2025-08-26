@@ -27,6 +27,7 @@ function Input({
   // For dropdown and checkbox selections
   fetcher,
   mapOption,
+  reloadKey,
 }) {
   const { fields, handleChange } = useForm();
 
@@ -37,6 +38,7 @@ function Input({
   const [selectOptions, setSelectOptions] = useState([]);
   const [selectLoading, setSelectLoading] = useState(false);
   const [selectError, setSelectError] = useState('');
+  const [hasLoaded, setHasLoaded] = useState(false);
 
   // Password Input state
   const [showPassword, setShowPassword] = useState(false);
@@ -69,6 +71,7 @@ function Input({
       setSelectError('Failed to load options');
     } finally {
       setSelectLoading(false);
+      setHasLoaded(true);
     }
   }, [fetcher, mapOption]);
 
@@ -90,13 +93,22 @@ function Input({
   };
 
   /**
+   * Resets cache if the relevant dependencies change
+   */
+  useEffect(() => {
+    setHasLoaded(false);
+    setSelectOptions([]);
+    setSelectError('');
+  }, [reloadKey]);
+
+  /**
    * Fetches the passed fetcher function on mount if on dropdown mode
    */
   useEffect(() => {
-    if ((type === 'dropdown' || type === 'checkbox') && fetcher) {
+    if ((type === 'dropdown' || type === 'checkbox') && fetcher && !hasLoaded) {
       fetchOptions();
     }
-  }, [type, fetchOptions, fetcher]);
+  }, [type, fetcher, fetchOptions, hasLoaded]);
 
   /**
    * Handler for opening the window to upload a file when upload button is clicked
@@ -122,25 +134,28 @@ function Input({
   // --- Checkbox Selection ---
   if (type === 'checkbox') {
     return (
-      <fieldset>
-        <legend>{label}</legend>
+      <fieldset className={styles.checkboxGroup} disabled={selectLoading || disabled}>
+        <legend className={styles.label}>{label}</legend>
+        <div className={styles.checkboxList}>
+          {selectOptions.map((option) => (
+            <label key={option.key} className={styles.checkboxLabel}>
+              <input
+                className={styles.checkboxInput}
+                type="checkbox"
+                value={option.key}
+                checked={checkboxSelected.includes(option.key)}
+                onChange={handleCheckbox}
+                disabled={selectLoading || disabled}
+              />
+              <span className={styles.checkboxCustom} />
+              <span className={`${styles.checkboxText} ${styles[size]}`}>{option.value}</span>
+            </label>
+          ))}
+        </div>
 
-        {selectOptions.map((option) => (
-          <label key={option.key} style={{ display: 'block' }}>
-            <input
-              type="checkbox"
-              value={option.key}
-              checked={checkboxSelected.includes(option.key)}
-              onChange={handleCheckbox}
-              disabled={selectLoading || disabled} //
-            />
-            {option.value}
-          </label>
-        ))}
-        {selectOptions.length === 0 && !selectLoading && !selectError && <div>No options</div>}
-
-        {selectLoading && <span>Loading…</span>}
-        {selectError && <span>{selectError}</span>}
+        {!hasLoaded && selectLoading && <span className={styles.loading}>Loading...</span>}
+        {selectOptions.length === 0 && !selectLoading && !selectError && <div className={styles.checkboxEmpty}>No options</div>}
+        {selectError && <span className={styles.error}>{selectError}</span>}
       </fieldset>
     );
   }
@@ -148,26 +163,28 @@ function Input({
   // --- Dropdown Selection ---
   if (type === 'dropdown') {
     return (
-      <label>
+      <label className={styles.label}>
         {label}
-        <select
-          className={className}
-          name={name}
-          value={fields[name] || ''}
-          onChange={handleChange}
-          disabled={selectLoading || disabled}
-          required={required} //
-        >
-          <option value="">{placeholder || 'Select...'}</option>
+        <span className={styles.inputWrapper}>
+          <select
+            className={`${styles.input} ${styles.select} ${styles[size]}`}
+            name={name}
+            value={fields[name] || ''}
+            onChange={handleChange}
+            disabled={selectLoading || disabled}
+            required={required}
+          >
+            <option value="">{!hasLoaded && selectLoading ? 'Loading...' : placeholder || 'Select...'}</option>
+            {selectOptions.map((option) => (
+              <option key={option.key} value={option.key}>
+                {option.value}
+              </option>
+            ))}
+          </select>
 
-          {selectOptions.map((option) => (
-            <option key={option.key} value={option.key}>
-              {option.value}
-            </option>
-          ))}
-        </select>
+          <Icon className={styles.selectArrow} name={'arrow_down'} size="ty" black />
+        </span>
 
-        {selectLoading && <span className={styles.loading}>Loading...</span>}
         {selectError && <span className={styles.error}>{selectError}</span>}
       </label>
     );
