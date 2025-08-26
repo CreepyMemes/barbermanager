@@ -16,10 +16,9 @@ Proposed:
 Important:  
 
   - misc:
-    - stylize barbers dropdown list, services checkbox and dateslot dropdown list with better data
-
     - fix trash and warning icons in the buttons not getting white when hovered in profile settings (works in dev not in prod)
     - return availabilities from API in date sorted order, (not text based as it is rn) 
+    - return appointmentss from API in date sorted order, (active more recent on top)
 
   - admins:
     - add date_joined to barbers and clients pagination pages
@@ -34,7 +33,6 @@ Important:
         readapt client appointments page steps based moodal for this
 
 Proposed:
-
   - add view barber profile on clicking barber (idk if i should add this)
 
   - enhance popup (or modal at this point) to stop it from being closed while loading

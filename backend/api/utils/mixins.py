@@ -624,7 +624,7 @@ class GetAppointmentsMixin:
     def get_appointments_queryset(self, barber_id=None, client_id=None, show_all=False):
         """
         Returns Appointment queryset filtered by barber or client.
-        If show_all is True, returns all appointments.
+        If show_all is True, returns all appointments. (For admin use only!)
         """
         from ..models import Appointment
 
