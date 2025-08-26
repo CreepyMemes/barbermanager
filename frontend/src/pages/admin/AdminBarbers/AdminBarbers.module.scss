@@ -1,7 +1,7 @@
 @use '@styles/variables.module.scss' as *;
 
 .admin-barbers {
-  padding: 5rem;
+  margin: 5rem;
 
   .action {
     padding-block: 1rem;
@@ -64,5 +64,10 @@
   .tag {
     width: 7rem;
     text-align: center; // centers text in tag
+  }
+
+  .actions {
+    display: flex;
+    gap: 2rem;
   }
 }

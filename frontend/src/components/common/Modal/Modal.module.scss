@@ -1,33 +1,33 @@
 @use '@styles/variables.module.scss' as *;
 
-.create-service-popup {
+.modal-popup {
   padding: 5rem;
 
-  .create-service {
+  .modal {
     width: 40rem;
 
-    .create-service-header {
+    .modal-header {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 1rem;
 
-      .create-service-title {
+      .modal-title {
         font-size: 2.5rem;
         font-weight: 600;
       }
     }
 
-    .create-service-content {
+    .modal-content {
       margin-top: 2rem;
 
-      .create-service-text {
+      .modal-description {
         text-align: center;
         font-size: 1.5rem;
       }
     }
 
-    .create-service-field {
+    .modal-field {
       margin-top: 2.5rem;
 
       display: flex;
@@ -35,7 +35,7 @@
       gap: 1rem;
     }
 
-    .create-service-action {
+    .modal-action {
       margin-block: 2rem;
       display: flex;
       justify-content: space-between;

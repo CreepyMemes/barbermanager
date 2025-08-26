@@ -5,7 +5,7 @@ import api from '@api';
 
 import Pagination from '@components/common/Pagination/Pagination';
 import Icon from '@components/common/Icon/Icon';
-import Profile from '@components/common/Profile/Profile';
+import Profile from '@components/ui/Profile/Profile';
 import Tag from '@components/common/Tag/Tag';
 import Button from '@components/common/Button/Button';
 import Spinner from '@components/common/Spinner/Spinner';
@@ -136,9 +136,7 @@ function AdminClients() {
                 <div className={styles.nextAppointment}>
                   {client.next_appointment ? (
                     <>
-                      <span className={styles.appointmentDate}>
-                        {client.next_appointment.date.replaceAll('-', ' / ')}
-                      </span>
+                      <span className={styles.appointmentDate}>{client.next_appointment.date.replaceAll('-', ' / ')}</span>
                       <span className={styles.appointmentSlot}>( {client.next_appointment.slot} )</span>
                     </>
                   ) : (

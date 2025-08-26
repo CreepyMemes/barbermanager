@@ -95,7 +95,7 @@ class GetClientAppointmentsSerializer(ClientValidationMixin, GetAppointmentsMixi
     
     def to_representation(self, validated_data):
         client = validated_data['client']
-        return {'appointments': self.get_appointments_public(client_id=client.id, show_all=True)}
+        return {'appointments': self.get_appointments_public(client_id=client.id)}
     
 
 class CreateClientAppointmentSerializer(ClientValidationMixin, BarberValidationMixin, AppointmentValidationMixin, serializers.Serializer):

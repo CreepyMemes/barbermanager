@@ -52,7 +52,7 @@ export async function getAllAppointments() {
  * Sends an invitation to a barber via email.
  */
 export async function inviteBarber(email) {
-  const { data } = await api.instance.post(ENDPOINTS.admin.inviteBarber, { email });
+  const { data } = await api.instance.post(ENDPOINTS.admin.inviteBarber, email);
   return data;
 }
 

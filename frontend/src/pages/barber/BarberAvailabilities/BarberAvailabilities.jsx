@@ -20,8 +20,8 @@ function BarberAvailabilities() {
     setIsLoading(true);
 
     try {
-      const result = await api.barber.getBarberAvailabilities();
-      setAvailabilities(result.availabilities || []);
+      const { availabilities } = await api.barber.getBarberAvailabilities();
+      setAvailabilities(availabilities);
     } finally {
       setIsLoading(false);
     }
@@ -40,70 +40,69 @@ function BarberAvailabilities() {
   if (!profile || profile.role !== 'BARBER') return null;
 
   return (
-    <div className={styles.barberAvailabilities}>
-      <Pagination
-        icon="availability"
-        label="Availabilities"
-        itemsPerPage={5}
-        loading={isLoading}
-        emptyMessage="No availabilities found." //
-      >
-        <Pagination.Action>
-          <div className={styles.action}>
-            <Button
-              className={styles.refreshBtn}
-              type="button"
-              color="primary"
-              size="md"
-              onClick={fetchAvailabilities}
-              disabled={isLoading} //
-            >
-              <span className={styles.line}>
-                {isLoading ? (
-                  <>
-                    <Spinner size="sm" /> Refreshing...
-                  </>
-                ) : (
-                  <>
-                    <Icon name="refresh" size="ty" /> Refresh availabilities
-                  </>
-                )}
-              </span>
-            </Button>
-          </div>
-        </Pagination.Action>
+    <Pagination
+      className={styles.barberAvailabilities}
+      icon="availability"
+      label="Availabilities"
+      itemsPerPage={5}
+      loading={isLoading}
+      emptyMessage="No availabilities found." //
+    >
+      <Pagination.Action>
+        <div className={styles.action}>
+          <Button
+            className={styles.refreshBtn}
+            type="button"
+            color="primary"
+            size="md"
+            onClick={fetchAvailabilities}
+            disabled={isLoading} //
+          >
+            <span className={styles.line}>
+              {isLoading ? (
+                <>
+                  <Spinner size="sm" /> Refreshing...
+                </>
+              ) : (
+                <>
+                  <Icon name="refresh" size="ty" /> Refresh availabilities
+                </>
+              )}
+            </span>
+          </Button>
+        </div>
+      </Pagination.Action>
 
-        {/* Table headers */}
-        <Pagination.Column>
-          <div className={styles.tableTitle}>
-            <Icon name="date" size="ty" black />
-            <span className={styles.tableTitleName}>Date</span>
-          </div>
-        </Pagination.Column>
+      {/* Table headers */}
+      <Pagination.Column>
+        <div className={styles.tableTitle}>
+          <Icon name="date" size="ty" black />
+          <span className={styles.tableTitleName}>Date</span>
+        </div>
+      </Pagination.Column>
 
-        <Pagination.Column>
-          <div className={styles.tableTitle}>
-            <Icon name="hourglass" size="ty" black />
-            <span className={styles.tableTitleName}>Slots</span>
-          </div>
-        </Pagination.Column>
+      <Pagination.Column>
+        <div className={styles.tableTitle}>
+          <Icon name="hourglass" size="ty" black />
+          <span className={styles.tableTitleName}>Slots</span>
+        </div>
+      </Pagination.Column>
 
-        {/* Table rows */}
-        {availabilities.map((availability) => (
-          <Pagination.Row key={availability.id}>
-            <Pagination.Cell>
-              <span className={styles.availabilityDate}>{availability.date.replaceAll('-', ' / ')}</span>
-            </Pagination.Cell>
+      {/* Table rows */}
+      {availabilities.map((availability) => (
+        <Pagination.Row key={availability.id}>
+          <Pagination.Cell>
+            <span className={styles.availabilityDate}>{availability.date.replaceAll('-', ' / ')}</span>
+          </Pagination.Cell>
 
-            <Pagination.Cell>
-              <div className={styles.availabilitySlots}>
-                <span className={styles.slots}>{availability.slots.join(', ')}</span>
-              </div>
-            </Pagination.Cell>
-          </Pagination.Row>
-        ))}
-      </Pagination>
-    </div>
+          <Pagination.Cell>
+            <div className={styles.availabilitySlots}>
+              <span className={styles.slots}>{availability.slots.join(', ')}</span>
+            </div>
+          </Pagination.Cell>
+        </Pagination.Row>
+      ))}
+    </Pagination>
   );
 }
 

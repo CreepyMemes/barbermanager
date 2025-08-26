@@ -5,7 +5,7 @@ import styles from './Sidebar.module.scss';
 import Spinner from '@components/common/Spinner/Spinner';
 import Button from '@components/common/Button/Button';
 import Icon from '@components/common/Icon/Icon';
-import ProfileImage from '@components/common/ProfileImage/ProfileImage';
+import ProfileImage from '@components/ui/ProfileImage/ProfileImage';
 
 // Define role-based navigation
 const adminNav = [

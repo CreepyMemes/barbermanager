@@ -15,30 +15,29 @@ Proposed:
 
 Important:  
 
-  - admins:
-    - add create mutliple avaiabiities api endpoint (takes in start date, end date, start slot, end slot, 30 min interval each)
-    
-    - add manage availability functionality to admin barbers (create, update, delete)
-      - workflow: select create availability, then enter either 1 date or interal (form takes account of whether using singuar creation api or multiple)
-    
-    - add availability page to edit it for selected barber 
+  - misc:
+    - fix trash and warning icons in the buttons not getting white when hovered in profile settings (works in dev not in prod)
+    - return availabilities from API in date sorted order, (not text based as it is rn) 
+    - return appointmentss from API in date sorted order, (active more recent on top)
 
+  - admins:
+    - add date_joined to barbers and clients pagination pages
+        
   - clients:
     - add recent appointments (like reviews) in api profile
-    - make clients appointments page, where they can view, create and cancel appointments
     
     - add client api endpoint that returns all barbers that the client has a completed appointment with (to be used for making reviews)
-    - make client reviews page, where they can create, edit, delete reviews (to barbers which they have completed appointments with)
-      - workflow: select create review action, opens popup with barbers which you have completed appointtments with, select one and write review
 
-  - public:
-    - add view barber profile on clicking barber (idk if i should add this)
+    - make client reviews page, where they can create, edit, delete reviews (to barbers which they have completed appointments with)
+      - workflow: select create review action, opens popup with barbers which you have completed appointtments with, select one and write review,
+        readapt client appointments page steps based moodal for this
 
 Proposed:
+  - add view barber profile on clicking barber (idk if i should add this)
 
-  - make reusable update popup to handle all inputs (as custom jsx) and reusable delete popup
+  - enhance popup (or modal at this point) to stop it from being closed while loading
 
-  - enhance popup to stop it from being closed while loading
+  - when creating appointment check if selected avaiability is not past
 
   - fix table text overflow when screen width is small
   - add error message when loading tables if the api request fails
@@ -49,7 +48,8 @@ Proposed:
   - add responsivity to sidebar, show toggle button on header, width 100% for (small screens)
   - add media queries for screen sizes on each layout component 
   - fix settings page responsivity, input fields get of the card, on small screens
-   
+  
+  - add loading prop to StatCard like Pagination (use it in dashboard instead of external if isLoading <Spinner/>)
   - add skeleton loading for page components
 
   - cleanup Form code, make it work automagically (Form.Button, auto fields, Form.Input, etc)

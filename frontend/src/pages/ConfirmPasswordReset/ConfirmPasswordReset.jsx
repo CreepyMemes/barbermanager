@@ -9,7 +9,7 @@ import Form from '@components/common/Form/Form';
 import Input from '@components/common/Input/Input';
 import Button from '@components/common/Button/Button';
 import Error from '@components/common/Error/Error';
-import Hero from '@components/common/Hero/Hero';
+import Hero from '@components/ui/Hero/Hero';
 import Icon from '@components/common/Icon/Icon';
 
 function ConfirmPasswordReset() {
