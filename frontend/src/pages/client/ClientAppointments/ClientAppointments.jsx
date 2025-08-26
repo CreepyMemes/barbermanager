@@ -137,6 +137,7 @@ function ClientAppointments() {
     return (
       <Input
         type="dropdown"
+        size="md"
         name="barber_id"
         label="Barber"
         fetcher={fetchBarbers}
@@ -161,7 +162,7 @@ function ClientAppointments() {
         name="services"
         label="Select one or more services"
         fetcher={() => fetchServices(fields.barber_id)}
-        mapOption={(service) => ({ key: String(service.id), value: `${service.name} (${service.price})` })}
+        mapOption={(service) => ({ key: String(service.id), value: `${service.name} $${service.price}` })}
         required //
       />
     );
@@ -200,6 +201,7 @@ function ClientAppointments() {
       <>
         <Input
           type="dropdown"
+          size="md"
           name="date"
           label="Date"
           fetcher={() => fetchAvailabilities(fields.barber_id)}
@@ -209,9 +211,11 @@ function ClientAppointments() {
 
         <Input
           type="dropdown"
+          size="md"
           name="slot"
           label="Slot"
           fetcher={() => fetchSlots(fields.barber_id, fields.date)}
+          reloadKey={`${fields.barber_id}-${fields.date}`}
           mapOption={(slot) => ({ key: slot, value: slot })}
           disabled={!fields.date}
           required //

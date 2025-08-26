@@ -1,7 +1,118 @@
 @use '@styles/variables.module.scss' as *;
 @use '@styles/classes.module.scss' as *;
 
-// For file type input
+// --- For dropdown & standard input wrappers, with shared logic ---
+.input-wrapper {
+  position: relative; // Ensure the arrow sits relative to the wrapper
+  display: flex;
+  align-items: center;
+
+  // Dropdown select styling
+  .select {
+    width: 100%;
+
+    background: $color-light;
+    border: 1px solid $border-light;
+    border-radius: $border-radius;
+    outline: none;
+
+    color: $color-primary;
+
+    appearance: none; // Remove native arrow
+    cursor: pointer;
+
+    transition: border-color 0.2s;
+
+    &:focus {
+      border-color: $color-primary;
+    }
+
+    &:disabled {
+      background: $color-muted;
+      color: $color-primary;
+      cursor: not-allowed;
+    }
+  }
+
+  // Dropdown right arrow
+  .select-arrow {
+    position: absolute;
+
+    top: 50%;
+    right: 1.2rem;
+    transform: translateY(-50%);
+
+    pointer-events: none;
+
+    display: flex;
+    align-items: center;
+  }
+
+  // Standard input (text, password, etc.)
+  .input {
+    width: 100%;
+    border-radius: $border-radius;
+    border: 1px solid $border-light;
+
+    color: $color-primary;
+
+    transition: border-color 0.2s;
+
+    &::placeholder {
+      color: $color-accent;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+    }
+
+    &:disabled {
+      background: $color-muted;
+      color: $color-primary;
+      cursor: not-allowed;
+    }
+  }
+
+  // Password eye button for input[type=password]
+  .eye-btn {
+    position: absolute;
+    right: 1.5rem;
+    top: 0.5rem;
+    background: none;
+  }
+}
+
+// --- Label for all input types except file & checkbox ---
+.label {
+  display: flex;
+  flex-direction: column;
+  color: $color-primary;
+  font-size: 1.3rem;
+}
+
+// --- Loading & error states ---
+.loading {
+  padding: 0.25rem 0 0 0.2rem;
+  color: $color-muted;
+  font-size: 1.1rem;
+  display: block;
+}
+
+.error {
+  width: fit-content;
+  padding: 0.2rem 0.6rem;
+  margin-top: 0.25rem;
+  border-radius: 5px;
+  background: $color-error-bg;
+
+  color: $color-error;
+  font-size: 1.1rem;
+
+  display: block;
+}
+
+// --- File type input styling ---
 .file-input {
   display: flex;
   flex-direction: column;
@@ -21,52 +132,146 @@
   }
 }
 
-// For text type input
-.label {
-  display: flex;
-  flex-direction: column;
-  color: $color-primary;
-  font-size: 1.3rem;
+// --- For checkbox input ---
+.checkbox-group {
+  border: none;
+  margin: 0 0 2rem 0;
+  padding: 0;
+  min-width: 0;
+  width: 100%;
 
-  .input-wrapper {
-    // Needed to overlay the button INSIDE input
-    position: relative;
+  .checkbox-legend {
+    font-weight: 600;
+    color: $color-primary;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+  }
+
+  .checkbox-list {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    gap: 0.6rem; // space between rows
 
-    .input {
-      width: 100%;
-      padding-right: 2.5rem; // Make space for the eye button
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+
+      background: $color-secondary;
+
+      padding-inline: 1rem;
 
       border-radius: $border-radius;
-      border: 1px solid $border-light;
+      transition: background 0.14s;
 
-      color: $color-primary;
-      font-size: 1.4rem;
-
-      transition: border-color 0.2s;
-
-      &::placeholder {
-        color: $color-accent;
+      &:hover,
+      &:focus-within {
+        background: $color-tertiary;
       }
 
-      &:focus {
-        outline: none;
-        border-color: $color-primary;
+      &:last-child {
+        margin-bottom: 0;
       }
 
-      &:disabled {
-        background: $color-muted;
+      // Hide the native checkbox [visually], but keep it focusable for accessibility
+      .checkbox-input {
+        position: absolute;
+        z-index: 1;
+
+        left: 0;
+        top: 0.32rem;
+        width: 1.45rem;
+        height: 1.45rem;
+
+        opacity: 0;
+        cursor: pointer;
+
+        &:focus + .checkbox-custom {
+          outline: 2px solid $border;
+          outline-offset: 3px;
+        }
+
+        &:disabled + .checkbox-custom {
+          background: $color-muted;
+          border-color: $border-light;
+          cursor: not-allowed;
+        }
+      }
+
+      // Custom checkbox square
+      .checkbox-custom {
+        display: inline-block;
+
+        width: 1.45rem;
+        height: 1.45rem;
+
+        background: $color-light;
+        border: 2px solid $border-light;
+        border-radius: 5px;
+        margin-right: 0.7rem;
+
+        transition:
+          border-color 0.2s,
+          background 0.18s;
+
+        // Checkbox tick/indicator
+        &::after {
+          content: '';
+
+          margin: 0.2rem auto;
+
+          width: 0.7rem;
+          height: 0.7rem;
+
+          border-radius: 2px;
+          background: transparent;
+          transition: background 0.16s;
+
+          display: block;
+        }
+      }
+
+      // Custom label text
+      .checkbox-text {
+        padding-left: 0;
         color: $color-primary;
+        align-content: center;
+        word-break: break-word;
+        cursor: pointer;
+      }
+
+      // Show tick when checked
+      .checkbox-input:checked + .checkbox-custom {
+        border-color: $color-main;
+        background: $color-tag-yellow-bg;
+
+        &::after {
+          background: $color-main;
+        }
+      }
+
+      // Disabled state for label
+      .checkbox-input:disabled ~ .checkbox-text {
+        color: $color-muted;
         cursor: not-allowed;
       }
-    }
 
-    .eye-btn {
-      position: absolute;
-      right: 1.5rem;
-      top: 0.5rem;
-      background: none;
+      .checkbox-input:disabled + .checkbox-custom {
+        background: $color-muted;
+        border-color: $border-light;
+        cursor: not-allowed;
+        &::after {
+          background: $color-light;
+        }
+      }
+
+      .checkbox-empty {
+        margin-top: 0.7rem;
+        color: $color-muted;
+        font-size: 1.1rem;
+      }
     }
   }
 }
