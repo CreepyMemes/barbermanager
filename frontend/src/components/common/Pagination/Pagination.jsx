@@ -1,12 +1,20 @@
 import { useState, useEffect, Children } from 'react';
 import styles from './Pagination.module.scss';
 
-import StatCard from '@components/common/StatCard/StatCard';
+import StatCard from '@components/ui/StatCard/StatCard';
 import Icon from '@components/common/Icon/Icon';
 import Button from '@components/common/Button/Button';
 import Spinner from '@components/common/Spinner/Spinner';
 
-function Pagination({ icon, label, children, itemsPerPage = 3, loading, emptyMessage = 'No items' }) {
+function Pagination({
+  icon,
+  label,
+  children,
+  itemsPerPage = 3,
+  loading,
+  emptyMessage = 'No items',
+  className = '', //
+}) {
   // Extracts first PaginationColumn and PaginationRow children by displayName
   const [action, columns, rows] = [Action.displayName, Column.displayName, Row.displayName].map((name) =>
     Children.toArray(children).filter((child) => child.type.displayName === name),
@@ -27,8 +35,11 @@ function Pagination({ icon, label, children, itemsPerPage = 3, loading, emptyMes
     setPage(0);
   }, [rowKeys, itemsPerPage]);
 
+  // Get all style classes into a string
+  const computedClassName = [className].join(' ');
+
   return (
-    <StatCard icon={icon} label={label}>
+    <StatCard className={computedClassName} icon={icon} label={label}>
       {action}
       <div className={styles.tableWrapper}>
         <table className={styles.table}>
@@ -54,9 +65,7 @@ function Pagination({ icon, label, children, itemsPerPage = 3, loading, emptyMes
             {!loading &&
               rows.length > 0 &&
               pageRows.map((row, ridx) => {
-                const cells = Children.toArray(row.props.children).filter(
-                  (cell) => cell.type.displayName === Cell.displayName,
-                );
+                const cells = Children.toArray(row.props.children).filter((cell) => cell.type.displayName === Cell.displayName);
 
                 return (
                   <tr key={row.key || ridx}>

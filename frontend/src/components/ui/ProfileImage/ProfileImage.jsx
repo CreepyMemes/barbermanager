@@ -12,7 +12,7 @@ function ProfileImage({ src, size = '4rem' }) {
         src={src}
         name="avatar"
         alt="Profile Image"
-        style={{ width: imgSize, height: imgSize }}
+        style={{ width: imgSize, height: imgSize }} //
       />
     </div>
   );

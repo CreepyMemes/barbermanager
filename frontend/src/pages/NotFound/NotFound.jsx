@@ -1,6 +1,6 @@
 import styles from './NotFound.module.scss';
 
-import Hero from '@components/common/Hero/Hero';
+import Hero from '@components/ui/Hero/Hero';
 import Button from '@components/common/Button/Button';
 import Image from '@components/common/Image/Image';
 

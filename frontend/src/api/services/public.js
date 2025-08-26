@@ -34,6 +34,14 @@ export async function getBarberAvailabilitiesPublic(barberId) {
 }
 
 /**
+ * Retrieves the public availability schedule for a specific barber.
+ */
+export async function getBarberSlotsPublic(barberId, date) {
+  const { data } = await api.instance.post(ENDPOINTS.public.barberSlots(barberId), date);
+  return data;
+}
+
+/**
  * Retrieves the services offered by a specific barber.
  */
 export async function getBarberServicesPublic(barberId) {

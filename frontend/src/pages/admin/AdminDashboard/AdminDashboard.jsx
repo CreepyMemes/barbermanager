@@ -4,8 +4,8 @@ import styles from './AdminDashboard.module.scss';
 import api from '@api';
 
 import Spinner from '@components/common/Spinner/Spinner';
-import StatCard from '@components/common/StatCard/StatCard';
-import RadialChart from '@components/common/RadialChart/RadialChart';
+import StatCard from '@components/ui/StatCard/StatCard';
+import RadialChart from '@components/ui/RadialChart/RadialChart';
 
 function AdminDashboard() {
   const { profile, setProfile } = useAuth();

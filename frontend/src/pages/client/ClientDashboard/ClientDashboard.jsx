@@ -4,15 +4,17 @@ import styles from './ClientDashboard.module.scss';
 import api from '@api';
 
 import Icon from '@components/common/Icon/Icon';
-import StatCard from '@components/common/StatCard/StatCard';
+import StatCard from '@components/ui/StatCard/StatCard';
 import Pagination from '@components/common/Pagination/Pagination';
-import Rating from '@components/common/Rating/Rating';
+import Rating from '@components/ui/Rating/Rating';
 import Spinner from '@components/common/Spinner/Spinner';
-import Profile from '@components/common/Profile/Profile';
+import Profile from '@components/ui/Profile/Profile';
 
 function ClientDashboard() {
   const { profile, setProfile } = useAuth();
-  const [isLoading, setIsLoading] = useState(true);
+
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
+  const [isLoadingBarberProfiles, setIsLoadingBarberProfiles] = useState(true);
 
   const [barbers, setBarbers] = useState({}); // barberId -> profile
 
@@ -20,35 +22,41 @@ function ClientDashboard() {
    * Defines fetching all barber profiles needed for reviews (only unique barber IDs)
    */
   const fetchBarberProfiles = useCallback(async (reviews) => {
-    if (!reviews) return;
+    setIsLoadingBarberProfiles(true);
 
-    const barberIds = [...new Set(reviews.map((r) => r.barber_id))];
+    try {
+      // Gets all unique barber IDs from reviews
+      const barberIds = [...new Set(reviews.map((r) => r.barber_id))];
 
-    const entries = await Promise.all(
-      barberIds.map(async (id) => {
-        try {
-          const { profile } = await api.pub.getBarberProfilePublic(id);
-          return [id, profile];
-        } catch {
-          return [id, null];
-        }
-      }),
-    );
+      // fetches all barber profiles in parallel
+      const entries = await Promise.all(
+        barberIds.map(async (id) => {
+          try {
+            const { profile } = await api.pub.getBarberProfilePublic(id);
+            return [id, profile];
+          } catch {
+            return [id, null];
+          }
+        }),
+      );
 
-    setBarbers(Object.fromEntries(entries)); // assembles into { [id]: profile }
+      setBarbers(Object.fromEntries(entries)); // assembles into { [id]: profile }
+    } finally {
+      setIsLoadingBarberProfiles(false);
+    }
   }, []);
 
   /**
    * Defines fetching latest profile data
    */
   const fetchProfile = useCallback(async () => {
-    setIsLoading(true);
+    setIsLoadingProfile(true);
 
     try {
       const { profile } = await api.client.getClientProfile();
       setProfile(profile);
     } finally {
-      setIsLoading(false);
+      setIsLoadingProfile(false);
     }
   }, [setProfile]);
 
@@ -63,13 +71,13 @@ function ClientDashboard() {
    *  Only run on reviews change
    */
   useEffect(() => {
-    if (profile?.reviews?.length > 0) {
-      fetchBarberProfiles(profile.reviews);
+    if (profile?.latest_reviews) {
+      fetchBarberProfiles(profile.latest_reviews);
     }
-  }, [profile?.reviews, fetchBarberProfiles]);
+  }, [profile?.latest_reviews, fetchBarberProfiles]);
 
   // While fetching latest profile data show loading spinner
-  if (isLoading) return <Spinner />;
+  if (isLoadingProfile) return <Spinner />;
 
   return (
     <div className={styles.clientDashboard}>
@@ -78,9 +86,7 @@ function ClientDashboard() {
         {profile.upcoming_appointment ? (
           <div className={styles.upcomingAppointmentValue}>
             <span className={styles.upcomingAppointmentSlot}>{profile.upcoming_appointment?.slot}</span>
-            <span className={styles.upcomingAppointmentDate}>
-              {profile.upcoming_appointment?.date.replaceAll('-', ' / ')}
-            </span>
+            <span className={styles.upcomingAppointmentDate}>{profile.upcoming_appointment?.date.replaceAll('-', ' / ')}</span>
           </div>
         ) : (
           <span className={styles.empty}>No future appointment</span>
@@ -141,7 +147,7 @@ function ClientDashboard() {
         {profile.latest_reviews.map((review) => (
           <Pagination.Row key={review.id}>
             <Pagination.Cell>
-              {barbers[review.barber_id] ? <Profile profile={barbers[review.barber_id]} /> : <Spinner size="sm" />}
+              <Profile profile={barbers[review.barber_id]} loading={isLoadingBarberProfiles} />
             </Pagination.Cell>
 
             <Pagination.Cell>

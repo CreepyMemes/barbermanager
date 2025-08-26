@@ -5,7 +5,7 @@ import styles from './Header.module.scss';
 import Logo from '@components/common/Logo/Logo';
 import Spinner from '@components/common/Spinner/Spinner';
 import Button from '@components/common/Button/Button';
-import ProfileImage from '@components/common/ProfileImage/ProfileImage';
+import ProfileImage from '@components/ui/ProfileImage/ProfileImage';
 
 function Header() {
   const { isAuthenticated, profile, logout, isFetchingProfile } = useAuth();

@@ -272,6 +272,7 @@ class AvailabilityValidationMixin:
 
     - Ensures a barber does not already have an availability set for the same date, preventing duplicate availabilities on a single day.
     - Validates the existence of an availability entry for the given barber and specified ID before allowing retrieval or update operations.
+    - Built in util function that generates the slots based on input start/end time and interval
     """
     def validate_availability_date(self, attrs, availability_instance=None):
         from ..models import Availability
@@ -302,6 +303,19 @@ class AvailabilityValidationMixin:
         
         attrs['availability'] = availability
         return attrs
+    
+    def generate_slots(self, start_time, end_time, interval):
+        from datetime import timedelta, datetime
+
+        slots = []
+        start_date = datetime.combine(datetime.today(), start_time)
+        end_date = datetime.combine(datetime.today(), end_time)
+
+        while start_date + timedelta(minutes=interval) <= end_date:
+            slots.append(start_date.strftime('%H:%M'))
+            start_date += timedelta(minutes=interval)
+
+        return slots
     
 
 class ServiceValidationMixin:
@@ -490,7 +504,7 @@ class GetAvailabilitiesMixin:
     """
     Mixin for retrieving and serializing Availability models.
     """
-    def get_availabilities_queryset(self, barber_id, show_all=False):
+    def _get_availabilities_queryset(self, barber_id, show_all=False):
         """
         Returns Availability queryset for a specific barber, only for dates today or in the future.
         If show_all is True, returns all availabilities.
@@ -499,22 +513,43 @@ class GetAvailabilitiesMixin:
         import datetime
         return Availability.objects.filter(barber_id=barber_id, date__gte=datetime.date.today()) if not show_all else Availability.objects.all()
 
+    def _remove_booked_slots(self, barber, date, slots):
+        """
+        Given a barber, date, and a list of slots, return list of slots which are not already booked.
+        """
+        from ..models import Appointment, AppointmentStatus
+
+        # Get all non-cancelled appointments for this barber/date, get their slots
+        booked_slots = set(Appointment.objects.filter( barber=barber, date=date,).exclude(status=AppointmentStatus.CANCELLED.value).values_list('slot', flat=True))
+
+        # Convert booked_slots to string format for comparison (slot is a time object, slots are strings: "HH:MM")
+        booked_slots_str = {s.strftime("%H:%M") for s in booked_slots}
+
+        # Only keep slots that are not in the booked slots
+        return [slot for slot in slots if slot not in booked_slots_str]
+    
     def _filter_slots_future(self, availability):
         """
-        Given an Availability instance, for today, filter out slots that are not in the future.
-        For future dates (date > today), leave slots as is.
-        If after filtering no slot remains, returns empty list.
+        Given an Availability instance, filter out:
+        - slots that are in the past (if today)
+        - slots that are already booked (non-cancelled appointment)
         """
         import datetime
 
         today = datetime.date.today()
         now = datetime.datetime.now().time()
 
+        slots = availability.slots
+
+        # Filter for future times if today
         if availability.date == today:
             filtered = [slot for slot in availability.slots if self._slot_str_is_future(slot, now)]
             return filtered
         
-        return availability.slots
+        # Exclude booked slots (always)
+        slots = self._remove_booked_slots(availability.barber, availability.date, slots)
+
+        return slots
 
     def _slot_str_is_future(self, slot_str, now_time):
         """
@@ -546,7 +581,7 @@ class GetAvailabilitiesMixin:
         Removes any today-availabilities that have zero remaining slots.
         """
         result = []
-        for availability in self.get_availabilities_queryset(barber_id=barber_id, show_all=show_all):
+        for availability in self._get_availabilities_queryset(barber_id=barber_id, show_all=show_all):
             filtered_slots = self._filter_slots_future(availability)
 
             if filtered_slots:
@@ -589,7 +624,7 @@ class GetAppointmentsMixin:
     def get_appointments_queryset(self, barber_id=None, client_id=None, show_all=False):
         """
         Returns Appointment queryset filtered by barber or client.
-        If show_all is True, returns all appointments.
+        If show_all is True, returns all appointments. (For admin use only!)
         """
         from ..models import Appointment
 

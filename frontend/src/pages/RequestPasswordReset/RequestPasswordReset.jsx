@@ -11,7 +11,7 @@ import Input from '@components/common/Input/Input';
 import Icon from '@components/common/Icon/Icon';
 import Button from '@components/common/Button/Button';
 import Error from '@components/common/Error/Error';
-import Hero from '@components/common/Hero/Hero';
+import Hero from '@components/ui/Hero/Hero';
 
 function RequestPasswordReset() {
   const { isAuthenticated } = useAuth();

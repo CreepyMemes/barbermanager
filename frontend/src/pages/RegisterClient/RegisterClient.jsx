@@ -10,8 +10,8 @@ import Form from '@components/common/Form/Form';
 import Input from '@components/common/Input/Input';
 import Button from '@components/common/Button/Button';
 import Error from '@components/common/Error/Error';
-import Hero from '@components/common/Hero/Hero';
-import SidePanel from '@components/common/SidePanel/SidePanel';
+import Hero from '@components/ui/Hero/Hero';
+import SidePanel from '@components/ui/SidePanel/SidePanel';
 import Icon from '@components/common/Icon/Icon';
 
 function RegisterClient() {
@@ -103,7 +103,7 @@ function RegisterClient() {
             className={styles.registerForm}
             initialFields={initialFields}
             onSubmit={handleRegister}
-            validate={validate}
+            validate={validate} //
           >
             <h2 className={styles.label}>Sign up</h2>
 
