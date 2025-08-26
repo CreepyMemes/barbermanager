@@ -17,7 +17,10 @@ Important:
 
   - misc:
     - stylize barbers dropdown list, services checkbox and dateslot dropdown list with better data
-    
+
+    - fix trash and warning icons in the buttons not getting white when hovered in profile settings (works in dev not in prod)
+    - return availabilities from API in date sorted order, (not text based as it is rn) 
+
   - admins:
     - add date_joined to barbers and clients pagination pages
         
@@ -29,12 +32,6 @@ Important:
     - make client reviews page, where they can create, edit, delete reviews (to barbers which they have completed appointments with)
       - workflow: select create review action, opens popup with barbers which you have completed appointtments with, select one and write review,
         readapt client appointments page steps based moodal for this
-
-  - public:
-    - don't show booked slots for barber availabilities
-
-  - fix trash and warning icons in the buttons not getting white when hovered in profile settings (works in dev not in prod)
-  - return availabilities from API in date sorted order, (not text based as it is rn) 
 
 Proposed:
 
