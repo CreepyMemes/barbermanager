@@ -150,8 +150,8 @@ function AdminAppointments() {
         {/* Table headers */}
         <Pagination.Column>
           <div className={styles.tableTitle}>
-            <Icon name="barber" size="ty" black />
-            <span className={styles.tableTitleName}>Barber</span>
+            <Icon name="client" size="ty" black />
+            <span className={styles.tableTitleName}>Client</span>
           </div>
         </Pagination.Column>
 
@@ -164,8 +164,8 @@ function AdminAppointments() {
 
         <Pagination.Column>
           <div className={styles.tableTitle}>
-            <Icon name="client" size="ty" black />
-            <span className={styles.tableTitleName}>Client</span>
+            <Icon name="barber" size="ty" black />
+            <span className={styles.tableTitleName}>Barber</span>
           </div>
         </Pagination.Column>
 
@@ -201,7 +201,7 @@ function AdminAppointments() {
         {appointments.map((appointment) => (
           <Pagination.Row key={appointment.id}>
             <Pagination.Cell>
-              <Profile profile={barbers[appointment.barber_id]} loading={isLoadingBarberProfiles} />
+              <Profile profile={clients[appointment.client_id]} loading={isLoadingClientProfiles} />
             </Pagination.Cell>
 
             <Pagination.Cell>
@@ -214,7 +214,7 @@ function AdminAppointments() {
             </Pagination.Cell>
 
             <Pagination.Cell>
-              <Profile profile={clients[appointment.client_id]} loading={isLoadingClientProfiles} />
+              <Profile profile={barbers[appointment.barber_id]} loading={isLoadingBarberProfiles} />
             </Pagination.Cell>
 
             <Pagination.Cell>
