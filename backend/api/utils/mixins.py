@@ -520,7 +520,7 @@ class GetAvailabilitiesMixin:
         from ..models import Appointment, AppointmentStatus
 
         # Get all non-cancelled appointments for this barber/date, get their slots
-        booked_slots = set(Appointment.objects.filter( barber=barber, date=date,).exclude(status=AppointmentStatus.CANCELLED.value).values_list('slot', flat=True))
+        booked_slots = set(Appointment.objects.filter(barber=barber, date=date,).exclude(status=AppointmentStatus.CANCELLED.value).values_list('slot', flat=True))
 
         # Convert booked_slots to string format for comparison (slot is a time object, slots are strings: "HH:MM")
         booked_slots_str = {s.strftime("%H:%M") for s in booked_slots}
@@ -528,7 +528,7 @@ class GetAvailabilitiesMixin:
         # Only keep slots that are not in the booked slots
         return [slot for slot in slots if slot not in booked_slots_str]
     
-    def _filter_slots_future(self, availability):
+    def _filter_slots(self, availability):
         """
         Given an Availability instance, filter out:
         - slots that are in the past (if today)
@@ -540,13 +540,12 @@ class GetAvailabilitiesMixin:
         now = datetime.datetime.now().time()
 
         slots = availability.slots
-
-        # Filter for future times if today
-        if availability.date == today:
-            filtered = [slot for slot in availability.slots if self._slot_str_is_future(slot, now)]
-            return filtered
         
-        # Exclude booked slots (always)
+        # If today, filter out past slots
+        if availability.date == today:
+            slots = [slot for slot in slots if self._slot_str_is_future(slot, now)]
+        
+        # Then always filter out booked slots
         slots = self._remove_booked_slots(availability.barber, availability.date, slots)
 
         return slots
@@ -572,7 +571,7 @@ class GetAvailabilitiesMixin:
         Returns all data for a single availability, only showing future slots where appropriate.
         """
         availability_data = availability.to_dict()
-        availability_data["slots"] = self._filter_slots_future(availability)
+        availability_data["slots"] = self._filter_slots(availability)
         return availability_data
     
     def get_availabilities_public(self, barber_id, show_all=False):
@@ -582,7 +581,7 @@ class GetAvailabilitiesMixin:
         """
         result = []
         for availability in self._get_availabilities_queryset(barber_id=barber_id, show_all=show_all):
-            filtered_slots = self._filter_slots_future(availability)
+            filtered_slots = self._filter_slots(availability)
 
             if filtered_slots:
                 availability_data = availability.to_dict()
