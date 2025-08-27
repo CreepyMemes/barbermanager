@@ -44,8 +44,9 @@ function ClientAppointments() {
   /**
    * Defines fetching all barber profiles needed (only unique barber IDs)
    */
-  const fetchClientProfiles = useCallback(async (appointments) => {
+  const fetchBarberProfiles = useCallback(async (appointments) => {
     setIsLoadingBarberProfiles(true);
+
     try {
       // Gets all unique barber IDs from appointments
       const barberIds = [...new Set(appointments.map((a) => a.barber_id))];
@@ -62,7 +63,7 @@ function ClientAppointments() {
         }),
       );
 
-      setBarbers(Object.fromEntries(entries)); // assembles into { [id]: profile }
+      setBarbers((prev) => ({ ...prev, ...Object.fromEntries(entries) })); // assembles into { [id]: profile }
     } finally {
       setIsLoadingBarberProfiles(false);
     }
@@ -82,9 +83,9 @@ function ClientAppointments() {
    */
   useEffect(() => {
     if (appointments.length > 0) {
-      fetchClientProfiles(appointments);
+      fetchBarberProfiles(appointments);
     }
-  }, [appointments, fetchClientProfiles]);
+  }, [appointments, fetchBarberProfiles]);
 
   // Book appointment popup state handlers
   const openBookPopup = () => setBookPopup(true);
