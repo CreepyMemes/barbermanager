@@ -159,6 +159,13 @@ function AdminBarbers() {
 
         <Pagination.Column>
           <div className={styles.tableTitle}>
+            <Icon name="check" size="ty" black />
+            <span className={styles.tableTitleName}>Joined</span>
+          </div>
+        </Pagination.Column>
+
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
             <Icon name="dial" size="ty" black />
             <span className={styles.tableTitleName}>Actions</span>
           </div>
@@ -183,6 +190,10 @@ function AdminBarbers() {
 
             <Pagination.Cell>
               <span className={styles.revenue}>${barber.total_revenue}</span>
+            </Pagination.Cell>
+
+            <Pagination.Cell>
+              <span className={styles.date}>{barber.date_joined.replaceAll('-', ' / ')}</span>
             </Pagination.Cell>
 
             <Pagination.Cell>

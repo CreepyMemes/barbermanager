@@ -113,6 +113,13 @@ function AdminClients() {
 
         <Pagination.Column>
           <div className={styles.tableTitle}>
+            <Icon name="check" size="ty" black />
+            <span className={styles.tableTitleName}>Joined</span>
+          </div>
+        </Pagination.Column>
+
+        <Pagination.Column>
+          <div className={styles.tableTitle}>
             <Icon name="spinner" size="ty" black />
             <span className={styles.tableTitleName}>Status</span>
           </div>
@@ -155,6 +162,10 @@ function AdminClients() {
                 <span className={styles.count}>{client.completed_appointments}</span>
                 <span className={styles.text}>appointments</span>
               </div>
+            </Pagination.Cell>
+
+            <Pagination.Cell>
+              <span className={styles.date}>{client.date_joined.replaceAll('-', ' / ')}</span>
             </Pagination.Cell>
 
             <Pagination.Cell>
