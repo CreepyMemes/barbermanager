@@ -17,9 +17,6 @@ Important:
   - misc:
     - fix availability slots still showing when they are booked...
 
-  - admins:
-    - add date_joined to barbers and clients pagination pages
-        
   - clients:
     - add recent appointments (like reviews) in api profile
     
