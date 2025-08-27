@@ -14,12 +14,7 @@ Proposed:
 2. Frontend:
 
 Important:  
-  - misc:
-    - fix availability slots still showing when they are booked...
-
   - clients:
-    - add recent appointments (like reviews) in api profile
-    
     - add client api endpoint that returns all barbers that the client has a completed appointment with (to be used for making reviews)
 
     - make client reviews page, where they can create, edit, delete reviews (to barbers which they have completed appointments with). Readapt code from appointments page 

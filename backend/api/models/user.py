@@ -274,10 +274,10 @@ class Client(User):
     
     @property
     def total_spent(self):
-        from .appointment import AppointmentStatus
         """
         Returns the sum of the services in all completed appointments for this barber.
         """
+        from .appointment import AppointmentStatus
         spent = (
             self.appointments_created.filter(status=AppointmentStatus.COMPLETED.value)
             .annotate(price_sum=Sum('services__price'))
@@ -285,6 +285,14 @@ class Client(User):
         )
         return float(spent) if spent else 0.0
 
+    @property
+    def recent_appointments(self):
+        """
+        Returns a list of dicts representing the latest 3 appointments for this client (excluding cancelled).
+        """
+        from .appointment import AppointmentStatus
+        return [appointment.to_dict() for appointment in self.appointments_created.exclude(status=AppointmentStatus.CANCELLED.value).order_by('-date', '-slot')[:3]]
+    
     def to_dict(self):
         base = super().to_dict()
         base.update({      
@@ -295,6 +303,7 @@ class Client(User):
             'completed_appointments': self.completed_appointments,
             'upcoming_appointment': self.upcoming_appointment,
             'latest_reviews': self.latest_reviews,
+            'recent_appointments': self.recent_appointments,
             'total_spent': self.total_spent,
         })
         return base
