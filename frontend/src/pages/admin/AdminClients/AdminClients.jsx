@@ -132,12 +132,12 @@ function AdminClients() {
             </Pagination.Cell>
 
             <Pagination.Cell>
-              <div className={styles.nextAppointmentContainer}>
-                <div className={styles.nextAppointment}>
-                  {client.next_appointment ? (
+              <div className={styles.upcomingAppointmentContainer}>
+                <div className={styles.upcomingAppointment}>
+                  {client.upcoming_appointment ? (
                     <>
-                      <span className={styles.appointmentDate}>{client.next_appointment.date.replaceAll('-', ' / ')}</span>
-                      <span className={styles.appointmentSlot}>( {client.next_appointment.slot} )</span>
+                      <span className={styles.appointmentDate}>{client.upcoming_appointment.date.replaceAll('-', ' / ')}</span>
+                      <span className={styles.appointmentSlot}>( {client.upcoming_appointment.slot} )</span>
                     </>
                   ) : (
                     <span className={styles.noAppointment}>—</span>
