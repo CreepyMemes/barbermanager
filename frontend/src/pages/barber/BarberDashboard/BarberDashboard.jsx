@@ -23,19 +23,24 @@ function BarberDashboard() {
    * Defines fetching all client profiles needed for reviews and appointments (only unique client IDs)
    */
   const fetchClientProfiles = useCallback(
-    async (reviews = [], upcoming_appointments = []) => {
+    async (latest_reviews = [], upcoming_appointments = []) => {
       setIsLoadingClientProfiles(true);
 
       try {
-        const reviewClientIds = (reviews || []).map((r) => r.client_id); // Get clients from reviews
+        const reviewClientIds = (latest_reviews || []).map((r) => r.client_id); // Get clients from reviews
         const appointmentClientIds = (upcoming_appointments || []).map((a) => a.client_id); // Get clients from appointments
         const allClientIds = Array.from(new Set([...reviewClientIds, ...appointmentClientIds])); // Combine both
-        const clientIds = allClientIds.filter((id) => !(id in clients)); // Only get those not already in our clients cache
 
-        if (clientIds.length === 0) return;
+        // Only fetch the clients that aren't in our clients cache yet
+        const clientIdsToFetch = allClientIds.filter((id) => !(id in clients));
+
+        if (clientIdsToFetch.length === 0) {
+          setIsLoadingClientProfiles(false);
+          return;
+        }
 
         const entries = await Promise.all(
-          clientIds.map(async (id) => {
+          clientIdsToFetch.map(async (id) => {
             try {
               const { profile } = await api.pub.getClientProfilePublic(id);
               return [id, profile];
@@ -78,10 +83,10 @@ function BarberDashboard() {
    *  Only run when reviews or appointments change
    */
   useEffect(() => {
-    if (profile?.reviews || profile?.upcoming_appointments) {
-      fetchClientProfiles(profile?.reviews, profile?.upcoming_appointments);
+    if (profile?.latest_reviews || profile?.upcoming_appointments) {
+      fetchClientProfiles(profile?.latest_reviews, profile?.upcoming_appointments);
     }
-  }, [profile?.reviews, profile?.upcoming_appointments, fetchClientProfiles]);
+  }, [profile?.latest_reviews, profile?.upcoming_appointments, fetchClientProfiles]);
 
   // While fetching latest profile data show loading spinner
   if (isLoadingProfile) return <Spinner />;
