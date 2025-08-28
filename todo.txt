@@ -14,57 +14,38 @@ Proposed:
 2. Frontend:
 
 Important:  
-
-  - misc:
-    - fix trash and warning icons in the buttons not getting white when hovered in profile settings (works in dev not in prod)
-    - return availabilities from API in date sorted order, (not text based as it is rn) 
-    - return appointmentss from API in date sorted order, (active more recent on top)
-
-  - admins:
-    - add date_joined to barbers and clients pagination pages
-        
-  - clients:
-    - add recent appointments (like reviews) in api profile
-    
-    - add client api endpoint that returns all barbers that the client has a completed appointment with (to be used for making reviews)
-
-    - make client reviews page, where they can create, edit, delete reviews (to barbers which they have completed appointments with)
-      - workflow: select create review action, opens popup with barbers which you have completed appointtments with, select one and write review,
-        readapt client appointments page steps based moodal for this
-
+  ...
+  
 Proposed:
-  - add view barber profile on clicking barber (idk if i should add this)
+  - likely
+    - enhance modal to stop it from closing while loading
 
-  - enhance popup (or modal at this point) to stop it from being closed while loading
-
-  - when creating appointment check if selected avaiability is not past
-
-  - fix table text overflow when screen width is small
-  - add error message when loading tables if the api request fails
-  - on backend return availabilities, appointments sorted based on date (newer to older)
-  
-  - add delete appointment functionality for admins and barbers?
-  
-  - add responsivity to sidebar, show toggle button on header, width 100% for (small screens)
-  - add media queries for screen sizes on each layout component 
-  - fix settings page responsivity, input fields get of the card, on small screens
-  
-  - add loading prop to StatCard like Pagination (use it in dashboard instead of external if isLoading <Spinner/>)
-  - add skeleton loading for page components
-
-  - cleanup Form code, make it work automagically (Form.Button, auto fields, Form.Input, etc)
+    - return availabilities and appointmentss from API in date sorted order, (not text based as it is rn)  (active appointment more recent on top)
+    - when creating appointment check if selected avaiability is not past
+ 
+    - add responsivity to sidebar, show toggle button on header, width 100% for (small screens)
+    - add media queries for screen sizes on each layout component 
+    - fix settings page responsivity, input fields get of the card, on small screens
     
-  - see if it's worth it to fix loading spinner not showing when accessing dashboard from a route 
-    this happens because to redirect you need to be authenticated to get role
-  
-  - see how vite tests work and maybe implement some
+  - unlikely
+    - add loading prop to StatCard like Pagination (use it in dashboard instead of external if isLoading <Spinner/>)
+    - add skeleton loading for page components
 
-  - change structure of project:
-    - you can register as barbershop owner, then invite your own barbers
-    - or you can register as client and view barbershops
-    - admim can view evrything about the platform
-    - services are like tags, barbers can add them to their own list, but not create new ones (although this is a pricing problem as it has to be the same for everyone)
-    
+    - fix table text overflow when screen width is small (still gets cluttered)
+    - add error message when loading tables if the api request fails
+
+    - fix trash and warning icons in the buttons not getting white when hovered in profile settings (works in dev not in prod)
+
+    - cleanup Form code, make it work automagically (Form.Button, auto fields, Form.Input, etc)
+
+    - add view barber profile on clicking barber
+
+    - change structure of project:
+      - you can register as barbershop owner, then invite your own barbers
+      - or you can register as client and view barbershops
+      - admim can view evrything about the platform
+      - services are like tags, barbers can add them to their own list, but not create new ones (although this is a pricing problem as it has to be the same for everyone)
+      
 -----------------------------------------------------------------------------------------------------------------------------------------
 3. Docs:
 

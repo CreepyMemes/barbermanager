@@ -115,7 +115,7 @@ class GetBarberSlotsSerializer(BarberValidationMixin, GetAvailabilitiesMixin, se
             return {"slots": []}
 
         # Optionally filter slots if date is today
-        slots = self._filter_slots_future(availability)
+        slots = self._filter_slots(availability)
         return {"slots": slots}
 
 

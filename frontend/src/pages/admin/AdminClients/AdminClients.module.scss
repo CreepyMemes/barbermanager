@@ -40,7 +40,7 @@
     .email {
       color: $color-primary;
       font-size: 1.2rem;
-      font-weight: 500;
+      font-weight: 600;
 
       white-space: nowrap;
       overflow: hidden;
@@ -48,11 +48,11 @@
     }
   }
 
-  .next-appointment-container {
+  .upcoming-appointment-container {
     display: flex;
     flex-direction: start;
 
-    .next-appointment {
+    .upcoming-appointment {
       width: 6.5rem;
 
       display: flex;
@@ -80,6 +80,12 @@
   .spent {
     color: $color-primary;
     font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .date {
+    color: $color-primary;
+    font-size: 1.2rem;
     font-weight: 600;
   }
 
