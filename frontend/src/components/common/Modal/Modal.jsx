@@ -97,12 +97,6 @@ function Modal({
             {description}
             <div className={styles.modalField}>{enhancedFields}</div>
 
-            {isMultiStep && (
-              <div className={styles.modalStepIndicator}>
-                Step {stepIndex + 1} of {steps.length}
-              </div>
-            )}
-
             <div className={styles.modalAction}>
               <Button
                 type="button"
@@ -135,6 +129,12 @@ function Modal({
                 </span>
               </Button>
             </div>
+
+            {isMultiStep && (
+              <div className={styles.modalStepIndicator}>
+                Step {stepIndex + 1} of {steps.length}
+              </div>
+            )}
           </div>
 
           <Error />
