@@ -1,37 +1,32 @@
 @use '@styles/variables.module.scss' as *;
 
-.client-dashboard {
-  padding: 5rem;
-
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 5rem;
-
-  :nth-child(4),
-  :nth-child(5) {
-    grid-column: span 3;
-  }
-
-  .value {
-    display: block;
-    margin-top: 1rem;
-
-    font-size: 2rem;
-    font-weight: 800;
-    color: $color-primary;
-  }
-
-  .empty {
-    display: block;
-    margin-top: 1rem;
-    font-style: italic;
-    font-size: 1.2rem;
-    font-weight: 500;
-    color: $color-muted;
-  }
+.client-reviews {
+  margin: 5rem;
 
   .action {
     padding-block: 1rem;
+
+    display: flex;
+    justify-content: space-between;
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .refresh-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+
+      .line {
+        display: flex;
+        gap: 1rem;
+      }
+    }
   }
 
   .table-title {
@@ -43,27 +38,6 @@
       display: block;
       height: 1.7rem;
       font-weight: 600;
-    }
-  }
-
-  .upcoming-appointment-value {
-    margin-top: 1rem;
-
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 0.8rem;
-
-    .upcoming-appointment-date {
-      font-size: 1.3rem;
-      font-weight: 600;
-      color: $color-primary;
-    }
-
-    .upcoming-appointment-slot {
-      font-size: 2rem;
-      font-weight: 600;
-      color: $color-primary;
     }
   }
 
@@ -133,6 +107,56 @@
       color: $color-primary;
       font-size: 1.2rem;
       font-weight: 600;
+    }
+  }
+
+  .actions {
+    display: flex;
+    gap: 2rem;
+  }
+}
+
+.confirmation {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .confirm-row {
+    height: 4rem;
+    padding: 1rem;
+
+    background: $color-secondary;
+    border-radius: $border-radius;
+
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+
+    .confirm-block {
+      width: 8rem;
+      margin-right: 1rem;
+
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+
+      .confirm-label {
+        padding-left: 0.5rem;
+        color: $color-primary;
+        font-size: 1.7rem;
+        font-weight: 600;
+      }
+    }
+
+    .confirm-content {
+      display: flex;
+      flex-direction: column;
+
+      .confirm-value {
+        color: $color-primary;
+        font-size: 1.4rem;
+        word-break: break-word;
+      }
     }
   }
 }

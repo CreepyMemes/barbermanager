@@ -38,6 +38,7 @@ function BarberAppointments() {
    */
   const fetchClientProfiles = useCallback(async (appointments) => {
     setIsLoadingClientProfiles(true);
+
     try {
       // Gets all unique client IDs from appointments
       const clientIds = [...new Set(appointments.map((a) => a.client_id))];
@@ -54,7 +55,7 @@ function BarberAppointments() {
         }),
       );
 
-      setClients(Object.fromEntries(entries)); // assembles into { [id]: profile }
+      setClients((prev) => ({ ...prev, ...Object.fromEntries(entries) })); // assembles into { [id]: profile }
     } finally {
       setIsLoadingClientProfiles(false);
     }

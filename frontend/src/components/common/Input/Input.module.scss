@@ -1,6 +1,97 @@
 @use '@styles/variables.module.scss' as *;
 @use '@styles/classes.module.scss' as *;
 
+// Rating input
+.rating-group {
+  padding: 0.5rem;
+  width: fit-content;
+
+  background: $color-secondary;
+  border-radius: $border-radius;
+
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  .star-btn {
+    padding-left: 0.5rem;
+
+    appearance: none;
+    border: none;
+    background: none;
+
+    cursor: pointer;
+    color: $color-tertiary; // base (empty) star color
+
+    line-height: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:focus {
+      outline: 2px solid $border;
+      outline-offset: 1px;
+      border-radius: 4px;
+    }
+
+    &:hover {
+      color: $color-rating;
+    }
+
+    &.filled {
+      color: $color-rating; // filled stars
+    }
+
+    &.disabled {
+      cursor: not-allowed;
+      color: $color-muted;
+    }
+
+    .star-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+
+      font-size: 2.2rem;
+      letter-spacing: 0.2em;
+
+      font-weight: 800;
+
+      display: flex;
+      align-items: center; // vertical centering of star text
+    }
+  }
+
+  .clear-btn {
+    margin-left: 0.3rem;
+    appearance: none;
+    border: none;
+    background: none;
+    color: $color-accent;
+    font-size: 1.2rem;
+
+    cursor: pointer;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+
+    &:hover {
+      color: $color-primary;
+      text-decoration: underline;
+    }
+
+    &:focus {
+      outline: 2px solid $border;
+      outline-offset: 2px;
+    }
+
+    &.disabled {
+      cursor: not-allowed;
+      color: $color-muted;
+      text-decoration: none;
+    }
+  }
+}
+
 // --- For dropdown & standard input wrappers, with shared logic ---
 .input-wrapper {
   position: relative; // Ensure the arrow sits relative to the wrapper
