@@ -1,7 +1,7 @@
+// Input.jsx
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useForm } from '@hooks/useForm';
 import styles from './Input.module.scss';
-
 import Button from '@components/common/Button/Button';
 import Icon from '@components/common/Icon/Icon';
 
@@ -28,6 +28,10 @@ function Input({
   fetcher,
   mapOption,
   reloadKey,
+
+  // For rating input
+  maxStars = 5,
+  allowClear = false,
 }) {
   const { fields, handleChange } = useForm();
 
@@ -39,6 +43,13 @@ function Input({
   const [selectLoading, setSelectLoading] = useState(false);
   const [selectError, setSelectError] = useState('');
   const [hasLoaded, setHasLoaded] = useState(false);
+
+  // Rating Input state
+  const [hoverValue, setHoverValue] = useState(0);
+
+  // Rating Input functionality
+  const numericValue = Number(fields[name]) || 0;
+  const activeValue = hoverValue || numericValue;
 
   // Password Input state
   const [showPassword, setShowPassword] = useState(false);
@@ -130,6 +141,96 @@ function Input({
       },
     });
   };
+
+  const setRatingValue = (val) => {
+    handleChange({ target: { name, value: val } });
+  };
+
+  const onClickStar = (val) => {
+    if (disabled) return;
+    if (allowClear && numericValue === val) {
+      setRatingValue(0);
+    } else {
+      setRatingValue(val);
+    }
+  };
+
+  // Roving tabindex: only one item is tabbable
+  const getRatingTabIndex = (i) => {
+    if (disabled) return -1;
+    if (numericValue) return numericValue === i ? 0 : -1;
+    return i === 1 ? 0 : -1;
+  };
+
+  const ratingOnKeyDown = (e, i) => {
+    if (disabled) return;
+    const key = e.key;
+    if (key === 'ArrowRight' || key === 'ArrowUp') {
+      e.preventDefault();
+      const next = Math.min((numericValue || 0) + 1, maxStars);
+      setRatingValue(next);
+    } else if (key === 'ArrowLeft' || key === 'ArrowDown') {
+      e.preventDefault();
+      const prev = Math.max((numericValue || 0) - 1, 1);
+      setRatingValue(prev);
+    } else if (key === 'Home') {
+      e.preventDefault();
+      setRatingValue(1);
+    } else if (key === 'End') {
+      e.preventDefault();
+      setRatingValue(maxStars);
+    } else if ((key === 'Backspace' || key === 'Delete' || key === '0') && allowClear) {
+      e.preventDefault();
+      setRatingValue(0);
+    } else if (key === ' ' || key === 'Enter') {
+      e.preventDefault();
+      onClickStar(i);
+    }
+  };
+
+  // --- Rating Input ---
+  if (type === 'rating') {
+    return (
+      <div className={styles.label}>
+        {label}
+        <div className={styles.ratingGroup} role="radiogroup" aria-label={label || name} aria-required={required || undefined}>
+          {[...Array(maxStars)].map((_, idx) => {
+            const i = idx + 1;
+            const filled = i <= activeValue;
+
+            return (
+              <Button
+                key={i}
+                type="button"
+                color="animated"
+                className={`${styles.starBtn} ${filled ? styles.filled : ''} ${disabled ? styles.disabled : ''}`}
+                tabIndex={getRatingTabIndex(i)}
+                onMouseEnter={() => !disabled && setHoverValue(i)}
+                onMouseLeave={() => !disabled && setHoverValue(0)}
+                onFocus={() => !disabled && setHoverValue(0)}
+                onClick={() => onClickStar(i)}
+                onKeyDown={(e) => ratingOnKeyDown(e, i)}
+                disabled={disabled}
+              >
+                <span className={styles.starIcon}>★</span>
+              </Button>
+            );
+          })}
+          {!required && allowClear && (
+            <Button
+              type="button"
+              color="animated"
+              className={`${styles.clearBtn} ${disabled ? styles.disabled : ''}`}
+              onClick={() => !disabled && setRatingValue(0)}
+              disabled={disabled}
+            >
+              Clear
+            </Button>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   // --- Checkbox Selection ---
   if (type === 'checkbox') {
