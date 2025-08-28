@@ -15,6 +15,7 @@ function Modal({
   action,
   onSubmit,
   onClose,
+  onValidate, // custom validator for single-step modals
   children, // expects Modal.Title, Modal.Description, then form fields, then (optionally) custom extra actions
 }) {
   const [isLoading, setIsLoading] = useState(false); // Used to disable the submit button while loading
@@ -47,16 +48,18 @@ function Modal({
     if (open) setStepIndex(0);
   }, [open]);
 
+  // Decide which validator to use (step-level for multi-step, onValidate for single-step)
+  const effectiveValidate = isMultiStep ? stepValidate : onValidate;
+
   /**
    * Handles form submission running the submit function with passed data
    */
   const handleSubmit = async (data) => {
-    // Step-level validation (Form will call this before continuing)
-    if (isMultiStep && stepValidate) {
-      const error = stepValidate(data);
-      if (error) {
-        throw new Error(error); // FormProvider will catch this and show <Error />
-      }
+    // Validation guard (Form already runs this, but we keep it here to protect step transitions)
+    const validationError = effectiveValidate?.(data);
+
+    if (validationError) {
+      throw new Error(validationError); // FormProvider will catch this and show <Error />
     }
 
     // If not last step, just go forward
@@ -88,7 +91,7 @@ function Modal({
     >
       <Form
         initialFields={fields}
-        validate={(vals) => stepValidate?.(vals)}
+        validate={effectiveValidate}
         onSubmit={handleSubmit} //
       >
         <div className={styles.modal}>
