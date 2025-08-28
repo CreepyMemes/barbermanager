@@ -6,7 +6,6 @@ import api from '@api';
 
 import Pagination from '@components/common/Pagination/Pagination';
 import Input from '@components/common/Input/Input';
-
 import Modal from '@components/common/Modal/Modal';
 import Icon from '@components/common/Icon/Icon';
 import Tag from '@components/common/Tag/Tag';
@@ -70,7 +69,7 @@ function ClientAppointments() {
   }, []);
 
   /**
-   * Only fetch if profile is loaded AND user is admin
+   * Only fetch if profile is loaded AND user is client
    */
   useEffect(() => {
     if (profile?.role === 'CLIENT') {
@@ -306,7 +305,7 @@ function ClientAppointments() {
     );
   }
 
-  // Only render UI for admins; otherwise, render nothing
+  // Only render UI for clients otherwise render nothing
   if (!profile || profile.role !== 'CLIENT') return null;
 
   return (
