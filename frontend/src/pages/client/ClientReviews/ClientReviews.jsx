@@ -301,7 +301,9 @@ function BarberReviews() {
 
             <Pagination.Cell>
               <div className={styles.reviewComment}>
-                <span className={styles.comment}>{review.comment}</span>
+                <span className={review.comment ? styles.comment : `${styles.comment} ${styles.noComment}`}>
+                  {review.comment || 'No comment'}
+                </span>
               </div>
             </Pagination.Cell>
 
