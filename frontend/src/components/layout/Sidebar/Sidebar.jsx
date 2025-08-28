@@ -25,6 +25,7 @@ const barberNav = [
 ];
 const clientNav = [
   { to: '/client/dashboard', label: 'Dashboard', icon: 'dashboard' },
+  { to: '/client/barbers', label: 'Barbers', icon: 'barber' },
   { to: '/client/appointments', label: 'Appointments', icon: 'appointment' },
   { to: '/client/reviews', label: 'Reviews', icon: 'review' },
   { to: '/client/settings', label: 'Settings', icon: 'settings' },
