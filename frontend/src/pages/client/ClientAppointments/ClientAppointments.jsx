@@ -282,29 +282,69 @@ function ClientAppointments() {
     const selectedServices = services.filter((service) => fields.services?.includes(String(service.id)));
 
     return (
-      <div>
-        <div>
-          <b>Barber:</b>
-          {loadingBarbers ? 'Loading...' : selectedBarber ? `${selectedBarber.name} ${selectedBarber.surname}` : fields.barber_id}
+      <div className={styles.confirmation}>
+        <div className={styles.confirmRow}>
+          <div className={styles.confirmBlock}>
+            <Icon name="barber" size="ty" black />
+            <span className={styles.confirmLabel}>Barber:</span>
+          </div>
+          <div className={styles.confirmContent}>
+            <div className={styles.confirmValue}>
+              {loadingBarbers ? (
+                <Spinner size="sm" />
+              ) : selectedBarber ? (
+                `(${selectedBarber.username}) ${selectedBarber.name} ${selectedBarber.surname}`
+              ) : fields.barber_id ? (
+                fields.barber_id
+              ) : (
+                '-'
+              )}
+            </div>
+          </div>
         </div>
-        <div>
-          <b>Services:</b>
-          {loadingServices
-            ? 'Loading...'
-            : selectedServices.length
-              ? selectedServices.map((s) => s.name).join(', ')
-              : fields.services?.join(', ')}
+
+        <div className={styles.confirmRow}>
+          <div className={styles.confirmBlock}>
+            <Icon name="service" size="ty" black />
+            <span className={styles.confirmLabel}>Services:</span>
+          </div>
+          <div className={styles.confirmContent}>
+            <div className={styles.confirmValue}>
+              {loadingServices ? (
+                <Spinner size="sm" />
+              ) : selectedServices.length ? (
+                selectedServices.map((s) => s.name).join(', ')
+              ) : fields.services?.length ? (
+                fields.services.join(', ')
+              ) : (
+                '-'
+              )}
+            </div>
+          </div>
         </div>
-        <div>
-          <b>Date:</b> {fields.date}
+
+        <div className={styles.confirmRow}>
+          <div className={styles.confirmBlock}>
+            <Icon name="calendar" size="ty" black />
+            <span className={styles.confirmLabel}>Date:</span>
+          </div>
+          <div className={styles.confirmContent}>
+            <div className={styles.confirmValue}>{fields.date || '-'}</div>
+          </div>
         </div>
-        <div>
-          <b>Time Slot:</b> {fields.slot}
+
+        <div className={styles.confirmRow}>
+          <div className={styles.confirmBlock}>
+            <Icon name="availability" size="ty" black />
+            <span className={styles.confirmLabel}>Slot:</span>
+          </div>
+          <div className={styles.confirmContent}>
+            <div className={styles.confirmValue}>{fields.slot || '-'}</div>
+          </div>
         </div>
       </div>
     );
   }
-
   // Only render UI for clients otherwise render nothing
   if (!profile || profile.role !== 'CLIENT') return null;
 
