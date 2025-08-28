@@ -25,6 +25,12 @@
         text-align: center;
         font-size: 1.5rem;
       }
+
+      .modal-step-indicator {
+        font-size: 1.2rem;
+        font-weight: 500;
+        text-align: right;
+      }
     }
 
     .modal-field {
@@ -36,7 +42,8 @@
     }
 
     .modal-action {
-      margin-block: 2rem;
+      margin-top: 3rem;
+      margin-bottom: 2rem;
       display: flex;
       justify-content: space-between;
       gap: 2rem;
