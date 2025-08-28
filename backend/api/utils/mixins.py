@@ -456,6 +456,19 @@ class GetBarbersMixin:
         Returns all active barbers as public dicts.
         """
         return [self.get_barber_public(b) for b in self.get_barbers_queryset()]
+    
+    def get_barbers_completed_public(self, client):
+        """
+        Returns public data for all barbers that the client had a completed appointment with.
+        """
+        from ..models import Barber
+        from ..models import AppointmentStatus
+
+        # All ids of barbers the client had a completed appointment with
+        barber_ids = client.appointments_created.filter(status=AppointmentStatus.COMPLETED.value).values_list('barber_id', flat=True).distinct()
+
+        # Only active barbers (is_active=True), matching get_barbers_public
+        return [self.get_barber_public(barber) for barber in Barber.objects.filter(id__in=barber_ids, is_active=True)]
 
 
 class GetClientsMixin:

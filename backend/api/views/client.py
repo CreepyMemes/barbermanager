@@ -17,6 +17,7 @@ from api.serializers.client import (
     CreateClientReviewSerializer,
     UpdateClientReviewSerializer,
     DeleteClientReviewSerializer,
+    GetClientCompletedBarbersSerializer,
 )
 
 
@@ -81,6 +82,7 @@ def get_client_appointments(request):
     """
     serializer = GetClientAppointmentsSerializer(data={}, context={'client': request.user})
     serializer.is_valid(raise_exception=True)
+
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -96,7 +98,6 @@ def create_client_appointment(request, barber_id):
     """
     Client only: Creates an appointmentt for the authenticated client.
     """
-
     serializer = CreateClientAppointmentSerializer(data=request.data, context={'client': request.user, 'barber_id': barber_id})
     serializer.is_valid(raise_exception=True)
     serializer.save()
@@ -135,6 +136,7 @@ def get_client_reviews(request):
     """
     serializer = GetClientReviewsSerializer(data={}, context={'client': request.user})
     serializer.is_valid(raise_exception=True)
+
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -192,3 +194,20 @@ def manage_client_reviews(request, review_id):
         serializer.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+@extend_schema(
+responses={200: GetClientCompletedBarbersSerializer},
+description="Client only: Returns all barbers with whom the client has completed appointments.",
+)
+@api_view(['GET'])
+@permission_classes([IsClientRole])
+@parser_classes([JSONParser]) 
+def get_client_completed_barbers(request):
+    """
+    Client only: Returns all barbers with whom the authenticated client has completed appointments
+    """
+    serializer = GetClientCompletedBarbersSerializer(data={}, context={'client': request.user})
+    serializer.is_valid(raise_exception=True)
+
+    return Response(serializer.data, status=status.HTTP_200_OK)

@@ -7,6 +7,7 @@ from ..utils import (
     AppointmentValidationMixin,
     ReviewValidationMixin,
     GetClientsMixin,
+    GetBarbersMixin,
     GetAppointmentsMixin,
     GetReviewsMixin,
     phone_number_validator,
@@ -245,3 +246,15 @@ class DeleteClientReviewSerializer(ClientValidationMixin, ReviewValidationMixin,
     def delete(self):
         self.validated_data['review'].delete()
 
+
+class GetClientCompletedBarbersSerializer(GetBarbersMixin, ClientValidationMixin, serializers.Serializer):
+    """
+    Returns all barbers with whom the client has completed appointments.
+    """
+    def validate(self, attrs):
+        attrs = self.validate_client(attrs)
+        return attrs
+
+    def to_representation(self, validated_data):
+        client = validated_data['client']
+        return {'barbers': self.get_barbers_completed_public(client) }
