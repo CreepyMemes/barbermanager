@@ -48,6 +48,7 @@ export const ENDPOINTS = {
     createReview: (appointmentId) => `/client/reviews/appointments/${appointmentId}/`,
     createAppointment: (barberId) => `/client/appointments/barbers/${barberId}/`,
     appointment: (appointmentId) => `/client/appointments/${appointmentId}/`,
+    barbers: '/client/barbers/',
   },
 
   // Public Routes

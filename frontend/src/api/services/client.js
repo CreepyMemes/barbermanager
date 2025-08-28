@@ -78,3 +78,11 @@ export async function updateClientReview(reviewId, patchData) {
 export async function deleteClientReview(reviewId) {
   await api.instance.delete(ENDPOINTS.client.review(reviewId));
 }
+
+/**
+ * Retrieves all the barbers with whom the client has completed appointments.
+ */
+export async function getClientCompletedBarbers() {
+  const { data } = await api.instance.get(ENDPOINTS.client.barbers);
+  return data;
+}
