@@ -45,7 +45,7 @@ export const ENDPOINTS = {
     appointments: '/client/appointments/',
     reviews: '/client/reviews/',
     review: (reviewId) => `/client/reviews/${reviewId}/`,
-    createReview: (appointmentId) => `/client/reviews/appointments/${appointmentId}/`,
+    createReview: (barberId) => `/client/reviews/barbers/${barberId}/`,
     createAppointment: (barberId) => `/client/appointments/barbers/${barberId}/`,
     appointment: (appointmentId) => `/client/appointments/${appointmentId}/`,
     barbers: '/client/barbers/',
