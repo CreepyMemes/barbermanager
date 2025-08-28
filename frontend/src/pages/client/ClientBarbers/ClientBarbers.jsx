@@ -144,6 +144,15 @@ function AdminBarbers() {
                 >
                   <Icon name="calendar" size="sm" black />
                 </Button>
+
+                <Button
+                  type="button"
+                  size="sm"
+                  color="animated"
+                  href={`/client/reviews?reviewBarber=${barber.id}`} //
+                >
+                  <Icon name="rating" size="sm" black />
+                </Button>
               </div>
             </Pagination.Cell>
           </Pagination.Row>

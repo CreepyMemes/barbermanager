@@ -15,14 +15,14 @@ import Spinner from '@components/common/Spinner/Spinner';
 import Profile from '@components/ui/Profile/Profile';
 
 function ClientAppointments() {
+  const { profile } = useAuth();
+
   const location = useLocation();
   const navigate = useNavigate();
 
   // Parse barber id from query:
   const queryParams = new URLSearchParams(location.search);
   const preselectBarberId = queryParams.get('bookBarber');
-
-  const { profile } = useAuth();
 
   const [appointments, setAppointments] = useState([]);
 
@@ -105,14 +105,12 @@ function ClientAppointments() {
     if (!preselectBarberId) return;
 
     // Open and preselect the barber (ok even if already open)
-    setBookPopup(true);
+    openBookPopup();
     setBookFields((fields) => ({ ...fields, barber_id: preselectBarberId }));
 
     // Remove the param immediately so closing won't reopen the modal
     const params = new URLSearchParams(location.search);
     params.delete('bookBarber');
-
-    // Navigate to the page with set params
     navigate({ search: params.toString() }, { replace: true });
   }, [preselectBarberId, location.search, navigate]);
 
