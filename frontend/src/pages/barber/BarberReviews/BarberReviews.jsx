@@ -54,7 +54,7 @@ function BarberReviews() {
   }, []);
 
   /**
-   * Only fetch if profile is loaded AND user is admin
+   * Only fetch if profile is loaded AND user is barber
    */
   useEffect(() => {
     if (profile?.role === 'BARBER') {
@@ -63,7 +63,7 @@ function BarberReviews() {
   }, [profile, fetchReviews]);
 
   /**
-   * When reviews change, fetch needed barber profiles
+   * When reviews change, fetch needed client profiles
    */
   useEffect(() => {
     if (reviews.length > 0) {
@@ -71,12 +71,13 @@ function BarberReviews() {
     }
   }, [reviews, fetchClientProfiles]);
 
-  // Only render UI for admins; otherwise, render nothing
+  // Only render UI for barbers otherwise render nothing
   if (!profile || profile.role !== 'BARBER') return null;
 
   return (
-    <div className={styles.barberReviews}>
+    <>
       <Pagination
+        className={styles.barberReviews}
         icon="review"
         label="Reviews"
         itemsPerPage={5}
@@ -162,7 +163,7 @@ function BarberReviews() {
           </Pagination.Row>
         ))}
       </Pagination>
-    </div>
+    </>
   );
 }
 
