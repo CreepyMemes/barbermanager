@@ -15,6 +15,7 @@ function Button({
   color,
   className,
   autoIconInvert = false, // <-- new prop, default false
+  ...rest
 }) {
   const [hovered, setHovered] = useState(false);
 
@@ -61,6 +62,7 @@ function Button({
             aria-disabled={disabled}
             onClick={disabled ? (e) => e.preventDefault() : onClick}
             {...hoverProps}
+            {...rest}
           >
             {composedChildren}
           </NavLink>
@@ -76,6 +78,7 @@ function Button({
           aria-disabled={disabled}
           onClick={disabled ? (e) => e.preventDefault() : onClick}
           {...hoverProps}
+          {...rest} //
         >
           {composedChildren}
         </Link>
@@ -93,6 +96,7 @@ function Button({
         target="_blank" // maybe for external?
         rel="noopener noreferrer"
         {...hoverProps}
+        {...rest} //
       >
         {composedChildren}
       </a>
@@ -105,7 +109,8 @@ function Button({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      {...hoverProps} ///
+      {...hoverProps}
+      {...rest} //
     >
       {composedChildren}
     </button>
