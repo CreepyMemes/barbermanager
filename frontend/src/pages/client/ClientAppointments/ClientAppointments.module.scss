@@ -93,3 +93,48 @@
     text-align: center;
   }
 }
+
+.confirmation {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .confirm-row {
+    height: 4rem;
+    padding: 1rem;
+
+    background: $color-secondary;
+    border-radius: $border-radius;
+
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+
+    .confirm-block {
+      width: 8rem;
+      margin-right: 1rem;
+
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+
+      .confirm-label {
+        padding-left: 0.5rem;
+        color: $color-primary;
+        font-size: 1.7rem;
+        font-weight: 600;
+      }
+    }
+
+    .confirm-content {
+      display: flex;
+      flex-direction: column;
+
+      .confirm-value {
+        color: $color-primary;
+        font-size: 1.4rem;
+        word-break: break-word;
+      }
+    }
+  }
+}
