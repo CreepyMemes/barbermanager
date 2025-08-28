@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@hooks/useAuth';
 import { useForm } from '@hooks/useForm';
 import styles from './ClientAppointments.module.scss';
@@ -15,6 +16,14 @@ import Profile from '@components/ui/Profile/Profile';
 
 function ClientAppointments() {
   const { profile } = useAuth();
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Parse barber id from query:
+  const queryParams = new URLSearchParams(location.search);
+  const preselectBarberId = queryParams.get('bookBarber');
+
   const [appointments, setAppointments] = useState([]);
 
   const [isLoadingAppointments, setIsLoadingAppointments] = useState(true);
@@ -23,8 +32,11 @@ function ClientAppointments() {
   const [barbers, setBarbers] = useState({}); // barberId -> profile
 
   // Popup states
-  const [bookPopup, setBookPopup] = useState(false);
+  const [bookPopup, setBookPopup] = useState(Boolean(preselectBarberId)); // Local state for controlling the modal and preselection
   const [cancelPopup, setCancelPopup] = useState({ open: false, appointment: null });
+
+  // Preselected barber initial fields state from parameters
+  const [bookFields, setBookFields] = useState({ barber_id: preselectBarberId || '', services: [], date: '', slot: '' });
 
   /**
    * Defines fetching all appointmentts from api (single responsibility, outside effect)
@@ -86,9 +98,28 @@ function ClientAppointments() {
     }
   }, [appointments, fetchBarberProfiles]);
 
+  /**
+   *  If query param is present and modal isn't open, open it and preselect barber
+   */
+  useEffect(() => {
+    if (!preselectBarberId) return;
+
+    // Open and preselect the barber (ok even if already open)
+    openBookPopup();
+    setBookFields((fields) => ({ ...fields, barber_id: preselectBarberId }));
+
+    // Remove the param immediately so closing won't reopen the modal
+    const params = new URLSearchParams(location.search);
+    params.delete('bookBarber');
+    navigate({ search: params.toString() }, { replace: true });
+  }, [preselectBarberId, location.search, navigate]);
+
   // Book appointment popup state handlers
   const openBookPopup = () => setBookPopup(true);
-  const closeBookPopup = () => setBookPopup(false);
+  const closeBookPopup = () => {
+    setBookPopup(false);
+    setBookFields({ barber_id: '', services: [], date: '', slot: '' });
+  };
 
   // Cancel apointment popup state handlers
   const openCancelPopup = (appointment) => setCancelPopup({ open: true, appointment });
@@ -488,7 +519,8 @@ function ClientAppointments() {
       {/* Book Appointment Modal */}
       <Modal
         open={bookPopup}
-        fields={{ barber_id: '', services: [], date: '', slot: '' }}
+        fields={bookFields}
+        initialStepIndex={bookFields.barber_id ? 1 : 0}
         action={{ submit: 'Book', loading: 'Booking...' }}
         onSubmit={handleBookAppointment}
         onClose={closeBookPopup}

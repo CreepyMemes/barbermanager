@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@hooks/useAuth';
 import { useForm } from '@hooks/useForm';
 import { cleanPayload, isAnyFieldSet } from '@utils/utils';
@@ -16,15 +17,26 @@ import Profile from '@components/ui/Profile/Profile';
 
 function BarberReviews() {
   const { profile } = useAuth();
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Parse barber id from query:
+  const queryParams = new URLSearchParams(location.search);
+  const preselectBarberId = queryParams.get('reviewBarber');
+
   const [reviews, setReviews] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const [barbers, setBarbers] = useState({}); // barberId -> profile
 
   // Popup states
-  const [postPopup, setPostPopup] = useState(false);
+  const [postPopup, setPostPopup] = useState(Boolean(preselectBarberId)); // Local state for controlling the modal and preselection
   const [deletePopup, setDeletePopup] = useState({ open: false, review: null });
   const [editPopup, setEditPopup] = useState({ open: false, review: null });
+
+  // Preselected barber initial fields state from parameters
+  const [postFields, setPostFields] = useState({ barber_id: preselectBarberId || '', rating: '', comment: '' });
 
   /**
    * Defines fetching all reviews from api (single responsibility, outside effect)
@@ -80,9 +92,28 @@ function BarberReviews() {
     }
   }, [reviews, fetchBarberProfiles]);
 
+  /**
+   *  If query param is present and modal isn't open, open it and preselect barber
+   */
+  useEffect(() => {
+    if (!preselectBarberId) return;
+
+    // Open and preselect the barber (ok even if already open)
+    openPostPopup();
+    setPostFields((fields) => ({ ...fields, barber_id: preselectBarberId }));
+
+    // Remove the param immediately so closing won't reopen the modal
+    const params = new URLSearchParams(location.search);
+    params.delete('reviewBarber');
+    navigate({ search: params.toString() }, { replace: true });
+  }, [preselectBarberId, location.search, navigate]);
+
   // Post review popup state handlers
   const openPostPopup = () => setPostPopup(true);
-  const closePostPopup = () => setPostPopup(false);
+  const closePostPopup = () => {
+    setPostPopup(false);
+    setPostFields({ barber_id: '', rating: '', comment: '' });
+  };
 
   // Delete review popup state handlers
   const openDeletePopup = (review) => setDeletePopup({ open: true, review });
@@ -120,7 +151,7 @@ function BarberReviews() {
   };
 
   /**
-   * Function that fetches and returns thebarbers with whom the client has completed appointments from the API (useCallback to fix endless loop)
+   * Function that fetches and returns the barbers with whom the client has completed appointments from the API (useCallback to fix endless loop)
    */
   const fetchCompletedBarbers = useCallback(async () => {
     const { barbers } = await api.client.getClientCompletedBarbers();
@@ -301,7 +332,9 @@ function BarberReviews() {
 
             <Pagination.Cell>
               <div className={styles.reviewComment}>
-                <span className={styles.comment}>{review.comment}</span>
+                <span className={review.comment ? styles.comment : `${styles.comment} ${styles.noComment}`}>
+                  {review.comment || 'No comment'}
+                </span>
               </div>
             </Pagination.Cell>
 
@@ -336,10 +369,11 @@ function BarberReviews() {
         ))}
       </Pagination>
 
-      {/* Post Revew Modal */}
+      {/* Post Review Modal */}
       <Modal
         open={postPopup}
-        fields={{ barber_id: '', rating: '', comment: '' }}
+        fields={postFields}
+        initialStepIndex={postFields.barber_id ? 1 : 0}
         action={{ submit: 'Post', loading: 'Posting...' }}
         onSubmit={handlePostReview}
         onClose={closePostPopup}
