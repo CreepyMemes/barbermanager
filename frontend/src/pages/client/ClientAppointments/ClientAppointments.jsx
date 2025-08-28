@@ -131,23 +131,6 @@ function ClientAppointments() {
   }, []);
 
   /**
-   * Barbers selection component to render the dropdown input of barbers to be selected
-   */
-  const BarerSelect = () => {
-    return (
-      <Input
-        type="dropdown"
-        size="md"
-        name="barber_id"
-        label="Barber"
-        fetcher={fetchBarbers}
-        mapOption={(barber) => ({ key: barber.id, value: `(${barber.username}) ${barber.name} ${barber.surname}` })}
-        required //
-      />
-    );
-  };
-
-  /**
    * Services selection component to render the checkbox input of services to be selected
    */
   const ServiceSelect = () => {
@@ -514,7 +497,16 @@ function ClientAppointments() {
         <Modal.Step validate={(fields) => (!fields.barber_id ? 'You must select a barber.' : undefined)}>
           <Modal.Title icon="barber">Choose Barber</Modal.Title>
           <Modal.Description>Please choose the barber you want to book.</Modal.Description>
-          <BarerSelect />
+
+          <Input
+            type="dropdown"
+            size="md"
+            name="barber_id"
+            label="Barber"
+            fetcher={fetchBarbers}
+            mapOption={(barber) => ({ key: barber.id, value: `(${barber.username}) ${barber.name} ${barber.surname}` })}
+            required //
+          />
         </Modal.Step>
 
         {/* STEP 2: Select Services */}

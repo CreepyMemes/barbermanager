@@ -216,7 +216,7 @@ function Input({
               </Button>
             );
           })}
-          {!required && allowClear && (
+          {allowClear && (
             <Button
               type="button"
               color="animated"

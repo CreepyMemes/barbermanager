@@ -14,9 +14,8 @@ Proposed:
 2. Frontend:
 
 Important:  
-  - clients:
-    - make client reviews page, where they can create, edit, delete reviews (to barbers which they have completed appointments with). Readapt code from appointments page 
-
+  ...
+  
 Proposed:
   - likely
     - enhance modal to stop it from closing while loading

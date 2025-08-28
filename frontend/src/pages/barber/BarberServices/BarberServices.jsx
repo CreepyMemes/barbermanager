@@ -271,6 +271,7 @@ function BarberServices() {
           placeholder={updatePopup.service?.name}
           size="md" //
         />
+
         <Input
           label="Service Price"
           type="number"
