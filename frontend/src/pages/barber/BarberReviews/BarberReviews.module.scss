@@ -90,6 +90,12 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
+    .no-comment {
+      color: $color-muted;
+      font-style: italic;
+      font-size: 1rem;
+    }
   }
 
   .review-date {

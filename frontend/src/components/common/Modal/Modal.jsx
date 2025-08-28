@@ -16,10 +16,11 @@ function Modal({
   onSubmit,
   onClose,
   onValidate, // custom validator for single-step modals
+  initialStepIndex = 0, // default starts at step 0
   children, // expects Modal.Title, Modal.Description, then form fields, then (optionally) custom extra actions
 }) {
   const [isLoading, setIsLoading] = useState(false); // Used to disable the submit button while loading
-  const [stepIndex, setStepIndex] = useState(0);
+  const [stepIndex, setStepIndex] = useState(initialStepIndex);
 
   // Extracts special children by type, passes the rest as the field inputs
   const all = Children.toArray(children);
@@ -44,9 +45,12 @@ function Modal({
     isValidElement(child) && child.type === Input ? cloneElement(child, { disabled: isLoading }) : child,
   );
 
+  /**
+   * Renders the modal on specified step on mount
+   */
   useEffect(() => {
-    if (open) setStepIndex(0);
-  }, [open]);
+    if (open) setStepIndex(initialStepIndex);
+  }, [open, initialStepIndex]);
 
   // Decide which validator to use (step-level for multi-step, onValidate for single-step)
   const effectiveValidate = isMultiStep ? stepValidate : onValidate;
