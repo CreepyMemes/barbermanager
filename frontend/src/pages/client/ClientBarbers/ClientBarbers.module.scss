@@ -61,13 +61,17 @@
     font-weight: 600;
   }
 
-  .description {
-    color: $color-primary;
-    font-size: 1.2rem;
+  .description-container {
+    display: flex; // need this to hide overflow
 
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    .description {
+      color: $color-primary;
+      font-size: 1.2rem;
+
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 
   .no-description {

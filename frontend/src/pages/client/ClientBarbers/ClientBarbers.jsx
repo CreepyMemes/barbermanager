@@ -121,9 +121,11 @@ function AdminBarbers() {
             </Pagination.Cell>
 
             <Pagination.Cell>
-              <span className={barber.description ? styles.description : `${styles.description} ${styles.noDescription}`}>
-                {barber.description || 'No description'}
-              </span>
+              <div className={styles.descriptionContainer}>
+                <span className={barber.description ? styles.description : `${styles.description} ${styles.noDescription}`}>
+                  {barber.description || 'No description'}
+                </span>
+              </div>
             </Pagination.Cell>
 
             <Pagination.Cell>
