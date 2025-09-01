@@ -8,7 +8,7 @@ function Profile({ profile, imageSize, className, fontSize = '1.3rem', loading }
   const computedClassName = [className, styles.profile].join(' ');
 
   // Render loading spinner if profile data is still loading
-  if (loading) {
+  if (loading || !profile) {
     return <Spinner size="sm" />;
   }
   return (
