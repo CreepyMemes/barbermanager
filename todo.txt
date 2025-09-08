@@ -50,10 +50,16 @@ Proposed:
 3. Docs:
 
 Important:
-  - correggi i diagrammi di casi d'uso
-  - rifai i diagrammi di classi di analisi
-  - correggi i diagrammi di sequenza e i rispettivi di attivita
-  - fai i diagrammi di classi di progettazione
+
+  - diagrammi di progettazione
+    - fai il diagramma dei componenti
+    - fai i diagrammi delle macchine a stati (scegliere 3-4 classi da modellare)
+  
+  - diagrammi di implementazione
+    - fai il diagramma di deployment (sta gia su github)
+    - fai le immagini di mockup (screenshottare il progetto)
+    - fai la descrizione unit tests cosa si è testato, scelte implementative (screenshotta il codice dei test gia fatto)
 
 Proposed:
-  - ...
+  - correggi i diagrammi di casi d'uso
+  - correggi i diagrammi di sequenza e i rispettivi di attivita
