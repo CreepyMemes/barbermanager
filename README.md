@@ -1,16 +1,16 @@
 <div align="center">
-  <img src="./frontend/assets/images/logo.webp" height="100px" alt="BarberManager Logo"/>
-  <h1>BarberManager</h1>
+  <img src="./frontend/assets/images/logo.webp" height="100px" alt="ManageBarber Logo"/>
+  <h1>ManageBarber</h1>
 
-[![Deploy to Production](https://github.com/CreepyMemes/barbermanager/actions/workflows/deploy.yml/badge.svg?branch=master)](https://github.com/CreepyMemes/barbermanager/actions/workflows/deploy.yml)
-[![BarberManager](https://img.shields.io/badge/BarberManager-Live%20Website-F38020?labelColor=555555&logo=cloudflare&logoColor=white)](https://barbermanager.creepymemes.com/)
-[![API Documentation](https://img.shields.io/badge/Swagger%20UI-API%20Documentation-6ec225?labelColor=555555&logo=swagger&logoColor=white)](https://barbermanager.creepymemes.com/api/)
+[![Deploy to Production](https://github.com/CreepyMemes/ManageBarber/actions/workflows/deploy.yml/badge.svg?branch=master)](https://github.com/CreepyMemes/ManageBarber/actions/workflows/deploy.yml)
+[![ManageBarber](https://img.shields.io/badge/ManageBarber-Live%20Website-F38020?labelColor=555555&logo=cloudflare&logoColor=white)](https://ManageBarber.creepymemes.com/)
+[![API Documentation](https://img.shields.io/badge/Swagger%20UI-API%20Documentation-6ec225?labelColor=555555&logo=swagger&logoColor=white)](https://ManageBarber.creepymemes.com/api/)
 
 </div>
 
 ## Overview
 
-BarberManager is a containerized barber shop management system web application.
+ManageBarber is a containerized barber shop management system web application.
 
 It provides an appointment booking system for clients, availability management for barbers, and automated reminders.
 
@@ -137,10 +137,10 @@ flowchart TD
 
 ## API Documentation
 
-BarberManager offers extensive, interactive API documentation using **Swagger UI**.  
+ManageBarber offers extensive, interactive API documentation using **Swagger UI**.  
 You can explore all backend endpoints, models, request/response formats, and try out live requests directly in your browser.
 
-➡️ **[View the API Documentation here.](https://barbermanager.creepymemes.com/api/)**  
+➡️ **[View the API Documentation here.](https://ManageBarber.creepymemes.com/api/)**  
 Or click the green "Swagger UI" badge at the top of this README.
 
 Typical API documentation features:
@@ -153,10 +153,10 @@ This documentation is always up-to-date with the deployed backend and is a helpf
 
 ## Live Deployment
 
-You can try out BarberManager yourself on our live, production website!
+You can try out ManageBarber yourself on our live, production website!
 
-➡️ **[Open the Live Website](https://barbermanager.creepymemes.com/)**  
-Or click the orange "BarberManager" badge at the top of this README.
+➡️ **[Open the Live Website](https://ManageBarber.creepymemes.com/)**  
+Or click the orange "ManageBarber" badge at the top of this README.
 
 The live deployment features:
 
@@ -190,8 +190,8 @@ This section is about the development workflow in programming and testing the ap
 If the repository is public:
 
 ```bash
-git clone https://github.com/CreepyMemes/barbermanager.git
-cd barbermanager/
+git clone https://github.com/CreepyMemes/ManageBarber.git
+cd ManageBarber/
 ```
 
 If the repository is private:
@@ -200,8 +200,8 @@ If the repository is private:
 > Change **TOKEN** to your github token
 
 ```bash
-git clone https://CreepyMemes:TOKEN@github.com/CreepyMemes/barbermanager.git
-cd barbermanager
+git clone https://CreepyMemes:TOKEN@github.com/CreepyMemes/ManageBarber.git
+cd ManageBarber
 ```
 
 #### Build and launch all containers
